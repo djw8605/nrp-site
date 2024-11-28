@@ -1,3 +1,7 @@
+---
+title: Managed LLM
+---
+
 ## Public managed LLM API
 
 We use the [LiteLLM](https://www.litellm.ai) LLM proxy to provide access to the LLMs we're running on nautilus.

@@ -32,6 +32,25 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'NRP Nautilus',
+      sidebar: [
+        {
+          label: "User documentation",
+          items: [
+            {
+              label: "Start",
+              autogenerate: { directory: 'Documentation/User documentation/Start' },
+            },
+            {
+              label: "AI",
+              autogenerate: { directory: 'Documentation/User documentation/AI' },
+            },
+            {
+              label: "Coder",
+              autogenerate: { directory: 'Documentation/User documentation/Coder' },
+            },
+          ],
+        },
+      ],
     }),
     tailwind({
     applyBaseStyles: false,

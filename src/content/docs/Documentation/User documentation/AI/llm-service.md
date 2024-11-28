@@ -1,3 +1,7 @@
+---
+title: LLM managed service
+---
+
 ## SHALB helm chart
 
 One of easy ways to deploy an LLM is to use a model provided by [HuggingFace](https://huggingface.co/models) with the help of [SHALB helm chart](https://github.com/shalb/charts/tree/main/huggingface-model).

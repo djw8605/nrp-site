@@ -1,3 +1,7 @@
+---
+title: Deploying
+---
+
 # Guide to Deploying Your Own Coder Instance on Nautilus
 
 This guide walks you through deploying a Coder instance in your own namespace on Nautilus, where you can have admin control, customize templates, and manage users. The instructions here are based on Coder's official [Kubernetes installation guide](https://coder.com/docs/install/kubernetes) with some adjustments for Nautilus.
