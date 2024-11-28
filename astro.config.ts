@@ -29,7 +29,7 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      title: 'NRP Nautilus documentation'
+      title: 'NRP Nautilus',
     }),
     tailwind({
     applyBaseStyles: false,
