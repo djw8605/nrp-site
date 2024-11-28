@@ -24,6 +24,10 @@ export const headerData = {
       ],
     },
     {
+      text: 'Docs',
+      href: getPermalink('/documentation'),
+    },    
+    {
       text: 'Pages',
       links: [
         {

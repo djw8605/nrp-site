@@ -1,0 +1,37 @@
+`kubectl apply -k "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.5.0"`
+
+Fix operator mem and CPU limits:
+
+```diff
+--- /var/folders/b2/hgd_skcd7fxd1mvvsb2jq2cr0000gn/T/LIVE-408301260/apps.v1.Deployment.piraeus-datastore.piraeus-operator-controller-manager    2024-04-16 10:00:28
++++ /var/folders/b2/hgd_skcd7fxd1mvvsb2jq2cr0000gn/T/MERGED-3149965176/apps.v1.Deployment.piraeus-datastore.piraeus-operator-controller-manager 2024-04-16 10:00:28
+         resources:
+           limits:
+-            cpu: "5"
+-            memory: 3Gi
++            cpu: 500m
++            memory: 256Mi
+           requests:
+-            cpu: "1"
+-            memory: 500Mi
++            cpu: 10m
++            memory: 64Mi
+```
+
+```diff
+--- /var/folders/b2/hgd_skcd7fxd1mvvsb2jq2cr0000gn/T/LIVE-408301260/v1.ConfigMap.piraeus-datastore.piraeus-operator-image-config        2024-04-16 10:00:28
++++ /var/folders/b2/hgd_skcd7fxd1mvvsb2jq2cr0000gn/T/MERGED-3149965176/v1.ConfigMap.piraeus-datastore.piraeus-operator-image-config     2024-04-16 10:00:28
+         resources:
+           limits:
+-            cpu: "5"
+-            memory: 3Gi
++            cpu: 500m
++            memory: 256Mi
+           requests:
+-            cpu: "1"
+-            memory: 500Mi
++            cpu: 10m
++            memory: 64Mi
+```
+
+If failing with a secret can't be created, follow https://github.com/piraeusdatastore/piraeus-operator/issues/541

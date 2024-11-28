@@ -1,0 +1,46 @@
+---
+title: Start page
+description: The front page for NRP docs
+---
+
+#### Get started
+
+[:rocket: Get access to Nautilus](/userdocs/start/get-access/)
+
+[:book: Learn to use the cluster](/userdocs/tutorial/basic/)
+
+[:octicons-terminal-16: Install tools](/userdocs/start/quickstart)
+
+[:shield: Cluster policies](/userdocs/start/policies/)
+
+[:question: FAQ](/userdocs/start/faq/)
+
+[:material-contacts: Contact us](/userdocs/start/contact/)
+
+[:question: Asking for support](/userdocs/start/support/)
+
+#### Disclamers
+
+The National Research Platform currently has no storage that is suitable for **HIPAA**, **PID**, **FISMA**, **FERPA**, or protected data of any kind. Users are not permitted to store such data on NRP machines.
+
+#### Start using the cluster
+
+[:question: Best ways of using the NRP](/userdocs/start/how-to-use-nautilus/)
+
+[:fontawesome-solid-microchip: Run GPU pod](/userdocs/running/gpu-pods/)
+
+[:material-card-multiple-outline: Run batch jobs](/userdocs/running/jobs/) (**:exclamation:Don't use "sleep" in those**); [:fontawesome-solid-rocket: make them run fast](/userdocs/running/io-jobs/)
+
+[:material-docker: Explore the images we provide](/userdocs/running/sci-img/)
+
+[:fontawesome-solid-hard-drive: Use persistent storage](/userdocs/storage/ceph-posix/) and [:material-cloud-upload: move your data in and out](/userdocs/storage/move-data/)
+
+[:material-robot: Run an LLM as a service](/userdocs/ai/llm-service/) or [:fontawesome-solid-brain: in jupyterhub](/userdocs/ai/llm-jupyterhub/)
+
+#### Other links
+
+[:gem: Services you can use](/userdocs/start/resources/) (many require separate registration)
+
+[:map: Cluster nodes map](https://elastic-igrok.nrp-nautilus.io/login?next=%2Fapp%2Fdashboards%3Fauth_provider_hint%3Danonymous1&auth_provider_hint=anonymous1#/view/76b9b030-81d5-11eb-ad7c-1f5ec373b923?_g=(filters%3A!())) and [:material-sitemap: Busy cluster map with all connections](https://traceroute.nrp-nautilus.io)
+
+[:material-gauge: Dashboard](https://dash.nrp-nautilus.io/)
