@@ -25,12 +25,12 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
   hasExternalScripts ? (Array.isArray(items) ? items.map((item) => item()) : [items()]) : [];
 
 export default defineConfig({
-  site: 'https://gitlab.nrp-nautilus.io',
-  base: '/prp/nrp-site',
+  site: 'https://prp.pages.nrp-nautilus.io',
+  base: '/nrp-site',
   output: 'static',
   outDir: 'public',
   publicDir: 'static',
-
+  
   integrations: [
     starlight({
       title: 'NRP Nautilus',
