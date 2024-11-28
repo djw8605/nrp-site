@@ -1,3 +1,8 @@
+---
+title: 'Network Requirements'
+layout: '~/layouts/MarkdownLayout.astro'
+---
+
 Our cluster contains several hundreds nodes around the world, and to make a cluster out of these we place certain connectivity requirements to join a node.
 
 The nodes are mostly connected to Science DMZ with 10G-100G speeds. To utilize this speed, they should support jumbo frames (9000 MTU) to all other nodes in the cluster.

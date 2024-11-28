@@ -1,3 +1,8 @@
+---
+title: 'Contacts'
+layout: '~/layouts/MarkdownLayout.astro'
+---
+
 # [matrix]
 
 We're using the new innovative federated communication system [https://matrix.org](https://matrix.org). You can get an account using any compatible client.
