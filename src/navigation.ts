@@ -32,24 +32,32 @@ export const headerData = {
       text: 'News',
       links: [
         {
-          text: 'Blog List',
+          text: 'All List',
           href: getBlogPermalink(),
         },
         {
-          text: 'Article',
-          href: getPermalink('get-started-website-with-astro-tailwind-css', 'post'),
+          text: 'All List from WP directly',
+          href: getPermalink('/wpblog'),
         },
         {
-          text: 'Article (with MDX)',
-          href: getPermalink('markdown-elements-demo-post', 'post'),
+          text: 'Events',
+          href: getPermalink('events', 'tag'),
         },
         {
-          text: 'Category Page',
-          href: getPermalink('tutorials', 'category'),
+          text: 'Media',
+          href: getPermalink('media', 'tag'),
         },
         {
-          text: 'Tag Page',
-          href: getPermalink('astro', 'tag'),
+          text: 'Presentations',
+          href: getPermalink('presentations', 'tag'),
+        },
+        {
+          text: 'Reports',
+          href: getPermalink('reports', 'tag'),
+        },
+        {
+          text: 'Updates',
+          href: getPermalink('updates', 'tag'),
         },
       ],
     },
