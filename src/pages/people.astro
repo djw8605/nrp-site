@@ -1,0 +1,32 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import PeopleWidget from '~/components/widgets/People.astro';
+
+const metadata = {
+  title: 'People',
+};
+---
+
+<Layout metadata={metadata}>
+  <PeopleWidget
+  title="People"
+  subtitle="People who make this project possible."
+  people={[
+    {
+      img: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/frank-1.png',
+      name: 'Frank Würthwein - PI',
+      title: 'Executive Director of Open Science Grid - Director of SDSC',
+    },
+    {
+      img: 'https://nationalresearchplatform.org/wp-content/uploads/2021/12/tajana-rosing.jpg',
+      name: 'Tajana Rosing - Co-PI',
+      title: 'Professor - ECE, UCSD',
+    },
+    {
+      img: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/tom-sm.png',
+      name: 'Tom DeFanti - Co-PI',
+      title: 'Research Scientist - Calit2 / Qualcomm Institute - UCSD',
+    },
+  ]}
+/>
+</Layout>

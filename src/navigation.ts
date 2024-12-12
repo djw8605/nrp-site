@@ -3,10 +3,6 @@ import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 export const headerData = {
   links: [
     {
-      text: 'Docs',
-      href: getPermalink('/documentation'),
-    },
-    {
       text: 'Participating',
       links: [
         {
@@ -20,13 +16,43 @@ export const headerData = {
       ],
     },
     {
-      text: 'Pages',
+      text: 'Information',
       links: [
         {
           text: 'Contact',
           href: getPermalink('/contact'),
         },
       ],
+    },
+    {
+      text: 'Community',
+      links: [
+        {
+          text: 'Partners',
+          href: getPermalink('/partners'),
+        },
+        {
+          text: 'People',
+          href: getPermalink('/people'),
+        },
+      ],
+    },
+    {
+      text: 'Graphics',
+      links: [
+        {
+          text: 'Cluster Dashboard',
+          href: "https://dash.nrp-nautilus.io",
+        },
+        {
+          text: 'Storage distribution',
+          href: getPermalink('/storage'),
+        },
+      ],
+    },
+    {
+      text: 'Docs',
+      href: getPermalink('/documentation'),
     },
     {
       text: 'News',

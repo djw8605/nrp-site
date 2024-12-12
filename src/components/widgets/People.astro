@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { People as Props } from '~/types';
+
+import Image from '~/components/common/Image.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+const {
+  title = '',
+  subtitle = '',
+  tagline = '',
+  people = [],
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+
+  <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
+    {
+      people &&
+        people.map(
+          (person) =>
+            person && (
+              <div>
+                <Image src={person.img} alt="" class="h-30 mx-auto object-cover rounded-full w-30" width={170} height={170}  layout="fixed" />
+                <Headline class="flex flex-wrap justify-center " title={person.name}></Headline>
+                <Headline class="flex flex-wrap justify-center " subtitle={person.title}></Headline>
+              </div>
+            )
+        )
+    }
+  </div>
+</WidgetWrapper>
