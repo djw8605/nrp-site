@@ -10,4 +10,4 @@ build:
     - npm i wrangler --location=global
   script:
     - npm run build
-    - wrangler pages deploy ./public --project-name "nrp-portal" --branch "production"
+    - wrangler pages deploy ./public --project-name "nrp-portal" --branch "main"
