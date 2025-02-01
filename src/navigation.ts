@@ -56,6 +56,10 @@ export const headerData = {
           text: 'Ceph Storage distribution',
           href: getPermalink('/storageceph'),
         },
+        {
+          text: 'CPU/GPU Usage Log10',
+          href: getPermalink('/usagelog'),
+        },
       ],
     },
     {
