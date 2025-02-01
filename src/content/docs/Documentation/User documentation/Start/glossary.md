@@ -1,4 +1,8 @@
-## Nautilus Glossary
+---
+title: Glossary
+sidebar:
+  order: 60
+---
 
 This is an abridged list of terminology that Nautilus users may find useful. These glossary entries explain terminology used in the Nautilus User Documentation and Tutorials.
 

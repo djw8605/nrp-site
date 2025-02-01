@@ -1,3 +1,8 @@
+---
+title: Quick start
+sidebar:
+  order: 20
+---
 
 This quickstart will:
 

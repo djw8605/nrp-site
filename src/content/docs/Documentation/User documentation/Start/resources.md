@@ -1,3 +1,9 @@
+---
+title: Deployed Services
+sidebar:
+  order: 70
+---
+
 Although you can run your own containers, there are several services and resources 
 already deployed by cluster admins that you can use without creating those yourself.
 

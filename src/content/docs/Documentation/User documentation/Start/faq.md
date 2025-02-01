@@ -1,3 +1,10 @@
+---
+title: FAQ
+sidebar:
+  order: 50
+---
+
+
 --------
 
 > I'm getting `failed to refresh token`, `oauth2`, `server_error` errors when trying to access the cluster with kubectl.<br>

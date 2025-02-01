@@ -41,22 +41,27 @@ export default defineConfig({
               autogenerate: { directory: 'Documentation/User documentation/Start' },
             },
             {
+              label: "Coder",
+              autogenerate: { directory: 'Documentation/User documentation/Coder' },
+            },
+            {
               label: "AI",
               autogenerate: { directory: 'Documentation/User documentation/AI' },
             },
             {
-              label: "Coder",
-              autogenerate: { directory: 'Documentation/User documentation/Coder' },
+              label: "Development",
+              autogenerate: { directory: 'Documentation/User documentation/Development' },
             },
           ],
         },
       ],
     }),
     tailwind({
-    applyBaseStyles: false,
+    applyBaseStyles: true,
     }), sitemap(), mdx(), icon({
     include: {
       tabler: ['*'],
+      mdi: ["*"],
       'flat-color-icons': [
         'template',
         'gallery',

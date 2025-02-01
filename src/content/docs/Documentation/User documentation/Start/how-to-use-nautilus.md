@@ -1,5 +1,8 @@
-How Should I Use The NRP?
-=========================
+---
+title: How Should I Use The NRP?
+sidebar:
+  order: 30
+---
 
 There are many ways to use resources on the NRP, whether you connect to the NRP's Jupyterhub instance to run Jupyter notebooks, or through interfacing with Kubernetes to create pods, jobs, or deployments. Here we will discuss some of the options available for you.
 

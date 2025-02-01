@@ -43,14 +43,20 @@ const metadata = {
 
   <Features
     id="features"
-    tagline="Supporting science"
-    title="We support multiple modern science fields"
+    tagline="Accelerating science"
+    title="Multiple science fields"
     items={[
       {
         title: 'Artifical Intelligence',
         description:
-          'We support the research for AI applications.',
+          'The research for AI applications.',
         icon: 'tabler:ai',
+      },
+      {
+        title: 'Machine learning',
+        description:
+          'Using neural networks for science.',
+        icon: 'tabler:artboard',
       },
       {
         title: 'Network experiments',
@@ -61,7 +67,7 @@ const metadata = {
       {
         title: 'Robotics',
         description:
-          'Blablabla',
+          '',
         icon: 'tabler:robot',
       },
     ]}
@@ -78,39 +84,44 @@ const metadata = {
 
   <FAQs
     title="Frequently Asked Questions"
-    subtitle="Dive into the following questions to gain insights into the powerful features that AstroWind offers and how it can elevate your web development journey."
+    subtitle="Dive into the following questions to gain insights into what NRP can provide to you."
     tagline="FAQs"
     classes={{ container: 'max-w-6xl' }}
     items={[
       {
-        title: 'Why AstroWind?',
+        title: 'Why NRP?',
         description:
-          "Michael Knight a young loner on a crusade to champion the cause of the innocent. The helpless. The powerless in a world of criminals who operate above the law. Here he comes Here comes Speed Racer. He's a demon on wheels.",
+          "We are the open community of scientists that together make it possible to collaborate free of limitations. We make cutting edge technologies available to anybody in scoentific community.",
       },
       {
-        title: 'What do I need to start?',
+        title: 'How much does it cost?',
         description:
-          'Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds. Many say exploration is part of our destiny, but it’s actually our duty to future generations.',
+          'Free as in beer. We are funded by the National Science Foundation and everybody can use our resources free of charge.',
       },
       {
-        title: 'How to install the Astro + Tailwind CSS template?',
+        title: 'Does my project fit here?',
         description:
-          "Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.",
+          "As long as you work is related to a Scientific project in US, you can use our infrastructure.",
       },
       {
-        title: "What's something that you don't understand?",
+        title: "What if I'm not fluent with kubernetes?",
         description:
-          "A flower in my garden, a mystery in my panties. Heart attack never stopped old Big Bear. I didn't even know we were calling him Big Bear.",
+          "We provide JupyterHub, Coder and other high level services that require no knowledge of kubernetes. You can also participate in our tutorials to learn more",
       },
       {
-        title: 'What is something that you would like to try again?',
+        title: "How can I gelp the project?",
         description:
-          "A business big enough that it could be listed on the NASDAQ goes belly up. Disappears! It ceases to exist without me. No, you clearly don't know who you're talking to, so let me clue you in.",
+          "We gladly accept donations in the form of hardware that you can join to our cluster. You can also help by spreading the word about our project.",
       },
       {
-        title: 'If you could only ask one question to each person you meet, what would that question be?',
+        title: "What will I gain if I join hardware?",
         description:
-          "This is not about revenge. This is about justice. A lot of things can change in twelve years, Admiral. Well, that's certainly good to know. About four years. I got tired of hearing how young I looked.",
+          "You will get priority in computing on your hardware whenever you'd like. When it's not used, we will provide shared access to it to other users.",
+      },
+      {
+        title: "Do I need to manage the hardware I join to the cluster?",
+        description:
+          "We will install the OS, configure the node and do upgrades ourselves (we'll need IPMI access to install the OS). We might ask you to reboot the node or swap a hard drive if needed.",
       },
     ]}
   />
@@ -119,10 +130,10 @@ const metadata = {
 
   <Stats
     stats={[
-      { title: 'Downloads', amount: '132K' },
-      { title: 'Stars', amount: '24.8K' },
-      { title: 'Forks', amount: '10.3K' },
-      { title: 'Users', amount: '48.4K' },
+      { title: 'Nodes', amount: '400+' },
+      { title: 'Locations', amount: '70+' },
+      { title: 'Continents', amount: '3' },
+      { title: 'Users', amount: '5K+' },
     ]}
   />
 
@@ -132,20 +143,24 @@ const metadata = {
     actions={[
       {
         variant: 'primary',
-        text: 'Get template',
-        href: 'https://github.com/onwidget/astrowind',
-        target: '_blank',
-        icon: 'tabler:download',
+        text: 'Join us',
+        href: '/join',
+        icon: 'tabler:comet',
+      },
+      {
+        variant: 'secondary',
+        text: 'Donate hardware',
+        href: '/new-contributor-guide',
+        icon: 'tabler:server',
       },
     ]}
   >
     <Fragment slot="title">
-      Astro&nbsp;+&nbsp;<br class="block sm:hidden" /><span class="sm:whitespace-nowrap">Tailwind CSS</span>
+      NRP + Nautilus
     </Fragment>
 
     <Fragment slot="subtitle">
-      Be very surprised by these huge fake numbers you are seeing on this page. <br class="hidden md:inline" />Don't
-      waste more time! :P
+      Join the cluster today and start your scientific journey with us.
     </Fragment>
   </CallToAction>
 </Layout>

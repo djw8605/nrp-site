@@ -1,5 +1,6 @@
 ---
-title: Get Access
+title: 'Get Access'
+layout: '~/layouts/MarkdownLayout.astro'
 ---
 
 To get access to the PRP Nautilus cluster:
@@ -28,7 +29,7 @@ To get access to the PRP Nautilus cluster:
 namespace, you will get access to all namespace resources. 
 
 1. If you're starting a new project and would like to have your own namespace,
-either for yourself or for your group, you can request to be promoted to the **admin** in [Matrix](/userdocs/start/contact/). 
+either for yourself or for your group, you can request to be promoted to the **admin** in [Matrix](/contact). 
 This will give you permission to create any number of namespaces and invite other users to your namespace(s). 
 Please note, you'll be the one responsible for all activity happening in your namespaces.
 
@@ -37,4 +38,5 @@ Please note, you'll be the one responsible for all activity happening in your na
 1. Follow [quick start][2] page to start using kubernetes.
 
 [1]: https://portal.nrp-nautilus.io
-[2]: /userdocs/start/quickstart/
+
+[2]: /documentation/user-documentation/start/quickstart/

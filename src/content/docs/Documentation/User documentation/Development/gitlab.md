@@ -1,3 +1,7 @@
+---
+title: Building in GitLab
+---
+
 To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/userdocs/tutorial/docker/).
 
 We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source Code Management, [Continuous Integration automation][3], 
@@ -157,12 +161,21 @@ Check out [this guide](https://guide.esciencecenter.nl) from the Netherlands eSc
 Also a [thesis on measuring container registry performance](https://atlarge-research.com/pdfs/Petar_Galic_Master_Thesis_14_12_2020.pdf).
 
 [1]: https://about.gitlab.com/what-is-gitlab/
+
 [3]: https://docs.gitlab.com/ee/ci/
+
 [4]: https://gitlab.nrp-nautilus.io
+
 [5]: https://docs.gitlab.com/ee/gitlab-basics/
+
 [6]: https://about.gitlab.com/blog/2023/06/27/efficient-devsecops-workflows-with-rules-for-conditional-pipelines/
+
 [dockerhub]: https://docs.docker.com/docker-hub/
+
 [project]: https://docs.gitlab.com/ee/user/project/working_with_projects.html#create-a-project
+
 [registry]: https://docs.gitlab.com/ee/user/project/container_registry.html
+
 [quickstart]: https://docs.gitlab.com/ce/ci/quick_start/
+
 [portal_example]: https://gitlab.nrp-nautilus.io/prp/k8s_portal/blob/master/.gitlab-ci.yml

@@ -1,3 +1,9 @@
+---
+title: Policies
+sidebar:
+  order: 40
+---
+
 !!! note "TL;DR"
 
     - Use [*Job*](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/userdocs/running/jobs/) and set *right* resources request

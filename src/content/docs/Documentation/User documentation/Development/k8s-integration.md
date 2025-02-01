@@ -1,3 +1,7 @@
+---
+title: Integrate GitLab and Kubernetes
+---
+
 This page covers integrating GitLab with kubernetes cluster to automatically deploy from GitLab to kubernetes via CI/CD jobs.
 
 1. In your project, go to `Operate -> Kubernetes clusters`, click the dropdown in the top right and select `Connect a cluster (certificate - deprecated)`
