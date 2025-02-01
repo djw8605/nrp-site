@@ -1,0 +1,102 @@
+<section class="py-8 sm:py-16 lg:py-20 mx-auto">
+    <div id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center"></div>
+</section>
+
+<script>
+    import * as Plot from '@observablehq/plot';
+    // import humanize from 'humanize';
+    
+    const gpu_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_gpu_usage[30d:1h])"
+    );
+    
+    const cpu_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_cpu_usage[30d:1h])"
+    );
+    
+
+    const [gpu_resp, cpu_resp] = await Promise.all([
+      gpu_req,
+      cpu_req
+    ]);
+
+    const [gpu, cpu] = await Promise.all([
+      gpu_resp.json(),
+      cpu_resp.json(),
+    ]);
+
+
+    const gpu_map = new Map(
+      gpu.data.result.map((element) => [
+        element.metric.namespace,
+        parseInt(element.value[1])
+      ])
+    );
+
+    const cpu_map = new Map(
+      cpu.data.result.map((element) => [
+        element.metric.namespace,
+        parseInt(element.value[1])
+      ])
+    );
+
+    const vals = [];
+    gpu_map.forEach((val, key) => {
+      if(key != "gpu-mon" && key != "kube-system" && key != "default") {
+        vals.push({
+          namespace: key,
+          gpu: gpu_map.get(key),
+          cpu: cpu_map.get(key),
+        });
+      }
+    });
+
+    const plot = Plot.plot({
+      width: 1200,
+      height: 1200,
+      inset: 8,
+      grid: true,
+      style: "font-size: 0.7em",
+      color: {
+        legend: false,
+        scheme: "Warm",
+      },
+      marks: [
+        Plot.dot(vals, {
+          x: "cpu",
+          y: "gpu",
+          stroke: "gpu",
+          fill: "gpu",
+          strokeWidth: 1,
+          title: (d) => d.namespace,
+        }),
+        Plot.axisX({
+          label: "CPU Usage",
+          grid: true,
+          // inset: 10,
+        }),
+        Plot.axisY({
+          label: "GPU Usage",
+          grid: true,
+          // inset: 10,
+        }),        
+        Plot.tip(vals, Plot.pointer({
+          x: "cpu",
+          y: "gpu",
+          title: (d) => d.namespace,
+        })),
+      ],
+      x: {
+        type: "log",
+        base: 10,
+      },
+      y: {
+        type: "log",
+        base: 10,
+      },
+    });
+
+    const div = document.querySelector("#plot");
+    div.append(plot);
+    
+</script>

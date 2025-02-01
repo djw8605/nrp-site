@@ -104,18 +104,18 @@
     });
 
     const size_map_linstor = new Map(
-  size_linstor.data.result.map((element) => [
-    element.metric.storage_pool,
-    element.value[1]
-  ])
-);
+      size_linstor.data.result.map((element) => [
+        element.metric.storage_pool,
+        element.value[1]
+      ])
+    );
 
-    const avail_map_linstor = new Map(
-  avail_linstor.data.result.map((element) => [
-    element.metric.storage_pool,
-    element.value[1]
-  ])
-);
+        const avail_map_linstor = new Map(
+      avail_linstor.data.result.map((element) => [
+        element.metric.storage_pool,
+        element.value[1]
+      ])
+    );
 
     avail_map_linstor.forEach((val, key) => {
       vals.push({
