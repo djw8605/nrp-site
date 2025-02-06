@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Special Use
+description: Special Use
 ---
 
 Our cluster combines various hardware resources from multiple universities and other organizations. By default you can only use the nodes **having NO Taints** (see the [resources page](https://portal.nrp-nautilus.io/resources) of the portal).

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Knowledge Base
+description: Knowledge Base
 ---
 
 #### Get involved in NRP

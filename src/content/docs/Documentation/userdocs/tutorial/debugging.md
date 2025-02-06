@@ -1,6 +1,6 @@
 ---
-title: Debugging in Kubernetes
-description: Learn essential debugging techniques for diagnosing and fixing issues in Kubernetes, including job errors, pod logs, resource constraints, and error handling mechanisms.
+title: Debugging
+description: Debugging
 ---
 
 # Debugging

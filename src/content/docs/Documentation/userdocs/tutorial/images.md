@@ -1,6 +1,6 @@
 ---
-title: Working with Docker Images in Nautilus
-description: Learn how to locate, build, and extend Docker images for use with Nautilus to deploy containerized applications efficiently on Kubernetes.
+title: Docker Images
+description: Docker Images
 ---
 
 # **Images**

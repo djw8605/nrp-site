@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: CPU Only Jobs
+description: CPU Only Jobs
 ---
 
 ## Running large CPU-only jobs

@@ -1,8 +1,8 @@
 ---
-title: Title
-description: Description
+title: Coder
+description: Coder
 ---
 
-#### Upgrading coder
+#### Upgrading Coder
 
 https://coder.com/docs/v2/latest/install/kubernetes#upgrading-coder-via-helm

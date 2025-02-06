@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Install
+description: Install
 ---
 
 

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Linstor
+description: Linstor
 ---
 
 [Linstor](https://linbit.com/linstor/) is currently the fastest distributed block storage in the cluster, and can be used for tasks requiring minimal latency, such as VM images, docker build space, databases, etc. Also it doesn't lock the volumes like ceph does, making it a good option for critical highly available storage volumes. 

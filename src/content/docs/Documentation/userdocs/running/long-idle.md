@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Long Idle Pods
+description: Long Idle Pods
 ---
 
 ## Running an idle deployment

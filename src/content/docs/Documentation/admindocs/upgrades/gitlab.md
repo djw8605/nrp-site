@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: GitLab
+description: GitLab
 ---
 
 #### Upgrading GitLab

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: SENSE/Multus
+description: SENSE/Multus
 ---
 
 # SENSE/Multus L2 Path Provisioning Guide

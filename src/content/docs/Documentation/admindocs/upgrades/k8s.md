@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Kubernetes
+description: Kubernetes
 ---
 
 #### Kubernetes upgrades

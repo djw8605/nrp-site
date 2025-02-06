@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Policies
+description: Policies
 ---
 
 !!! note "TL;DR"

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Services Topology
+description: Services Topology
 ---
 
 ## Creating cluster-wide CDN-like services

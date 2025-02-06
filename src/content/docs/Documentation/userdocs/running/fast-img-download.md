@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Faster Image Download
+description: Faster Image Download
 ---
 
 ## Spegel image cache

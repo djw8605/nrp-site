@@ -1,6 +1,6 @@
 ---
-title: Public Managed LLM API
-description: Learn how to access and interact with the LLMs running on Nautilus using the LiteLLM proxy, along with available chat UIs and API access.
+title: NRP-Managed LLMs
+description: NRP-Managed LLMs
 ---
 
 ## Public managed LLM API

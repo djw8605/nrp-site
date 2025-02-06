@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: GUI Desktop
+description: GUI Desktop
 ---
 
 **Note that Coder (<https://coder.nrp-nautilus.io>) and JupyterHub West (<https://jupyterhub-west.nrp-nautilus.io/>) are currently the preferred methods to deploy the GUI Desktop containers. Use the below instructions if you want to deploy in your own namespace.**

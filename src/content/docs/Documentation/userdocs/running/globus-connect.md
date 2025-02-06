@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Globus Connect
+description: Globus Connect
 ---
 
 We have a [globus-connect][1] Gitlab repository that provides step by step

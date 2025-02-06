@@ -1,6 +1,6 @@
 ---
 title: Nextcloud
-description: Description
+description: Nextcloud
 ---
 
 We provide access to the [Nextcloud][1] [instance][2] running in our cluster and using our CephFS storage.

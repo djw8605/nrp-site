@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Glossary
+description: Glossary
 ---
 
 ## Nautilus Glossary

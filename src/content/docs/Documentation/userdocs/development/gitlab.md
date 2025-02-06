@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Building in Gitlab
+description: Building in Gitlab
 ---
 
 To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/userdocs/tutorial/docker/).

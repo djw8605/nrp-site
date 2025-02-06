@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Ceph Recover
+description: Ceph Recover
 ---
 
 ## Finding lost objects
