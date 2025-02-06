@@ -1,6 +1,6 @@
 site:
   name: NRP
-  site: 'https://prp.pages.nrp-nautilus.io'
+  site: 'https://portal.nrp.ai'
   base: '/'
   trailingSlash: false
 
