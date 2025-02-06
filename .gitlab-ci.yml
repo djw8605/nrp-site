@@ -11,3 +11,5 @@ build:
   script:
     - npm run build
     - wrangler pages deploy ./public --project-name "nrp-portal" --branch "main"
+  only:
+    - main
