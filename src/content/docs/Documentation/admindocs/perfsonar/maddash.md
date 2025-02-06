@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Workshop Links
+description: Workshop Links
 ---
 
 <div class="border">

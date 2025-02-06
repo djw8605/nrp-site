@@ -1,9 +1,9 @@
 ---
-title: Title
+title: Nextcloud
 description: Description
 ---
 
-#### Upgrading nextcloud
+#### Upgrading Nextcloud
 
 ##### Before Upgrading
 

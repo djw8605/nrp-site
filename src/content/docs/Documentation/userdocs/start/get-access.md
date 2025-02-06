@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Get Access
+description: Get Access
 ---
 
 To get access to the PRP Nautilus cluster:

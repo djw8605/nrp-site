@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: CPU Throttling
+description: CPU Throttling
 ---
 
 The jobs are running in linux cgroups, and CPU limits are enforced by those. There's a number of issues still pending that result in decreased performance if limits are not set right.

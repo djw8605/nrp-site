@@ -1,5 +1,5 @@
 ---
-title: Title
+title: Ceph S3
 description: Description
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Contact in [Matrix]
+description: Contact in [Matrix]
 ---
 
  [matrix]

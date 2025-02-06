@@ -1,6 +1,6 @@
 ---
-title: Introduction to Nautilus
-description: Learn what Nautilus is, why it is useful, and how to get started with using the cluster for your research and computational needs.
+title: Introduction
+description: Introduction
 ---
 
 # Introduction

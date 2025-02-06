@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Origin SyncThing
+description: Origin SyncThing
 ---
 
 ## Syncing user data to an origin

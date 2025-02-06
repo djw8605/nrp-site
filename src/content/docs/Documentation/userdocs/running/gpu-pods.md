@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: GPU Pods
+description: GPU Pods
 ---
 
 !!! info

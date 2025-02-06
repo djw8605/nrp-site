@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: How to use Nautilus
+description: How to use Nautilus
 ---
 
 How Should I Use The NRP?

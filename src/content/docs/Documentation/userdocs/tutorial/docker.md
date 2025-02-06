@@ -1,6 +1,6 @@
 ---
-title: Docker and Nautilus
-description: Learn how Docker enhances your ability to manage and scale applications on the Nautilus cluster by using containerization for efficient deployment and execution.
+title: Docker and Kubernetes
+description: Docker and Kubernetes
 ---
 
 # Docker and Nautilus

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: KubeVirt GPU
+description: KubeVirt GPU
 ---
 
 ### Guide: Switch Kubernetes Node to VFIO Passthrough for KubeVirt

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Postgres Cluster
+description: Postgres Cluster
 ---
 
 ### Using Zalando Postgres Operator in Kubernetes

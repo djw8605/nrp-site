@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: JupyterHub Service
+description: JupyterHub Service
 ---
 
 ##[JupyterHub](https://jupyterhub-west.nrp-nautilus.io) on Nautilus

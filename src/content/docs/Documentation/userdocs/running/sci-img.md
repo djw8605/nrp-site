@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Scientific Images
+description: Scientific Images
 ---
 
 This page is mostly related to our [Official JupyterHub](https://jupyterhub-west.nrp-nautilus.io), but all images can be also used in other pods deployed directly on the cluster.

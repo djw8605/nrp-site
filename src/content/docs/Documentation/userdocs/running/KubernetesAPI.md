@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Python k8s API
+description: Python k8s API
 ---
 
 Kubernetes offers API clients that allow you to build integrations under-the-hood of applications.

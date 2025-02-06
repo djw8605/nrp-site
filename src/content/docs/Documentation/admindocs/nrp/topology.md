@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Topology
+description: Topology
 ---
 
 #### Current NRP nodes topology

@@ -1,6 +1,6 @@
 ---
 title: Basic Kubernetes
-description: Learn the basics of Kubernetes commands, launching pods, deployments, and understanding pod statelessness and deployments.
+description: Basic Kubernetes
 ---
 
 # Basic Kubernetes (k8s) Tutorial

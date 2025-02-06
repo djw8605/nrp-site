@@ -1,6 +1,6 @@
 ---
-title: Docker and Containers
-description: Learn how to scale Kubernetes applications horizontally by deploying multiple replicas of services and load balancing between them for better performance and fault tolerance.
+title: Scheduling and Exposing
+description: Scheduling and Exposing
 ---
 
 # Horizontal scaling

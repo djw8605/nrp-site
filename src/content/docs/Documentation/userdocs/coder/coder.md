@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Using Coder
+description: Using Coder
 ---
 
 # Coder Environment Documentation

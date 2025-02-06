@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Calico
+description: Calico
 ---
 
 #### Upgrading calico

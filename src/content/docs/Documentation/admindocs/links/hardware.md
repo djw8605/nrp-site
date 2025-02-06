@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Hardware
+description: Hardware
 ---
 
 <div class="border">

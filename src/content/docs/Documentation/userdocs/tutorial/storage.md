@@ -1,6 +1,6 @@
 ---
-title: Managing Storage in Nautilus with Kubernetes
-description: Learn how to manage storage in the Nautilus Cluster, including using persistent volume claims (PVCs), attaching storage to pods, and understanding storage types and classes.
+title: Storage
+description: Storage
 ---
 
 # Storage

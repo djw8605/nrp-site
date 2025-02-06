@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Ceph S3
+description: Ceph S3
 ---
 
 The Nautilus ceph storage cluster can be accessed via S3 protocol. It uses our own storage, which is free for our users and is not related to Amazon or any commercial cloud.

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Nodes
+description: Nodes
 ---
 
 ### Upgrade compute nodes

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Monitoring
+description: Monitoring
 ---
 
 When you run your jobs, it's your responsibility to make sure they are running as intended, without overrequesting the resources. Our [Grafana](https://grafana.nrp-nautilus.io/) page is a great resource to see what your jobs are doing.

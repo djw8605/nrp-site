@@ -1,6 +1,6 @@
 ---
-title: Deploying LLMs with SHALB Helm Chart
-description: Learn how to deploy HuggingFace models on Nautilus using the SHALB Helm chart, including setting up text generation, chat UIs, and adjusting resource requirements.
+title: LLM as a Service
+description: LLM as a Service
 ---
 
 ## SHALB helm chart

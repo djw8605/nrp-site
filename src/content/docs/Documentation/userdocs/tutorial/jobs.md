@@ -1,6 +1,6 @@
 ---
-title: Running Batch Jobs on Nautilus
-description: Learn how to run batch jobs on the Nautilus Cluster, including creating jobs, understanding job states, and setting resource limits.
+title: Running Batch Jobs
+description: Running Batch Jobs
 ---
 
 # Running batch jobs

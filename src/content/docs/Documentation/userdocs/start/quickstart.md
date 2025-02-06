@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Quick Start
+description: Quick Start
 ---
 
 This quickstart will:
