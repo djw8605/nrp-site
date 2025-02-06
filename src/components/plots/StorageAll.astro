@@ -1,0 +1,180 @@
+<section class="py-8 sm:py-16 lg:py-20 mx-auto">
+    <div id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center"></div>
+</section>
+
+<script>
+    import * as Plot from '@observablehq/plot';
+    import humanize from 'humanize';
+    
+    const used_ceph_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=ceph_cluster_total_used_bytes"
+    );
+    
+    const total_ceph_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=ceph_cluster_total_bytes"
+    );
+
+    const avail_origins_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=node_filesystem_avail_bytes{instance=~'node-1-5.sdsc.optiputer.net|hcc-nrp-shor-c6005.unl.edu|storage-01.nrp.mghpcc.org|osgprdk8s01.kennesaw.edu', device=~'/dev/mapper/linstor-osg_origin|zpool/origin|10.54.80.66:6789,10.54.80.67:6789,10.54.80.68:6789:/volumes/_nogroup/ksu_data/77092078-1dd1-437a-a4d3-49c9134439d8|10.54.80.66:6789,10.54.80.67:6789,10.54.80.68:6789:/volumes/_nogroup/osg_data/43487d27-164d-4f54-af9a-1c28983b99b0'}"
+    );
+
+    const size_origins_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=node_filesystem_size_bytes{instance=~'node-1-5.sdsc.optiputer.net|hcc-nrp-shor-c6005.unl.edu|storage-01.nrp.mghpcc.org|osgprdk8s01.kennesaw.edu', device=~'/dev/mapper/linstor-osg_origin|zpool/origin|10.54.80.66:6789,10.54.80.67:6789,10.54.80.68:6789:/volumes/_nogroup/ksu_data/77092078-1dd1-437a-a4d3-49c9134439d8|10.54.80.66:6789,10.54.80.67:6789,10.54.80.68:6789:/volumes/_nogroup/osg_data/43487d27-164d-4f54-af9a-1c28983b99b0'}"
+    );
+
+    const avail_linstor_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum(linstor_storage_pool_capacity_free_bytes{backing_pool=~'linstor|zpool'})by(storage_pool)"
+    );
+
+    const size_linstor_req = fetch(
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum(linstor_storage_pool_capacity_total_bytes{backing_pool=~'linstor|zpool'})by(storage_pool)"
+    );
+
+    const [used_ceph_resp, total_ceph_resp, avail_origins_resp, size_origins_resp, avail_linstor_resp, size_linstor_resp] = await Promise.all([
+      used_ceph_req,
+      total_ceph_req,
+      avail_origins_req,
+      size_origins_req,
+      avail_linstor_req,
+      size_linstor_req
+    ]);
+
+    const [used_ceph, total_ceph, avail_origins, size_origins, avail_linstor, size_linstor] = await Promise.all([
+      used_ceph_resp.json(),
+      total_ceph_resp.json(),
+      avail_origins_resp.json(),
+      size_origins_resp.json(),
+      avail_linstor_resp.json(),
+      size_linstor_resp.json()
+    ]);
+
+
+    const vals = [];
+
+    const total_map_ceph = new Map(
+  total_ceph.data.result.map((element) => [
+    element.metric.namespace,
+    element.value[1]
+  ])
+);
+
+    const used_map_ceph = new Map(
+  used_ceph.data.result.map((element) => [
+    element.metric.namespace,
+    element.value[1]
+  ])
+);
+
+    used_map_ceph.forEach((val, key) => {
+      vals.push({
+        name: "ceph " + key,
+        percent: used_map_ceph.get(key) / total_map_ceph.get(key),
+        size: Number(total_map_ceph.get(key)),
+        used: Number(used_map_ceph.get(key))
+      });
+    });
+
+    const size_map_origins = new Map(
+  size_origins.data.result.map((element) => {
+    if(element.metric.instance != "osgprdk8s01.kennesaw.edu") {
+      return [element.metric.instance,element.value[1]];
+    } else {
+      return [element.metric.instance+":"+element.metric.mountpoint,element.value[1]];
+    }
+  })
+);
+
+    const avail_map_origins = new Map(
+  avail_origins.data.result.map((element) => {
+    if(element.metric.instance != "osgprdk8s01.kennesaw.edu") {
+      return [element.metric.instance,element.value[1]];
+    } else {
+      return [element.metric.instance+":"+element.metric.mountpoint,element.value[1]];
+    }
+  })
+);
+    
+    avail_map_origins.forEach((val, key) => {
+      vals.push({
+        name: "cvmfs " + key,
+        percent: 1 - avail_map_origins.get(key) / size_map_origins.get(key),
+        size: Number(size_map_origins.get(key)),
+        used: size_map_origins.get(key) - avail_map_origins.get(key)
+      });
+    });
+
+    const size_map_linstor = new Map(
+      size_linstor.data.result.map((element) => [
+        element.metric.storage_pool,
+        element.value[1]
+      ])
+    );
+
+        const avail_map_linstor = new Map(
+      avail_linstor.data.result.map((element) => [
+        element.metric.storage_pool,
+        element.value[1]
+      ])
+    );
+
+    avail_map_linstor.forEach((val, key) => {
+      vals.push({
+        name: "linstor " + key,
+        percent: 1 - avail_map_linstor.get(key) / size_map_linstor.get(key),
+        size: size_map_linstor.get(key),
+        used: size_map_linstor.get(key) - avail_map_linstor.get(key)
+      });
+    });
+
+
+
+    const plot = Plot.plot({
+      height: 700,
+      width: 1200,
+      grid: true,
+      color: {
+        range: ["#16b336", "#f9cb2a", "#b40b0b"],
+        type: "quantile",
+        domain: [0.3, 0.7, 0.85]
+      },
+      marks: [
+        Plot.barY(vals, {
+          x: "name",
+          y: "size",
+          fill: "#909090aa",
+          sort: { x: "y", reverse: true }
+        }),
+        Plot.barY(vals, {
+          x: "name",
+          y: "used",
+          fill: "percent",
+          sort: { x: "y", reverse: true }
+        }),
+        Plot.text(vals, {
+          x: "name",
+          y: "used",
+          text: (d) =>
+            humanize.filesize(d.used, 1024, 1) +
+            "\nof\n" +
+            humanize.filesize(d.size, 1024, 1),
+          dy: -30,
+          lineAnchor: "top"
+        }),
+        Plot.axisY({
+          tickFormat: (d) => humanize.filesize(d),
+          grid: true,
+          marginLeft: 80
+        }),
+        Plot.axisX({
+          label: "Pool",
+          tickRotate: "20",
+          marginBottom: 80
+        }),
+        Plot.ruleY([0])
+      ]
+    });
+
+    const div = document.querySelector("#plot");
+    div.append(plot);
+    
+</script>

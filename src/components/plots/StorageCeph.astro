@@ -1,0 +1,90 @@
+<section class="py-8 sm:py-16 lg:py-20 mx-auto">
+    <div id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center"></div>
+</section>
+
+<script>
+    import * as Plot from '@observablehq/plot';
+    import humanize from 'humanize';
+    
+    const used_ceph_req = await fetch(
+      "https://prometheus.nrp-nautilus.io/api/v1/query?query=ceph_cluster_total_used_bytes"
+    );
+    
+    const used = await used_ceph_req.json();
+    
+    const total_ceph_req = await fetch(
+      "https://prometheus.nrp-nautilus.io/api/v1/query?query=ceph_cluster_total_bytes"
+    );
+    
+    const total_ceph = await total_ceph_req.json();
+    
+    const total_ceph_map = new Map(
+      total_ceph.data.result.map((element) => [
+        element.metric.namespace,
+        element.value[1]
+      ])
+    );
+    
+    const used_ceph_map = new Map(
+      used.data.result.map((element) => [
+        element.metric.namespace,
+        element.value[1]
+      ])
+    );
+    
+    const vals = [];
+    used_ceph_map.forEach((val, key) => {
+      vals.push({
+        pool: key,
+        percent: used_ceph_map.get(key) / total_ceph_map.get(key),
+        size: Number(total_ceph_map.get(key)),
+        used: Number(used_ceph_map.get(key))
+      });
+    });
+    
+    const plot = Plot.plot({
+      grid: true,
+      width: 1200,
+      x: {
+        label: "Ceph pool"
+      },
+      color: {
+        range: ["#16b336", "#f9cb2a", "#b40b0b"],
+        type: "quantile",
+        domain: [0.3, 0.7, 0.85]
+      },
+      marks: [
+        Plot.barY(vals, {
+          x: "pool",
+          y: "size",
+          fill: "#909090aa",
+          sort: { x: "y", reverse: true }
+        }),
+        Plot.barY(vals, {
+          x: "pool",
+          y: "used",
+          fill: "percent"
+        }),
+        Plot.axisY({
+          tickFormat: (d) => humanize.filesize(d),
+          grid: true,
+          marginLeft: 80
+        }),
+        Plot.text(vals, {
+          x: "pool",
+          y: "used",
+          text: (d) =>
+            humanize.filesize(d.used, 1024, 1) +
+            " / " +
+            humanize.filesize(d.size, 1024, 1),
+          dy: -8,
+          lineAnchor: "bottom"
+        }),
+        Plot.ruleY([0])
+      ]
+    });
+    
+    const div = document.querySelector("#plot");
+    div.append(plot);
+    
+</script>

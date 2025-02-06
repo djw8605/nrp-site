@@ -1,6 +1,6 @@
 site:
-  name: AstroWind
-  site: 'https://astrowind.vercel.app'
+  name: NRP
+  site: 'https://prp.pages.nrp-nautilus.io'
   base: '/'
   trailingSlash: false
 

@@ -1,0 +1,15 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: node:lts
+  before_script:
+    - npm ci
+    - npm i wrangler --location=global
+  script:
+    - npm run build
+    - wrangler pages deploy ./public --project-name "nrp-portal" --branch "main"
+  only:
+    - main

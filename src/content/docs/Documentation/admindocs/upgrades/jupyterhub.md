@@ -1,0 +1,10 @@
+---
+title: Title
+description: Description
+---
+
+## Updating external images definitions
+
+Check the versions for [Julia](https://gitlab.b-data.ch/julia), [R](https://gitlab.b-data.ch/r), [Python](https://gitlab.b-data.ch/python).
+
+Modify [West jupyterhub profiles list](https://gitlab.nrp-nautilus.io/prp/jupyterlab-west/-/blob/master/values.template.yaml#L639) as needed.
