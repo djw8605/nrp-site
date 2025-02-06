@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: rook/Ceph
+description: rook/Ceph
 ---
 
 ## Upgrading rook

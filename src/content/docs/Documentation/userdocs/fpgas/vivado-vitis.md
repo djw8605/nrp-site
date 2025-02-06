@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: AMD/Xilinx FPGAs
+description: AMD/Xilinx FPGAs
 ---
 
 # Using FPGAs with Vivado and Vitis on Coder

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Asking for Support
+description: Asking for Support
 ---
 
 # Asking Effective Questions in Support Chat

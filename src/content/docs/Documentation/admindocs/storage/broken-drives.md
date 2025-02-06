@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Broken Drives
+description: Broken Drives
 ---
 
 ## List of broken drives in the cluster by prometheus monitoring:

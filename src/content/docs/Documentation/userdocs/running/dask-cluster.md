@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Dask Cluster
+description: Dask Cluster
 ---
 
 ## Running a dask cluster in your namespace

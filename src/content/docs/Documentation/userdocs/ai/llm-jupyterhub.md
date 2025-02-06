@@ -1,6 +1,6 @@
 ---
-title: Experimenting with LLMs in JupyterHub
-description: Learn how to run and experiment with large language models (LLMs) in JupyterHub, including setting up necessary resources, installing dependencies, and running models like Stable Diffusion and text generation.
+title: LLM in JupyterHub
+description: LLM in JupyterHub
 ---
 
 You can easily experiment with LLMs in jupyterhub. We provide the [managed one](/userdocs/jupyter/jupyterhub-service/), or you can [run your own](https://docs.nrp.ai/userdocs/jupyter/jupyterhub/).

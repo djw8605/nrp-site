@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Running Batch Jobs
+description: Running Batch Jobs
 ---
 
 We highly recommend using [Jobs][1] for any kind of development and computations in our cluster. 

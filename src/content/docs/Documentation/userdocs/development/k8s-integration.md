@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: K8s Gitlab Integration
+description: K8s Gitlab Integration
 ---
 
 This page covers integrating GitLab with kubernetes cluster to automatically deploy from GitLab to kubernetes via CI/CD jobs.

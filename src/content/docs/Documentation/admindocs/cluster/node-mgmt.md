@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Node Management
+description: Node Management
 ---
 
 # Cluster node Management

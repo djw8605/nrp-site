@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Linstor
+description: Linstor
 ---
 
 `kubectl apply -k "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.5.0"`

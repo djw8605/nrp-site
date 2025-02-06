@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Local Scratch
+description: Local Scratch
 ---
 
 Most nodes in the cluster have local NVME drives, which provide faster I/O than shared filesystems. These can be used for workloads that require very intensive I/O operations ([see recommendations and an example for running these](/userdocs/running/io-jobs/)).

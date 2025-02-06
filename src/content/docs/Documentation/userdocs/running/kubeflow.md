@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Kubeflow Training
+description: Kubeflow Training
 ---
 
 # Kubeflow Training

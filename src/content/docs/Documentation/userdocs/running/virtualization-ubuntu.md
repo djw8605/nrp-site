@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Virtualization - Ubuntu
+description: Virtualization - Ubuntu
 ---
 
 Guide: <https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html>

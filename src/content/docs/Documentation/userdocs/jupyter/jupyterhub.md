@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Deploy JupyterHub
+description: Deploy JupyterHub
 ---
 
 This guide is based on [Zero to jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. Also assuming you're the admin of the namespace you're deploying to.

@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Getting Certs
+description: Getting Certs
 ---
 
 #### Using cert-manager to generate a certificate from vault (NSI example)

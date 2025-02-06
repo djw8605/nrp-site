@@ -1,5 +1,5 @@
 ---
-title: Title
+title: Install
 description: Description
 ---
 

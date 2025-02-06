@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: JupyterHub
+description: JupyterHub
 ---
 
 ## Updating external images definitions

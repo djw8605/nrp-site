@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Cert-manager
+description: Cert-manager
 ---
 
 ## Upgrading Cert-manager

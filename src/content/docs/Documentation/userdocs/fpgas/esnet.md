@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: ESnet SmartNIC
+description: ESnet SmartNIC
 ---
 
 ## ESnet SmartNIC Tools on Coder

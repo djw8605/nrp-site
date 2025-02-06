@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Private Repos
+description: Private Repos
 ---
 
 Follow these steps to provide access to container images stored in the **private** [:fontawesome-brands-gitlab:Nautilus GitLab][1] repository.

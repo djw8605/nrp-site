@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: JupyterLab
+description: JupyterLab
 ---
 
 # JupyterLab

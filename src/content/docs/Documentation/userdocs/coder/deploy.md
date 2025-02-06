@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Deploying Coder
+description: Deploying Coder
 ---
 
 # Guide to Deploying Your Own Coder Instance on Nautilus

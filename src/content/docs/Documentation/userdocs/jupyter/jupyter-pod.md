@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: ML/Jupyter pod
+description: ML/Jupyter pod
 ---
 
 **Do you need to run your own Jupyter pod? Probably not!**

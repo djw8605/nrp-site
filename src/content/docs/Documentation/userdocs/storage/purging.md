@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Purging
+description: Pruging
 ---
 
 Please purge any unused data. **Our storage can't be used for long-term archival**.

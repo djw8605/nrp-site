@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Networking
+description: Networking
 ---
 
 Our cluster contains several hundreds nodes around the world, and to make a cluster out of these we place certain connectivity requirements to join a node.

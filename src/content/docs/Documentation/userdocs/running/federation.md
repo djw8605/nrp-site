@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Federation
+description: Federation
 ---
 
 # Establishing cluster federation from your cluster to Nautilus cluster via admiralty

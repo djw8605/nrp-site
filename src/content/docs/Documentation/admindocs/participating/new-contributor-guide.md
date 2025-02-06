@@ -1,6 +1,6 @@
 ---
-title: Title
-description: Description
+title: Joining a Server
+description: Joining a Server
 ---
 
 In this guide, you will learn how to join a server to the [National Research Platform (NRP)](https://nationalresearchplatform.org/).  Joining the NRP is as easy as gathering required server information and sending that data to the NRP administrators.
