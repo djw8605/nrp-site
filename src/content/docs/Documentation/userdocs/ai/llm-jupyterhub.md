@@ -1,0 +1,50 @@
+---
+title: Experimenting with LLMs in JupyterHub
+description: Learn how to run and experiment with large language models (LLMs) in JupyterHub, including setting up necessary resources, installing dependencies, and running models like Stable Diffusion and text generation.
+---
+
+You can easily experiment with LLMs in jupyterhub. We provide the [managed one](/userdocs/jupyter/jupyterhub-service/), or you can [run your own](https://docs.nrp.ai/userdocs/jupyter/jupyterhub/).
+
+Make sure your `/home/jovyan` volume is large enough to hold the LLM model (which usually reaches hundreds GB), and ask admins to extend it if nesessary.
+
+Run a jupyter pod with enough memory and cores for your model and appropriate GPU type.
+
+Install the huggingface interface:
+
+`!pip install --user --upgrade diffusers accelerate transformers`
+
+Then run stable diffusion in python to generate an image:
+
+```python
+from diffusers import StableDiffusionPipeline
+import torch
+
+model_id = "runwayml/stable-diffusion-v1-5"
+pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
+pipe = pipe.to("cuda")
+
+prompt = "An astronaut riding a horse, painting in Dali style"
+image = pipe(prompt).images[0]  
+    
+image.save("astronaut_rides_horse.png")
+```
+
+Or do text generation:
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-v0.1")
+model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-v0.1")
+
+prompt = "Hey, are you conscious? Can you talk to me?"
+inputs = tokenizer(prompt, return_tensors="pt")
+
+# Generate
+generate_ids = model.generate(inputs.input_ids, max_length=30)
+tokenizer.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+```
+
+Each model comes with documentation on how to use one.
+
+The model files will be cached in `/home/jovyan/.cache/huggingface` folder.

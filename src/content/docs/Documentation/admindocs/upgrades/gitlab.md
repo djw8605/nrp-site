@@ -1,0 +1,12 @@
+---
+title: Title
+description: Description
+---
+
+#### Upgrading GitLab
+
+Follow the [upgrade path doc](https://docs.gitlab.com/ee/update/#upgrade-paths).
+
+Starting from v15 GitLab deprecates the kubernetes connection currently used, and uses the agents. [Agents aren't supported in sameersbn's build](https://github.com/sameersbn/docker-gitlab/issues/2736) and we're using the [deprecated feature gate](https://github.com/sameersbn/docker-gitlab/issues/2494#issuecomment-1324484189)
+
+Also need to upgrade the registry - pick the right version for gitlab deployed from [their repo](https://gitlab.com/gitlab-org/omnibus-gitlab/-/blob/16.10.2+ce.0/config/software/registry.rb?ref_type=tags)

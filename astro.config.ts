@@ -32,27 +32,85 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'NRP Nautilus',
+      editLink: {
+        baseUrl: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
+      },
       sidebar: [
         {
           label: "User documentation",
           items: [
-            {
-              label: "Start",
-              autogenerate: { directory: 'Documentation/User documentation/Start' },
-            },
-            {
-              label: "Coder",
-              autogenerate: { directory: 'Documentation/User documentation/Coder' },
-            },
-            {
-              label: "AI",
-              autogenerate: { directory: 'Documentation/User documentation/AI' },
-            },
-            {
-              label: "Development",
-              autogenerate: { directory: 'Documentation/User documentation/Development' },
-            },
-          ],
+          {
+            label: "Start",
+            autogenerate: { directory: 'Documentation/userdocs/start' },
+          },
+          {
+            label: "Tutorials",
+            autogenerate: { directory: 'Documentation/userdocs/tutorial' },
+          },
+          {
+            label: "Coder",
+            autogenerate: { directory: 'Documentation/userdocs/coder' },
+          },
+          {
+            label: "AI",
+            autogenerate: { directory: 'Documentation/userdocs/ai' },
+          },
+          {
+            label: "Development",
+            autogenerate: { directory: 'Documentation/userdocs/development' },
+          },
+          {
+            label: "FPGAs",
+            autogenerate: { directory: 'Documentation/userdocs/fpgas' },
+          },
+          {
+            label: "Storage",
+            autogenerate: { directory: 'Documentation/userdocs/storage' },
+          }
+        ]
+      },
+      {
+        label: "Admin documentation",
+        items: [
+
+              {
+                label: "Participating",
+                autogenerate: { directory: 'Documentation/admindocs/Participating' },
+              },
+              {
+                label: "Perfsonar",
+                autogenerate: { directory: 'Documentation/admindocs/Perfsonar' },
+              },
+              {
+                label: "FIONA",
+                autogenerate: { directory: 'Documentation/admindocs/FIONA' },
+              },
+              {
+                label: "NRP",
+                autogenerate: { directory: 'Documentation/admindocs/NRP' },
+              },
+              {
+                label: "Storage",
+                autogenerate: { directory: 'Documentation/admindocs/Storage' },
+              },
+              {
+                label: "Vault",
+                autogenerate: { directory: 'Documentation/admindocs/Vault' },
+              },
+              {
+                label: "Links",
+                autogenerate: { directory: 'Documentation/admindocs/Links' },
+              },
+              {
+                label: "Cluster admin",
+                autogenerate: { directory: 'Documentation/admindocs/Cluster admin' },
+              },
+              {
+                label: "Upgrades",
+                autogenerate: { directory: 'Documentation/admindocs/Upgrades' },
+              },
+
+          ]
         },
       ],
     }),

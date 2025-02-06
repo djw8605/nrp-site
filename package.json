@@ -32,10 +32,12 @@
     "astro": "^4.16.2",
     "astro-embed": "^0.7.4",
     "astro-icon": "^1.1.5",
+    "build": "^0.1.4",
     "d3": "^7.9.0",
     "humanize": "^0.0.9",
     "limax": "4.1.0",
     "lodash.merge": "^4.6.2",
+    "lucide-react": "^0.474.0",
     "unpic": "^3.18.0"
   },
   "devDependencies": {
