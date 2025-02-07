@@ -25,3 +25,9 @@ npm run dev
 ```
 wrangler r2 object put nrp-site/presentations/<file> -f <path_to_file>
 ```
+
+or
+
+```
+find <folder> -mindepth 1 -print0 | xargs -0 -n1 -I{} wrangler r2 object put "nrp-site/{}" -f "{}"
+```

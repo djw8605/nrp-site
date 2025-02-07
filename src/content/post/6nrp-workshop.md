@@ -65,8 +65,7 @@ Neil McKee (have video also)
 
 Tom DeFanti and Christopher Bruton
 
-[DeFanti+Bruton 6NRP CENIC AIR FAQ Tutorial 1-28-2025--screen res](https://media.nrp.ai/6nrp-slides/Tues%204pm%20DeFanti+Bruton%206NRP%20CENIC%20AIR%20FAQ%20Tutorial%201-28-2025--screen%20res%20.pptx)
-(Not yet uploaded)
+[Tues 4PM Tom DeFanti 6NRP CENIC AIR FAQ Tutorial 1-28-2025](https://media.nrp.ai/6nrp-slides/Tues%204PM%20Tom%20DeFanti%206NRP%20CENIC%20AIR%20FAQ%20Tutorial%201-28-2025%20.pptx)
 
 [Christopher Bruton 6NRP CENIC AIR Tutorial-1-28-25](https://media.nrp.ai/6nrp-slides/Tues%204pm%20Christopher%20Bruton%206NRP%20CENIC%20AIR%20Tutorial-1-28-25.pptx)
 
