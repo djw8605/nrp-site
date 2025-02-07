@@ -18,9 +18,9 @@ metadata:
   openGraph:
     site_name: NRP
     images:
-      - url: '~/assets/images/NRP_globe.ong'
-        width: 960
-        height: 640
+      - url: '~/assets/images/NRP_globe.jpg'
+        width: 1200
+        height: 800
     type: website
   twitter:
     handle: '@sdsc'
