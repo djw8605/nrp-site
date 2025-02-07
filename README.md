@@ -19,3 +19,9 @@ Then run dev version:
 ```
 npm run dev
 ```
+
+## Uploading media
+
+```
+wrangler r2 object put nrp-site/presentations/<file> -f <path_to_file>
+```

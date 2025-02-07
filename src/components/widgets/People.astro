@@ -26,10 +26,10 @@ const {
         people.map(
           (person) =>
             person && (
-              <div>
+              <div class="max-w-md">
                 <Image src={person.img} alt="" class="h-30 mx-auto object-cover rounded-full w-30" width={170} height={170}  layout="fixed" />
-                <Headline class="flex flex-wrap justify-center " title={person.name}></Headline>
-                <Headline class="flex flex-wrap justify-center " subtitle={person.title}></Headline>
+                <Headline class="flex flex-wrap justify-center" title={person.name}></Headline>
+                <Headline class="flex flex-wrap justify-center" subtitle={person.title}></Headline>
               </div>
             )
         )

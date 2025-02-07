@@ -5,25 +5,16 @@ import Brands from '~/components/widgets/Brands.astro';
 const metadata = {
   title: 'Partners',
 };
+
+const images = await Astro.glob("/src/assets/images/partners/*").then(files => {
+  return files.map(file => ({src: file.default}));
+});
 ---
 
 <Layout metadata={metadata}>
   <Brands
   title="Partners"
-  subtitle="Partners who make this project possible."
-  images={[
-    {
-      src: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/AARNet-Logo.wine_-768x512.png',
-    },
-    {
-      src: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/ai-for-mankind.png',
-    },
-    {
-      src: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/CSUSB.png',
-    },
-    {
-      src: 'https://nationalresearchplatform.org/wp-content/uploads/2021/04/caltech.png',
-    }
-  ]}
+  subtitle="Partners that make this project possible."
+  images={images}
 />
 </Layout>
