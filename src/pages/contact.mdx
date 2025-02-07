@@ -3,6 +3,28 @@ title: 'Contact'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+<CallToAction
+  actions={[
+    {
+      variant: 'primary',
+      text: 'Subscribe',
+      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
+      icon: 'tabler:mail',
+    },
+  ]}
+>
+  <Fragment slot="title">
+    Mailing list
+  </Fragment>
+
+  <Fragment slot="subtitle">
+    We send weekly meeting recordings and other useful info.
+  </Fragment>
+</CallToAction>
+
+
 ## [matrix]
 
 We're using the new innovative federated communication system [https://matrix.org](https://matrix.org). You can get an account using any compatible client.
@@ -61,4 +83,4 @@ After that click `Share` for each Email address that you want to be discoverable
 
 ## Possible issues
 
-If you've created the account on matrix.org server (not the NRP one), and have the user ID like `@username:matrix.org`, you should use the standard <https://app.element.io> web page to log in.
+If you've created the account on matrix.org server (not the NRP one), and have the user ID like `@username:matrix.org`, you should use the standard https://app.element.io web page to log in.
