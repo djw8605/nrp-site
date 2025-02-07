@@ -9,22 +9,22 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: AstroWind
-    template: '%s — AstroWind'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+    default: National Research Platform (NRP)
+    template: '%s — NRP'
+  description: "National Research Platform (NRP) is a platform for researchers to access and share data, tools, and resources."
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: AstroWind
+    site_name: NRP
     images:
-      - url: '~/assets/images/default.png'
-        width: 1200
-        height: 628
+      - url: '~/assets/images/NRP_globe.webp'
+        width: 960
+        height: 640
     type: website
   twitter:
-    handle: '@onwidget'
-    site: '@onwidget'
+    handle: '@sdsc'
+    site: '@sdsc'
     cardType: summary_large_image
 
 i18n:
