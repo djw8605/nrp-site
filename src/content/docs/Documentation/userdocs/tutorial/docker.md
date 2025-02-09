@@ -7,11 +7,11 @@ description: Docker and Kubernetes
 
 ## Introduction
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "Nautilus is a hyperconverged GPU/CPU cluster funded by the National Science Foundation. The cluster runs on Kubernetes. Can you tell me why learning to use Docker would be important when using Nautilus?")
+
 
 Learning to use Docker for Nautilus enables you to take advantage of containerization technology to streamline the deployment, management, and scalability of your applications on the cluster. It also aligns with modern DevOps practices and helps you leverage the full capabilities of the Nautilus infrastructure.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "Nautilus is a hyperconverged GPU/CPU cluster funded by the National Science Foundation. The cluster runs on Kubernetes. Can you tell me why learning to use Docker would be important when using Nautilus?")
+
 
 ## Prerequisites
 You will need the ability to install applications on your computer running a supported operating system (OS), such as Windows, Mac OS X or Linux (Chromebooks are not supported). You should also be familiar with the basic concepts of software containers (images) and [Docker Hub](https://hub.docker.com).

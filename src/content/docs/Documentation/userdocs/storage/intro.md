@@ -3,7 +3,7 @@ title: Introduction
 description: Description
 ---
 
-!!! tip
+:::tip
 
     We now have storage located in several geographic regions. Make sure you use the [right compute nodes](#using-the-right-region-for-your-pod) to ensure the optimal speed accessing it!
 

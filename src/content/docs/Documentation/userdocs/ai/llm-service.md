@@ -86,7 +86,7 @@ chat:
       - <subdomain>-chat.nrp-nautilus.io
 
   modelConfig: {}
-    # !!! THis doesn't seem to work now. You can manually add this later as described below.
+    # :::THis doesn't seem to work now. You can manually add this later as described below.
     ## e.g.
     # parameters:
     #   temperature: 0.1

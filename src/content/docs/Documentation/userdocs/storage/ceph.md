@@ -3,7 +3,7 @@ title: Ceph FS / RBD
 description: Ceph FS / RBD
 ---
 
-!!! warning "No Conda or PIP on CephFS"
+:::warning "No Conda or PIP on CephFS"
 
     Installing `conda` and `pip` packages on all CephFS (shared) filesystems is strictly prohibited!
 
@@ -199,7 +199,7 @@ Ceph block storage allows [**RBD** (Rados Block Devices)](https://docs.ceph.com/
 
 ## UCSD NVMe CephFS filesystem policy
 
-!!! warning
+:::warning
 
     **This policy applies to the `rook-cephfs-ucsd` storageclass**
 

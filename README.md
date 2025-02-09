@@ -1,5 +1,9 @@
 # NRP web site
 
+### **🚨If you add or remove pages, please modify the navbar in *astro.config.ts*🚨**
+
+
+
 The site is based on [astrowind](https://astrowind.vercel.app) tamplate.
 
 Production site: [https://portal.nrp.ai](https://portal.nrp.ai), [https://portal.nationalresearchplatform.org](https://portal.nationalresearchplatform.org). The `main `branch is automagically deployed there.

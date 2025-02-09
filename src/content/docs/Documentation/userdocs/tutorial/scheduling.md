@@ -4,7 +4,7 @@ description: Learn how to schedule and optimize the placement of pods in the Nau
 ---
 
 # Scheduling
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "In the context of Kubernetes, what is scheduling?")
+
 In Kubernetes, scheduling refers to the process of assigning pods to nodes in a cluster based on various factors such as resource requirements, node capacity, and other constraints. Kubernetes scheduler is responsible for determining where and how to run pods within the cluster.
 
 :exclamation:While you can run jobs without any special node selectors, understanding this section will allow you to better optimize the placement of your workloads and significantly increase the computations performance. You can request the more performant CPUs, GPUs with more memory, faster network links. Also you can select nodes in a specific geographical region to optimize the latency to your selected storage.

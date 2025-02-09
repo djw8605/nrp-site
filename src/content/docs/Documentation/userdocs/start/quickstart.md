@@ -10,7 +10,7 @@ This quickstart will:
 3. Show the commands to query the NRP cluster to view running processes
 4. Point you to further resources to submit jobs and learn Kubernetes
 
-!!! note "Please Note"
+:::note "Please Note"
 
     - Containers are stateless. ALL your data WILL BE GONE FOREVER when container restarts, unless you store in a persistent volume.
     - Container restart is normal in k8s cluster. Expect it.
@@ -22,7 +22,7 @@ This quickstart will:
 1. [Install][1] the kubectl tool
 2. Login to [NRP Nautilus portal][2]  and click the **Get Config** link on top right corner of the page to get your configuration file.
 
-    !!! note "Same Login"
+    :::note "Same Login"
 
         Make sure you use the same provider and account you used to login to the portal. If you use the different provider with the same email, your account in the system will still be different and your namespaces membership will change.
 

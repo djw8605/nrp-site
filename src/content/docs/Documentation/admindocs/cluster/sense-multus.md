@@ -1,22 +1,17 @@
 ---
-title: SENSE/Multus
-description: SENSE/Multus
+title: SENSE/Multus L2 Path Provisioning
+description: Guide to provision an L2 path using SENSE and Multus for network attachment.
 ---
 
 # SENSE/Multus L2 Path Provisioning Guide
 
 Follow these steps to provision an L2 path using SENSE and Multus.
 
----
-
 ## Step 1: Verify SENSE Path
-Ensure a plumbed SENSE path exists between the source and destination (e.g., two NRP nodes or an NRP node and FABRIC Facility Port).
-Contact Nautilus Support on Matrix if needed.
-
----
+Ensure that a plumbed SENSE path exists between the source and destination (e.g., two NRP nodes or an NRP node and FABRIC Facility Port). Contact Nautilus Support on Matrix if necessary.
 
 ## Step 2: Configure the Node
-On the relevant node, execute these commands, replacing placeholders with actual values:
+On the relevant node, execute the following commands, replacing placeholders with actual values:
 
 ```bash
 # Add a MACVLAN interface
@@ -29,12 +24,8 @@ sudo ip -6 addr add <ipv6-address>/<prefix-length> dev <macvlan>
 sudo ip link set up <macvlan>
 ```
 
----
-
 ## Step 3: Create a Multus NetworkAttachmentDefinition
-
-Define a Multus `NetworkAttachmentDefinition` using the MACVLAN interface.
-Save the following YAML as `network.yaml`:
+Define a Multus `NetworkAttachmentDefinition` using the MACVLAN interface. Save the following YAML as `network.yaml`:
 
 ```yaml
 apiVersion: "k8s.cni.cncf.io/v1"
@@ -61,14 +52,12 @@ spec:
 ```
 
 Apply it:
+
 ```bash
 kubectl apply -f network.yaml
 ```
 
----
-
 ## Step 4: Create a Pod
-
 Deploy a pod using the network. Save the following YAML as `pod.yaml`:
 
 ```yaml
@@ -94,15 +83,16 @@ spec:
 ```
 
 Apply it:
+
 ```bash
 kubectl apply -f pod.yaml
 ```
 
----
-
 ## Step 5: Verify Connectivity
 1. Exec into the pod:
-   ```bash
-   kubectl exec -it macvlan-pod -n <namespace> -- sh
-   ```
+
+```bash
+kubectl exec -it macvlan-pod -n <namespace> -- sh
+```
+
 2. Test connectivity using `ping6` or other tools.

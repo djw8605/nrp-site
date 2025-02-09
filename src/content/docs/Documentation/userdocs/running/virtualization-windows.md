@@ -154,7 +154,7 @@ spec:
           image: kubevirt/virtio-container-disk
 ```
 
-!!! info
+:::info
     
     The usb tablet input and sound device are required for proper audio and mouse tracking
 
@@ -276,7 +276,7 @@ spec:
           image: kubevirt/virtio-container-disk
 ```
 
-!!! warning
+:::warning
     
     If you want to request a GPU with KubeVirt, please ensure there are available GPUs specifically designated for KubeVirt. **Note: KubeVirt GPUs aren't managed by Kubernetes (k8s) in the standard way.**
 

@@ -4,7 +4,7 @@ description: Install
 ---
 
 
-!!! note 
+:::note 
     These instructions are for nodes that we will not be joining the NRP by giving IPMI access to NRP admins.  If you are giving IPMI access to NRP admins, please contact NRP admins with details.
 
 ## To install or reinstall a new node:

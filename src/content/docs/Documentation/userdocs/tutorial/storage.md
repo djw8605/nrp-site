@@ -5,7 +5,7 @@ description: Storage
 
 # Storage
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "In kubernetes, what is a persistent volume claim?")
+
 
 In Kubernetes, a Persistent Volume Claim (PVC) is a resource that allows a user to request storage from a storage class defined in the cluster. StorageClasses enable the cluster to abstract the details of storage provisioning and management, allowing users to request storage without needing to know the specifics of the underlying infrastructure.
 
@@ -20,7 +20,7 @@ This section builds on skills from the tutorial on [Basic Kubernetes](/userdocs/
 3. You will understand how to connect your PVC to another pod and make it available to your software container.
 
 ## Storage Types
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the different kinds of storage in a Kubernetes cluster?")
+
 
 In a Kubernetes cluster, there are several types of storage options available to manage data persistence for applications and services:
 
@@ -29,16 +29,16 @@ In a Kubernetes cluster, there are several types of storage options available to
 - **Persistent Volume Claim** (PVC): PVCs are requests for storage by applications. They are used by developers to request specific storage resources (size, access mode, etc.) without needing to know the underlying storage implementation.
 - **Object Storage**: Kubernetes can also integrate with object storage systems like Amazon S3, Google Cloud Storage, and others using plugins or external solutions like MinIO. These provide scalable and durable storage for various types of data.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the different kinds of storage in a Kubernetes cluster?")
+
 
 There are other types of storage options in other Kubernetes clusters, but they are not implemented in Nautilus.
 
 ## Create an emptyDir
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What is an emptyDir in Kubernetes?")
+
 In Kubernetes, an `emptyDir` is a type of volume that is initially empty and created when a Pod is assigned to a node. It's intended to be used as temporary storage within a pod. An `emptyDir` volume exists as long as the Pod that uses it is running on a node. When the Pod is removed from the node for any reason, the data in the emptyDir is deleted permanently.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "What is an emptyDir in Kubernetes?")
+
 
 Let’s explore the `emptyDir`by creating a simple example.
 
@@ -102,14 +102,14 @@ If you used the command:
 
 :exclamation: In fact, the `yaml` file is using the Linux distribution known as "Alpine".
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "In the context of Kubernetes, what is Alpine?")
+
 The Alpine Linux distribution is a lightweight and security-oriented Linux distribution commonly used in containerized environments, including Kubernetes. Alpine Linux is known for its minimalistic design, small footprint, and focus on security. It provides a simple and efficient base for containerized applications, offering a smaller attack surface and reduced resource usage compared to other Linux distributions.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "In the context of Kubernetes, what is Alpine?")
+
 
 But instead of the full-featured `bash`shell (aka Command Line Interpreter or CLI), Alpine uses a lightweight version called `ash` (short for Almquist Shell).
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What is the difference between the command line interpreter "bash" and the command line interpreter "ash"?")
+
 
 It aims to provide essential shell functionalities while keeping its codebase small and efficient. It lacks some of the advanced features found in Bash but offers POSIX compliance and basic scripting capabilities.
 
@@ -137,11 +137,11 @@ You can now delete the deployment.
 
 In addition to the computing cluster we've been exploring, Nautilus also has a distributed storage system (a Ceph Storage Cluster). This storage cluster provides persistent storage for Nautilus.
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the advantages of having a ceph storage cluster attached to a Kubernetes cluster?")
+
 
 Integrating a Ceph storage cluster with a Kubernetes cluster offers several advantages for managing storage in containerized environments, such as scaleability, high availability, fault tolerance, dynamic provisioning, performance and data mobility for containerized applications.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the advantages of having a ceph storage cluster attached to a Kubernetes cluster?")
+
 
 To get storage, we need to create an abstraction called `PersistentVolumeClaim`. By doing so, we "claim" some storage space and a "Persistent Volume" is created dynamically. PVCs are scoped to a particular namespace in Kubernetes. This means that PVCs created within one namespace are not directly accessible or visible to other namespaces by default.
 

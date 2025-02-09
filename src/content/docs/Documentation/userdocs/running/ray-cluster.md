@@ -7,7 +7,7 @@ description: Ray Cluster
 
 [Ray](https://docs.ray.io/en/latest/index.html) is an open-source unified framework for scaling AI and Python applications like machine learning. It provides the compute layer for parallel processing so that you don’t need to be a distributed systems expert. To run Ray applications on multiple nodes, you must first deploy a Ray cluster. This document is adapted from the official guide of [RayCluster Quickstart](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html#kuberay-raycluster-quickstart) for deploying and using a Ray Cluster on Nautilus in your namespace. 
 
-!!! info
+:::info
 
     This document assumes you're deploying in your default namespace. If you are in multiple namespaces and you are deploying Ray in a non-default namespace, you will need to append `-n <namespace-name>` to the `helm` and `kubectl` commands below.
 

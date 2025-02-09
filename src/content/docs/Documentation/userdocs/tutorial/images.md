@@ -5,11 +5,11 @@ description: Docker Images
 
 # **Images**
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "How important are images for kubernetes?")
+
 
 Images are fundamental components in Nautilus as they package the application code, dependencies, and runtime environment required to run containers within Kubernetes clusters. Images serve as the building blocks for containerized applications, allowing developers to deploy their software in a consistent and portable manner.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "How important are images for kubernetes?")
+
 
 ## Learning Objectives
 1. By reviewing these materials, you will have a basic understanding of how to locate standard software packages to run on Nautilus.

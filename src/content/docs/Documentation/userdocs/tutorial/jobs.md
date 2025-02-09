@@ -7,11 +7,11 @@ description: Running Batch Jobs
 
 The Nautilus Cluster is designed specifically to support high-throughput batch jobs.  
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "In kubernetes, what is a batch job?")
+
 
 In Kubernetes, a batch job is a type of workload designed to run a finite number of tasks to completion, as opposed to continuously running or long-lived services. Batch jobs are ideal for executing tasks such as data processing, data analysis, batch data updates, backups, or any other task that needs to be performed periodically or on-demand.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022, query text "In kubernetes, what is a batch job?")
+
 
 A batch job (or simply, a job) is a daemon which watches your pod and makes sure it exited with exit status 0. If it did not for any reason, it will be restarted up to `backoffLimit` number of times.
 
@@ -28,7 +28,7 @@ This section builds on skills from both the [Quickstart](/userdocs/start/quickst
 2. You will have a preliminary understanding of job states, such as "Completed" or "Error".
 3. You will understand how to set limits to jobs
 
-!!! Note
+:::Note
 
     Since jobs in Nautilus are not limited in runtime, you can only run jobs with meaningful `command` field. Running in manual mode (`sleep infinity` `command` and manual start of computation) is prohibited.
 
@@ -76,7 +76,7 @@ When job is finished, your pod will stay in Completed state, and Job will have C
       kubectl logs pi-<hash>
       ```
 
-!!! note
+:::note
 
     Learn more about Job states by visiting the Kubernetes documentation about [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/). There are many features of Jobs that can be utilized to run your application at-scale.
 
