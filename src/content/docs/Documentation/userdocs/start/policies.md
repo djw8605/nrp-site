@@ -3,7 +3,7 @@ title: Policies
 description: Policies
 ---
 
-!!! note "TL;DR"
+:::note "TL;DR"
 
     - Use [*Job*](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/userdocs/running/jobs/) and set *right* resources request
     - Use [*Deployment*](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/userdocs/running/long-idle/) and set **minimal** resources request.

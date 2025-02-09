@@ -9,7 +9,7 @@ don't waste resources, since this method does not require any babysitting of pro
 Once your development is done, you are immediately ready to run a large-scale stuff with no changes 
 to the code and minimal changes in the definition, plus your changes are saved in Git.
 
-!!! Warning
+:::Warning
 
     Since jobs in Nautilus can run forever, you can only run jobs with meaningful `command` field. Running in manual mode (`sleep infinity` command and manual start of computation) is prohibited, and user **can be banned**.
 

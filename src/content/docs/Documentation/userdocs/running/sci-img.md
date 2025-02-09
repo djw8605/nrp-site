@@ -17,6 +17,8 @@ Both projects now support CUDA and ARM. Docker stack only has CUDA in TensorFlow
 
 The **NRP image with additional libraries** (gitlab-registry.nrp-nautilus.io/nrp/scientific-images/python) is based on Docker Stack TensorFlow and PyTorch, with additional packages.
 
+NOTE: If you are using the VS Code editor with a Jupyter Notebook, use the `base` Python Environment as the kernel. Moreover, do not use the `/usr/bin/python`/`/usr/bin/python3` Python executable. Instead, use `python` or `python3` without the path.
+
 Refer to <https://gitlab.nrp-nautilus.io/nrp/scientific-images/python> for the list of packages installed.
 
 We can add more libraries to this image by requesting in [Matrix](/userdocs/start/contact/).

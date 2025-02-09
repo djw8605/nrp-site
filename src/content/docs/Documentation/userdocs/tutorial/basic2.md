@@ -6,13 +6,13 @@ description: Scheduling and Exposing
 # Horizontal scaling
 
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What is kubernetes orchestration?")
-In a Kubernetes cluster, orchestration refers to the automated coordination, deployment, scaling, and management of containerized applications and their associated workloads.
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022)
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "Why is horizontal scaling important for services hosted on a Kubernetes cluster??")
+In a Kubernetes cluster, orchestration refers to the automated coordination, deployment, scaling, and management of containerized applications and their associated workloads.
+
+
+
 Horizontal scaling is crucial for services hosted on a Kubernetes cluster for several reasons, and it aligns with the fundamental principles of container orchestration and cloud-native architectures.
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022)
+
 
 Horizontal scaling in Nautilus allows you increase the overall workload of your jobs, improve reliability and availability, use resources more efficiently, load balance across replicas, and it increases fault tolerance (no single instance failing disrupts your work). Horizontal scaling is common practice for cloud-native applications.
 
@@ -126,7 +126,7 @@ spec:
 ```
 :question: What resources are we requesting in this example? Are the resources requested for this pod capable of much?
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the base units for describing memory resources in Kubernetes?")
+
 :exclamation: In Kubernetes, the base unit for describing memory resources is the `byte`. However, to make it more convenient and human-readable, memory values are commonly expressed in multiples of bytes using the International System of Units (SI) prefixes.
 
 - Kilobyte (Ki): 1 Ki is equivalent to 1024 bytes.
@@ -134,13 +134,13 @@ spec:
 - Gigabyte (Gi): 1 Gi is equivalent to 1024 MiB or 1,073,741,824 bytes.
 - ...and so on
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022)
 
-[//]: # (begin GPT-3.5 developed by OpenAI, training data from January 2022, query text "What are the base units for describing CPU resources in Kubernetes?")
+
+
 
 :exclamation: In Kubernetes, the base unit for describing CPU resources is the "millicore" which represents one thousandth of a CPU core. The term "millicore" is often abbreviated as "mCPU" or simply "m" (as above). For example, a CPU value of "100m" means 100 millicores, which is equivalent to 0.1 CPU core. Similarly, "500m" represents 500 millicores or 0.5 CPU core.
 
-[//]: # (end GPT-3.5 developed by OpenAI, training data from January 2022)
+
 
 ### A Container that has curl
 

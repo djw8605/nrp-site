@@ -1,23 +1,22 @@
 ---
-title: Services Topology
-description: Services Topology
+title: Cluster-wide CDN-like Services with Topology Awareness
+description: Learn how to configure cluster-wide CDN-like services using Kubernetes topology-aware hints and pod affinities for optimized network connectivity.
 ---
 
-## Creating cluster-wide CDN-like services
+## Configuring Cluster-wide CDN-like Services with Topology Awareness
 
-The cluster nodes are grouped by topology.kubernbetes.io/{region,zone} labels. For applications that require faster or larger network connectivity, it's possible to distribute the pods through most or all zones and'or (larger) regions, and also make kubernetes service aware of that.
+The nodes in the cluster are grouped by the `topology.kubernetes.io/{region,zone}` labels. For applications requiring faster or larger network connectivity, you can distribute pods across multiple zones or larger regions. Kubernetes services can also be made aware of these topologies to optimize performance.
 
-** I was not able to make this work yet, most likely because of [safeguards](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/#safeguards) which we violate several of. **
+**Note:** This setup has not been fully successful yet, most likely due to [safeguards](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/#safeguards) that are being violated in this configuration.
 
-#### Pod affinities
+#### Pod Affinities and Anti-Affinities
 
-First step is to set the pod affinities to make sure that:
+The first step is to configure pod affinities and anti-affinities to control where pods are placed within the cluster:
 
-1. Pods are geographically repelled from each other
+1. **Pod Anti-Affinity:** Ensures that pods are geographically repelled from each other.
+2. **Pod Affinity:** Optionally, you can attract pods to certain points (for example, next to ingress points).
 
-2. Optionally: pods are attracted to some other points (for example if you want to place pods next to the Ingress points of the cluster)
-
-To spread the pods between zones, add the podAntiAffinity to your deployment:
+To spread the pods across different zones, add `podAntiAffinity` to your deployment:
 
 ```yaml
 spec:
@@ -35,7 +34,7 @@ spec:
         weight: 50
 ```
 
-It's also possible to do required instead of preferred:
+You can also use `requiredDuringSchedulingIgnoredDuringExecution` instead of `preferred` to enforce stricter placement rules:
 
 ```yaml
 spec:
@@ -51,7 +50,7 @@ spec:
         topologyKey: topology.kubernetes.io/zone
 ```
 
-To attract the pods to HAProxies, add the podAffinity:
+To attract pods to high-availability proxies, use `podAffinity`:
 
 ```yaml
 spec:
@@ -71,11 +70,11 @@ spec:
         weight: 50
 ```
 
-(you can adjust the weights too)
+You can also adjust the weight to fine-tune the affinity preferences.
 
-#### Service topology awareness
+#### Service Topology Awareness
 
-Now your service can be [topology zone aware](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/) and prefer serving traffic locally inside the zone:
+To ensure that your service is [topology-aware](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/) and prefers serving traffic within the same zone:
 
 ```yaml
 kind: Service
@@ -84,4 +83,4 @@ metadata:
     service.kubernetes.io/topology-aware-hints: auto
 ```
 
-(Seems like this is [being deprecated already](https://github.com/kubernetes/kubernetes/pull/116522))
+**Note:** This feature is [being deprecated](https://github.com/kubernetes/kubernetes/pull/116522), so consider alternatives in the future.

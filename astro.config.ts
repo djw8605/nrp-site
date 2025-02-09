@@ -31,6 +31,7 @@ export default defineConfig({
   
   integrations: [
     starlight({
+      favicon: '/static/favicon.ico',
       title: 'NRP Nautilus',
       editLink: {
         baseUrl: 'https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main',

@@ -7,13 +7,13 @@ description: Linstor
 
 It uses the [DRBD](https://linbit.com/drbd/) kernel module that handles the replication, and provides nearly native drive performance for I/O operations.
 
-!!! note
+:::note
     Please use the `nautilus.io/linstor` nodeAffinity label to use the nodes where linstor is deployed.
 
-!!! note
+:::note
     Linstor allocates the space for the requested amount of storage. YOu should only request the space as needed and extend when necessary.
 
-!!! note
+:::note
     `linstor-ha` provides the highest level of redundancy and reliability at a cost of higher replication factor, and can only be used for smaller most critical use cases. (jupyter hub volume is a good example)
 
 ### Linstor storage pools data use

@@ -5,11 +5,11 @@ description: Using Coder
 
 # Coder Environment Documentation
 
-!!! warning
+:::warning
 
     If your workspace was created before 11/01/2024, please do not update your workspace version before backing up your data! Otherwise, your data might be lost.
 
-!!! note "TL;DR"
+:::note "TL;DR"
 
     1. **Coder** provides a quick-start development environment similar to JupyterHub, running directly on our cluster. No Kubernetes knowledge required!
     2. **FPGA Requests**: Easily request and use Xilinx Alveo U55C FPGAs for specialized workloads.

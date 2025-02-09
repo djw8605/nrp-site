@@ -3,12 +3,12 @@ title: GPU Pods
 description: GPU Pods
 ---
 
-!!! info
+:::info
     
     In this section you will request GPUs. Make sure you don't waste those and delete your pods when not using the GPUs.
 
 
-!!! warning
+:::warning
     
     The NRP is in a transition in how some specific high-memory GPUs are requested. The old syntax involved setting node affinity, the new
     only requires the gpu type in the container `resource` requests and limits.
@@ -134,7 +134,7 @@ NVIDIA-A100-SXM4-80GB | 80G
 **NOTE**: [Not all nodes are available to all users](/userdocs/running/special/). You can consult about your available resources in [Matrix](/userdocs/start/contact) and on [resources page](https://portal.nrp-nautilus.io/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 
-!!! warning
+:::warning
 
     This is the old syntax below. For higher end GPUs, the use the syntax documented above!
 
