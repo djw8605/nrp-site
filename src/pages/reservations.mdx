@@ -1,0 +1,54 @@
+---
+title: Reservations on NRP
+layout: '~/layouts/MarkdownLayout.astro'
+---
+
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+## Node taints
+
+  <CallToAction actions={[{
+        variant: "primary",
+        text: "Request nodes taint",
+        href: "https://airtable.com/appfVVZLgTvG04pKe/pagfrjdaRo6UtSoux/form"
+      }]}
+    >
+
+    <Fragment slot="title">
+        Requesting a node taint
+    </Fragment>
+
+    <Fragment slot="subtitle">
+        We can taint a number of nodes for the specified amount of time based on availability and provided reasons.
+    </Fragment>
+  </CallToAction>
+
+To use the reservation, set the [appropriate taint](/documentation/userdocs/running/special/) on your pods.
+
+<iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shr3fD7xl6JDQkck3?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc;"></iframe>
+
+## A100 access
+
+  <CallToAction actions={[{
+        variant: "primary",
+        text: "Request A100 access",
+        href: "https://airtable.com/appfVVZLgTvG04pKe/pagrZFgrh3fNqbV4c/form"
+      }]}
+    >
+
+    <Fragment slot="title">
+        Requesting A100s
+    </Fragment>
+
+    <Fragment slot="subtitle">
+        <p>We’ve noticed that many A100 resources are being used for jobs that don’t require their capabilities. To ensure fair and efficient utilization of these high-performance resources, we are implementing limits on A100 usage across all namespaces.</p>
+
+         <p>If your work requires access to A100s, please reach out to us, and we’ll gladly adjust the limits for your namespace.</p>
+
+         <p>Groups that contributed A100s to the cluster will continue to have unrestricted access, but we kindly ask for responsible usage to maintain optimal utilization levels.</p>
+
+         <p>Thank you for your understanding and cooperation!</p>
+    </Fragment>
+  </CallToAction>
+
+<iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shruKqqBIYZG0yiqx?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc;"></iframe>
