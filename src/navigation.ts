@@ -49,20 +49,16 @@ export const headerData = {
       text: 'InfoGraphics',
       links: [
         {
-          text: 'Cluster Dashboard',
+          text: 'Cluster InfoGraphics',
+          href: "/viz",
+        },
+        {
+          text: 'External notebooks',
+          href: "https://observablehq.com/@nrp-nautilus",
+        },
+        {
+          text: 'External Cluster Dashboard',
           href: "https://dash.nrp-nautilus.io",
-        },
-        {
-          text: 'All Storage distribution',
-          href: getPermalink('/storageall'),
-        },
-        {
-          text: 'Ceph Storage distribution',
-          href: getPermalink('/storageceph'),
-        },
-        {
-          text: 'CPU/GPU Usage Log10',
-          href: getPermalink('/usagelog'),
         },
       ],
     },
