@@ -17,6 +17,10 @@ export const headerData = {
           text: 'Reservations',
           href: getPermalink('/reservations'),
         },
+        {
+          text: 'Projects',
+          href: getPermalink('/namespaces'),
+        },
       ],
     },
     {

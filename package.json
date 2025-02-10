@@ -30,6 +30,7 @@
     "@astrolib/seo": "^1.0.0-beta.8",
     "@fontsource-variable/inter": "^5.1.0",
     "@observablehq/plot": "^0.6.16",
+    "@open-rpc/client-js": "^1.8.1",
     "astro": "^4.16.2",
     "astro-embed": "^0.7.4",
     "astro-icon": "^1.1.5",

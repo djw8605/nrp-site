@@ -202,7 +202,7 @@ export default defineConfig({
   })],
 
   image: {
-    domains: ['cdn.pixabay.com'],
+    domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp-nautilus.io'],
   },
 
   markdown: {

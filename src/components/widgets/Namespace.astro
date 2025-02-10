@@ -1,0 +1,113 @@
+---
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+export interface Namespace {
+  Name: string;
+  Description: string;
+  PI: string;
+  Publications: string;
+  Institution: string;
+  Software: string;
+}
+
+export interface Props {
+    namespace: Namespace;
+}
+
+const {
+    namespace,
+    id,
+    isDark = false,
+    classes = {},
+    bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+import https from 'https';
+import { parse } from 'url';
+
+const urlExists = async function (url) {
+    return await new Promise((resolve) => {
+   
+      const options = {
+        method: 'HEAD',
+        host: parse(url).host,
+        path: parse(url).pathname,
+        port: 443,
+      };
+  
+      const req = https.request(options, (res) => {
+        // console.log(res.statusCode);
+        resolve(res.statusCode < 400 || res.statusCode >= 500);
+      });
+      
+      req.end();
+    });
+  }
+
+const imageExists = await urlExists("https://portal.nrp-nautilus.io/avatars/"+namespace.Name+".png");
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <section>
+      <article>
+        <header>
+          <div class="text-3xl flex justify-between flex-col sm:flex-row max-w-3xl mx-auto mt-0 mb-2 px-4 sm:px-6 sm:items-center">
+            <p>
+              <Fragment set:html={namespace.Name} />
+            </p>
+            {
+              imageExists && (
+                <img src={"https://portal.nrp-nautilus.io/avatars/"+namespace.Name+".png"} class="h-48 w-96 object-contain" />
+              )
+            }
+          </div>
+        </header>
+        <div class="max-w-3xl mx-auto">
+          {
+            namespace.Description && (
+              <p
+                class="text-md text-muted mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+                set:html={namespace.Description}
+              />
+            )
+          }
+        </div>
+        <div class="text-sm grid grid-cols-4 gap-4 max-w-3xl mx-auto py-8">
+          {
+            namespace.Institution && (
+              <p>
+                Institution:
+                <Fragment set:html={namespace.Institution} />
+              </p>
+            )
+          }
+          {
+            namespace.PI && (
+              <p>
+                PI:
+                <Fragment set:html={namespace.PI} />
+              </p>
+            )
+          }
+          {
+            namespace.Software && (
+              <p>
+                Software:
+                <Fragment set:html={namespace.Software} />
+              </p>
+            )
+          }
+        </div>
+        <div class="max-w-3xl mx-auto">
+          {
+            namespace.Publications && namespace.Publications.toLowerCase() != "none" && (
+              <p class="text-sm">
+                Publications:
+                <Fragment set:html={namespace.Publications} />
+              </p>
+            )
+          }
+        </div>
+      </article>
+  </section>
+</WidgetWrapper>
