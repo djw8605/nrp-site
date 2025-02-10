@@ -11,5 +11,3 @@ build:
   script:
     - npm run build
     - wrangler pages deploy ./public --project-name "nrp-portal" --branch "$CI_COMMIT_REF_NAME"
-  except:
-    - main
