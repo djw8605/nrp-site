@@ -56,6 +56,8 @@ Quadro RTX 8000 | nvidia.com/rtx8000
 Grace Hopper GH200 | nvidia.com/gh200
 A100 MIG 1g.10gb | nvidia.com/mig-small
 
+Using A100s also requires [a reservation](/reservations).
+
 For example, modifying the above example for one of these GPUs, the new yaml would be:
 
 ```yaml
