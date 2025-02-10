@@ -13,6 +13,10 @@ export const headerData = {
           text: 'Contact',
           href: getPermalink('/contact'),
         },
+        {
+          text: 'Reservations',
+          href: getPermalink('/reservations'),
+        },
       ],
     },
     {
