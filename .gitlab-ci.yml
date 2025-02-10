@@ -2,7 +2,7 @@ stages:
   - build
   - deploy
 
-build_dev:
+build:
   stage: build
   image: node:lts
   before_script:
