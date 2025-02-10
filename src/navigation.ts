@@ -99,10 +99,10 @@ export const footerData = {
     {
       title: 'Information',
       links: [
-        { text: 'Get Access', href: 'get-access' },
-        { text: 'Contact', href: 'contact' },
-        { text: 'Network Requirements', href: 'network-requirements' },
-        { text: 'New Contributor Guide', href: 'new-contributor-guide' },
+        { text: 'Get Access', href: '/get-access' },
+        { text: 'Contact', href: '/contact' },
+        { text: 'Network Requirements', href: '/network-requirements' },
+        { text: 'New Contributor Guide', href: '/new-contributor-guide' },
       ],
     },
   ],
