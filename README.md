@@ -4,11 +4,11 @@
 
 
 
-The site is based on [astrowind](https://astrowind.vercel.app) tamplate.
+The site is based on [astrowind](https://astrowind.vercel.app) template.
 
-Production site: [https://portal.nrp.ai](https://portal.nrp.ai), [https://portal.nationalresearchplatform.org](https://portal.nationalresearchplatform.org). The `main `branch is automagically deployed there.
+Production site: [https://portal.nrp.ai](https://portal.nrp.ai), [https://portal.nationalresearchplatform.org](https://portal.nationalresearchplatform.org). The `main` branch is automagically deployed there.
 
-Dev site: [https://dev.nrp-portal.pages.dev](https://dev.nrp-portal.pages.dev), branches other than `main` are deployed there.
+Branches other than `main` are deployed to https://<branch_name>.nrp-portal.pages.dev
 
 Local development:
 
