@@ -39,4 +39,4 @@ Please note, you'll be the one responsible for all activity happening in your na
 
 [1]: https://portal.nrp-nautilus.io
 
-[2]: /documentation/user-documentation/start/quickstart/
+[2]: /documentation/userdocs/start/quickstart/
