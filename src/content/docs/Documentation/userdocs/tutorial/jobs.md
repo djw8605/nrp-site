@@ -15,9 +15,11 @@ In Kubernetes, a batch job is a type of workload designed to run a finite number
 
 A batch job (or simply, a job) is a daemon which watches your pod and makes sure it exited with exit status 0. If it did not for any reason, it will be restarted up to `backoffLimit` number of times.
 
-??? question "What is the difference between a Job and a Pod?"
+:::tip[What is the difference between a Job and a Pod?]
 
-    A Job is a higher-level abstraction that manages a Pod. A Job will ensure that the Pod runs to completion, and can be scaled up or down as needed. A Pod is a group of one or more containers, with shared storage and network resources.
+A Job is a higher-level abstraction that manages a Pod. A Job will ensure that the Pod runs to completion, and can be scaled up or down as needed. A Pod is a group of one or more containers, with shared storage and network resources.
+
+:::
 
 ## Prerequisites
 
@@ -28,9 +30,11 @@ This section builds on skills from both the [Quickstart](/userdocs/start/quickst
 2. You will have a preliminary understanding of job states, such as "Completed" or "Error".
 3. You will understand how to set limits to jobs
 
-:::Note
+:::note
 
-    Since jobs in Nautilus are not limited in runtime, you can only run jobs with meaningful `command` field. Running in manual mode (`sleep infinity` `command` and manual start of computation) is prohibited.
+Since jobs in Nautilus are not limited in runtime, you can only run jobs with meaningful `command` field. Running in manual mode (`sleep infinity` `command` and manual start of computation) is prohibited.
+
+:::
 
 Let's run a simple job and get it's result.
 
@@ -68,17 +72,21 @@ kubectl get pods
 
 When job is finished, your pod will stay in Completed state, and Job will have COMPLETIONS field 1/1. For long jobs, the pods can have Error, Evicted, and other states until they finish properly or backoffLimit is exhausted.
 
-??? question "How would you diagnose and fix a Job that exited with the code "error"?"
+:::tip[How would you diagnose and fix a Job that exited with the code "error"?]
 
-    You could view the logs of the job with the logs command:
-      
-      ```bash
-      kubectl logs pi-<hash>
-      ```
+You could view the logs of the job with the logs command:
+  
+  ```bash
+  kubectl logs pi-<hash>
+  ```
+
+:::
 
 :::note
 
-    Learn more about Job states by visiting the Kubernetes documentation about [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/). There are many features of Jobs that can be utilized to run your application at-scale.
+Learn more about Job states by visiting the Kubernetes documentation about [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/job/). There are many features of Jobs that can be utilized to run your application at-scale.
+
+:::
 
 Our job did not use any storage and output the result to STDOUT, which can be seen as our pod logs:
 
