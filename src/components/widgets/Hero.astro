@@ -16,14 +16,28 @@ const {
 
   id,
   bg = await Astro.slots.render('bg'),
+  bgImage = await Astro.slots.render('bgImage'),
   whiteText,
 } = Astro.props;
+// sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
+// width={1024}
+//         widths={[400, 768, 1024, 2040]}
 ---
 
 <section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
+      {bgImage ? (
+        <Image
+        class="brightness-50 object-cover object-center w-full h-full"
+
+        
+        loading="eager"
+        
+        {...bgImage}
+      />
+      ) : null}
     </slot>
   </div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">

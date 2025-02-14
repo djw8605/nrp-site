@@ -18,13 +18,15 @@ const metadata = {
 <Layout metadata={metadata} darkHeader={true}>
   <!-- Hero Widget ******************* -->
   <!-- image={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }} -->
+  <!-- bg="<img src='/src/assets/images/NRP_globe.jpg' alt='NRP Background image' class='brightness-50 object-cover object-center w-full h-full' />" -->
   <Hero
     actions={[
       { text: 'Learn more', href: '#features', variant: 'primary' },
     ]}
     
-    bg="<img src='/src/assets/images/NRP_globe.jpg' alt='NRP Background image' class='brightness-50 object-cover object-center w-full h-full' />"
+    
     whiteText={true}
+    bgImage={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }}
   >
     <Fragment slot="title">
       Designed for Growth and Inclusion
