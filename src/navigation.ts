@@ -59,6 +59,10 @@ export const headerData = {
           text: 'Grafana Dashboards (external)',
           href: "https://grafana.nrp-nautilus.io/dashboards",
         },
+        {
+          text: 'PerfSonar network (external)',
+          href: "https://perfsonar.nrp-nautilus.io/maddash-webui/index.cgi",
+        },
       ],
     },
     {
