@@ -49,7 +49,7 @@ export const headerData = {
         },
         {
           text: 'External notebooks',
-          href: "https://observablehq.com/@nrp-nautilus",
+          href: "https://observablehq.com/@nrp-nautilus?type=collections",
         },
         {
           text: 'External Cluster Dashboard',
