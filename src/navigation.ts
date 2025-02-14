@@ -48,12 +48,16 @@ export const headerData = {
           href: "/viz",
         },
         {
-          text: 'External notebooks',
+          text: 'Observable notebooks (external)',
           href: "https://observablehq.com/@nrp-nautilus?type=collections",
         },
         {
-          text: 'External Cluster Dashboard',
+          text: 'Cluster Dashboard (external)',
           href: "https://dash.nrp-nautilus.io",
+        },
+        {
+          text: 'Grafana Dashboards (external)',
+          href: "https://grafana.nrp-nautilus.io/dashboards",
         },
       ],
     },
