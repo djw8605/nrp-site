@@ -10,19 +10,21 @@ import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 const metadata = {
-  title: 'National Research Project landing page',
+  title: 'National Research Project',
   ignoreTitleTemplate: true,
 };
 ---
 
-<Layout metadata={metadata}>
+<Layout metadata={metadata} darkHeader={true}>
   <!-- Hero Widget ******************* -->
-
+  <!-- image={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }} -->
   <Hero
     actions={[
-      { text: 'Learn more', href: '#features' },
+      { text: 'Learn more', href: '#features', variant: 'primary' },
     ]}
-    image={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }}
+    
+    bg="<img src='/src/assets/images/NRP_globe.jpg' alt='NRP Background image' class='brightness-50 object-cover object-center w-full h-full' />"
+    whiteText={true}
   >
     <Fragment slot="title">
       Designed for Growth and Inclusion

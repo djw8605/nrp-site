@@ -3,13 +3,14 @@ title: Policies
 description: Policies
 ---
 
-:::note "TL;DR"
+:::note[TL;DR]
 
-    - Use [*Job*](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/userdocs/running/jobs/) and set *right* resources request
-    - Use [*Deployment*](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/userdocs/running/long-idle/) and set **minimal** resources request.
-    - Use [monitoring](/userdocs/running/monitoring/) to accurately set the resource requests.
-    - Avoid wasting resources: if you've requested something, use it, and free up once computation is done.  Admins monitor resource utilization and will ban namespaces with under-utilized resources requests.
-    - **Users running a Job with "sleep" command or equivalent (script ending with "sleep") will be banned from using the cluster.**
+- Use [*Job*](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/documentation/userdocs/running/jobs/) and set *right* resources request
+- Use [*Deployment*](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/documentation/userdocs/running/long-idle/) and set **minimal** resources request.
+- Use [monitoring](/documentation/userdocs/running/monitoring/) to accurately set the resource requests.
+- Avoid wasting resources: if you've requested something, use it, and free up once computation is done.  Admins monitor resource utilization and will ban namespaces with under-utilized resources requests.
+- **Users running a Job with "sleep" command or equivalent (script ending with "sleep") will be banned from using the cluster.**
+:::
 
 #### Acceptable Use Policy
 

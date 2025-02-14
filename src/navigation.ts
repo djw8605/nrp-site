@@ -3,31 +3,14 @@ import { getPermalink, getBlogPermalink, getAsset } from './utils/permalinks';
 export const headerData = {
   links: [
     {
-      text: 'Information',
-      links: [
-        {
-          text: 'Get Access',
-          href: getPermalink('/get-access'),
-        },
-        {
-          text: 'Contact',
-          href: getPermalink('/contact'),
-        },
-        {
-          text: 'Reservations',
-          href: getPermalink('/reservations'),
-        },
-        {
-          text: 'Projects',
-          href: getPermalink('/namespaces'),
-        },
-      ],
-    },
-    {
       text: 'Participating',
       links: [
         {
-          text: 'New contributor guide',
+          text: 'New User Guide',
+          href: getPermalink('/documentation/userdocs/tutorial/introduction'),
+        },
+        {
+          text: 'New Contributor Guide',
           href: getPermalink('/new-contributor-guide'),
         },
         {
@@ -40,12 +23,20 @@ export const headerData = {
       text: 'Community',
       links: [
         {
+          text: 'Contact',
+          href: getPermalink('/contact'),
+        },
+        {
           text: 'Partners',
           href: getPermalink('/partners'),
         },
         {
           text: 'People',
           href: getPermalink('/people'),
+        },
+        {
+          text: 'Science Enabled',
+          href: getPermalink('/namespaces'),
         },
       ],
     },
@@ -67,10 +58,6 @@ export const headerData = {
       ],
     },
     {
-      text: 'Docs',
-      href: getPermalink('/documentation'),
-    },
-    {
       text: 'News',
       links: [
         {
@@ -90,6 +77,14 @@ export const headerData = {
           href: getPermalink('/wpblog'),
         },
       ],
+    },
+    {
+      text: 'Reservations',
+      href: getPermalink('/reservations'),
+    },
+    {
+      text: 'Docs',
+      href: getPermalink('/documentation'),
     },
   ],
 };

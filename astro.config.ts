@@ -33,6 +33,7 @@ export default defineConfig({
     starlight({
       favicon: '/static/favicon.ico',
       title: 'NRP Nautilus',
+      customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       editLink: {
         baseUrl: 'https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main',
       },

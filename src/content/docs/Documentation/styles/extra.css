@@ -1,0 +1,10 @@
+
+.main-pane ul:not(.sl-steps) {
+    list-style: revert;
+    padding: revert;
+}
+
+.main-pane ol:not(.sl-steps) {
+    list-style: revert;
+    padding: revert;
+}

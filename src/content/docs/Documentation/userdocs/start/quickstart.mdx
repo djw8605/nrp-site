@@ -3,6 +3,8 @@ title: Quick Start
 description: Quick Start
 ---
 
+import { Steps } from '@astrojs/starlight/components';
+
 This quickstart will:
 
 1. Guide you on getting the tools necessary to interact with the NRP installed
@@ -10,27 +12,30 @@ This quickstart will:
 3. Show the commands to query the NRP cluster to view running processes
 4. Point you to further resources to submit jobs and learn Kubernetes
 
-:::note "Please Note"
+:::note[Please Note]
 
-    - Containers are stateless. ALL your data WILL BE GONE FOREVER when container restarts, unless you store in a persistent volume.
-    - Container restart is normal in k8s cluster. Expect it.
-    - NEVER FORCE DELETE PODS
-    - Users running a Job with "sleep" command or equivalent (any command that never ends by itself) will be banned from using the cluster.
+- Containers are stateless. ALL your data WILL BE GONE FOREVER when container restarts, unless you store in a persistent volume.
+- Container restart is normal in k8s cluster. Expect it.
+- NEVER FORCE DELETE PODS
+- Users running a Job with "sleep" command or equivalent (any command that never ends by itself) will be banned from using the cluster.
+:::
 
 ## Step by Step
 
+<Steps>
 1. [Install][1] the kubectl tool
 2. Login to [NRP Nautilus portal][2]  and click the **Get Config** link on top right corner of the page to get your configuration file.
 
-    :::note "Same Login"
+    :::note[Same Login]
 
         Make sure you use the same provider and account you used to login to the portal. If you use the different provider with the same email, your account in the system will still be different and your namespaces membership will change.
+    :::
 
-3. Save the file as **config** and put the file in your <home>/.kube folder. 
+3. Save the file as **config** and put the file in your \<home\>/.kube folder. 
 
     This folder may not exists on your machine, to create it execute:
 
-    ```
+    ```bash
     mkdir ~/.kube
     ```
 
@@ -40,13 +45,13 @@ This quickstart will:
  
 6. Test kubectl can connect to the cluster using a command line tool: 
 
-    ```
+    ```bash
     kubectl get pods -n your_namespace
     ```
 
     It's possible there are no pods in your namespace yet. If you've got `No resources found.`, this indicates your namespace is empty and you can start running in it.
 
-7. To learn more about kubernetes you can look at [our tutorial](/userdocs/tutorial/basic/).
+7. To learn more about kubernetes you can look at [our tutorial](/documentation/userdocs/tutorial/basic/).
 
     These resources might be helpful:
 
@@ -56,18 +61,18 @@ This quickstart will:
    
     Please note that not all examples will work in our cluster because of security policies. You are limited to see what's happening in your own namespace, and nobody else can see your running pods.
 
-8. **MANDATORY**: read the [Policies](/userdocs/start/policies/) page
+8. **MANDATORY**: read the [Policies](/documentation/userdocs/start/policies/) page
 
-9. [Proceed](/userdocs/running/jobs/) to creating your first ML job in kubernetes
+9. [Proceed](/documentation/userdocs/running/jobs/) to creating your first ML job in kubernetes
 
 10. You might want to try one of these GUI tools for Kubernetes:
 
     * [Lens](https://k8slens.dev/) - Graphical user interface
     * [K9s](https://k9scli.io/) - console graphical user interface
 
-Both will use your config file in default location to get access to the cluster.
+    Both will use your config file in default location to get access to the cluster.
 
-[![Guided kubernetes meditation](/userdocs/images/med.jpeg "Guided kubernetes meditation")](https://medium.com/@gabe_50302/a-guided-kubernetes-meditation-63cc4193582c)
+</Steps>
 
 [1]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [2]: https://portal.nrp-nautilus.io

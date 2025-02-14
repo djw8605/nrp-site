@@ -3,9 +3,10 @@ title: Introduction
 description: Introduction
 ---
 
-# Introduction
+import { Steps } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
 
-In these tutorials you will learn the basic skills needed to access resources associated with the Nautilus Cluster. These resources can include GPU and CPU cycles, storage and even software. For novice users, we recommend that you step through all the tutorials, especially tutorials on launching pods, requesting a storage volume, and using Docker. For users experienced in using containerized software, Kubernetes and virtualization, you may wish to skip the tutorials and read the [Nautilus User Documentation](https://ucsd-prp.gitlab.io/userdocs/running/ingress/) starting with how to expose HTTP.
+In these tutorials you will learn the basic skills needed to access resources associated with the Nautilus Cluster. These resources can include GPU and CPU cycles, storage and even software. For novice users, we recommend that you step through all the tutorials, especially tutorials on launching pods, requesting a storage volume, and using Docker.
 
 ## <a id="nautilusIntroduction"></a> What is Nautilus?
 
@@ -17,19 +18,29 @@ Nautilus has a huge variety of both standard GPUs (e.g. NVIDIA RTX2080-Ti, RTX30
 
 ### But how much does it cost?
 
-Perhaps most importantly, for individuals associated with institutions that participate in the InCommon identity and access management service, and who are conducting sponsored research in artificial intelligence or machine learning, Nautilus is FREE to use (subject to [policy restrictions](https://ucsd-prp.gitlab.io/userdocs/start/policies/) and fair use).
+Perhaps most importantly, for individuals associated with institutions that participate in the InCommon identity and access management service, and who are conducting sponsored research in artificial intelligence or machine learning, Nautilus is FREE to use (subject to [policy restrictions](/documentation/userdocs/start/policies/) and fair use).
 
 ## Steps to Successful Nautilus Use
 
 There are several key steps which you must go through to get access to Nautilus. They are:
 
+<Steps>
 1. Establish an account
-2. Configure your local system to interact with Nautilus
-3. Be promoted to User or Admin
-4. Read and understand the policies
-5. For beginners, complete the [Tutorials](https://ucsd-prp.gitlab.io/userdocs/tutorial/basic/)
 
-* WARNING: Familiarity with the Unix command line is the single biggest predictor of success with Nautilus. For most users who are unfamiliar with the Unix shell, this will prevent them from being able to use Nautilus, as it has no graphical user interface or desktop application. Users who do not understand the basic principles of Unix, lack the ability to navigate a Unix file system through a terminal window, do not understand Unix commands, have no experience with scripting or scripting languages, or have never written code before are highly discouraged from attempting to use Nautilus without first having a basic grasp of these skills.
+2. Configure your local system to interact with Nautilus
+
+3. Be promoted to User or Admin
+
+4. Read and understand the policies
+
+5. For beginners, complete the [Tutorials](./basic)
+</Steps>
+
+:::caution
+
+Familiarity with the Unix command line is the single biggest predictor of success with Nautilus. For most users who are unfamiliar with the Unix shell, this will prevent them from being able to use Nautilus, as it has no graphical user interface or desktop application. Users who do not understand the basic principles of Unix, lack the ability to navigate a Unix file system through a terminal window, do not understand Unix commands, have no experience with scripting or scripting languages, or have never written code before are highly discouraged from attempting to use Nautilus without first having a basic grasp of these skills.
+
+:::
 
 ## What if I don't think I have time to learn a bunch of new skills?
 
@@ -43,4 +54,5 @@ Nautilus is a community-based cluster, managed by a small group of NSF-funded ad
 
 # Now, let's get started...
 
-[Continue](https://ucsd-prp.gitlab.io/userdocs/start/get-access/)
+<LinkButton href="../start/get-access/">Get Access</LinkButton>
+
