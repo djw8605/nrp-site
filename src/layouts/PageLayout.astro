@@ -9,12 +9,13 @@ import type { MetaData } from '~/types';
 
 export interface Props {
   metadata?: MetaData;
+  id?: string;
 }
 
-const { metadata } = Astro.props;
+const { metadata, id } = Astro.props;
 ---
 
-<Layout metadata={metadata}>
+<Layout metadata={metadata} id={id}>
   <slot name="header">
     <Header {...headerData} isSticky showRssFeed showToggleTheme isDark />
   </slot>
