@@ -60,6 +60,12 @@
   padding: 0 5px;
 }
 
+#header nav button, #header nav>ul>li>a, #header svg {
+  /* Set the background color */
+  @apply mix-blend-difference;
+  @apply text-white;
+}
+
 .dropdown:focus .dropdown-menu,
 .dropdown:focus-within .dropdown-menu,
 .dropdown:hover .dropdown-menu {
