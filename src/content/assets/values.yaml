@@ -50,11 +50,9 @@ proxy:
       limits:
         cpu: "6"
         memory: 10Gi
-        nvidia.com/gpu: "1"
       requests:
         cpu: "1"
         memory: 512Mi
-        nvidia.com/gpu: "1"
 singleuser:
   uid: 0
   fsGid: 100
