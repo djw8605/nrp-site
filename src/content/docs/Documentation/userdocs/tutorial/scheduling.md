@@ -11,7 +11,7 @@ In Kubernetes, scheduling refers to the process of assigning pods to nodes in a 
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to query the cluster to see its current status and the status of its nodes in real-time.
@@ -171,9 +171,9 @@ Once the pod is up and running, let's log in and check if you indeed got the des
 
 `kubectl exec test-gpupod -it -- /bin/bash`
 
-You should now be inside of the software container running in the pod. The image we used (rocker/cuda) comes ready for [CUDA](/userdocs/NautilusGlossary/cuda), so you should be able to use the command `nvidia-smi` to see a readout of the GPU type and its details.
+You should now be inside of the software container running in the pod. The image we used (rocker/cuda) comes ready for [CUDA](/documentation/userdocs/NautilusGlossary/cuda), so you should be able to use the command `nvidia-smi` to see a readout of the GPU type and its details.
 
-[There is more information about choosing GPU types on Nautilus.](/userdocs/running/gpu-pods/#choosing-gpu-type)
+[There is more information about choosing GPU types on Nautilus.](/documentation/userdocs/running/gpu-pods/#choosing-gpu-type)
 
 ## Preferences in pods
 
@@ -262,11 +262,11 @@ Now look at the pod logs. Did it run in Korea?
 
 `kubectl logs test-geo`
 
-When you will do the [storage tutorial](/userdocs/tutorial/storage/#exploring-storageclasses), there will be a section for choosing the right storage class. Remember that you can pick a set of nodes closer to your storage location (region is close enough).
+When you will do the [storage tutorial](/documentation/userdocs/tutorial/storage/#exploring-storageclasses), there will be a section for choosing the right storage class. Remember that you can pick a set of nodes closer to your storage location (region is close enough).
 
 ## Optional Section: reserved nodes and taints. Using tolerations
 
-There are [several parts of the PRP Kubernetes pool that are off-limits to regular users](/userdocs/running/special). One of them is Science-DMZ nodes that don't have access to the regular internet.
+There are [several parts of the PRP Kubernetes pool that are off-limits to regular users](/documentation/userdocs/running/special). One of them is Science-DMZ nodes that don't have access to the regular internet.
 
 Here is a Pod yaml that will try to run on one:
 

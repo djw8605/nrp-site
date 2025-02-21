@@ -39,4 +39,4 @@ Once the pods start, you should be able to see the installation under your selec
 
 #### Automatic deployment
 
-You can put your jupyterhub configuration in GitLab and automatically redeploy the application on repository changes. Please refer to [this guide](/userdocs/development/k8s-integration/) for details.
+You can put your jupyterhub configuration in GitLab and automatically redeploy the application on repository changes. Please refer to [this guide](/documentation/userdocs/development/k8s-integration/) for details.

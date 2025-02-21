@@ -113,7 +113,7 @@ my-postgres-cluster my-team 14       Running   3           5m
 
 ### 4. Choosing the storage for the cluster
 
-Linstor storageClass is preferred as it provides the best performance for postgres. Refer to [linstor storage docs](/userdocs/storage/linstor/). Example of adding the linstor storage:
+Linstor storageClass is preferred as it provides the best performance for postgres. Refer to [linstor storage docs](/documentation/userdocs/storage/linstor/). Example of adding the linstor storage:
 
 ```yaml
 spec:

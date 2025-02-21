@@ -23,7 +23,7 @@ A Job is a higher-level abstraction that manages a Pod. A Job will ensure that t
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to create a simple job that will execute a command, then run to completion.
@@ -96,7 +96,7 @@ kubectl logs pi-<hash>
 
 The pod and job will remain for you to come and look at for `ttlSecondsAfterFinished=604800` seconds (1 week) by default, and you can adjust this value in your job definition if desired.
 
-You can use the [more advanced example](/userdocs/running/jobs) when ready.
+You can use the [more advanced example](/documentation/userdocs/running/jobs) when ready.
 
 ## The end
 

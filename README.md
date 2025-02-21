@@ -1,7 +1,11 @@
 # NRP web site
 
-### **🚨If you add or remove pages, please modify the navbar in *astro.config.ts*🚨**
+## Immportant notes for documentation:
 
+1. **🚨If you add or remove pages, please modify the navbar in *astro.config.ts*🚨**
+1. *Always* use .mdx not .md so things don't break
+1. To use 'note' blocks, use the :::note ::: syntax
+1. For any enumrated steps, please use Steps (import { Steps } from '@astrojs/starlight/components';)
 
 
 The site is based on [astrowind](https://astrowind.vercel.app) template.

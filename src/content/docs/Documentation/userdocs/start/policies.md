@@ -37,7 +37,7 @@ Kubernetes scheduler tries to accommodate all pods on the set of nodes according
 
 A **request** is what will be reserved for your pod on a node for scheduling purposes. A **limit** is the maximum which your pod should never exceed. If pod goes over its memory **limit**, it ***WILL BE KILLED***. If your pod was suddenly killed, please make sure you've got the limits set up right. [Google best practices post for requests and limits](https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-resource-requests-and-limits)
 
-While it's important to set the Limit properly, it's also important to not set the Request too high. Your **request should be as close as possible to the average resources** you're going to consume, and **limit should be a little higher than the highest peak** you're expecting to have. Use [monitoring](/userdocs/running/monitoring/) to set your requests and limits right.
+While it's important to set the Limit properly, it's also important to not set the Request too high. Your **request should be as close as possible to the average resources** you're going to consume, and **limit should be a little higher than the highest peak** you're expecting to have. Use [monitoring](/documentation/userdocs/running/monitoring/) to set your requests and limits right.
 
 If your RAM limit is much higher than request (more than ~20% higher), you can be in a situation when scheduler puts your pod on a node which only has requested amount of RAM available. Once the pod tries to allocate RAM above the request up to the limit, it will be killed before even reaching the limit, since the node only has requested amount. Same applies to CPUs: if your limit is much higher than request and you're using all available, the node might not have that many cores and will starve the resources, causing your job to run much slower. It's always a tradeoff, so use requests and limits wisely.
 
@@ -53,7 +53,7 @@ In case you need some pod to run idle for a long time, you can use the [Deployme
 #### Requesting GPUs
 
 
-When you [request GPUs for your pod](/userdocs/running/gpu-pods), nobody else can use those until you stop your pod. You should only schedule GPUs that you can actually use. **The only reason to request more than a single GPU** is when your GPU utilization is close to 100% and you can leverage more.
+When you [request GPUs for your pod](/documentation/userdocs/running/gpu-pods), nobody else can use those until you stop your pod. You should only schedule GPUs that you can actually use. **The only reason to request more than a single GPU** is when your GPU utilization is close to 100% and you can leverage more.
 
 GPUs are a limited resource shared by many users. If you plan on deploying large jobs (>50 GPUs) please present a plan in [matrix][3]
 
@@ -63,9 +63,9 @@ GPUs are a limited resource shared by many users. If you plan on deploying large
 We currently have more than a thousand users in the system, and many of them leave behind their deployments when their
 computation is done. There's no way for us to know whether some pod is useful or is abandoned. To clear the
 abandoned deployments, there's periodic process which destroys the workloads created more than 2 weeks ago. In case
-you're running [some permanent service](/userdocs/running/ingress/) and would want us to keep it running, you can contact admins in Matrix and ask
+you're running [some permanent service](/documentation/userdocs/running/ingress/) and would want us to keep it running, you can contact admins in Matrix and ask
 for an exception. Please provide an estimated period of service functioning and brief description of what the
-service does. [Long idle pods](/userdocs/running/long-idle/) can't be added to exceptions list, since those are considered temporary and we need to be sure those are cleaned when not needed.
+service does. [Long idle pods](/documentation/userdocs/running/long-idle/) can't be added to exceptions list, since those are considered temporary and we need to be sure those are cleaned when not needed.
 
 For workloads not in exceptions list you will get 3 notifications after which your workload will
 be deleted. Any data in persistent volumes will remain.

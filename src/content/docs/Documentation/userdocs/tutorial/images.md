@@ -35,7 +35,7 @@ First, create an account in our [GitLab](https://gitlab.nrp-nautilus.io) instanc
 
 Find the image you need. Let's say we want to extend the [python:3](https://hub.docker.com/_/python) image by adding a jupyter package to it, and also installing the vim text editor.
 
-Follow the [GitLab development guide](/userdocs/development/gitlab/) (make it public to simplify accessing your image), and also add this `Dockerfile` to the project before committing your changes:
+Follow the [GitLab development guide](/documentation/userdocs/development/gitlab/) (make it public to simplify accessing your image), and also add this `Dockerfile` to the project before committing your changes:
 
 ```
 FROM python:3
@@ -45,7 +45,7 @@ RUN pip install jupyter && \
   apt-get install -y vim
 ```
 
-Use the [basic section](/userdocs/tutorial/basic) to run the pod with your new image.
+Use the [basic section](/documentation/userdocs/tutorial/basic) to run the pod with your new image.
 
 Exec into the pod and check jupyter and vim are installed:
 

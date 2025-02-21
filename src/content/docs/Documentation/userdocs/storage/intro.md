@@ -9,7 +9,7 @@ description: Description
 
 ## Cleaning up
 
-**Please [purge](/userdocs/storage/purging/) any data you don't need. We're not an archival storage, and can only store the data actively used for computations.**
+**Please [purge](/documentation/userdocs/storage/purging/) any data you don't need. We're not an archival storage, and can only store the data actively used for computations.**
 
 **Any volume that was not accessed for 6 months can be purged without notification.**
 
@@ -33,7 +33,7 @@ new Runtime().module(define, name => {
 
 ### How to choose each filesystem to use
 
-**Read the [High I/O jobs](/userdocs/running/io-jobs/) guide on optimizing your storage performance.**
+**Read the [High I/O jobs](/documentation/userdocs/running/io-jobs/) guide on optimizing your storage performance.**
 
 **RBD (Rados Block Device)** is similar to a normal hard drive as it implements block storage on top of Ceph, and can run many kinds of file I/O operations including small files. Thus, it may accommodate conda/pip installation and code compilation. It can also provide higher IOPS than CephFS, but overall read/write performance tends to be slower than CephFS because it is less parallelized. Optimal read/write performance can be achieved when using a program or library that supports [librados](https://docs.ceph.com/en/latest/rados/api/librados-intro/) or when you code your own program using the library. Use this for housing databases or workloads that require quick response but not necessarily high read/write rates. It shares the storage pool with CephFS, therefore being the largest storage pool in Nautilus.
 

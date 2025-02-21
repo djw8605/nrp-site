@@ -3,7 +3,7 @@ title: Building in Gitlab
 description: Building in Gitlab
 ---
 
-To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/userdocs/tutorial/docker/).
+To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/documentation/userdocs/tutorial/docker/).
 
 We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source Code Management, [Continuous Integration automation][3], 
 containers registry and other development lifecycle tasks. It fully uses Nautilus Cluster resources, which provides our users unlimited storage and fast builds.
@@ -147,7 +147,7 @@ Use [multi-stage builds](https://docs.docker.com/develop/develop-images/multista
 
 ## Use S3 to store large files collections and access those during builds
 
-Refer to [S3 documentation](/userdocs/storage/ceph-s3/#using-s3-in-gitlab-ci).
+Refer to [S3 documentation](/documentation/userdocs/storage/ceph-s3/#using-s3-in-gitlab-ci).
 
 ## Other development information
 

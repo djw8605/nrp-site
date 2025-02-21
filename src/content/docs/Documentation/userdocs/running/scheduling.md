@@ -17,7 +17,7 @@ Each namespace is represented as a *queue* in yunikorn, which can be seen at the
 
 Most namespaces are located under the *general* queue with default guaranteed resources.
 
-There are special ones belonging to universities hosting our equipment. You can add your namespace to one of privileged groups in the portal ("Group" field) or by requesting [in matrix](/userdocs/start/contact/).
+There are special ones belonging to universities hosting our equipment. You can add your namespace to one of privileged groups in the portal ("Group" field) or by requesting [in matrix](/documentation/userdocs/start/contact/).
 
 [Interactive](#interactive-use) queues are set for namespaces generally running interactive use applications (Jupyterhubs, Coder, etc).
 
@@ -51,4 +51,4 @@ Using this will allow new pods to be scheduled ahead of older ones belonging to 
 
 #### Interactive use
 
-It's better to disable the preemption for interactive pods such as jupyterhub, coder and other pods where user is actively doing stuff. We can add namespaces to the "Interactive" queues [on request](/userdocs/start/contact/), making those non-preemptable even when the queue is above the guaranteed capacity.
+It's better to disable the preemption for interactive pods such as jupyterhub, coder and other pods where user is actively doing stuff. We can add namespaces to the "Interactive" queues [on request](/documentation/userdocs/start/contact/), making those non-preemptable even when the queue is above the guaranteed capacity.

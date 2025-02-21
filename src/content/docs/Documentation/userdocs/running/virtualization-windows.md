@@ -9,7 +9,7 @@ description: Virtualization - Windows
 
 First step is to download the Windows 11 ISO from <https://www.microsoft.com/en-us/software-download/windows11>.
 
-Then, you need to follow [these steps](/userdocs/storage/ceph-s3#host-a-file-for-public-download) to host your Windows 11 ISO file in an S3 Bucket.
+Then, you need to follow [these steps](/documentation/userdocs/storage/ceph-s3#host-a-file-for-public-download) to host your Windows 11 ISO file in an S3 Bucket.
 
 After you have your ISO file download link ready, create this DataVolume:
 

@@ -3,13 +3,18 @@ title: Install
 description: Install
 ---
 
+import { Steps } from '@astrojs/starlight/components';
 
-:::note 
-    These instructions are for nodes that we will not be joining the NRP by giving IPMI access to NRP admins.  If you are giving IPMI access to NRP admins, please contact NRP admins with details.
+:::note
+These instructions are for nodes that we will not be joining the NRP by giving IPMI access to NRP admins. If you are giving IPMI access to NRP admins, please contact NRP admins with details.
+:::
 
 ## To install or reinstall a new node:
 
-1. If node is in the cluster already, first [make sure the node is not a part of ceph or is a gateway (metallb, ingress, etc)](/admindocs/cluster/node-mgmt/#general-things-to-look-at-when-rebooting-a-node). Ceph nodes can only be taken out one at a time, allowing time to recover after being brought back.
+<Steps>
+
+1. If node is in the cluster already, first [make sure the node is not a part of ceph or is a gateway (metallb, ingress, etc)](/documentation/admindocs/cluster/node-mgmt/#general-things-to-look-at-when-rebooting-a-node). Ceph nodes can only be taken out one at a time, allowing time to recover after being brought back.
+
 
 1. Find the network settings: IP, subnet, gateway, DNS (if not google/cloudflare)
 
@@ -93,6 +98,7 @@ The below steps are meant for NRP administrators, and do not need to be performe
 
         ansible-playbook setup.yml -l <node> -e join_token=...
 
+</Steps>
 ## Labels done by cluster admins:
 
 Check that proper labels were added by ansible:

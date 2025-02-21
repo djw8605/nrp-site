@@ -11,6 +11,6 @@ Required Information:
 2. DNS information of the host network. If unknown, we will default to using public DNS such as 1.1.1.1 (Cloudflare) and 8.8.8.8 (Google)
 3. The IP address (and any credentials if they are set) for the server’s IPMI. Jump host information if required to reach the IPMI interface.
 4. If need to set the ACL accessing host for IPMI our IP is 67.58.53.149
-5. Review the [network requirements](/admindocs/participating/network/)
+5. Review the [network requirements](/documentation/admindocs/participating/network/)
 
-That’s enough for us to set up the host.  Send this information to central contact of administrators. [Matrix](/userdocs/start/contact/) is the preferred way to contact us.
+That’s enough for us to set up the host.  Send this information to central contact of administrators. [Matrix](/documentation/userdocs/start/contact/) is the preferred way to contact us.

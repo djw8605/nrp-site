@@ -328,7 +328,7 @@ In one entry, `value:` and `valueFrom:` must not exist at the same time.
 
 **Comment out `emptyDir: {}` and uncomment `persistentVolumeClaim:`, then change `claimName:` to the name of your PersistentVolumeClaim after uncommenting.**
 
-`rook-ceph-block-[region]` or `linstor-[region]` are the recommended StorageClasses to be mounted to `/home/ubuntu`. However, if their performances are slow for sequential read/writes, you may use `rook-cephfs-[region]` but **NEVER MOUNT TO `/home/ubuntu`**. Instead mount to a different directory such as `/home/ubuntu/persistent` or `/mnt/persistent`. Refer to the [Storage](/userdocs/storage/intro/) section for more information.
+`rook-ceph-block-[region]` or `linstor-[region]` are the recommended StorageClasses to be mounted to `/home/ubuntu`. However, if their performances are slow for sequential read/writes, you may use `rook-cephfs-[region]` but **NEVER MOUNT TO `/home/ubuntu`**. Instead mount to a different directory such as `/home/ubuntu/persistent` or `/mnt/persistent`. Refer to the [Storage](/documentation/userdocs/storage/intro/) section for more information.
 
 **If your client network blocks (likely your campus network) or throttles (likely your home network restricted by your Internet Service Privider) the UDP protocol, change the environment variable `SELKIES_TURN_PROTOCOL` to `tcp`.**
 
@@ -373,7 +373,7 @@ kubectl create -f egl.yml
 
 The below reference configuration `xgl-ingress.yml` is to expose your [docker-nvidia-glx-desktop](https://github.com/selkies-project/docker-nvidia-glx-desktop) container to the `*.nrp-nautilus.io` endpoint. Replace `YOUR_ENDPOINT` to the subdomain you want to use.
 
-Modify the configuration as in [Scaling and exposing](/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/xgl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
+Modify the configuration as in [Scaling and exposing](/documentation/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/xgl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -424,7 +424,7 @@ Access `YOUR_ENDPOINT.nrp-nautilus.io` with your web browser.
 
 The below reference configuration `egl-ingress.yml` is to expose your [docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop) container to the `*.nrp-nautilus.io` endpoint. Replace `YOUR_ENDPOINT` to the subdomain you want to use.
 
-Modify the configuration as in [Scaling and exposing](/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/egl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
+Modify the configuration as in [Scaling and exposing](/documentation/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/egl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -491,7 +491,7 @@ It is **STRONGLY** recommended that you update the container tags frequently or 
 
 You can import either `https://github.com/selkies-project/docker-nvidia-glx-desktop.git` or `https://github.com/selkies-project/docker-nvidia-egl-desktop.git` by importing with **Repo by URL** from <https://gitlab.nrp-nautilus.io/projects/new#import_project>.
 
-Refer to [Building in GitLab](/userdocs/development/gitlab) on how you can change and build your own customized container (add `--build-arg="UBUNTU_RELEASE=<Ubuntu Version>"` after `/kaniko/executor` in the example `.gitlab-ci.yml` file to change the Ubuntu version).
+Refer to [Building in GitLab](/documentation/userdocs/development/gitlab) on how you can change and build your own customized container (add `--build-arg="UBUNTU_RELEASE=<Ubuntu Version>"` after `/kaniko/executor` in the example `.gitlab-ci.yml` file to change the Ubuntu version).
 
 **If you want to change the `Dockerfile`, you are recommended to use the original container as a base container and only replace the `entrypoint.sh` and `supervisord.conf` files. This will keep you up to date with the latest updates. Use persistent container tags (such as `24.04-20210101010101`) to preserve a specific container build.**
 

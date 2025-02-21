@@ -11,7 +11,7 @@ In Kubernetes, a Persistent Volume Claim (PVC) is a resource that allows a user 
 
 ## Prerequisites
 
-This section builds on skills from the tutorial on [Basic Kubernetes](/userdocs/tutorial/basic). You will need a basic understanding of Kubernetes concepts such as Pods, Persistent Volume Claims (PVCs), and Persistent Volumes (PVs).
+This section builds on skills from the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic). You will need a basic understanding of Kubernetes concepts such as Pods, Persistent Volume Claims (PVCs), and Persistent Volumes (PVs).
 
 ## Learning objectives
 
@@ -199,13 +199,13 @@ In volumes section we're attaching the requested persistent volume to the pod (b
 
 ## Exploring storageClasses
 
-Attaching persistent storage is usually done based on storage class. You can explore the different storage classes by reading the [documentation](/userdocs/storage/intro). Not all storage classes are available to you as a User or even as a namespace administrator.
+Attaching persistent storage is usually done based on storage class. You can explore the different storage classes by reading the [documentation](/documentation/userdocs/storage/intro). Not all storage classes are available to you as a User or even as a namespace administrator.
 
 Note that the one we used is the default - it will be used if you define none.
 
 :exclamation: Not all Linux distributions share the same functionalities, though many of the basics may be the same (e.g. POSIX-compliance). It's important to choose the right distribution based on your needs. It's also important to remember to balance your requests against your actual needs, keeping in mind that optimizing system resource requirements is important when large numbers of tasks are executed concurrently. Minimizing system resource requirements improves scalability, speed, reliability and stability.
 
-:exclamation: Remember that you can choose compute nodes location closer to your preferred storage class as described in the [scheduling tutorial](/userdocs/tutorial/scheduling/#using-geographical-topology).
+:exclamation: Remember that you can choose compute nodes location closer to your preferred storage class as described in the [scheduling tutorial](/documentation/userdocs/tutorial/scheduling/#using-geographical-topology).
 
 ## Cleaning up
 

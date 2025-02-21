@@ -3,7 +3,7 @@ title: Local Scratch
 description: Local Scratch
 ---
 
-Most nodes in the cluster have local NVME drives, which provide faster I/O than shared filesystems. These can be used for workloads that require very intensive I/O operations ([see recommendations and an example for running these](/userdocs/running/io-jobs/)).
+Most nodes in the cluster have local NVME drives, which provide faster I/O than shared filesystems. These can be used for workloads that require very intensive I/O operations ([see recommendations and an example for running these](/documentation/userdocs/running/io-jobs/)).
 
 You can request an [ephemeral volume](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir) to be attached to your pod as a fast scratch space. Note that any information stored in it will be destroyed after pod shutdown.
 

@@ -7,15 +7,15 @@ description: ML/Jupyter pod
 
 We provide the [JupyterHub](https://jupyterhub-west.nrp-nautilus.io) service running in our cluster, which is great
 if you need to quickly run your workflow and do not want to learn any
-kubernetes. Proceed to [JupyterHub Service](/userdocs/jupyter/jupyterhub-service) for details.
+kubernetes. Proceed to [JupyterHub Service](/documentation/userdocs/jupyter/jupyterhub-service) for details.
 
 If the [JupyterHub](https://jupyterhub-west.nrp-nautilus.io) service does not meet your needs, and you need to create your own JupyterLab instance, you can run it as a Jupyter container in Nautilus by following step by step instructions below.
 
-This topic assumes that you have basic knowledge of Kubernetes, or you have completed the [Quick Start](/userdocs/start/quickstart) and [Basic kubernetes](/userdocs/tutorial/basic) sections.
+This topic assumes that you have basic knowledge of Kubernetes, or you have completed the [Quick Start](/documentation/userdocs/start/quickstart) and [Basic kubernetes](/documentation/userdocs/tutorial/basic) sections.
 
 ## Step by Step Tensorflow with Jupyter
 
-A Jupyter container in Nautilus [will be automatically destroyed in 6 hours](/userdocs/start/policies/#interactive-use-vs-batch). Use the [examples for Jobs](/userdocs/running/jobs/) once you're done with interactive debugging and ready to run a bigger job.<br>
+A Jupyter container in Nautilus [will be automatically destroyed in 6 hours](/documentation/userdocs/start/policies/#interactive-use-vs-batch). Use the [examples for Jobs](/documentation/userdocs/running/jobs/) once you're done with interactive debugging and ready to run a bigger job.<br>
 
 ### <a name="step1"></a>Step 1: Set context  
 
@@ -200,5 +200,5 @@ It is important to tear down everything once we are done with the Jupyter to fre
 
     This will free up the resources taken by our Pod.
 
-So far you have created an instance of Jupyter Notebook for personal use, if you prefer to create a full stack multi-user JupyterHub, proceed to [Deploy jupyterhub](/userdocs/jupyter/jupyterhub).
+So far you have created an instance of Jupyter Notebook for personal use, if you prefer to create a full stack multi-user JupyterHub, proceed to [Deploy jupyterhub](/documentation/userdocs/jupyter/jupyterhub).
 

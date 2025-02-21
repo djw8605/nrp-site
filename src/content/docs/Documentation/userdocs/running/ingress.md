@@ -3,9 +3,9 @@ title: Exposing HTTP
 description: Exposing HTTP
 ---
 
-While pods are not accessible from outside the cluster, you can expose the http services provided by pods by using the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controllers.  In general we don't allow exposing non-http applications via TCP ports, but if you really need to do that, contact us on [Matrix](/userdocs/start/contact/).
+While pods are not accessible from outside the cluster, you can expose the http services provided by pods by using the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controllers.  In general we don't allow exposing non-http applications via TCP ports, but if you really need to do that, contact us on [Matrix](/documentation/userdocs/start/contact/).
 
-For a complete example see the ([Tutorial](/userdocs/tutorial/basic2/))
+For a complete example see the ([Tutorial](/documentation/userdocs/tutorial/basic2/))
 
 Refer to the [haproxy ingress documentation](https://haproxy-ingress.github.io/docs/configuration/keys/) to set up additional config.
 

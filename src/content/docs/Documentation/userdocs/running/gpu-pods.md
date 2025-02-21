@@ -34,12 +34,12 @@ spec:
         nvidia.com/gpu: 1
 ```
 
-This example requests 1 GPU device. You can have up to 8 per node if you're [using jobs](/userdocs/running/jobs/), and up to 2 for pods. If you request GPU devices in your pod, 
+This example requests 1 GPU device. You can have up to 8 per node if you're [using jobs](/documentation/userdocs/running/jobs/), and up to 2 for pods. If you request GPU devices in your pod, 
 kubernetes will auto schedule your pod to the appropriate node. There's no need to specify the location manually.
 
 **You should always delete your pod** when your computation is done to let other users use the GPUs.
-Consider using [Jobs](/userdocs/running/jobs/) **with actual script instead of `sleep`** whenever possible to ensure your pod is not wasting GPU time.
-If you have never used Kubernetes before, see the [tutorial](/userdocs/tutorial/intro).
+Consider using [Jobs](/documentation/userdocs/running/jobs/) **with actual script instead of `sleep`** whenever possible to ensure your pod is not wasting GPU time.
+If you have never used Kubernetes before, see the [tutorial](/documentation/userdocs/tutorial/intro).
 
 #### Requesting special GPUs
 
@@ -77,7 +77,7 @@ spec:
         nvidia.com/a100: 1
 ```
 
-For Grace Hopper node make sure you're also using the image with `arm` support (`nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04` is a good one) and [tolerating the arm64 architecture](/userdocs/running/special/):
+For Grace Hopper node make sure you're also using the image with `arm` support (`nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04` is a good one) and [tolerating the arm64 architecture](/documentation/userdocs/running/special/):
 
 ```yaml
 tolerations:
@@ -133,7 +133,7 @@ NVIDIA-RTX-A6000 | 48G
 Quadro-RTX-8000 | 48G
 NVIDIA-A100-SXM4-80GB | 80G
 
-**NOTE**: [Not all nodes are available to all users](/userdocs/running/special/). You can consult about your available resources in [Matrix](/userdocs/start/contact) and on [resources page](https://portal.nrp-nautilus.io/resources). 
+**NOTE**: [Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://portal.nrp-nautilus.io/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 
 :::warning

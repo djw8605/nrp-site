@@ -8,7 +8,7 @@ already deployed by cluster admins that you can use without creating those yours
 
 :exclamation: Most services require additional registration.
 
-**People are expected to report any not working service in [Matrix Support](/userdocs/start/contact).**
+**People are expected to report any not working service in [Matrix Support](/documentation/userdocs/start/contact).**
 
 #### Computations
 - [JupyterHub (West Coast)][1]
@@ -20,7 +20,7 @@ already deployed by cluster admins that you can use without creating those yours
 - [Jitsi: Video conferencing][10]
 - [Nextcloud: File sharing][6]
 - [Overleaf: LaTeX collaboration][12]
-- [SyncThing: File sync][8] ([Contact us to set up](/userdocs/start/contact))
+- [SyncThing: File sync][8] ([Contact us to set up](/documentation/userdocs/start/contact))
 - [Coder: remote development environment][13]
 - [Hedgedoc: collaborative markdown editor][14]
 

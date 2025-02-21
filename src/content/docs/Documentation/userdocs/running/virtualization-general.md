@@ -7,7 +7,7 @@ description: Virtualization - General
 
 Virtual machines are more sensitive to the storage speed than regular container, making it important to choose the right storage type and region for your VM image.
 
-[Linstor](/userdocs/storage/linstor/) provides the fastest available storage option for VMs.
+[Linstor](/documentation/userdocs/storage/linstor/) provides the fastest available storage option for VMs.
 
 It's also important to minimize the latency to the storage. We currently have Linstor available in San Diego and UNL area. So please choose the region closes to your intendent computation place, and position your VMs as close to the storage as possible.
 
@@ -29,4 +29,4 @@ To use the GPU in VM, add it to the `gpus` section of your VM definition with th
             name: gpu1
 ```
 
-You can proceed with running our examples for [Windows](/userdocs/running/virtualization-windows/) and [Ubuntu linux](/userdocs/running/virtualization-ubuntu/)
+You can proceed with running our examples for [Windows](/documentation/userdocs/running/virtualization-windows/) and [Ubuntu linux](/documentation/userdocs/running/virtualization-ubuntu/)

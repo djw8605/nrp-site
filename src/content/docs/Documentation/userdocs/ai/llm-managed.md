@@ -7,7 +7,7 @@ description: NRP-Managed LLMs
 
 We use the [LiteLLM](https://www.litellm.ai) LLM proxy to provide access to the LLMs we're running on nautilus.
 
-You can start from logging to the [litellm UI](https://llm.nrp-nautilus.io/ui/) and requesting in [Matrix](/userdocs/start/contact/) to be assigned to a Team. Once you're a member of a team, you can create the tokens and access the models.
+You can start from logging to the [litellm UI](https://llm.nrp-nautilus.io/ui/) and requesting in [Matrix](/documentation/userdocs/start/contact/) to be assigned to a Team. Once you're a member of a team, you can create the tokens and access the models.
 
 To create a token, open the Virtual Keys tab and create a new token to access the API. There are also examples on using the API.
 

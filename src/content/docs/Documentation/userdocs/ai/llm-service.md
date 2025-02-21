@@ -86,7 +86,7 @@ chat:
       - <subdomain>-chat.nrp-nautilus.io
 
   modelConfig: {}
-    # :::THis doesn't seem to work now. You can manually add this later as described below.
+    # :::This doesn't seem to work now. You can manually add this later as described below.
     ## e.g.
     # parameters:
     #   temperature: 0.1
@@ -130,7 +130,7 @@ mongodb:
       memory: "1G"
 ```
 
-Replace `<subdomain>`. Optionally leave and [modify the section with `desired_gpu_type`](/userdocs/running/gpu-pods/#choosing-gpu-type) or remove the whole `affinity` block.
+Replace `<subdomain>`. Optionally leave and [modify the section with `desired_gpu_type`](/documentation/userdocs/running/gpu-pods/#choosing-gpu-type) or remove the whole `affinity` block.
 
 [Install Helm](https://github.com/helm/helm#install) and deploy the LLM into your namespace:
 
@@ -310,4 +310,4 @@ After the model starts (takes a long time for llama2 in the example), in the cha
 
 The list of available models to download is available at [https://huggingface.co/h2oai](https://huggingface.co/h2oai).
 
-Once the model is started, refer to the [Ingress docs](/userdocs/running/ingress/) to expose the service to the world.
+Once the model is started, refer to the [Ingress docs](/documentation/userdocs/running/ingress/) to expose the service to the world.

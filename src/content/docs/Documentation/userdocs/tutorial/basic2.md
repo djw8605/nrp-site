@@ -19,7 +19,7 @@ Horizontal scaling in Nautilus allows you increase the overall workload of your 
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to deploy a basic Apache service across multiple replicas.
@@ -30,7 +30,7 @@ This section builds on skills from both the [Quickstart](/userdocs/start/quickst
 
 In this exercise, we will launch multiple Web servers.
 
-To make distinguishing the two servers easier, we will force the nodename into their homepages. Using stock images, we achieve this by using an [init container](/userdocs/NautilusGlossary/initContainer).
+To make distinguishing the two servers easier, we will force the nodename into their homepages. Using stock images, we achieve this by using an [init container](/documentation/userdocs/NautilusGlossary/initContainer).
 
 You can copy-and-paste the lines below into a new file called ``http2.yaml`` (using the ``cat`` command to redirect the standard input).
 
@@ -294,7 +294,7 @@ kubectl create -f ingress.yaml
 
 You should now be able to fetch the Web pages from your browser by opening <https://test-service.nrp-nautilus.io>.
 
-:exclamation: Note that SSL termination is already provided for you. More information is available in [Ingress section](/userdocs/running/ingress).
+:exclamation: Note that SSL termination is already provided for you. More information is available in [Ingress section](/documentation/userdocs/running/ingress).
 
 You can now delete the deployment:
 

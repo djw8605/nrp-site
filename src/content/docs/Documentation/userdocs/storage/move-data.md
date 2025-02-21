@@ -7,7 +7,7 @@ description: Moving Data
 
 If you want to send data between the cluster storage and some other storage outside (including your local computer), you have several options, and choosing one depends on the volume of your data, number of files, where you data is now (and whether there's access to this location from the cluster).
 
-Kubernetes pods have local addresses and are not accessible from outside, so your options are pretty much limited to either accessing the cluster storage itself (S3), or pulling the data into the pod. If you're not using the services provided by the cluster (S3 or Nextcloud), you'll have to mount [a persistent storage volume](/userdocs/storage/ceph-posix/) into your pod.
+Kubernetes pods have local addresses and are not accessible from outside, so your options are pretty much limited to either accessing the cluster storage itself (S3), or pulling the data into the pod. If you're not using the services provided by the cluster (S3 or Nextcloud), you'll have to mount [a persistent storage volume](/documentation/userdocs/storage/ceph/) into your pod.
 
 ### "kubectl cp" command
 
@@ -25,18 +25,18 @@ kubectl -n my_namespace cp my_super_pod:/tmp/file.dat ~/tmp/file.dat
 
 ### Using S3 object storage provided by the cluster
 
-This is the most scalable way, and you can transfer the largest volume and number of files using it. Refer to our [S3 documentation](/userdocs/storage/ceph-s3/) on how to request an account, and setup one of clients outside and inside to access the data.
+This is the most scalable way, and you can transfer the largest volume and number of files using it. Refer to our [S3 documentation](/documentation/userdocs/storage/ceph-s3/) on how to request an account, and setup one of clients outside and inside to access the data.
 
 ### Using the Nextcloud instance
 
-Using our [Nextcloud](/userdocs/storage/nextcloud/) provides a convenient way to sync the data from your local machine, but this way is not too scalable and fast. Also you'll still have to copy the data to the pod from Nextcloud to use it. (The page provides a setup example for rclone which uses the Nextcloud WebDAV interface).
+Using our [Nextcloud](/documentation/userdocs/storage/nextcloud/) provides a convenient way to sync the data from your local machine, but this way is not too scalable and fast. Also you'll still have to copy the data to the pod from Nextcloud to use it. (The page provides a setup example for rclone which uses the Nextcloud WebDAV interface).
 
 ### Pulling data from inside the pod
  
  If your data is located in a storage which can be accessed from outside (any cloud provider, a server, etc), it might be easier to pull the data into your pod. Depending on the data size, you can either:
  
- * Run an [idle pod](/userdocs/running/long-idle/), `kubectl exec` into it and manually run a command. You'll have to set up the credentials to access the remote storage.
- * Run a [batch job](/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
+ * Run an [idle pod](/documentation/userdocs/running/long-idle/), `kubectl exec` into it and manually run a command. You'll have to set up the credentials to access the remote storage.
+ * Run a [batch job](/documentation/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
 
  The tools you can use include [scp](https://en.wikipedia.org/wiki/Secure_copy) (needs you to set up an ssh key or type the password by hand), [rclone](https://rclone.org/) (supports MANY data storages, and you can copy the config file generated locally), wget/curl (for pulling data from HTTP servers), any other tool for accessing your dataset you might find.
 

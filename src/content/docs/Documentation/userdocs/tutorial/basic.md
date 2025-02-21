@@ -12,7 +12,7 @@ In this tutorial, you will be introduced to basic k8s commands, how to launch si
 :exclamation: You may also see the :exclamation: mark followed by tips or important pieces of information that can assist you or be important things to remember while using Nautilus.
 
 ## Prerequisites
-This section assumes you've completed the [quickstart](/userdocs/start/quickstart/) section.
+This section assumes you've completed the [quickstart](/documentation/userdocs/start/quickstart/) section.
 
 ## Learning Objectives
 1. You will understand the basic format of k8s commands.
@@ -43,9 +43,9 @@ kubectl get nodes
 
 ### List processes running in your namespace
 There are three categories of processes we will examine:
-- [pods](/userdocs/NautilusGlossary/pod)
-- [deployments](/userdocs/NautilusGlossary/deployment)
-- [services](/userdocs/NautilusGlossary/service)
+- [pods](/documentation/userdocs/NautilusGlossary/pod)
+- [deployments](/documentation/userdocs/NautilusGlossary/deployment)
+- [services](/documentation/userdocs/NautilusGlossary/service)
 
 Listing the categories running in k8s follows a similar format.
 
@@ -368,7 +368,7 @@ kubectl exec -it test-dep-<hash> -- /bin/bash
 :exclamation: Using the right image helps with reliability and resiliency.
 >Ensuring that the software container you are deploying has all the necessary elements to function involves creating a well-packaged and self-contained container image. Unlike the simple examples above, you can make a robust and reliable deployment by specifying an appropriate base image, and including any system libraries, and any language-specific runtime or dependencies in your software container.
 
-:question: Examining the [`dep1.yaml`](dep1) example above, what would you change to specify a different image? Keep that in mind as we progress through the tutorials. If you are curious and want to read ahead, we cover that topic in the section called "[Images](/userdocs/tutorial/images)".
+:question: Examining the [`dep1.yaml`](dep1) example above, what would you change to specify a different image? Keep that in mind as we progress through the tutorials. If you are curious and want to read ahead, we cover that topic in the section called "[Images](/documentation/userdocs/tutorial/images)".
 
 Let’s now delete the deployment:
 

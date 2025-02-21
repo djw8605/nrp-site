@@ -7,7 +7,7 @@ description: Asking for Support
 
 To ensure that our support team can provide you with the most accurate and efficient assistance, we've outlined some guidelines for asking effective questions in our support chat.
 
-To reach out to us please use the [matrix chat registration guide](/userdocs/start/contact/).
+To reach out to us please use the [matrix chat registration guide](/documentation/userdocs/start/contact/).
 
 ### Before You Ask
 

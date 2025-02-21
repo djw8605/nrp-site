@@ -13,7 +13,7 @@ to the code and minimal changes in the definition, plus your changes are saved i
 
     Since jobs in Nautilus can run forever, you can only run jobs with meaningful `command` field. Running in manual mode (`sleep infinity` command and manual start of computation) is prohibited, and user **can be banned**.
 
-Use [our tutorial](/userdocs/tutorial/jobs/) for a simple job example.
+Use [our tutorial](/documentation/userdocs/tutorial/jobs/) for a simple job example.
 
 #### Pulling code from GIT
 
