@@ -1,0 +1,89 @@
+---
+title: NRP-Managed LLMs
+description: NRP-Managed LLMs
+---
+
+import Image from '~/components/common/Image.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+<CallToAction>
+
+<Fragment slot="title">
+    Accessing NRP LiteLLM
+</Fragment>
+
+<Fragment slot="subtitle">
+<p>
+<a href="https://llm.nrp-nautilus.io/ui/"><Image src="~/assets/images/docs/litellm-logo.png" alt="LiteLLM Logo"/></a>
+We use the [LiteLLM](https://www.litellm.ai) proxy to provide access to the LLMs we're running on nautilus.
+
+You can start from logging to the [NRP litellm UI](https://llm.nrp-nautilus.io/ui/). If you're coming from an .edu domain, you'll be placed into NRP team unless you're in a special SDSC list, in which case you'll be placed in the SDSC team. Otherwise request in [Matrix](/documentation/userdocs/start/contact/) to be assigned to a Team. 
+
+Once you're a member of a team, you can create the tokens and access the models.
+
+To create a token, open the Virtual Keys tab and create a new token to access the API. There are also examples on using the API.
+</p>
+</Fragment>
+</CallToAction>
+
+
+
+## Chat UIs
+
+<section class="bg-blue-50 dark:bg-slate-800 not-prose">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium">
+    <span class="font-bold">
+      The following apps provide access to models with no additional tokens.
+    </span>
+  </div>
+</section>
+
+<CallToAction>
+
+    <Fragment slot="title">
+        NRP OpenWebUI
+    </Fragment>
+
+    <Fragment slot="subtitle">
+        <p>
+            <a href="https://nrp-openwebui.nrp-nautilus.io"><Image src="~/assets/images/docs/openwebui-logo.png" alt="OpenwebUI Logo" width={170}/></a>
+            [https://nrp-openwebui.nrp-nautilus.io](https://nrp-openwebui.nrp-nautilus.io) - OpenWebUI chat
+        </p>
+    </Fragment>
+</CallToAction>
+
+
+<CallToAction>
+
+    <Fragment slot="title">
+        NRP LibreChat
+    </Fragment>
+
+    <Fragment slot="subtitle">
+        <p>
+            <a href="https://librechat.ai/"><Image src="~/assets/images/docs/LibreChat-logo.jpg" alt="LibreChat Logo" width={170}/></a>
+            [https://librechat.nrp-nautilus.io](https://librechat.nrp-nautilus.io) - LibreChat
+        </p>
+    </Fragment>
+</CallToAction>
+
+## Chat UIs using LiteLLM tokens
+
+<CallToAction>
+
+<Fragment slot="title">
+    ChatBox
+</Fragment>
+
+<Fragment slot="subtitle">
+<p>
+<a href="https://chatboxai.app"><Image src="~/assets/images/docs/chatbox-logo.png" alt="ChatBox Logo" width={170}/></a>
+
+You can also create your own token and use it via the [Chatbox AI app](https://chatboxai.app)
+
+</p>
+</Fragment>
+</CallToAction>
+
+
+
