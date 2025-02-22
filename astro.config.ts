@@ -42,10 +42,6 @@ export default defineConfig({
           label: "User Guide",
           items: [
             {
-              label: "Cluster Usage",
-              link: "documentation/userdocs/usage/usage_stats",
-            },
-            {
               label: "Start",
               collapsed: true,
               items: [
@@ -56,7 +52,6 @@ export default defineConfig({
                 { label: "Deployed Services", link: "documentation/userdocs/start/resources" },
                 { label: "Glossary", link: "documentation/userdocs/start/glossary" },
                 { label: "FAQ", link: "documentation/userdocs/start/faq" },
-                { label: "Contact in Matrix", link: "documentation/userdocs/start/contact" },
                 { label: "Asking for Support", link: "documentation/userdocs/start/support" },
               ],
             },

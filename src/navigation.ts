@@ -11,11 +11,11 @@ export const headerData = {
         },
         {
           text: 'New Contributor Guide',
-          href: getPermalink('/new-contributor-guide'),
+          href: getPermalink('/documentation/admindocs/participating/new-contributor-guide'),
         },
         {
           text: 'Network requirements',
-          href: getPermalink('/network-requirements'),
+          href: getPermalink('/documentation/admindocs/participating/network'),
         },
       ],
     },

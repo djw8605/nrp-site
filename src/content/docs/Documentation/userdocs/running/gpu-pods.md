@@ -3,17 +3,19 @@ title: GPU Pods
 description: GPU Pods
 ---
 
-:::info
+:::note
+In this section you will request GPUs. Make sure you don't waste those and delete your pods when not using the GPUs.
+:::
+
+
+
+:::caution
     
-    In this section you will request GPUs. Make sure you don't waste those and delete your pods when not using the GPUs.
+Some specific high-memory GPUs are require the gpu type specified in the container `resource` requests and limits, and are a special resource.
 
+:::
 
-:::warning
-    
-    The NRP is in a transition in how some specific high-memory GPUs are requested. The old syntax involved setting node affinity, the new
-    only requires the gpu type in the container `resource` requests and limits.
-
-#### Running GPU pods
+## Running GPU pods
 
 Use this definition to create your own pod and deploy it to kubernetes:
 
@@ -37,11 +39,14 @@ spec:
 This example requests 1 GPU device. You can have up to 8 per node if you're [using jobs](/documentation/userdocs/running/jobs/), and up to 2 for pods. If you request GPU devices in your pod, 
 kubernetes will auto schedule your pod to the appropriate node. There's no need to specify the location manually.
 
-**You should always delete your pod** when your computation is done to let other users use the GPUs.
+:::danger[You should always delete your pod when your computation is done to let other users use the GPUs.]
+
 Consider using [Jobs](/documentation/userdocs/running/jobs/) **with actual script instead of `sleep`** whenever possible to ensure your pod is not wasting GPU time.
 If you have never used Kubernetes before, see the [tutorial](/documentation/userdocs/tutorial/intro).
 
-#### Requesting special GPUs
+:::
+
+## Requesting special GPUs
 
 Certain kinds of GPUs are advertised on nodes as a special resource, f.e. "nvidia.com/rtx-8000". You have to request that resource instead of the "nvidia.com/gpu" one.
 
@@ -86,13 +91,13 @@ tolerations:
   effect: "NoSchedule"
 ```
 
-#### Requesting many GPUs
+## Requesting many GPUs
 
 Since 1 and 2 GPU jobs are blocking nodes from getting 4 and 8-GPU jobs, there are some nodes reserved for those. Once you submit a job with 4 or 8 GPUs request, a controller will automatically add toleration which will allow you to use the node reserved for more GPUs. You don't need to do anything manually for that.
 
-#### Choosing GPU type
+## Choosing GPU type
 
-**See [requesting high-end GPUs](#requesting-high-end-gpus) for special types of GPU**
+**See [requesting special GPUs](#requesting-special-gpus) for special types of GPU**
 
 We have a variety of GPU flavors attached to Nautilus. This table describes the types of GPUs available for use, but is not up to date - it's better to use the actual cluster information (f.e. `kubectl get nodes -L nvidia.com/gpu.product`).
 
@@ -133,12 +138,15 @@ NVIDIA-RTX-A6000 | 48G
 Quadro-RTX-8000 | 48G
 NVIDIA-A100-SXM4-80GB | 80G
 
-**NOTE**: [Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://portal.nrp-nautilus.io/resources). 
+:::note
+[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://portal.nrp-nautilus.io/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
+:::
 
-:::warning
+:::caution
+  For higher memory GPUs, use the [requesting special GPUs syntax](#requesting-special-gpus)! Affinity allows you to further refine the GPU type or choose the GPU type for generic GPUs.
+:::
 
-    This is the old syntax below. For higher end GPUs, the use the syntax documented above!
 
 To use a **specific type of GPU**, add the affinity definition to you pod yaml
 file. The example below specifies *1080Ti* GPU:
@@ -157,7 +165,7 @@ spec:
 
 **To make sure you did everything correctly** after you've submited the job, look at the corresponding pod yaml (`kubectl get pod ... -o yaml`) and check that resulting nodeAffinity is as expected.
 
-#### Selecting CUDA version
+## Selecting CUDA version
 
 In general the higher CUDA versions support the lower and same driver version. The nodes are labelled with the major and minor CUDA and driver versions. You can check those at the [resources page](https://portal.nrp-nautilus.io/resources) or list with this command (it will also choose only GPU nodes):
 

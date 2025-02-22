@@ -5,7 +5,7 @@ description: CVMFS
 
 ### OSG Origins data use
 
-We host a number of OSG origins in the cluster, that can be used to distribute read-only data, f.e. software packages or datasets. You can [contact us](/documentation/userdocs/start/contact/) to place data on origins.
+We host a number of OSG origins in the cluster, that can be used to distribute read-only data, f.e. software packages or datasets. You can [contact us](/contact) to place data on origins.
 
 The data is stored in a single server spinning drives JBOD, with RAID 50.
 

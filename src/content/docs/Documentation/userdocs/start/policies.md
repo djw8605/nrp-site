@@ -14,7 +14,7 @@ description: Policies
 
 #### Acceptable Use Policy
 
-<a href="https://docs.nrp.ai/assets/NRP-AUP.pdf">https://docs.nrp.ai/assets/NRP-AUP.pdf</a>
+https://docs.nrp.ai/assets/NRP-AUP.pdf
 
 #### Namespace
 

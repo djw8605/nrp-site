@@ -16,9 +16,11 @@ There are many ways to use resources on the NRP, whether you connect to the NRP'
 
 When interfacing with the NRP through Kubernetes, you have more control over the resources you use. You can create pods, jobs, and deployments, and specify the resources you need. This is useful when you need to run a specific software stack, or when you need to run a job that requires a specific amount of resources.
 
-:::Note
+:::note
 
-    In almost every case, Kubernetes jobs are the preferred way to run processing on the NRP. This is because jobs are designed to run to completion, and can be scaled up or down as needed.
+In almost every case, Kubernetes jobs are the preferred way to run processing on the NRP. This is because jobs are designed to run to completion, and can be scaled up or down as needed.
+
+:::
 
 To get started with Kubernetes, you can follow the [Quick Start](/documentation/userdocs/start/quickstart) and [Basic Kubernetes](/documentation/userdocs/tutorial/basic) sections. Once you are familiar with Kubernetes, you can create pods, jobs, and deployments as needed.
 

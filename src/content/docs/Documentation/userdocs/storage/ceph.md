@@ -3,9 +3,11 @@ title: Ceph FS / RBD
 description: Ceph FS / RBD
 ---
 
-:::warning "No Conda or PIP on CephFS"
+:::danger[No Conda or PIP on CephFS]
 
-    Installing `conda` and `pip` packages on all CephFS (shared) filesystems is strictly prohibited!
+Installing `conda` and `pip` packages on all CephFS (shared) filesystems is strictly prohibited!
+
+:::
 
 ## Best Practices for File Access in shared filesystems
 
@@ -23,7 +25,7 @@ When using CephFS, it is crucial not to open the same file for write from multip
 
 **Data Corruption:** Simultaneous writes to a single file can corrupt the file system or the data contained within.
 
-### Recommended Strategies to Avoid Conflicts:
+## Recommended Strategies to Avoid Conflicts:
 
 **File Versioning:** Implement a versioning system for files that multiple clients may need to update.
 
@@ -32,7 +34,7 @@ When using CephFS, it is crucial not to open the same file for write from multip
 **Coordination Among Clients:** Use coordination protocols or systems to manage write access among different clients.
 
 
-### Ceph filesystems data use
+## Ceph filesystems data use
 
 <div id="observablehq-plot-087dc8ea"></div>
 <p>Credit: <a href="https://observablehq.com/d/b9c19d9f7c57a186">Ceph data usage</a></p>
@@ -48,7 +50,7 @@ new Runtime().module(define, name => {
 
 [General ceph grafana dashboard](https://grafana.nrp-nautilus.io/d/r6lloPJmz/ceph-cluster)
 
-### Currently available storageClasses:
+## Currently available storageClasses:
 
 <table>
   <thead>
@@ -135,7 +137,7 @@ new Runtime().module(define, name => {
       <td markdown="span">NVME</td>
     </tr>
     <tr>
-      <td markdown="span">rook-ceph-block</td>
+      <td markdown="span">rook-ceph-block (*default*)</td>
       <td markdown="span">RBD</td>
       <td markdown="span">US West</td>
       <td markdown="span">ReadWriteOnce</td>
@@ -183,7 +185,7 @@ new Runtime().module(define, name => {
       <td markdown="span">Spinning drives with NVME meta</td>
     </tr>
     <tr>
-      <td markdown="span">rook-ceph-block-central (*default*)</td>
+      <td markdown="span">rook-ceph-block-central</td>
       <td markdown="span">RBD</td>
       <td markdown="span">US Central</td>
       <td markdown="span">ReadWriteOnce</td>
@@ -199,8 +201,8 @@ Ceph block storage allows [**RBD** (Rados Block Devices)](https://docs.ceph.com/
 
 ## UCSD NVMe CephFS filesystem policy
 
-:::warning
-
-    **This policy applies to the `rook-cephfs-ucsd` storageclass**
+:::caution
+**This policy applies to the `rook-cephfs-ucsd` storageclass**
+:::
 
 The filesystem is very fast and small. We expect all data on it to be used for currently running computation and then promptly deleted. We reserve the right to purge any data that's staying there longer than needed at admin's discretion without any notifications.

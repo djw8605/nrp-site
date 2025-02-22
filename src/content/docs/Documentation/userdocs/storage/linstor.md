@@ -1,6 +1,6 @@
 ---
 title: Linstor
-description: Linstor
+description: Linstor storage
 ---
 
 [Linstor](https://linbit.com/linstor/) is currently the fastest distributed block storage in the cluster, and can be used for tasks requiring minimal latency, such as VM images, docker build space, databases, etc. Also it doesn't lock the volumes like ceph does, making it a good option for critical highly available storage volumes. 
@@ -8,13 +8,16 @@ description: Linstor
 It uses the [DRBD](https://linbit.com/drbd/) kernel module that handles the replication, and provides nearly native drive performance for I/O operations.
 
 :::note
-    Please use the `nautilus.io/linstor` nodeAffinity label to use the nodes where linstor is deployed.
+Please use the `nautilus.io/linstor` nodeAffinity label to use the nodes where linstor is deployed.
+:::
 
 :::note
-    Linstor allocates the space for the requested amount of storage. YOu should only request the space as needed and extend when necessary.
+Linstor allocates the space for the requested amount of storage. YOu should only request the space as needed and extend when necessary.
+:::
 
 :::note
-    `linstor-ha` provides the highest level of redundancy and reliability at a cost of higher replication factor, and can only be used for smaller most critical use cases. (jupyter hub volume is a good example)
+`linstor-ha` provides the highest level of redundancy and reliability at a cost of higher replication factor, and can only be used for smaller most critical use cases. (jupyter hub volume is a good example)
+:::
 
 ### Linstor storage pools data use
 

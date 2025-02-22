@@ -1,0 +1,48 @@
+---
+title: FAQ
+description: FAQ
+---
+
+> ###### I'm getting `failed to refresh token`, `oauth2`, `server_error` errors when trying to access the cluster with kubectl.
+
+Get the config file again.
+
+--------
+
+> ###### This happens too often, and I need to pull the config file over and over again.
+
+You're probably using kubectl concurrently (from several shells in parallel), which breaks the token update mechanism. [Consider using ServiceAccounts](/documentation/userdocs/running/scripts/) for scripts.
+
+Also it's possible CiLogon blocked your IP for abusing their service (if you were using the config via some scripts and some library tried to update the token too frequently)
+
+--------
+
+> ###### I downloaded the config file from the portal and suddenly because guest.
+
+You should be consistent in which institution you choose from CILogon list. Even if UCSD is using Google for AD accounts, for CILogon Google and UCSD are two different institutions, which would result in two different accounts.
+
+--------
+
+> ###### My pod is stuck Terminating.
+
+This happens for 2 reasons:
+* The node running your pod went offline. The pod will finish terminating once the node is back online
+* The storage attached to the pod can't be unmounted.
+In both cases you can ask an admin in matrix to look at your pod, or just wait for somebody to fix it.
+
+:::danger
+DO NOT USE `kubectl  delete --grace-period=0 --force` to delete stuck pods! Those will indefinitely remain on the node, and will require the node reboot (if you happen to know which node was it)
+:::
+
+--------
+
+> ###### I tried to use `nvprof` in my GPU pod and got an error.
+
+There is a [vulnerability](https://nvidia.custhelp.com/app/answers/detail/a_id/4738) in NVIDIA drivers still not fixed, and this feature is disabled by default. Enabling it requires too much effort, so for now we keep it default. Hopefully it will be fixed soon.
+
+--------
+
+> ###### How do I acknowledge support from PRP / Natulius in paper?
+
+This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019, the University of California Office of the President, and the University of California San Diego's California Institute for Telecommunications and Information Technology/Qualcomm Institute. Thanks to CENIC for the 100Gbps networks.
+

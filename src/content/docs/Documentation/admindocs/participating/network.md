@@ -1,6 +1,6 @@
 ---
 title: Networking
-description: Networking
+description: Network requirements
 ---
 
 Our cluster contains several hundreds nodes around the world, and to make a cluster out of these we place certain connectivity requirements to join a node.

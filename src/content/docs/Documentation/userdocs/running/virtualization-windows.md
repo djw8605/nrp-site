@@ -5,7 +5,7 @@ description: Virtualization - Windows
 
 [2022 guide windows 11](https://kubevirt.io/2022/KubeVirt-installing_Microsoft_Windows_11_from_an_iso.html)
 
-###### Creating a Windows 11 VM install image from existing image
+## Creating a Windows 11 VM install image from existing image
 
 First step is to download the Windows 11 ISO from <https://www.microsoft.com/en-us/software-download/windows11>.
 
@@ -154,10 +154,11 @@ spec:
           image: kubevirt/virtio-container-disk
 ```
 
-:::info
+:::note
     
-    The usb tablet input and sound device are required for proper audio and mouse tracking
+  The usb tablet input and sound device are required for proper audio and mouse tracking
 
+:::
 
 Now, install virtctl: 
 <https://github.com/kubevirt/kubevirt/releases/tag/v0.42.1>
@@ -172,7 +173,7 @@ After that you should be able to connect to it using vnc: `virtctl vnc winvm` af
 
 <https://kubevirt.io/user-guide/#/usage/graphical-and-console-access>
 
-#### Our main example
+## Our main example
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -276,9 +277,11 @@ spec:
           image: kubevirt/virtio-container-disk
 ```
 
-:::warning
+:::caution
     
-    If you want to request a GPU with KubeVirt, please ensure there are available GPUs specifically designated for KubeVirt. **Note: KubeVirt GPUs aren't managed by Kubernetes (k8s) in the standard way.**
+If you want to request a GPU with KubeVirt, please ensure there are available GPUs specifically designated for KubeVirt. **Note: KubeVirt GPUs aren't managed by Kubernetes (k8s) in the standard way.**
+
+:::
 
 To check for available GPUs, you can run the following commands:
 
@@ -446,4 +449,6 @@ spec:
 
 Secret to hold the password for your virtvnc:
 
-`kubectl create secret generic virtvnc-login -n <namespace> --from-literal=auth=<my_login>::<my_password>`
+```bash
+kubectl create secret generic virtvnc-login -n <namespace> --from-literal=auth=<my_login>::<my_password>
+```

@@ -5,7 +5,7 @@ description: Description
 
 :::tip
 
-We now have storage located in several geographic regions. Make sure you use the [right compute nodes](#using-the-right-region-for-your-pod) to ensure the optimal speed accessing it!
+We have storage distributed across multiple geographic regions. To achieve optimal performance and speed when accessing it, ensure you select the [appropriate compute nodes](#using-the-right-region-for-your-pod) for your pod.
 
 :::
 

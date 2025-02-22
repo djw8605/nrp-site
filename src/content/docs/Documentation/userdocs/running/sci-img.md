@@ -21,6 +21,6 @@ NOTE: If you are using the VS Code editor with a Jupyter Notebook, use the `base
 
 Refer to <https://gitlab.nrp-nautilus.io/nrp/scientific-images/python> for the list of packages installed.
 
-We can add more libraries to this image by requesting in [Matrix](/documentation/userdocs/start/contact/).
+We can add more libraries to this image by requesting in [Matrix](/contact).
 
 The Desktop image has the X11 Window system installed and you can launch the GUI interface in Jupyter with this image. It's based on the Minimal stack.
