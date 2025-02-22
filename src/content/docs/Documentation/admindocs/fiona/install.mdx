@@ -1,0 +1,133 @@
+---
+title: Install
+description: Install
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+These instructions are for nodes that we will not be joining the NRP by giving IPMI access to NRP admins. If you are giving IPMI access to NRP admins, please contact NRP admins with details.
+:::
+
+## To install or reinstall a new node:
+
+<Steps>
+
+    1. If node is in the cluster already, first [make sure the node is not a part of ceph or is a gateway (metallb, ingress, etc)](/documentation/admindocs/cluster/node-mgmt/#general-things-to-look-at-when-rebooting-a-node). Ceph nodes can only be taken out one at a time, allowing time to recover after being brought back.
+
+    2. [Find the network settings: IP, subnet, gateway, DNS (if not google/cloudflare)](/documentation/admindocs/participating/new-contributor-guide)
+
+    3. Note the current disks setup - whether the node has similar OS drives for md RAID
+
+    4. Drain the node
+
+    5. Login to the node's IPMI screen
+
+    6. Attach the ubuntu 22.04 image via the virtual media
+
+    7. Reboot the node
+
+    8. Trigger the boot menu (usually F10), choose to boot from virtual media
+
+    9. Start the install [with media check off](https://askubuntu.com/questions/1313247/disable-integrity-check-on-ubuntu-server-20-04-1-iso)
+
+    10. Agree to everything it asks
+
+    11. Set up the network:
+
+        <Steps>
+        
+            1. DNS can be 1.1.1.1,8.8.8.8
+
+            2. Disable unused networks
+
+            3. Can use the [subnet calculator](https://www.tunnelsup.com/subnet-calculator) to figure out the subnet
+
+        </Steps>
+
+    12. For disk: if node has OS drive mirror, use custom layout:
+     
+        <Steps>
+
+             1. Delete all existing md arrays
+
+             2. Click the drives you're going to use, choose reformat
+
+             3. Add **unformatted** GPT partitions to the drives
+
+             4. Create md array with those partitions
+
+             5. For 2nd disk choose "Add as another boot device"
+
+             6. Create `ext4` GPT partition on created MD array
+
+             7. Proceed with installation
+
+        </Steps>
+
+    13. For username choose `nautilus`
+
+    14. Choose to install SSH server, optionally import key from github
+
+    15. Don't install any additional packages
+
+    16. In the end disconnect media, reboot
+
+    17. After the node boots, make the `nautilus` user sudoer with NOPASSWD:
+
+        <Steps>
+
+            1. `sudo visudo`, `%sudo   ALL=(ALL:ALL) NOPASSWD:ALL`
+
+            2. Add `mtu: 9000` to `/etc/netplan/00-installer-config.yaml`, exec `netplan apply`.  The `mtu` is under the ethernets device.
+
+        </Steps>
+
+</Steps>
+
+## Steps for NRP Administrators
+
+The below steps are meant for NRP administrators, and do not need to be performed by site system administrators.
+
+<Steps>
+    1. Make changes in ansible inventory file if needed. The node should be in the proper region and zone section, with zone labels added.
+
+    2. Generate a `join_token` by logging into the controller and running:
+
+        `kubeadm token create`
+
+    3. Run the [ansible playbook](https://gitlab.nrp-nautilus.io/prp/nautilus-ansible) according to docs:
+
+            `ansible-playbook setup.yml -l <node> -e join_token=...`
+
+</Steps>
+
+## Labels added by ansible:
+
+Check that proper labels were added by ansible:
+
+`host-endpoint: "true"`
+
+`mtu: "9000"`
+
+`nautilus.io/network: "10000"` - network speed (10000/40000/100000) (needed for perfsonar maddash)
+
+`netbox.io/site: UNL` - SLUG for netbox site (should exist)
+
+`topology.kubernetes.io/region: us-central` - region (us-west, us-east, etc)
+
+`topology.kubernetes.io/zone: unl` - zone
+
+To set all labels run:
+
+```bash
+kubectl label node node_name nautilus.io/network="10000" netbox.io/site="UNL" topology.kubernetes.io/region="us-central" topology.kubernetes.io/zone="unl"
+```
+
+:::note
+`netbox/netbox-agent-*` pods are using the node topology labels on start and are NOT watching the changes. If labels were changed or added, these pods need restart to work properly.
+:::
+
+## Cluster firewall
+
+The node's CIRD should be in https://gitlab.nrp-nautilus.io/prp/calico/-/blob/master/networksets.yaml list for the node to be accessible by other cluster nodes

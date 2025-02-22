@@ -1,8 +1,8 @@
 ---
 title: Topology
-description: Topology
+description: NRP Topology
 ---
 
 #### Current NRP nodes topology
 
-<img src="/admindocs/nrp/GigaIO FabreX Update.jpg">
+![GigaIO topology](~/assets/images/docs/GigaIO_FabreX_Update.jpg)
