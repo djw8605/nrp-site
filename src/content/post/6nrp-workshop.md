@@ -43,7 +43,9 @@ Mike Farley, Kyle Krick SDSU, and Alex Hurt:
 
 Mohammad Sada, SDSC, UC San Diego, and Justas Balcas, ESnet 
 
-[Mohammad Sada Justas Balcas  Programmable Networking](https://media.nrp.ai/6nrp-slides/Tues%2011am%20Mohammad%20Sada%20Justas%20Balcas%20%20Programmable%20Networking.pptx)
+[Justas Balcas  Programmable Networking](https://media.nrp.ai/6nrp-slides/Tues%2011am%20Mohammad%20Sada%20Justas%20Balcas%20%20Programmable%20Networking.pptx)
+
+[Mohammad Sada Programmable Networking](https://media.nrp.ai/6nrp-slides/Programmable%20Networking%20and%20Testbed%20Integration.pptx)
 
 #### Tues 1pm
 
