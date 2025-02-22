@@ -5,7 +5,9 @@ description: Description
 
 :::tip
 
-    We now have storage located in several geographic regions. Make sure you use the [right compute nodes](#using-the-right-region-for-your-pod) to ensure the optimal speed accessing it!
+We now have storage located in several geographic regions. Make sure you use the [right compute nodes](#using-the-right-region-for-your-pod) to ensure the optimal speed accessing it!
+
+:::
 
 ## Cleaning up
 
