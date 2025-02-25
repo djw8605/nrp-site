@@ -256,6 +256,7 @@ Note that you can also use the local DNS name for this (from pod1)
 
 :::note[Namespaces?]
 Do you remember what namespace you are using?  Be sure to note your namespace in order to access the service.
+:::
 
 ## Exposing public services
 
