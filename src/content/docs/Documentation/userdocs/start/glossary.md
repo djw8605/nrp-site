@@ -15,9 +15,9 @@ This is an abridged list of terminology that Nautilus users may find useful. The
 
 - **Container** See [Software Container](#softwareContainer)
 
-- <a id="cuda"></a> **CUDA** CUDA stands for **C**ompute **U**nified **D**evice **Architecture. It is a parallel computing platform and programming model developed by NVIDIA for performing general-purpose computing on NVIDIA GPUs (Graphics Processing Units).
+- <a id="cuda"></a> **CUDA** CUDA stands for **C**ompute **U**nified **D**evice **A**rchitecture. It is a parallel computing platform and programming model developed by NVIDIA for performing general-purpose computing on NVIDIA GPUs (Graphics Processing Units).
 
-- <a id="deployment"></a> **Deployment** In Kubernetes, a Deployment is a resource object that manages the deployment and scaling of a set of replica [pods](#pods). Deployments provide a declarative way to define the desired state for an application and ensure that the current state matches the desired state. For example, if you wish to have three [pods](pods) running their services (i.e [software containers](#softwareContainer)) at all times, instead of launching three separate [jobs](jobs), you would launch a deployment with three replica pods.
+- <a id="deployment"></a> **Deployment** In Kubernetes, a Deployment is a resource object that manages the deployment and scaling of a set of replica [pods](#pods). Deployments provide a declarative way to define the desired state for an application and ensure that the current state matches the desired state. For example, if you wish to have three [pods](pods) running their services (i.e., [software containers](#softwareContainer)) at all times, instead of launching three separate [jobs](jobs), you would launch a deployment with three replica pods.
 
 - <a id="directory"></a> **Directory** In Unix-like operating systems, a directory is a file system container that holds files and other directories. It serves as a way to organize and structure the file system hierarchy. Directories are sometimes referred to as folders in other operating systems.
 
@@ -37,7 +37,7 @@ This is an abridged list of terminology that Nautilus users may find useful. The
 
 - <a id="namespace"></a> **Namespace** In [Kubernetes](#Kubernetes), a namespace is a virtual cluster within the physical cluster. It provides a way to partition and organize resources within a Kubernetes cluster, allowing multiple users, teams, or projects to share the same cluster without interfering with each other. Namespaces help in creating isolated environments and preventing naming conflicts between different resources.
 
-- <a id="nautilus"></a> **Nautilus** is a distributed, hyper-converged GPU/CPU cluster made of heterogenous nodes that include a variety of GPU cards, CPUs, storage and network.
+- <a id="nautilus"></a> **Nautilus** is a distributed, hyper-converged GPU/CPU cluster made of heterogeneous nodes that include a variety of GPU cards, CPUs, storage and networks.
 
 - <a id="orchestration"></a> **Orchestration** In Kubernetes, orchestration refers to the automated coordination and management of containerized applications, their deployment, scaling, and operation within a cluster, such as Nautilus.
 
@@ -47,10 +47,10 @@ This is an abridged list of terminology that Nautilus users may find useful. The
 
 - <a id="service"></a> A **Service** is an abstraction that defines a logical set of pods and a policy by which to access them. Services enable a dynamic and scalable way for different parts of an application to communicate with each other within a Kubernetes cluster. For example, they may provide a stable endpoint (IP address and DNS name) that allows other services or external users to reach the pods associated with the service.
 
-- <a id="shell"></a> **Shell** In Unix, a shell is a command-line interpreter or a command processor that provides a user interface for interacting with the Unix or Unix-like operating systems (e.g Mac OS X). The shell is a crucial component of the operating system, responsible for interpreting user commands, executing programs, and managing the interaction between the user and the operating system kernel.
+- <a id="shell"></a> **Shell** In Unix, a shell is a command-line interpreter or a command processor that provides a user interface for interacting with the Unix or Unix-like operating systems (for example, Mac OS X). The shell is a crucial component of the operating system, responsible for interpreting user commands, executing programs, and managing the interaction between the user and the operating system kernel.
 
 - <a id="softwareContainer"></a> **Software Container** A software container is a lightweight, standalone, and executable package that includes everything needed to run a piece of software, including the code, runtime, system tools, libraries, and settings. Containers provide a consistent and reproducible environment, ensuring that the software runs consistently across different computing environments.
 
 - **Stateless** In computer engineering and software development, the term *stateless* refers to a system or application that does not retain information about the state or status of a user or entity between sessions or interactions. In the case of Nautilus, [pods](#pod) are stateless - each request to instance a pod is treated as an independent and self-contained transaction, and the cluster does not store any information about the previous pod or its characteristics.
 
-- <a id="unix"></a> **Unix** is a powerful and versatile multiuser, multitasking operating system originally developed in the 1960s and 1970s at Bell Labs (AT&T). It is known for its stability, security, and support for a wide range of applications and services. Unix has had a significant impact on the development of operating systems and has influenced many modern operating systems, including Linux and macOS.
+- <a id="unix"></a> **Unix** is a powerful and versatile multiuser, multitasking operating system originally developed in the 1960s and 1970s at Bell Labs (AT&T). It is known for its stability, security, and support for a wide range of applications and services. Unix has had a significant impact on the development of operating systems and has influenced many modern operating systems, including Linux and MacOS.

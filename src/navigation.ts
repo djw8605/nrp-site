@@ -117,6 +117,6 @@ export const footerData = {
     { ariaLabel: 'GitLab', icon: 'tabler:brand-gitlab', href: 'https://gitlab.nrp-nautilus.io/prp' },
   ],
   footNote: `
-    This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019, and the University of California San Diego's California Institute for Telecommunications and Information Technology/Qualcomm Institute and San Diego Supercomputer Center. Thanks to CENIC for the 100Gbps networks.
+    This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
   `,
 };

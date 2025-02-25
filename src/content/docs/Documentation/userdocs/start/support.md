@@ -16,7 +16,7 @@ Before reaching out to us, please take a moment to gather the necessary informat
 When asking a question in support chat, please provide the following essential information:
 
 * **Namespace and Pod Name**: If the issue is related to a specific pod in your cluster, please specify the namespace and pod name. This information helps us pinpoint the exact resource that's experiencing the problem.
-* **Minimal Reproducible Example**: If the issue is not specific to a particular pod or namespace, please provide a minimal reproducible example (MRE) that demonstrates the problem. An MRE should be a concise, self-contained code snippet that reproduces the issue.
+* **Minimal Reproducible Example**: If the issue is not specific to a particular pod or namespace, please provide a minimal reproducible example (MRE) that demonstrates the problem. MREs should be a concise, self-contained code snippet that reproduces the issue.
 
 ## Gathering Information with kubectl
 
