@@ -27,7 +27,7 @@ Create a namespace for your project on [Nautilus portal](https://portal.nrp-naut
 
 #### Install helm and download the helm chart
 
-Follow the [install guide](https://zero-to-jupyterhub.readthedocs.io/en/stable/jupyterhub/installation.html), and use [this template](values) for the config:
+Follow the [install guide](https://zero-to-jupyterhub.readthedocs.io/en/stable/jupyterhub/installation.html), and use [this template](../values) for the config:
 
 1. Run `openssl rand -hex 32` and replace the `secret_token` in the yaml file with the generated key
 2. Minimally set the `client_id`, `client_secret`, `admin_users`, `secret_token`, `oauth_callback_url`, `ingress.hosts` fields.
