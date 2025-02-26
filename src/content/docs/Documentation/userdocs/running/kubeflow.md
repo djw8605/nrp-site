@@ -3,10 +3,6 @@ title: Kubeflow Training
 description: Kubeflow Training
 ---
 
-# Kubeflow Training
-
-## Overview
-
 The Kubeflow Training Operator simplifies the management of distributed training jobs on Kubernetes. It allows users to define training jobs as Kubernetes custom resources, making it easy to scale and monitor machine learning models within a Kubernetes environment.
 
 This guide explains how to use the Kubeflow Training Operator to submit, manage, and monitor training jobs.
