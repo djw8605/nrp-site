@@ -60,7 +60,7 @@
   padding: 0 5px;
 }
 
-#front-page #header nav button, #front-page #header nav>ul>li>a, #front-page #header svg {
+#front-page #header:not(.scroll) nav button , #front-page #header:not(.scroll) nav>ul>li>a, #front-page #header:not(.scroll) svg {
   /* Set the background color */
   @apply mix-blend-difference;
   @apply text-white;
