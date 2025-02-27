@@ -7,10 +7,8 @@ description: GPU Pods
 In this section you will request GPUs. Make sure you don't waste those and delete your pods when not using the GPUs.
 :::
 
-
-
 :::caution
-Some specific high-memory GPUs are require the gpu type specified in the container `resource` requests and limits, and are a special resource.
+Some specific high-memory GPUs  require the gpu type specified in the container `resource` requests and limits.  See [Requesting special GPUs](#requesting-special-gpus)
 :::
 
 ## Running GPU pods

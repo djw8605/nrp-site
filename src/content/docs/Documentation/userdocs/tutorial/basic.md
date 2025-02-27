@@ -1,15 +1,13 @@
 ---
-title: Basic Kubernetes
-description: Basic Kubernetes
+title: Basic Kubernetes (k8s) Tutorial
+description: Basic Kubernetes (k8s) Tutorial
 ---
-
-# Basic Kubernetes (k8s) Tutorial
 
 In this tutorial, you will be introduced to basic k8s commands, how to launch simple pods and deployments, as well as interact with the cluster to query its status and the status of your processes running in the cluster. You will also see your first example of a YAML file.
 
-:question: Throughout these tutorials, you may see a red :question: mark. This is an opportunity for you to pause and reflect, or answer a quick self-assessment that can lead to deeper understanding of the materials.
-
-:exclamation: You may also see the :exclamation: mark followed by tips or important pieces of information that can assist you or be important things to remember while using Nautilus.
+:::note[Question?]
+Throughout these tutorials, you may see a "Question?". This is an opportunity for you to pause and reflect, or answer a quick self-assessment that can lead to deeper understanding of the materials.
+:::
 
 ## Prerequisites
 This section assumes you've completed the [quickstart](/documentation/userdocs/start/quickstart/) section.
@@ -21,12 +19,15 @@ This section assumes you've completed the [quickstart](/documentation/userdocs/s
 4. You will have an understanding of the difference between an pod and a deployment.
 5. You will have a basic understanding of the "stateless" nature of a pod and how deployments can be used to specify an ideal state for your pods or software containers (running inside your pods).
 
-:exclamation: Setting your namespace
->Since you only have permissions to run in namespaces of which you are a member, you must specify your namespace. For the purposes of this tutorial, it is recommended that you set your namespace globally with this command:
+:::tip[Setting your namespace]
+Since you only have permissions to run in namespaces of which you are a member, you must specify your namespace. For the purposes of this tutorial, it is recommended that you set your namespace globally with this command:
 
-``kubectl config set-context nautilus --namespace=<the_namespace>``
+```bash
+kubectl config set-context nautilus --namespace=<the_namespace>
+```
 
->Some users may operate concurrently across several namespaces, and k8s allows you to specify which in each `kubectl` command by adding `-n <a_namespace>`, regardless of whether you have set your context as above. Most users save the keystrokes by setting the context for themselves and deviate only when necessary, rather than specifying each time.
+Some users may operate concurrently across several namespaces, and k8s allows you to specify which in each `kubectl` command by adding `-n <a_namespace>`, regardless of whether you have set your context as above. Most users save the keystrokes by setting the context for themselves and deviate only when necessary, rather than specifying each time.
+:::
 
 ## Explore the system
 
@@ -36,7 +37,7 @@ Now that you understand how to set your namespace, let's begin to explore the sy
 
 The Nautilus Cluster is widely geographically distributed and highly heterogenous. You can get a sense of the types of nodes in the system by typing:
 
-```
+```bash
 kubectl get nodes
 ```
 **Please note**: You likely won't have access to all the nodes listed, as some are reserved.
@@ -49,7 +50,7 @@ There are three categories of processes we will examine:
 
 Listing the categories running in k8s follows a similar format.
 
-  ```
+  ```bash
   kubectl get <category>
   ```
 
@@ -59,19 +60,19 @@ Right now you probably don't have anything running in the namespace, and these c
 
 List all the pods in your namespace
 
-```
+```bash
 kubectl get pods
 ```
 #### List deployments
 List all the deployments in your namespace
 
-```
+```bash
 kubectl get deployments
 ```
 #### List services
 List all the services in your namespace
 
-```
+```bash
 kubectl get services
 ```
 
@@ -85,6 +86,7 @@ Create the `pod1.yaml` file with the following contents by copy-pasting:
 
 
 ```yaml
+// pod1.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -104,19 +106,21 @@ spec:
 ```
 **Reminder**: Indentation is important in YAML, just like in Python
 
-:exclamation: A simple way to create a file un Unix
+:::tip[A simple way to create a file un Unix]
 
->There are many ways to create a file and put data into it in Unix. One of the easiest ways is to redirect the standard input with the following command:
+There are many ways to create a file and put data into it in Unix. One of the easiest ways is to redirect the standard input with the following command:
 
-```
+```bash title="Create a new file"
 cat > <name_of_new_file>
 ```
->You can then paste any copied text or type directly into the command line interface. Once you are done, you can ``control-c`` out of the input stream. This will do the job without leaving the command line interface. Try it by copying the ``pod1.yaml`` sample above, and then pasting it into a new file using the Unix `cat` command.
+
+You can then paste any copied text or type directly into the command line interface. Once you are done, you can ``control-c`` out of the input stream. This will do the job without leaving the command line interface. Try it by copying the ``pod1.yaml`` sample above, and then pasting it into a new file using the Unix `cat` command.
+:::
 
 ### Creating YAML files dynamically
 Alternatively, if you don't want to create a file and are using Unix-like system, you can create YAML files dynamically like this:
 
-```
+```bash
 kubectl create -f - << EOF
 <contents you want to deploy>
 EOF
@@ -125,13 +129,13 @@ EOF
 ### Launch a simple pod
 Making sure you are in the same file directory as your `pod1.yaml` file, type the following command:
 
-```
+```bash
 kubectl create -f pod1.yaml
 ```
 
 After a few moments (as the pod is creating itself), see if you can find it:
 
-```
+```bash
 kubectl get pods
 ```
 
@@ -139,13 +143,13 @@ kubectl get pods
 
 If it is not yet in Running state, you can check what is going on with a list of the events in your namespace:
 
-```
+```bash
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
 Events and other useful information about the pod can be seen in `describe`:
 
-```
+```bash
 kubectl describe pod test-pod
 ```
 :question: Where did the name *test-pod* come from? Examine the `pod1.yaml` file to find the answer.
@@ -153,23 +157,30 @@ kubectl describe pod test-pod
 
 If the pod is in Running state, we can check it's logs
 
-```
+```bash
 kubectl logs test-pod
 ```
 
 Let’s log into it
 
-```
+```bash
 kubectl exec -it test-pod -- /bin/bash
 ```
-:exclamation: There's a relationship between the operating system and the command line interpreter
->The last part of this command, specifying `bash` can change, depending on the operating system we choose. Keep this in mind when you deploy operating systems other than Ubuntu.
+:::tip[There's a relationship between the operating system and the command line interpreter]
 
-:question: Did you manage to log into your pod?
+The last part of this command, specifying `bash` can change, depending on the operating system we choose. Keep this in mind when you deploy operating systems other than Ubuntu.
+:::
+
+:::note[Question?]
+Did you manage to log into your pod?
 
 If yes, you are now inside the (container in the) pod!
+:::
 
-:question: Does it feel any different than a regular, dedicated node?
+:::note[Question?]
+
+Does it feel any different than a regular, dedicated node?
+:::
 
 Try to create some directories and some files with content (using the ``cat`` command, if you like). "Hello world" will do, but feel free to be creative.
 
@@ -177,28 +188,33 @@ Try to create some directories and some files with content (using the ``cat`` co
 
 Networking inside a Kubernetes pod is crucial for facilitating communication between containers within the same pod and enabling connectivity with other pods, as well as external services. Understanding how networking works inside a pod is essential for building and deploying applications effectively in a Kubernetes environment. So, let's examine how the network is configured inside our simple pod by logging into it.
 
-:question: Do we have the necessary tools to examine the network installed in our pod?
+:::note[Question?]
 
-Remember that pods running inside k8s are "stateless" and since we didn't specify any software packages to be included in our [simple pod](pod1) example when we launched it, we have some work to do before we can look at the network.
+Do we have the necessary tools to examine the network installed in our pod?
+:::
+
+Remember that pods running inside k8s are "stateless" and since we didn't specify any software packages to be included in our [simple pod](#a-simple-yaml-file) example when we launched it, we have some work to do before we can look at the network.
 
 The package `ifconfig` is not included in our initial pod; so let’s install it.
 
 First, let's make sure our installation tools are updated.
 
-```
+```bash
 apt update
 ```
 Now, we can use apt to install the necessary network tools.
 
-```
+```bash
 apt install net-tools
 ```
 Now check the networking:
 
-```
+```bash
 ifconfig -a
 ```
-:question: What did you discover? Does the output look like you'd expect?
+:::note[Question?]
+What did you discover? Does the output look like you'd expect?
+:::
 
 Finally, let's exit out of the pod and move on by entering the `exit` command in the command line interface of the pod, or using the keyboard shortcut 'Control-D'.
 
@@ -210,32 +226,36 @@ To demonstrate that pods really are stateless, we are going to shutdown our simp
 
 Let's manually shut down the pod using `kubectl`
 
-```
+```bash
 kubectl delete -f pod1.yaml
 ```
 
 This may take a moment, as the system will remove the pod gracefully. After a few moments, check that it is actually gone:
 
-```
+```bash
 kubectl get pods
 ```
 
-:question: Is it gone?
+:::note[Question?] Is it gone?
 
 If yes, let’s create it again:
 
-```
+```bash
 kubectl create -f pod1.yaml
 ```
-:exclamation: Accessing prior commands from the CLI
 
->Most command line interfaces store the most recent commands you have entered. You can access them easily by using your keyboard's "up arrow" which is a quick and easy way to repeat commands.
+:::tip[Accessing prior commands from the CLI]
+
+Most command line interfaces store the most recent commands you have entered. You can access them easily by using your keyboard's "up arrow" which is a quick and easy way to repeat commands.
+:::
 
 ### Looking at Pod1.yaml (again)
 
 Give the system a moment to create the new pod.
 
-:question: Does it have the same IP? We can check by using the following command:
+:::note[Question?] 
+
+Does it have the same IP? We can check by using the following command:
 
 ```
 kubectl get pod -o wide test-pod
@@ -246,12 +266,14 @@ Log back into the pod:
 ```
 kubectl exec -it test-pod -- /bin/bash
 ```
-
-:question: What does the network look like now?
+:::
 
 Now, let's look for the files you created with the `cat` command. Are they where you left them? What is the status of the files your created?
 
-:question: How does this exercise demonstrate "statelessness" and what are the implications for how I prepare for the inevitable and normal restarting of a pod?
+:::note[Question?] 
+
+How does this exercise demonstrate "statelessness" and what are the implications for how I prepare for the inevitable and normal restarting of a pod?
+:::
 
 ### Cleaning up
 
@@ -259,7 +281,7 @@ Since Nautilus is a shared platform and a community resource, it's very importan
 
 So, let’s delete explicitly the pod, using the following command:
 
-```
+```bash
 kubectl delete pod test-pod
 ```
 
@@ -271,9 +293,12 @@ In order to specify to the cluster your "desired state", the use of Deployments 
 
 You can copy-and-paste the lines below into a new file on your local system (using the `cat` command, if you like).
 
-###### <a id="dep1"></a>dep1.yaml:
+
+
+###### Deployment 1
 
 ```yaml
+// dep1.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -305,28 +330,30 @@ spec:
 
 Now let’s start the deployment:
 
-```
+```bash
 kubectl create -f dep1.yaml
 ```
 
 See if you can find it:
 
-```
+```bash
 kubectl get deployments
 ```
 
-:exclamation: The Deployment is just a conceptual service, though.
->It describes to the cluster the *ideal state* of your pods. It doesn't actually do more than that. In this case, the *ideal state* is a single replica of the container called "mypod".
+:::tip[The Deployment is just a conceptual service]
+
+It describes to the cluster the *ideal state* of your pods. It doesn't actually do more than that. In this case, the *ideal state* is a single replica of the container called "mypod".
+:::
 
 See if you can find the associated pod:
 
-```
+```bash
 kubectl get pods
 ```
 
 Once you have found the name assigned to it by the cluster, let’s log into it.
 
-```
+```bash
 kubectl get pod -o wide test-dep-<hash>
 kubectl exec -it test-dep-<hash> -- /bin/bash
 ```
@@ -340,47 +367,57 @@ Try various commands as before.
 
 Let’s now delete the pod!
 
-```
+```bash
 kubectl delete pod test-dep-<hash>
 ```
 
 Is it really gone?
 
-```
+```bash
 kubectl get pods
 ```
 
 What happened to the deployment?
 
-```
+```bash
 kubectl get deployments
 ```
 
 Get into the new pod
 
-```
+```bash
 kubectl get pod -o wide test-dep-<hash>
 kubectl exec -it test-dep-<hash> -- /bin/bash
 ```
 
-:question: Was anything preserved? :question: How might you make sure the settings, software packages, and data you need in your pod is preserved?
+:::note[Question?]
+Was anything preserved? How might you make sure the settings, software packages, and data you need in your pod is preserved?
+:::
 
-:exclamation: Using the right image helps with reliability and resiliency.
->Ensuring that the software container you are deploying has all the necessary elements to function involves creating a well-packaged and self-contained container image. Unlike the simple examples above, you can make a robust and reliable deployment by specifying an appropriate base image, and including any system libraries, and any language-specific runtime or dependencies in your software container.
+:::tip[Using the right image helps with reliability and resiliency]
 
-:question: Examining the [`dep1.yaml`](dep1) example above, what would you change to specify a different image? Keep that in mind as we progress through the tutorials. If you are curious and want to read ahead, we cover that topic in the section called "[Images](/documentation/userdocs/tutorial/images)".
+Ensuring that the software container you are deploying has all the necessary elements to function involves creating a well-packaged and self-contained container image. Unlike the simple examples above, you can make a robust and reliable deployment by specifying an appropriate base image, and including any system libraries, and any language-specific runtime or dependencies in your software container.
+:::
+
+:::note[Question?]
+Examining the [`dep1.yaml`](#deployment-1) example above, what would you change to specify a different image? Keep that in mind as we progress through the tutorials. If you are curious and want to read ahead, we cover that topic in the section called "[Images](/documentation/userdocs/tutorial/images)".
+:::
 
 Let’s now delete the deployment:
 
-```
+```bash
 kubectl delete -f dep1.yaml
 ```
 
 Verify everything is gone:
 
-```
+```bash
 kubectl get deployments
 kubectl get pods
 ```
 
-## The end
+## Next steps
+
+In the next [tutorial](../basic2), we will explore how to run a simple web server in a pod, and how to expose it to the outside world and scale it.
+
+
