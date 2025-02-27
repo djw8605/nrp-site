@@ -102,7 +102,7 @@ export const footerData = {
     {
       title: 'Information',
       links: [
-        { text: 'Get Access', href: '/documentation/userdocs/start/get-access/' },
+        { text: 'Getting Started', href: '/documentation/userdocs/start/getting-started/' },
         { text: 'Contact', href: '/contact' },
         { text: 'Network Requirements', href: '/documentation/admindocs/participating/network/' },
         { text: 'New Contributor Guide', href: '/documentation/admindocs/participating/new-contributor-guide/' },

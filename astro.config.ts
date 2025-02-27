@@ -39,14 +39,19 @@ export default defineConfig({
       },
       sidebar: [
         {
+          label: "Start Here",
+          link: "documentation/",
+        },
+        {
           label: "User Guide",
           items: [
             {
               label: "Start",
               collapsed: true,
               items: [
-                { label: "Get Access", link: "documentation/userdocs/start/get-access" },
-                { label: "Quick Start", link: "documentation/userdocs/start/quickstart" },
+                { label: "Getting Started", link: "documentation/userdocs/start/getting-started" },
+                // { label: "Get Access", link: "documentation/userdocs/start/get-access" },
+                // { label: "Quick Start", link: "documentation/userdocs/start/quickstart" },
                 { label: "How Should I Use Nautilus?", link: "documentation/userdocs/start/how-to-use-nautilus" },
                 { label: "Policies", link: "documentation/userdocs/start/policies" },
                 { label: "Deployed Services", link: "documentation/userdocs/start/resources" },
