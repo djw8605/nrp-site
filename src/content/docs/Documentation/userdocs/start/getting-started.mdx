@@ -1,0 +1,136 @@
+---
+title: Getting Started with NRP Nautilus
+description: getting started with the NRP nautilus cluster
+---
+import { Steps } from '@astrojs/starlight/components';
+
+### Get access and log in
+
+If you are a new user and want to access the NRP Nautilus cluster, follow the steps below.
+
+<Steps>
+
+1. Point your browser to the [PRP Nautilus portal](https://portal.nrp-nautilus.io).
+
+2. On the portal page click on **`Login`** button at the top right corner.
+
+3. You will be redirected to the **`CILogon`** page where you have to **Select an Identity Provider**.
+
+4. Select your institution (example: University Name) from the menu and click the **`Log On`** button.
+
+    - If your institution is using **`CILogon`** as a federated certification authority, it will be in the menu. Select the name of your institution and use either a personal account or an institutional G-suite account. This is usually your institutional account name (email) and a password associated with it.
+    - If your institution is not using **`CILogon`**, you can select **`Google`**.
+
+    :::caution[Note for ORCID users]
+
+    We require email to be visible. If you're using **`ORCID`** as your institution, please change the email setting to make it visible to everyone.
+    :::
+
+5. After a successful authentication, you will log on to the portal with a **`guest`** status.
+
+    :::note
+    On first login you become a **`guest`**.  As a **`guest`**, you cannot access any computing resources to run your code.
+    You have to be part of at least one namespace (usually your research group) as a **`user`** or **`admin`**.
+    :::
+
+6. If you are a **student**, please contact your research supervisor and ask them to add you to their namespace. Once you are added to a namespace, your status will change to a cluster **`user`** and 
+you will get access to all namespace resources.
+
+7. If you are a **faculty member, researcher, or postdoc** starting a new project and need your own namespace—either for yourself or your research group—you 
+can request to be promoted to a namespace **`admin`** in [Matrix](/contact).
+As an **`admin`**, you will have the ability to: 
+    - Create multiple namespaces.
+    - Invite other users to your namespace(s).
+    :::note[Admin Responsibilities]
+    As a namespace **`admin`** you will be the one responsible for
+    -  all activity happening in your namespaces,
+    -  keeping the user list up-to-date.
+    :::
+
+
+8. Once you are made either a **`user`** or **`admin`** of a namespace, you will need to accept the Acceptable Use Policy (AUP) on the portal page in order to get access to the cluster.
+9. **Make sure you read the cluster policy before starting to use it.**
+    :::danger[Read the Cluster Policy]
+    - Read the [Policies](/documentation/userdocs/start/policies/) page.
+    - Read the [NRP Acceptable Use Policy (AUP).](/NRP-AUP.pdf)
+    :::
+</Steps>
+
+### How to interact with the cluster
+
+Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from your laptop or desktop using the Kubernetes command-line interface (CLI) tool, [`kubectl`](https://kubernetes.io/docs/reference/kubectl/kubectl/).
+
+<Steps>
+1. [Install][1] the Kubernetes command-line tool, `kubectl`
+2. Login to [NRP Nautilus portal][2]  and click the **`Get config`** link on top right corner of the page to get your configuration file.
+
+    :::note[Same Login]
+
+        Make sure you use the same provider and account you used to login to the portal. If you use the different provider with the same email, your account in the system will still be different and your namespaces membership will change.
+    :::
+
+3. Save the file as **`config`** and put the file in your `$HOME/.kube` folder. 
+
+    This folder may not exist on your machine, to create it execute:
+
+    ```bash
+    mkdir ~/.kube
+    ```
+    You should have the Nautilus Kubernetes config on your machine (laptop, desktop) as `~/.kube/config`
+
+4. Make sure you are using the correct config file.
+    - Run the following command to list available Kubernetes contexts
+    ```bash
+    kubectl config get-contexts
+    ```
+    You should see output like this
+    ```bash
+    CURRENT   NAME       CLUSTER    AUTHINFO                                  NAMESPACE
+    *         nautilus   nautilus   http://cilogon.org/serverE/users/XXXX     XXXX
+    ```
+    - If you have access to multiple Kubernetes clusters, you need to choose `use-context nautilus` by doing
+    ```bash
+    kubectl config use-context nautilus
+    ```
+
+6. Verify cluster access using `kubectl`. Run the following on your terminal.
+
+    ```bash
+    kubectl get pods -n <YOUR_NAMESPACE>
+    ```
+
+    If you see the message "No resources found in your namespace" it means there are no pods in your namespace yet. This indicates that you have access to the resources of your namespace.
+
+</Steps>
+
+### Learn about Kubernetes
+
+1. To learn more about kubernetes you can look at [our tutorial](/documentation/userdocs/tutorial/basic/).
+
+    These resources might be helpful:
+
+    * [`kubectl` Tool Overview][4] and [Cheatsheet][6]
+    * [Kubernetes Basics][3] from kubernetes project
+    * [Kubernetes Official Tutorials][5] 
+   
+    Please note that not all examples will work in our cluster because of security policies. You are limited to see what's happening in your own namespace, and nobody else can see your running pods.
+
+
+
+### GUI tools for Kubernetes
+
+You might want to try one of these GUI tools for Kubernetes:
+
+    * [Lens](https://k8slens.dev/) - Graphical user interface
+    * [K9s](https://k9scli.io/) - console graphical user interface
+
+    Both will use your config file in default location to get access to the cluster.
+
+
+
+[1]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
+[2]: https://portal.nrp-nautilus.io
+[3]: https://kubernetes.io/docs/tutorials/kubernetes-basics/
+[4]: https://kubernetes.io/docs/reference/kubectl
+[5]: https://kubernetes.io/docs/tutorials/
+[6]: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
