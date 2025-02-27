@@ -53,13 +53,13 @@ const metadata = {
 
   <Features
     id="features"
-    tagline="Accelerating science"
-    title="Multiple science fields"
+    tagline="Features"
+    title="Accelerating Science and Education"
     items={[
       {
         title: 'Artifical Intelligence',
         description:
-          'The research for AI applications.',
+          'Enabling AI use for research and education, including classes and workshops',
         icon: 'tabler:ai',
         callToAction: {
           text: 'Learn more',
@@ -67,15 +67,19 @@ const metadata = {
         },
       },
       {
-        title: 'Machine learning',
+        title: 'Resources for Classroom',
         description:
-          'Using neural networks for science.',
-        icon: 'tabler:artboard',
+          'The NRP provides resources for educators to use in their classrooms, including GPUs, CPUs, and storage accessible through convenient interfaces like JupyterHub and Coder',
+        icon: 'tabler:school',
+        callToAction: {
+          text: 'Learn more',
+          href: '/education',
+        },
       },
       {
         title: 'Network experiments',
         description:
-          'We have nodes around the world and allow experiments that are impossible on other clusters',
+          'The NRP nodes are distributed around the world and allow experiments that are impossible on other clusters',
         icon: 'tabler:network',
         callToAction: {
           text: 'Learn more',
@@ -88,8 +92,8 @@ const metadata = {
           'Mount your data across the world and use it in your experiments',
         icon: 'tabler:server-2',
         callToAction: {
-          text: 'Learn more',
-          href: '/viz/storageall',
+          text: 'Learn how to use storage on the NRP',
+          href: '/documentation/userdocs/storage/intro',
         },
       },
     ]}
@@ -118,27 +122,27 @@ const metadata = {
       {
         title: 'How much does it cost?',
         description:
-          'Free as in beer. We are funded by the National Science Foundation and everybody can use our resources free of charge.',
+          'We are funded by the National Science Foundation to provide free access to non-profit research and education institutions.',
       },
       {
         title: 'Does my project fit here?',
         description:
-          "As long as you work is related to a Scientific project in US, you can use our infrastructure.",
+          "As long as you work is related to a scientific project or educational use in US, you can use our infrastructure.",
       },
       {
         title: "What if I'm not fluent with kubernetes?",
         description:
-          "We provide JupyterHub, Coder and other high level services that require no knowledge of kubernetes. You can also participate in our tutorials to learn more",
+          "We provide hosted JupyterHub, Coder and other high level services that require no knowledge of kubernetes. You can also participate in our tutorials to learn more",
       },
       {
         title: "How can I gelp the project?",
         description:
-          "We gladly accept donations in the form of hardware that you can join to our cluster. You can also help by spreading the word about our project.",
+          "We gladly accept donations in the form of hardware that you can join to our cluster. You can also help by spreading the word about the NRP",
       },
       {
         title: "What will I gain if I join hardware?",
         description:
-          "You will get priority in computing on your hardware whenever you'd like. When it's not used, we will provide shared access to it to other users.",
+          "You will get priority in computing on your hardware whenever you'd like. When your hardware is not used by your group, we will provide opportunistic access to it to other NRP users.",
       },
       {
         title: "Do I need to manage the hardware I join to the cluster?",

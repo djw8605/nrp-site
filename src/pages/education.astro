@@ -1,0 +1,102 @@
+---
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Educational Resources',
+};
+---
+<!-- actions={[{ variant: 'primary', target: '_blank', text: 'Start exploring', href: '/' }]} 
+     tagline="Educational Resources"
+     
+-->
+
+<Layout metadata={metadata}>
+  
+  <Hero
+    tagline='Educational Resources' 
+    image={{ src: '~/assets/images/classroom.jpg', alt: 'Education image' }}
+    >
+    <Fragment slot="title">
+      Get access to GPUs and<br />
+      compute resources for your <span class="text-accent dark:text-white highlight">classroom</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      The National Research Platform provides a convenient way for educators to access GPUs
+      and other compute resources for their classrooms. Whether you are teaching a course on
+      machine learning, data science, or high-performance computing, the NRP can help you
+      provide your students with the resources they need.
+    </Fragment>
+  </Hero>
+
+
+  <Features2
+  title="Educational features of the NRP"
+  subtitle='The NRP offers many features that are useful for educators. Here are some of the key features of the platform:'
+  items={[
+    {
+      title: 'Hosted JupyterHub',
+      description: 'No need to create your own JupyterHub, you can use the NRP\'s hosted JupyterHub to run your notebooks and share them with your students.',
+      icon: 'tabler:notebook',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/jupyter/jupyterhub-service'
+      }
+    },
+    {
+      title: 'Private JupyterHub',
+      description: 'If you prefer to have your own private JupyterHub, the NRP can help you set one up for your classroom.',
+      icon: 'tabler:notebook',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/jupyter/jupyterhub'
+      }
+    },
+    {
+      title: 'Coder Hosted IDE',
+      description: 'Coder is a powerful web-based IDE, based on the same the open source VS Code, that allows you to write, run, and debug code in the cloud. The NRP provides a hosted version of Coder that you can use in your classroom.',
+      icon: 'tabler:cpu',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/coder/coder'
+      }
+    },
+    {
+      title: 'Hosted LLM Service',
+      description: 'The NRP provides a hosted LLM service with many open models to choose from.',
+      icon: 'tabler:cpu',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/ai/llm-managed'
+      }
+    },
+    {
+      title: 'Access to GPUs',
+      description: 'The NRP provides access to modern GPUs for use in your classroom. Whether you are teaching a course on machine learning, data science, or high-performance computing, the NRP can help you provide your students with the resources they need.',
+      icon: 'tabler:cpu',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/running/gpu-pods'
+      }
+    },
+  ]}
+  />
+
+  <CallToAction
+  actions={[
+    {
+      variant: 'primary',
+      text: 'Contact Us',
+      href: 'mailto:support@nationalresearchplatform.org',
+    },
+  ]}
+  title="Contact Us for More Information"
+  subtitle="If you are interested in learning more about how the NRP can help you provide resources for your classroom, please contact us at support@nationalresearchplatform.org"
+  />
+
+
+
+</Layout>

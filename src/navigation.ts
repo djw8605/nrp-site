@@ -10,6 +10,10 @@ export const headerData = {
           href: getPermalink('/documentation/userdocs/tutorial/introduction'),
         },
         {
+          text: 'Educational/Classroom Use',
+          href: getPermalink('/education'),
+        },
+        {
           text: 'New Contributor Guide',
           href: getPermalink('/documentation/admindocs/participating/new-contributor-guide'),
         },
