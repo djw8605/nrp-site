@@ -114,7 +114,7 @@ export const footerData = {
     },
   ],
   secondaryLinks: [
-    { text: 'AUP', href: getPermalink('/NRP-AUP.pdf') },
+    { text: 'NRP Acceptable Use Policy', href: getPermalink('/NRP-AUP.pdf') },
   ],
   socialLinks: [
     { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
