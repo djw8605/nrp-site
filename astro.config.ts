@@ -39,6 +39,10 @@ export default defineConfig({
       },
       sidebar: [
         {
+          label: "Start Here",
+          link: "documentation/",
+        },
+        {
           label: "User Guide",
           items: [
             {
