@@ -33,10 +33,10 @@ If you are a new user and want to access the NRP Nautilus cluster, follow the st
     You have to be part of at least one namespace (usually your research group) as a **`user`** or **`admin`**.
     :::
 
-6. If you are a **student**, please contact your research supervisor and ask them to add you to their namespace. Once you are added to a namespace, your status will change to a cluster **`user`** and 
+6. If you are a **student**, please contact your research supervisor and ask them to add you to their [namespace](cluster-overview#namespace). Once you are added to a namespace, your status will change to a cluster **`user`** and 
 you will get access to all namespace resources.
 
-7. If you are a **faculty member, researcher, or postdoc** starting a new project and need your own namespace—either for yourself or your research group—you 
+7. If you are a **faculty member, researcher, or postdoc** starting a new project and need your own [namespace](cluster-overview#namespace) —either for yourself or your research group—you 
 can request to be promoted to a namespace **`admin`** in [Matrix](/contact).
 As an **`admin`**, you will have the ability to: 
     - Create multiple namespaces.
@@ -47,16 +47,20 @@ As an **`admin`**, you will have the ability to:
     -  keeping the user list up-to-date.
     :::
 
+8. Once you are made either a **`user`** or **`admin`** of a namespace, you will need to accept the <a href="/NRP-AUP.pdf" target="_blank">Acceptable Use Policy (AUP)</a> on the portal page in order to get access to the cluster.
 
-8. Once you are made either a **`user`** or **`admin`** of a namespace, you will need to accept the Acceptable Use Policy (AUP) on the portal page in order to get access to the cluster.
-9. **Make sure you read the cluster policy before starting to use it.**
-    :::danger[Read the Cluster Policy]
-    - Read the [Policies](/documentation/userdocs/start/policies/) page.
-    - Read the [NRP Acceptable Use Policy (AUP).](/NRP-AUP.pdf)
+9. Access your namespace(s).
+    - If you have become a namespace **`admin`**, you can start creating your own namespaces at this time by going to the [**Namespaces manager**](https://portal.nrp-nautilus.io/profileN) section on the portal. You can add other users on the same page after they have logged in to the portal. 
+    - If you got added to a namespace as **`user`**, you can verify it by going to the [**Namespaces manager**](https://portal.nrp-nautilus.io/profileN) tab after logging in to the portal. You should be able to “Select your namespace” from a drop-down list.
+
+10. **Make sure you read the cluster policies before starting to use it.**
+    :::danger[Read the Cluster Policies]
+    - Read and accept the <a href="/NRP-AUP.pdf" target="_blank">**NRP Acceptable Use Policy (AUP)**</a>.
+    - Read the <a href="/documentation/userdocs/start/policies/" target="_blank">**Cluster Policies**</a>.
     :::
 </Steps>
 
-### How to interact with the cluster
+### Cluster access via kubectl
 
 Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from your laptop or desktop using the Kubernetes command-line interface (CLI) tool, [`kubectl`](https://kubernetes.io/docs/reference/kubectl/kubectl/).
 
@@ -103,11 +107,21 @@ Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from 
 
 </Steps>
 
-### Learn about Kubernetes
+:::caution[Read it before using the cluster]
+- Containers are stateless. 
+    - **All your data will be gone forever when container restarts**, unless you store in a persistent volume.
+- Container restart is normal in k8s cluster. Expect it.
+- Never force Delete Pods.
+- Users running a **`Job`** with **`sleep` command** or equivalent (any command that never ends by itself) will be banned from using the cluster.
+:::
 
-1. To learn more about kubernetes you can look at [our tutorial](/documentation/userdocs/tutorial/basic/).
+### Use the Cluster
 
-    These resources might be helpful:
+1. Read the [Using Nautilus](/documentation/userdocs/start/using-nautilus) page to learn how to use the cluster. 
+
+2. To learn more about kubernetes you can look at [our tutorial](/documentation/userdocs/tutorial/basic/).
+
+3. Other helpul resources:
 
     * [`kubectl` Tool Overview][4] and [Cheatsheet][6]
     * [Kubernetes Basics][3] from kubernetes project

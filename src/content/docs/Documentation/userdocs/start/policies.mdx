@@ -1,0 +1,147 @@
+---
+title: Cluster Policies
+description: cluster policies on how to use resources, request gpus, run interactive pods, batch jobs and deployments
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+:::note[TL;DR]
+
+- Use [**`Job`**](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/documentation/userdocs/running/jobs/) and set right resources request.
+- Use [**`Deployment`**](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/documentation/userdocs/running/long-idle/) and set **minimal** resources request.
+- Use [monitoring](/documentation/userdocs/running/monitoring/) to accurately set the resource requests.
+- Avoid wasting resources: if you’ve requested something, use it, and free it up once computation is done.  Admins monitor resource utilization and will ban namespaces with under-utilized resources requests.
+- **Users running a Job with `sleep` command or equivalent (script ending with "sleep") will be banned from using the cluster.**
+:::
+
+### Acceptable Use Policy
+
+Read the 
+<a href="/NRP-AUP.pdf" target="_blank" rel="noopener noreferrer">NRP Acceptable Use Policy (AUP)</a>.
+
+:::danger[You need to accept the AUP before using the cluster]
+:::
+
+
+### Resource allocation
+
+<Steps>
+1. Your actions can affect the whole cluster, so you have to be mindful while asking for resources (CPUs, memory, and storage). 
+Choose the resource `requests` and `limits` carefully.
+
+2. Set the resource (particularly CPU, memory and ephemeral-storage) `limits` properly. Your resource `limits` must be within 20% of the resource `requests`.
+
+    :::tip
+    - If your RAM limit is much higher than the request (more than ~20% higher), you can be in a situation where the scheduler puts your pod on a node that only has the requested amount of RAM available. 
+    Once the pod tries to allocate RAM above the request up to the limit, it will be killed before even reaching the limit, since the node only has the requested amount. 
+    - The same applies to CPUs: if your limit is much higher than the request and you're using all available, the node might not have that many cores and will starve the resources, causing your job to run much slower.
+    It's always a tradeoff, so use requests and limits wisely.
+    :::
+
+3. While running a large number (> ~100) of pods or jobs, you must choose your resource `limit` = `request`.
+4. If a pod goes over its memory `limit`, it will be killed (OOM - Out of Memory).
+5. If a pod exceeds the CPU limit, puts pressure on the node. It can affect the whole node and other user's work.
+
+    :::tip
+    It is crucial to set `limits` correctly, but equally important not to set `requests` too high.
+    Aim to match your `requests` closely to the average resources you expect to use, while setting `limits` slightly above your highest anticipated peak. 
+    - Use <a href="/documentation/userdocs/running/monitoring/" target="_blank">monitoring</a> to fine-tune these values effectively.
+    :::
+6. Do not waste resources. If you request it, use it—and then free it up when you are done. 
+7. Admins actively monitor resource usage and namespaces with consistently underutilized requests risk being banned.
+
+</Steps>
+
+### Interactive use (6 hours max runtime)
+
+<Steps>
+1. Pods do not stop on their own under normal conditions and won’t recover if a node fails. Because of this, we assume any pod running without a controller is **interactive**, meaning it's used temporarily for development or debugging.
+2. **Time limit:** such pods will be **destroyed in 6 hours**, unless you request an exception for your namespace (in case you run JupyterHub or some other application controlling the pods for you).
+3. **Resource limits:** interactive pods are limited to 2 GPUs, 32 GB RAM, and 16 CPU cores.
+4. It is okay to run `sleep` in an interactive pod. 
+</Steps>
+
+
+### Batch jobs
+
+:::tip
+If you need to run a larger and longer computation, you need to use one of available [Workload Controllers][4]. 
+We recommend running those as [Jobs][5] - this will closely watch your workload and make sure it ran to completion (exited with 0 status), shut it down to free up the resources, and restart if the node was rebooted or something else has happened. 
+:::
+
+<Steps>
+1. Use [Job](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) to run [batch jobs](/documentation/userdocs/running/jobs/) and set resources carefully.
+    - You can use [Guaranteed QoS](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed) for those.
+2. While running a large number (> ~100) of jobs, you must choose your resource `limit` = `request`.
+3. Do not run long `sleep` in your Job.
+4. Users running a Job with `sleep` command or equivalent (script ending with “sleep”) will be banned from using the cluster.
+
+</Steps>
+
+### Long-running idle pods
+
+In case you need some pod to run idle for a long time, you can use the [Deployment controller](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment).
+
+<Steps>
+1. Use [**`Deployment`**](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [long-running pod](/documentation/userdocs/running/long-idle/).
+2. Make sure you set minimal request and proper limits for those to get the [Burstable QoS](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable)
+3. Such a deployment can not request a GPU.
+4. Deployemnts are be automatically deleted after 2 weeks (unless the namespace is added to exceptions list and runs a permanent service). 
+
+</Steps>
+
+
+### Workloads purging (2 weeks max runtime)
+
+<Steps>
+
+1. With over a thousand users in the system, many leave their deployments running even after their computation is complete. Since we can not determine whether a pod is still needed or has been abandoned, we enforce automatic cleanup.
+2. A periodic process removes workloads **older than 2** weeks to free up resources and maintain system efficiency.
+3. In case you are running [some permanent service](/documentation/userdocs/running/ingress/) and would want us to keep it running, you can contact admins in [Matrix](/contact) and ask for an exception. 
+Please provide an estimated period of service functioning and brief description of what the service does.
+4. [Long idle pods](/documentation/userdocs/running/long-idle/) can't be added to exceptions list, since those are considered temporary and we need to be sure those are cleaned when not needed.
+5. For workloads not in exceptions list you will get 3 notifications after which your workload will
+be deleted. Any data in persistent volumes will remain.
+
+</Steps>
+
+
+### Requesting GPUs
+
+<Steps>
+1. When you [request GPUs for your pod](/documentation/userdocs/running/gpu-pods), nobody else can use those until you stop your pod. You should only schedule GPUs that you can actually use. 
+2. Check the [GPU dashboard](https://grafana.nrp-nautilus.io/d/dRG9q0Ymz/k8s-compute-resources-namespace-gpus) for your namespace to make sure the utilization is above 40%, and ideally is close to 100%.
+3. The only reason to request more than a single GPU is when your GPU utilization is close to 100% and you can leverage using more GPUs.
+4. GPUs are a limited resource shared by many users. If you plan on deploying large jobs (>50 GPUs) please present a plan in [Matrix][3].
+</Steps>
+
+:::caution[Access Request for A100 GPUs] 
+
+- To reduce the misuse the quota for using A100 GPUs is set to 0 for every namespace.
+- If you want to use A100 GPUs, you need to fill out the [A100 access](/reservations) request form online. 
+:::
+
+### System load
+
+
+While you're welcome to use as much resources as needed, using those inefficiently is causing problems to others. The CPU load of the system consists of user load, system load and several others. If you run `top`, you'll see something like:
+
+```bash
+%Cpu(s): 26.9 us,  1.5 sy,  0.0 ni, 71.5 id,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st
+```
+
+This means 26.9% of all system CPU time is spent on user tasks (computing), 1.5% on system stuff (kernel tasks), 71.5 idle, and so on. If the system (kernel) load is more than \~15%, it indicates a problem with the user's code. Usually, it is caused by too many threads (system is spending too much time just switching between those), inefficient file I/O (lots of small files processed by too many workers), or something similar. In this case, the system time is wasted not on processing.
+
+<Steps>
+1. If you were told your pod is causing too much load, look at your code and try to figure out why it is spending too much kernel time instead of computations.
+
+</Steps>
+
+
+
+[1]: https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/#specify-a-memory-request-and-a-memory-limit
+[2]: https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit
+[3]: /contact
+[4]: https://kubernetes.io/docs/concepts/
+[5]: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+[6]: /userdocs/running/jobs/
