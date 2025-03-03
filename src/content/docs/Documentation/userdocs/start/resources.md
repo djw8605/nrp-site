@@ -13,7 +13,7 @@ Most services require additional registration.
 **Please report any not working service in [Matrix Support](/contact).**
 
 ## Computations
-- [JupyterHub][1]
+- [JupyterHub][1] ([Instructions](/documentation/userdocs/jupyter/jupyterhub-service))
 - [WebODM (Web Open Drone Map): Drone Images stitching][4]
 
 ## Data sharing and collaboration tools
@@ -26,16 +26,21 @@ Most services require additional registration.
 - [Coder: remote development environment][13]
 - [Hedgedoc: collaborative markdown editor][14]
 
+## Artificial intelligence and LLM
+
+- [NRP-Managed LLMs](/documentation/userdocs/ai/llm-managed)
+- [Nextcloud Assistant][6] (press the three stars on the top-right)
+
 ## Network monitoring
 - [Traceroute tool][7]
 - [PerfSONAR][11]
 
-[1]: https://jupyterhub-west.nrp-nautilus.io/
-[3]: https://etherpad.nrp-nautilus.io/
-[4]: https://webodm.nrp-nautilus.io/
-[5]: https://gitlab.nrp-nautilus.io/
-[6]: https://nextcloud.nrp-nautilus.io/
-[7]: https://traceroute.nrp-nautilus.io/
+[1]: https://jupyterhub-west.nrp-nautilus.io
+[3]: https://etherpad.nrp-nautilus.io
+[4]: https://webodm.nrp-nautilus.io
+[5]: https://gitlab.nrp-nautilus.io
+[6]: https://nextcloud.nrp-nautilus.io
+[7]: https://traceroute.nrp-nautilus.io
 [8]: https://syncthing.net
 [10]: https://jitsi.nrp-nautilus.io
 [11]: https://perfsonar.nrp-nautilus.io/maddash-webui/
