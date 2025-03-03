@@ -3,7 +3,6 @@ title: JupyterLab Access Management
 description: Guide for managing user access to the JupyterLab service.
 ---
 
-# JupyterLab Access Management
 
 ## Adding a User to JupyterLab
 

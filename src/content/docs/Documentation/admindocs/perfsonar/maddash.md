@@ -1,27 +1,18 @@
 ---
-title: Workshop Links
-description: Workshop Links
+title: MaDDash Links
+description: MaDDash Links
 ---
 
-<div class="border">
-<strong>MaDDash Links</strong>
-</div>
-[PRP][maddash1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[NRP][maddash2]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[CENIC][maddash3]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[Pacific Wave][maddash4]
+[NRP][maddash2] MaDDash WebUI.
 
-
-<div class="border">
-<strong>Setting up perfSONAR</strong>
-</div>
+## Workshop Materials
 
 Links for the updated FIONA perfSONAR and GridFTP materials from a 2-day
 workshop held at Calit2, UCSD, March 2019.   
 
 [Workshop agenda][ws-agenda]
 
-[psConfig for MaDDash] [ws-psconfig]
+[psConfig for MaDDash][ws-psconfig]
 
 [Workshop materials (gitlab repo)][ws-materials]
 

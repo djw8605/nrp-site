@@ -3,8 +3,6 @@ title: SENSE/Multus L2 Path Provisioning
 description: Guide to provision an L2 path using SENSE and Multus for network attachment.
 ---
 
-# SENSE/Multus L2 Path Provisioning Guide
-
 Follow these steps to provision an L2 path using SENSE and Multus.
 
 ## Step 1: Verify SENSE Path

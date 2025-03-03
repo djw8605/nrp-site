@@ -3,32 +3,21 @@ title: Software
 description: Software
 ---
 
-<div class="border">
-<strong>For DTNs  </strong>
-</div>
-- [GridFTP ][gridftp] as baseline for disk-to-disk throughput testing
+## For DTNs
+[GridFTP ][gridftp] as baseline for disk-to-disk throughput testing
 
 
-<div class="border">
-<strong>ESnet Software</strong>
-</div>
-
+## ESNet Software
 - Links to publicly available [ESnet software][esnetlinks] 
 - [Esmond-client package][esmond] 
 - [Command line tools][esnet-cli]
 
 
-<div class="border">
-<strong>AI and related </strong>
-</div>
-
+## AI and related
 [Swipe for Science][swipe] - annotating  large data sets of images 
 
 
-<div class="border">
-<strong>Multi-cluster orchestration</strong>
-</div>
-
+## Multi-Cluster Orchestrators
 [Submariner][submariner] - Multi-Cluster network connectivity for Kubernetes<br>
 [Cilium][cilium]
 - Multi-Cluster service routing using standard Kubernetes services.

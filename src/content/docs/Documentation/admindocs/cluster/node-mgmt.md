@@ -3,15 +3,13 @@ title: Node Management
 description: Guide for managing and rebooting nodes in the cluster.
 ---
 
-# Node Management
-
 ### Key Considerations When Rebooting a Node
 
 1. Check if the node has any `rook-ceph-osd-*` pods. Verify the health of the corresponding Ceph cluster and [bring down one node at a time](#special-instruction-to-reboot-ceph-nodes).
 2. Check for `haproxy-ingress-*` pods. If the node will be down for an extended period, disable its record in [Constellix DNS](https://dns.constellix.com/).
 3. Check if the node has the `nautilus.io/linstor-server` label. This node serves as a Linstor server. Some Linstor servers are redundant, while others are critical.
 4. Check if the node has the `nautilus.io/bgp-speaker` label. There are two nodes used for MetalLB IPs—ensure one remains active.
-5. Check if the node has the `node-role.kubernetes.io/master` label. Rebooting this node will make the cluster inaccessible unless it's not an admiralty virtual node.
+5. Check if the node has the `node-role.kubernetes.io/master` label. Rebooting this node will make the cluster inaccessible unless it's not an Admiralty virtual node.
 
 ## Prerequisites
 

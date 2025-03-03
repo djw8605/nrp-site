@@ -5,6 +5,6 @@ description: Ceph Performance
 
 ## Ceph performance
 
-Currently we're referring to [this article](http://yourcmc.ru/wiki/Ceph_performance) regarding tuning ceph.
+Currently we're referring to [this article](http://yourcmc.ru/wiki/Ceph_performance) regarding tuning Ceph.
 
-Most nodes are set up with PLP NVME db and spinning drives.
+Most nodes are set up with PLP NVMe db and spinning drives.

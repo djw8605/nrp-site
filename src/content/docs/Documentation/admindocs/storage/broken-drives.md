@@ -3,7 +3,7 @@ title: Broken Drives
 description: Broken Drives
 ---
 
-## List of broken drives in the cluster by prometheus monitoring:
+## List of broken drives in the cluster by Prometheus monitoring:
 
 <div id="observablehq-b-080dd118"></div>
 <p><a href="https://observablehq.com/d/ad3be6949516bf98">Broken drives notebook</a></p>

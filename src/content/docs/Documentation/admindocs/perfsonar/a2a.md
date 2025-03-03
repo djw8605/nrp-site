@@ -5,7 +5,7 @@ description: Description
 
 #### All to All maddash
 
-The [NRP][maddash1]  maddash shows the connectivity between a node selected at each site. The sites are labelled in kubernetes by the `topology.kubernetes.io/zone` label.
+The [NRP][maddash1] maddash shows the connectivity between a node selected at each site. The sites are labelled in Kubernetes by the `topology.kubernetes.io/zone` label.
 
 To get the node participating in the maddash, you can run this query (for example, starlight is the zone we're interested in):
 

@@ -3,7 +3,7 @@ title: Deploy JupyterHub
 description: Deploy JupyterHub
 ---
 
-This guide is based on [Zero to jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. Also assuming you're the admin of the namespace you're deploying to.
+This guide is based on [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. You must be the admin of the namespace you’re deploying to.
 
 Start from choosing the name for your project. It will look like `your_name.nrp-nautilus.io`
 
@@ -31,7 +31,7 @@ Follow the [install guide](https://zero-to-jupyterhub.readthedocs.io/en/stable/j
 
 1. Run `openssl rand -hex 32` and replace the `secret_token` in the yaml file with the generated key
 2. Minimally set the `client_id`, `client_secret`, `admin_users`, `secret_token`, `oauth_callback_url`, `ingress.hosts` fields.
-3. Add security with either `allowed_idps` or `allowed_users`. Do NOT leave your jupyterhub instance open for anyone to sign in, this may result in locking of your namespace.
+3. Add security with either `allowed_idps` or `allowed_users`. Do NOT leave your JupyterHub instance open for anyone to sign in, this may result in locking of your namespace.
 4. `helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/ && helm repo update`
 5. `helm upgrade --cleanup-on-fail --install jhub jupyterhub/jupyterhub --namespace <namespace> --version=3.3.7 --values config.yaml`
 
@@ -39,4 +39,4 @@ Once the pods start, you should be able to see the installation under your selec
 
 #### Automatic deployment
 
-You can put your jupyterhub configuration in GitLab and automatically redeploy the application on repository changes. Please refer to [this guide](/documentation/userdocs/development/k8s-integration/) for details.
+You can put your JupyterHub configuration in GitLab and automatically redeploy the application on repository changes. Please refer to [this guide](/documentation/userdocs/development/k8s-integration/) for details.

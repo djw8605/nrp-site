@@ -3,10 +3,10 @@ title: K8s Gitlab Integration
 description: K8s Gitlab Integration
 ---
 
-This page covers integrating GitLab with kubernetes cluster to automatically deploy from GitLab to kubernetes via CI/CD jobs.
+This page covers integrating GitLab with the Nautilus cluster to automatically deploy from GitLab to Kubernetes via CI/CD jobs.
 
 1. In your project, go to `Operate -> Kubernetes clusters`, click the dropdown in the top right and select `Connect a cluster (certificate - deprecated)`
-1. In the namespace create a gitlab service account: `kubectl create sa gitlab -n <your_namespace>`
+1. In the namespace create a GitLab service account: `kubectl create sa gitlab -n <your_namespace>`
 1. Create the rolebinding for the service account:
 
         kubectl create -f - << EOF
@@ -37,7 +37,7 @@ This page covers integrating GitLab with kubernetes cluster to automatically dep
         type: kubernetes.io/service-account-token
         EOF
 
-1. Get the secret and CA for the service account:
+1. Get the secret and Certificate Authority (CA) for the service account:
 
       `kubectl get secret -n your_namespace | grep gitlab`
 
@@ -53,4 +53,4 @@ This page covers integrating GitLab with kubernetes cluster to automatically dep
 
 1. Click `Add kubernetes cluster`
 
-Now your cluster config will be available to tools like kubectl and helm to access your namespace. You can use [this project](https://gitlab.nrp-nautilus.io/prp/jupyterlab-west) as an example of how to automatically deploy a helm application yo your namespace and [this one](https://gitlab.nrp-nautilus.io/prp/nautilus-admission/-/blob/master/.gitlab-ci.yml#L28-39) to automatically update the deployment image.
+Now your cluster config will be available to tools like `kubectl` and `helm` to access your namespace. You can use [this project](https://gitlab.nrp-nautilus.io/prp/jupyterlab-west) as an example of how to automatically deploy a Helm application to your namespace and [this one](https://gitlab.nrp-nautilus.io/prp/nautilus-admission/-/blob/master/.gitlab-ci.yml#L28-39) to automatically update the deployment image.

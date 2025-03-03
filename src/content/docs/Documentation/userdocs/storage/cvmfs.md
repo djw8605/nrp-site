@@ -3,9 +3,11 @@ title: CVMFS
 description: CVMFS
 ---
 
-### OSG Origins data use
+[CVMFS](https://cernvm.cern.ch/fs/) is a distributed filesystem that allows you to mount software repositories and datasets on your local machine. It is used to distribute software and data across the grid, and is widely used in the High Energy Physics community.
 
-We host a number of OSG origins in the cluster, that can be used to distribute read-only data, f.e. software packages or datasets. You can [contact us](/contact) to place data on origins.
+### OSDF Origins
+
+We host a number of OSDF origins in the cluster, that can be used to distribute read-only data, f.e. software packages or datasets. You can [contact us](/contact) to place data on origins.
 
 The data is stored in a single server spinning drives JBOD, with RAID 50.
 

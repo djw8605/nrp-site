@@ -1,13 +1,11 @@
 ---
-title: rook/Ceph
-description: rook/Ceph
+title: Rook/Ceph Upgrades
+description: Rook/Ceph upgrades
 ---
-
-## Upgrading rook
 
 Follow the [most recent docs corresponding the the version being upgraded to](https://rook.io/docs/rook/v1.12/Upgrade/rook-upgrade/).
 
-It's important to also use the [template for the 2nd cluster](https://github.com/rook/rook/blob/master/deploy/examples/common-second-cluster.yaml) for all additional ceph clusters (there are 5+ deployed). Remove all the PSP stuff from it.
+It's important to also use the [template for the 2nd cluster](https://github.com/rook/rook/blob/master/deploy/examples/common-second-cluster.yaml) for all additional Ceph clusters (there are 5+ deployed). Remove all the PSP stuff from it.
 
 ```bash
 cd deploy/examples
@@ -51,6 +49,6 @@ kubectl apply -f clusters -f crds.yaml
 
 fix toolbox pods
 
-## Upgrading ceph
+## Upgrading Ceph
 
 **Before upgrading the major version, [make sure the OS and kernel support it](https://docs.ceph.com/en/latest/start/os-recommendations/)**

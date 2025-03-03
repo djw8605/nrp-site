@@ -14,8 +14,7 @@ To access your Nextcloud storage from shell (or Jupyter), you can use the [rclon
 
 To get access, create new rclone config:
 
-<div class="codeblock">
-<pre>
+```bash
 jovyan@jupyter:~$ rclone config
 2019/04/23 17:05:08 NOTICE: Config file "/home/jovyan/.config/rclone/rclone.conf" not found - using defaults
 No remotes found - make a new one
@@ -145,12 +144,11 @@ c) Copy remote
 s) Set configuration password
 q) Quit config
 e/n/d/r/c/s/q> q
-</pre>
-</div>
+```
 
 Then copy in your data:
 
-```
+```bash
 rclone copy -P nextcloud:/Downloads .
 ```
 

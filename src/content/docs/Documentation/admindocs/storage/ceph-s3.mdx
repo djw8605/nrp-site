@@ -5,25 +5,43 @@ description: Description
 
 import { Card } from '@astrojs/starlight/components';
 
-To log into the CEPH control pod:
+To log into the Ceph control pod:
 
-<Card title="West Control Pod">`kubectl exec -it -n rook $(kubectl get pods -n rook --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash`</Card>
+West Control Pod:
+```bash title="West Control Pod"
+kubectl exec -it -n rook $(kubectl get pods -n rook --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash
+```
 
-<Card title="East Control Pod">`kubectl exec -it -n rook-east $(kubectl get pods -n rook-east --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash`</Card>
+East Control Pod:
+```bash title="East Control Pod"
+kubectl exec -it -n rook-east $(kubectl get pods -n rook-east --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash
+```
 
-<Card title="Central Control Pod">`kubectl exec -it -n rook-central $(kubectl get pods -n rook-central --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash`</Card>
+Central Control Pod:
+```bash title="Central Control Pod"
+kubectl exec -it -n rook-central $(kubectl get pods -n rook-central --selector=app=rook-ceph-tools --output=jsonpath={.items..metadata.name}) -- bash
+```
 
 
 ### Adding Users
 
 
-Once logged into the CEPH control pod, run the command to add a user:
+Once logged into the Ceph control pod, run the command to add a user:
 
-<Card title="West Pool">`radosgw-admin --rgw-realm=nautiluss3 --rgw-zone=nautiluss3 --rgw-zonegroup=nautiluss3 user create --uid <uid> --display-name "<name>" --email "<email>"`</Card>
+West Pool:
+```bash title="West Pool"
+radosgw-admin --rgw-realm=nautiluss3 --rgw-zone=nautiluss3 --rgw-zonegroup=nautiluss3 user create --uid <uid> --display-name "<name>" --email "<email>"
+```
 
-<Card title="East Pool">`radosgw-admin --rgw-realm=easts3 --rgw-zone=easts3 --rgw-zonegroup=easts3 user create --uid <uid> --display-name "<name>" --email "<email>"`</Card>
+East Pool:
+```bash title="East Pool"
+radosgw-admin --rgw-realm=easts3 --rgw-zone=easts3 --rgw-zonegroup=easts3 user create --uid <uid> --display-name "<name>" --email "<email>"
+```
 
-<Card title="Central Pool">`radosgw-admin --rgw-realm=centrals3 --rgw-zone=centrals3 --rgw-zonegroup=centrals3 user create --uid <uid> --display-name "<name>" --email "<email>"`</Card>
+Central Pool:
+```bash title="Central Pool"
+radosgw-admin --rgw-realm=centrals3 --rgw-zone=centrals3 --rgw-zonegroup=centrals3 user create --uid <uid> --display-name "<name>" --email "<email>"
+```
 
 The `access_key` and `secret_key` is in the output from the above command.
 

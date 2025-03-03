@@ -3,17 +3,17 @@ title: LLM in JupyterHub
 description: LLM in JupyterHub
 ---
 
-You can easily experiment with LLMs in jupyterhub. We provide the [managed one](/documentation/userdocs/jupyter/jupyterhub-service/), or you can [run your own](https://docs.nrp.ai/userdocs/jupyter/jupyterhub/).
+You can easily experiment with LLMs in JupyterHub. We provide the [managed one](/documentation/userdocs/jupyter/jupyterhub-service/), or you can [run your own](https://docs.nrp.ai/userdocs/jupyter/jupyterhub/).
 
-Make sure your `/home/jovyan` volume is large enough to hold the LLM model (which usually reaches hundreds GB), and ask admins to extend it if nesessary.
+Make sure your `/home/jovyan` volume is large enough to hold the LLM model (which usually reaches hundreds of GB), and ask admins to extend it if nesessary.
 
-Run a jupyter pod with enough memory and cores for your model and appropriate GPU type.
+Run a Jupyter pod with enough memory and cores for your model and appropriate GPU type.
 
-Install the huggingface interface:
+Install the Hugging Face interface:
 
 `!pip install --user --upgrade diffusers accelerate transformers`
 
-Then run stable diffusion in python to generate an image:
+Then run Stable Diffusion in python to generate an image:
 
 ```python
 from diffusers import StableDiffusionPipeline

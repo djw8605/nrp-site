@@ -3,8 +3,6 @@ title: Cluster-wide CDN-like Services with Topology Awareness
 description: Learn how to configure cluster-wide CDN-like services using Kubernetes topology-aware hints and pod affinities for optimized network connectivity.
 ---
 
-## Configuring Cluster-wide CDN-like Services with Topology Awareness
-
 The nodes in the cluster are grouped by the `topology.kubernetes.io/{region,zone}` labels. For applications requiring faster or larger network connectivity, you can distribute pods across multiple zones or larger regions. Kubernetes services can also be made aware of these topologies to optimize performance.
 
 **Note:** This setup has not been fully successful yet, most likely due to [safeguards](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/#safeguards) that are being violated in this configuration.

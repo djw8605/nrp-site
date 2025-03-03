@@ -3,8 +3,6 @@ title: Partitioning GPU into MIG (Multi-Instance GPU)
 description: Guide to partition GPUs into Multi-Instance GPUs (MIG) for better resource management.
 ---
 
-## Partitioning GPUs into MIG (Multi-Instance GPU)
-
 1. Drain the node.
 
 2. Run the command to convert **ALL** GPUs to MIGs:

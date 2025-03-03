@@ -3,15 +3,15 @@ title: LLM as a Service
 description: LLM as a Service
 ---
 
-## SHALB helm chart
+## SHALB Helm chart
 
-One of easy ways to deploy an LLM is to use a model provided by [HuggingFace](https://huggingface.co/models) with the help of [SHALB helm chart](https://github.com/shalb/charts/tree/main/huggingface-model).
+One of easy ways to deploy an LLM is to use a model provided by [HuggingFace](https://huggingface.co/models) with the help of [SHALB Helm chart](https://github.com/shalb/charts/tree/main/huggingface-model).
 
-The helm chart allows installing a [text genertation inference](https://github.com/huggingface/text-generation-inference) container, optionally accompanied by the [chat-ui interface](https://github.com/huggingface/chat-ui) to talk to the service.
+The Helm chart allows installing a [text genertation inference](https://github.com/huggingface/text-generation-inference) container, optionally accompanied by the [chat-ui interface](https://github.com/huggingface/chat-ui) to talk to the service.
 
 To deploy the LLM, choose a [text generation model](https://huggingface.co/models?pipeline_tag=text-generation&sort=likes) without download restrictions and modest footprint (f.e. Mistral is a good one). You can get approval for protected (like LLama) and/or choose the larger ones and adjust the GPU type that will be able to handle it.
 
-Create the helm values file (`huggingface-values.yaml`) similar to this one (at least replace the values in first "model" block):
+Create the Helm values file (`huggingface-values.yaml`) similar to this one (at least replace the values in first "model" block):
 
 ```yaml
 model:
@@ -134,7 +134,7 @@ Replace `<subdomain>`. Optionally leave and [modify the section with `desired_gp
 
 [Install Helm](https://github.com/helm/helm#install) and deploy the LLM into your namespace:
 
-Many of the hugging face repositories and models to use a token to deploy or run the system.  To do this you must set these values.  Since the token is sensitive information you can pass this to helm directly instead of including it in the yaml file by replacing (or using environment variables) the `$hf_user`, `$hf_token` in addition to setting the `$namespace` variable. The token can be generated at https://huggingface.co/settings/tokens. 
+Many of the hugging face repositories and models to use a token to deploy or run the system.  To do this you must set these values.  Since the token is sensitive information you can pass this to Helm directly instead of including it in the yaml file by replacing (or using environment variables) the `$hf_user`, `$hf_token` in addition to setting the `$namespace` variable. The token can be generated at https://huggingface.co/settings/tokens. 
 
 ```bash
 helm install hug -n $namespace oci://registry-1.docker.io/shalb/huggingface-model -f huggingface-values.yaml \
@@ -144,7 +144,7 @@ helm install hug -n $namespace oci://registry-1.docker.io/shalb/huggingface-mode
 
 If you see 3 pods started in your namespace, you're almost done! The model will be downloaded and cached by the init container. Go stretch, make some tea, and give it some time to be downloaded into our persistent storage. Onse the init container is done and main one starts, give it some more time to start, and you can start chatting with the AI.
 
-Some models require more memory when downloading the model via git-lfs, to do this you must update the helm chart (https://github.com/shalb/charts).
+Some models require more memory when downloading the model via git-lfs, to do this you must update the Helm chart (https://github.com/shalb/charts).
 
 ```patch
 diff --git a/huggingface-model/templates/application.yaml b/huggingface-model/templates/application.yaml
@@ -169,7 +169,7 @@ index 73b1c17..192c78a 100644
 
 Your chat-ui will be available at `<subdomain>-chat.nrp-nautilus.io`, and API at `<subdomain>.nrp-nautilus.io`.
 
-The chat parameters for calling the model can be tuned by adding the MODEL config into the chat-ui deployment (the corresponding section in the helm chart doesn't seem to work currently):
+The chat parameters for calling the model can be tuned by adding the MODEL config into the chat-ui deployment (the corresponding section in the Helm chart doesn't seem to work currently):
 
 ```yaml
     spec:
@@ -212,7 +212,7 @@ The chat parameters for calling the model can be tuned by adding the MODEL confi
 
 [H2O project](https://github.com/h2oai) provides a complete toolset for running LLMs.
 
-To run their helm chart, clone the repo and cd into the cloned folder:
+To run their Helm chart, clone the repo and cd into the cloned folder:
 
 ```bash
 git clone https://github.com/h2oai/h2ogpt.git
@@ -300,13 +300,13 @@ vllm:
       nvidia.com/gpu: 2
 ```
 
-Install the helm chart:
+Install the Helm chart:
 
 `helm install h2ogpt helm/h2ogpt-chart -f h2o-values.yaml`
 
 (substitute the name of the values file you created).
 
-After the model starts (takes a long time for llama2 in the example), in the chat window you'll have to "load" the model in the Model tab first.
+After the model starts (takes a long time for llama 2 in the example), in the chat window you'll have to "load" the model in the Model tab first.
 
 The list of available models to download is available at [https://huggingface.co/h2oai](https://huggingface.co/h2oai).
 

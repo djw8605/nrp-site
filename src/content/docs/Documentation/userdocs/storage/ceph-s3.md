@@ -3,7 +3,7 @@ title: Ceph S3
 description: Ceph S3
 ---
 
-The Nautilus ceph storage cluster can be accessed via S3 protocol. It uses our own storage, which is free for our users and is not related to Amazon or any commercial cloud.
+The Nautilus Ceph storage cluster can be accessed via S3 protocol. It uses our own storage, which is free for our users and is not part of Amazon or any commercial cloud.
 
 ### Ceph filesystems data use
 
@@ -19,11 +19,11 @@ new Runtime().module(define, name => {
 });
 </script>
 
-[S3 ceph grafana dashboard](https://grafana.nrp-nautilus.io/d/WaJ_lohMk/ceph-s3)
+[S3 Ceph grafana dashboard](https://grafana.nrp-nautilus.io/d/WaJ_lohMk/ceph-s3)
 
 ## Access
 
-You can get your **credentials** (key and secret) in the [user portal](https://portal.nrp-nautilus.io), `Storage->S3 Keys` page for public ceph pools. To get credentials for private ones, contact the admin managing particular S3 storage.
+You can get your **credentials** (key and secret) in the [user portal](https://portal.nrp-nautilus.io), `Storage->S3 Keys` page for public Ceph pools. To get credentials for private ones, contact the admin managing the particular S3 storage.
 
 ## S3 regions settings
 
@@ -39,8 +39,7 @@ Pool | Inside endpoint | Outside endpoint
 
 Note that the inside endpoint is **http** (without SSL) and the outside endpoint is **https** (with SSL). You can use the 
 outside endpoint within the kubernetes cluster but it will end up going through a load balancer. By using the 
-inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate OSD's 
-and therefore achieve very large training set bandwith.
+inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate storage servers (called Object Storage Devices (OSD) in ceph) and therefore achieve very large training set bandwith.
 
 ## Using Rclone
 
@@ -60,7 +59,7 @@ Use these options:
 ## Using s3cmd
 
 
-[S3cmd](https://s3tools.org/s3cmd) is an open-source tool for accessing S3.
+[s3cmd](https://s3tools.org/s3cmd) is an open-source tool for accessing S3.
 
 To configure, create the `~/.s3cfg` file with contents if you're accessing from outside of the cluster:
 
@@ -102,7 +101,7 @@ Public URL of the object is: http://s3-west.nrp-nautilus.io/...
 ```
 
 
-## Using AWS S3 tool
+## Using the AWS S3 tool
 
 ### Credentials
 
@@ -142,7 +141,7 @@ s3 =
 endpoint = awscli_plugin_endpoint
 ```
 
-### Using AWS CLI
+### Using the AWS CLI
 
 
 The AWS CLI (command line interface) has two modes of operation for S3, `aws s3` are used for basic file manipulations (copy, list, delete, move, etc), and `aws s3api` for creating/deleting buckets, manipulating permissions, etc.

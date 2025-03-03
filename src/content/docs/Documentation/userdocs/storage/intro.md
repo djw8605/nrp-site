@@ -17,7 +17,7 @@ We have storage distributed across multiple geographic regions. To achieve optim
 
 ## POSIX volumes
 
-Most persistent data in kubernetes comes in a form of [Persistent Volumes (PV)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), which can only be seen by cluster admins. To request a PV, you have to create a [PersistentVolumeClaim (PVC)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) of a supported [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/) in your namespace, which will allocate storage for you.
+Most persistent data in Kubernetes comes in a form of [Persistent Volumes (PV)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/), which can only be seen by cluster admins. To request a PV, you have to create a [PersistentVolumeClaim (PVC)](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) of a supported [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/) in your namespace, which will allocate storage for you.
 
 ### Provided filesystems
 
@@ -33,7 +33,7 @@ new Runtime().module(define, name => {
 });
 </script>
 
-### How to choose each filesystem to use
+### How to choose which filesystem to use
 
 **Read the [High I/O jobs](/documentation/userdocs/running/io-jobs/) guide on optimizing your storage performance.**
 
@@ -41,13 +41,13 @@ new Runtime().module(define, name => {
 
 **CephFS** is a distibuted parallel filesystem which stores files as objects. It **cannot** handle lots of small files rapidly because it has to use metadata servers for annotating the files. Thus, conda/pip and code compilation should not be performed over CephFS. However, it has a much higher read/write performance than RBD, **especially if you are able to open multiple parallel streams to a file and aggregate many small files to a few large files**. CephFS has the largest storage pool in Nautilus, and thus it is suitable for workloads that deal with comparably larger files than RBD which requires high I/O performance, for example checkpoint files of various tasks. There is a per-file size limit of 16 TB in CephFS.
 
-**CVMFS** provides read-only access to data on **XROOTD OSG origins** via a set of Stashcaches, that can be mapped as a PVC to the pods. The access is read-only, and this is mostly used for rarely changing large files collections, like software packages and large training datasets.
+**CVMFS** provides read-only access to data on **OSDF origins** via a set of [OSDF](https://osdf.osg-htc.org/) caches, that can be mapped as a PVC to the pods. The access is read-only, and this is mostly used for rarely changing large files collections, like software packages and large training datasets.
 
 [Linstor](https://linbit.com/linstor/) provides the fastest and the smallest latency block storage, but can't handle large (>10TB) volumes. Can be used for VM images, high-loaded databases, etc.
 
-**Linstor is the only block storage that can recover from a node that mounts the storage going offline - the pod will be migrated to another node. In case of ceph it will be stuck until the node is back online. This is good for services requiring HA.**
+**Linstor is the only block storage that can recover from a node that mounts the storage going offline - the pod will be migrated to another node. In case of Ceph it will be stuck until the node is back online. This is good for services requiring HA.**
 
-[Comparison of linstor vs ceph by linstor](https://linbit.com/blog/how-does-linstor-compare-to-ceph/)
+[Comparison of Linstor vs Ceph by Linstor](https://linbit.com/blog/how-does-linstor-compare-to-ceph/)
 
 Ceph provides an S3-compatible protocol interface (with a per-file size limit of 5 TiB). This is a native object storage protocol that can supply the maximum read/write performance. It uses the HTTP protocol instead of POSIX, if your tool supports the protocol instead of only POSIX file I/O. Many data science tools and libraries support the S3-compatible protocol as an alternative file I/O interface, and the protocol is well optimized for such purposes.
 
@@ -71,7 +71,7 @@ spec:
       storage: <volume size, f.e. 20Gi>
 ```
 
-After you've created a PVC, you can see it's status (`kubectl get pvc pvc_name`). Once it has the Status `Bound`, you can attach it to your pod (claimName should match the name you gave your PVC):
+After you've created a PVC, you can see its status (`kubectl get pvc pvc_name`). Once it has the Status `Bound`, you can attach it to your pod (claimName should match the name you gave your PVC):
 
 ```yaml
 apiVersion: v1

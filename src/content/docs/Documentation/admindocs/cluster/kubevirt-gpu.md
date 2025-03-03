@@ -3,8 +3,6 @@ title: Configuring VFIO Passthrough for KubeVirt GPUs
 description: A guide for setting up VFIO passthrough to enable GPU resources for KubeVirt.
 ---
 
-### Configuring VFIO Passthrough for KubeVirt GPUs
-
 Follow these steps to configure a Kubernetes node for VFIO passthrough, enabling GPU resources for KubeVirt VMs.
 
 #### Step 1: Cordon and Drain the Node
@@ -139,7 +137,7 @@ Find the `pciVendorSelector` values by running:
 lspci -nn
 ```
 
-###### Step 15: Restart the DaemonSet Pod
+##### Step 15: Restart the DaemonSet Pod
 After updating the configuration, restart the NVIDIA DaemonSet pod:
 
 ```bash

@@ -6,7 +6,7 @@ description: Building in Gitlab
 To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/documentation/userdocs/tutorial/docker/).
 
 We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source Code Management, [Continuous Integration automation][3], 
-containers registry and other development lifecycle tasks. It fully uses Nautilus Cluster resources, which provides our users unlimited storage and fast builds.
+containers registry and other development lifecycle tasks. It fully uses Nautilus Cluster resources, which provides our users plenty of storage and fast builds.
 All data from our GitLab except container images are backed up nightly to Google storage, which means there's almost zero chance that you might lose your code in our repository. 
 
 #### Step 1: Create a Git repo
@@ -103,7 +103,7 @@ build-and-push-job:
   - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
 ```
 
-#### Using sysbox-provided docker
+#### Using the sysbox-provided docker
 
 ```yaml
 image: docker:git
@@ -135,7 +135,7 @@ build-and-push-job:
 
 ## Cloud IDE
 
-You could use our [Coder Web Instance](https://coder.nrp-nautilus.io) or [DevPod](https://github.com/loft-sh/devpod) with your own namespace for an environment similar to GitHub Codespaces or GitPod.
+You can use our [Coder Web Instance](https://coder.nrp-nautilus.io) or [DevPod](https://github.com/loft-sh/devpod) with your own namespace for an environment similar to GitHub Codespaces or GitPod.
 
 Visual Studio Code allows remote access and editing within any Kubernetes pod with the combination of the [Kubernetes](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) and [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions. Right-click a pod in the Kubernetes sidebar (after changing the namespace within the `~/.kube/config` file if you have multiple namespaces) and click `Attach Visual Studio Code` with `kubectl` in your PATH.
 

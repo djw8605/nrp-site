@@ -3,7 +3,7 @@ title: Purging
 description: Pruging
 ---
 
-Please purge any unused data. **Our storage can't be used for long-term archival**.
+Please purge any unused data. ** Our storage must not be used as long-term archival storage**.
 
 In cephFS and RBD (not S3) if you simply run `rm -rf <folder>` on a folder with many (more than 10,000) files, it might crash the metadata server or will be too slow.
 

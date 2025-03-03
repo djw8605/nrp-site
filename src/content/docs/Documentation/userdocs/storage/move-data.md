@@ -21,7 +21,7 @@ kubectl -n my_namespace cp ~/tmp/file.dat my_super_pod:/tmp/file.dat
 kubectl -n my_namespace cp my_super_pod:/tmp/file.dat ~/tmp/file.dat
 ```
 
-**You should NOT use this method for any large amount of data.** The data is going through our api (management) server, which is not having any fast connection, and you'll be affecting the cluster performance if you send more than a couple megabytes through it.
+**You should NOT use this method for any large amount of data.** The data is going through our api (management) server, which does not have a fast connection, and you'll be affecting the cluster performance if you send more than a couple megabytes through it.
 
 ### Using S3 object storage provided by the cluster
 
@@ -33,10 +33,10 @@ Using our [Nextcloud](/documentation/userdocs/storage/nextcloud/) provides a con
 
 ### Pulling data from inside the pod
  
- If your data is located in a storage which can be accessed from outside (any cloud provider, a server, etc), it might be easier to pull the data into your pod. Depending on the data size, you can either:
+ If your data is located in a storage which can be accessed from outside (any cloud provider, a server, etc.), it might be easier to pull the data into your pod. Depending on the data size, you can either:
  
  * Run an [idle pod](/documentation/userdocs/running/long-idle/), `kubectl exec` into it and manually run a command. You'll have to set up the credentials to access the remote storage.
- * Run a [batch job](/documentation/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
+ * Or, run a [batch job](/documentation/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
 
  The tools you can use include [scp](https://en.wikipedia.org/wiki/Secure_copy) (needs you to set up an ssh key or type the password by hand), [rclone](https://rclone.org/) (supports MANY data storages, and you can copy the config file generated locally), wget/curl (for pulling data from HTTP servers), any other tool for accessing your dataset you might find.
 
