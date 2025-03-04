@@ -84,10 +84,6 @@ export const headerData = {
           text: 'Presentations',
           href: getPermalink('presentations', 'category'),
         },
-        {
-          text: 'All news from the old web site',
-          href: getPermalink('/wpblog'),
-        },
       ],
     },
     {
