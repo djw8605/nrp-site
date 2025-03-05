@@ -18,4 +18,4 @@ The ESnet SmartNIC framework provides a complete workflow for programming AMD/Xi
 
 By following these workflows, you can effectively harness the capabilities of Alveo FPGAs within a high-performance networking environment.
 
-Please continue to our tutorial: [ESnet SmartNIC Tutorial](/documentation/userdocs/fpgas/esnet_evelopment).
+Please continue to our tutorial: [ESnet SmartNIC Tutorial](/documentation/userdocs/fpgas/esnet_development).

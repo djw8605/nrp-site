@@ -3,7 +3,7 @@ title: ESnet SmartNIC FPGA - Development
 description: ESnet SmartNIC FPAG Tutorial - Notebook 1/3
 ---
 
-**For the ipynb notebooks and slides, please see: [the tutorial respository.](https://github.com/nrp-nautilus/esnet-smartnic/blob/main/3_Running.ipynb)**
+**For the ipynb notebooks and slides, please see: [the tutorial respository.](https://github.com/nrp-nautilus/esnet-smartnic)**
 
 ## Development (Notebook 1/3): Writing and Testing a P4 Program
 
