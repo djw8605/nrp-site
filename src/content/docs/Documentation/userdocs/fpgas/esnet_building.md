@@ -117,8 +117,3 @@ This notebook is part 2 out of 3 in the **ESnet SmartNIC Tutorial on NRP** serie
 This was last modified on March 4th, 2025.
 
 For any inquiries, questions, feedback, please contact: mfsada@ucsd.edu
-
-
-```bash
-
-```
