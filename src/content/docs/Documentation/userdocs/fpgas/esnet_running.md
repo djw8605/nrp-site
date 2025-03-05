@@ -3,6 +3,7 @@ title: ESnet SmartNIC FPGA - Running
 description: ESnet SmartNIC FPAG Tutorial - Notebook 3/3
 ---
 
+
 ## Running (Notebook 3/3): Running SmartNIC Logic on the FPGA
 
 This notebook is **Part 3** of the **ESnet SmartNIC Tutorial on NRP** series. It continues from **Notebook 2** to provide an example for building the FPGA logic from our SmartNIC P4 code.
@@ -30,9 +31,6 @@ You can start directly from this notebook if you have different development and 
 echo "$BASH_VERSION"
 ```
 
-    5.0.17(1)-release
-
-
 If the above command doesn't show a bash version, **you may be running with a Python kernel. Please switch to a Bash kernel.**
 
 
@@ -41,20 +39,10 @@ cd ~/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/artifacts
 ls
 ```
 
-    bash: cd: /home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/artifacts: No such file or directory
-    artifacts.au55c.p4_only.0.zip  Documents  esnet-smartnic  Pictures  Templates
-    Desktop			       Downloads  Music		  Public    Videos
-
-
 
 ```bash
 cp artifacts.u55c.p4_only.0.zip to ~/artifacts.u55c.p4_only.0.zip
 ```
-
-    cp: target '/home/coder/artifacts.u55c.p4_only.0.zip' is not a directory
-
-
-
 
 You should see your artifacts here.
 
@@ -67,28 +55,12 @@ cd ~/
 wget "https://nextcloud.nrp-nautilus.io/s/5LmLADJtNKmTYSp/download" -O "artifacts.au55c.p4_only.0.zip" 
 ```
 
-    --2025-03-05 08:22:17--  https://nextcloud.nrp-nautilus.io/s/5LmLADJtNKmTYSp/download
-    Resolving nextcloud.nrp-nautilus.io (nextcloud.nrp-nautilus.io)... 129.93.244.193, 2600:900:6:1301:1270:fdff:fe80:cde4
-    Connecting to nextcloud.nrp-nautilus.io (nextcloud.nrp-nautilus.io)|129.93.244.193|:443... connected.
-    HTTP request sent, awaiting response... 200 OK
-    Length: 33635537 (32M) [application/zip]
-    Saving to: ‘artifacts.au55c.p4_only.0.zip’
-    
-    artifacts.au55c.p4_ 100%[===================>]  32.08M  76.6MB/s    in 0.4s    
-    
-    2025-03-05 08:22:18 (76.6 MB/s) - ‘artifacts.au55c.p4_only.0.zip’ saved [33635537/33635537]
-    
-
-
 ### Step 2: Setting up Docker
 
 
 ```bash
 docker image ls
 ```
-
-    REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
-
 
 The `ESnet SmartNIC` stack requires 3 Docker images:
 
@@ -114,56 +86,15 @@ docker tag gitlab-registry.nrp-nautilus.io/esnet/smartnic-dpdk-docker smartnic-d
 
 ```
 
-    Using default tag: latest
-    latest: Pulling from esnet/xilinx-labtools-docker
-    
-    [1B4c3075c9: Pulling fs layer 
-    [1B882610d3: Pulling fs layer 
-    [1Befdf60fd: Pulling fs layer 
-    [1B685f2c52: Pulling fs layer 
-    [1Ba4ac3123: Pulling fs layer 
-    [1B907275f3: Pulling fs layer 
-    [1B84aa5ace: Pulling fs layer 
-    [1Be1bc9536: Pulling fs layer 
-    [1B71174da9: Pulling fs layer 
-    [1Ba19bb40b: Pulling fs layer 
-    [8B685f2c52: Waiting fs layer 
-    [8Ba4ac3123: Waiting fs layer 
-    [5Bfailed to register layer: write /tools/Xilinx/Vivado_Lab/2023.1/lib/lnx64.o/librdi_iptasks.so: no space left on device
-    Error response from daemon: No such image: gitlab-registry.nrp-nautilus.io/esnet/xilinx-labtools-docker:latest
-    Using default tag: latest
-    latest: Pulling from esnet/smartnic-dpdk-docker
-    
-    [1B4c3075c9: Pulling fs layer 
-    [1B5082e2b7: Pulling fs layer 
-    [1B650534b5: Pulling fs layer 
-    [1Ba00a5344: Pulling fs layer 
-    [1B8223c371: Pulling fs layer 
-    [1B76f66088: Pulling fs layer 
-    [1B72a1f4b3: Pulling fs layer 
-    [1B51a4ed94: Pulling fs layer 
-    [1BDigest: sha256:6475d747b0588e047de21e5ce5e3cd8e71fbf258f49bf2b388d99fe7281be89e
-    Status: Downloaded newer image for gitlab-registry.nrp-nautilus.io/esnet/smartnic-dpdk-docker:latest
-    gitlab-registry.nrp-nautilus.io/esnet/smartnic-dpdk-docker:latest
-
-
 
 ```bash
 docker image ls
 ```
 
-    REPOSITORY                                                   TAG         IMAGE ID       CREATED         SIZE
-    smartnic-dpdk-docker                                         coder-dev   46405af76854   16 months ago   700MB
-    gitlab-registry.nrp-nautilus.io/esnet/smartnic-dpdk-docker   latest      46405af76854   16 months ago   700MB
-
-
 
 ```bash
 whoami
 ```
-
-    coder
-
 
 ### Step 3: Prep the `esnet-smartnic-fw` repo
 
@@ -173,9 +104,6 @@ The last step is building the `esnet-smartnic-fw` image.
 ```bash
 pwd
 ```
-
-    /home/coder
-
 
 
 ```bash
@@ -187,40 +115,6 @@ git submodule update --init --recursive && \
 ls
 ```
 
-    Cloning into 'esnet-smartnic-fw'...
-    remote: Enumerating objects: 3649, done.[K
-    remote: Counting objects: 100% (1185/1185), done.[K
-    remote: Compressing objects: 100% (601/601), done.[K
-    remote: Total 3649 (delta 756), reused 960 (delta 562), pack-reused 2464 (from 1)[K
-    Receiving objects: 100% (3649/3649), 885.80 KiB | 5.75 MiB/s, done.
-    Resolving deltas: 100% (2217/2217), done.
-    Note: switching to 'c064d4ac775ed1a4c50ec72dea3615f9c644433e'.
-    
-    You are in 'detached HEAD' state. You can look around, make experimental
-    changes and commit them, and you can discard any commits you make in this
-    state without impacting any branches by switching back to a branch.
-    
-    If you want to create a new branch to retain commits you create, you may
-    do so (now or later) by using -c with the switch command. Example:
-    
-      git switch -c <new-branch-name>
-    
-    Or undo this operation with:
-    
-      git switch -
-    
-    Turn off this advice by setting config variable advice.detachedHead to false
-    
-    HEAD is now at c064d4a Merge branch 'dev/jranger/test-automation-framework' into 'main'
-    Submodule 'regio' (https://github.com/esnet/regio) registered for path 'regio'
-    Cloning into '/home/coder/esnet-smartnic/esnet-smartnic-fw/regio'...
-    Submodule path 'regio': checked out 'fbd8bdf1a7a628287e95c5cf667b14afc94203c5'
-    build.sh     libsnp4	  README.fw.artifacts  sn-hw	    sn-stack
-    Dockerfile   libsnutil	  README.md	       sn-p4-agent  subprojects
-    example.env  LICENSE.md   regio		       sn-p4-cli
-    libopennic   meson.build  sn-cli	       sn-p4-proto
-
-
 **Copy the artifacts to sn-hw without renaming.**
 
 
@@ -228,9 +122,6 @@ ls
 cp ~/artifacts.au55c.p4_only.0.zip sn-hw/
 ls sn-hw
 ```
-
-    artifacts.au55c.p4_only.0.zip
-
 
 `artifacts` is a prefix all `hw` artifacts start with.
 
@@ -249,25 +140,6 @@ The root director of the repo requires a correctly filled `.env` file.
 cat example.env | grep -i required -A 4
 ```
 
-    # (Required) Hardware Application Name
-    #  - Used to select the esnet-smartnic-hw artifact to build against
-    #  - This is commonly the same name as the git repository that holds your smartnic plugin
-    #  - Selects the artifact zip file from the sn-hw directory
-    #SN_HW_APP_NAME=esnet-smartnic-ht
-    --
-    # (Required) Hardware Board Variant
-    #  - Used to select the esnet-smartnic-hw artifact to build against
-    #  - Selects the artifact zip file from the sn-hw directory
-    #  - Examples: au280 au55c au250
-    #SN_HW_BOARD=au280
-    --
-    # (Required) Hardware Version
-    #  - Used to select the esnet-smartnic-hw artifact to build against
-    #  - Selects the artifact zip file from the sn-hw directory
-    #SN_HW_VER=0
-    
-
-
 
 ```bash
 cat <<EOL > .env
@@ -282,241 +154,12 @@ EOL
 cat .env
 ```
 
-    SN_HW_APP_NAME=p4_only
-    SN_HW_BOARD=au55c
-    SN_HW_VER=0
-
-
 Now we can build the image with `./build.sh`. This might take ~30-40 minutes.
 
 
 ```bash
 ./build.sh
 ```
-
-    Building container 'esnet-smartnic-fw:coder-dev'
-    #0 building with "default" instance using docker driver
-    
-    #1 [internal] load .dockerignore
-    #1 transferring context: 2B done
-    #1 ...
-    
-    #2 [internal] load build definition from Dockerfile
-    #2 transferring dockerfile: 2.47kB done
-    #2 DONE 8.2s
-    
-    #1 [internal] load .dockerignore
-    #1 DONE 9.6s
-    
-    #3 resolve image config for docker.io/docker/dockerfile:1
-    #3 DONE 13.0s
-    
-    #4 docker-image://docker.io/docker/dockerfile:1@sha256:93bfd3b68c109427185cd78b4779fc82b484b0b7618e36d0f104d4d801e66d25
-    #4 resolve docker.io/docker/dockerfile:1@sha256:93bfd3b68c109427185cd78b4779fc82b484b0b7618e36d0f104d4d801e66d25
-    #4 resolve docker.io/docker/dockerfile:1@sha256:93bfd3b68c109427185cd78b4779fc82b484b0b7618e36d0f104d4d801e66d25 4.7s done
-    #4 sha256:93bfd3b68c109427185cd78b4779fc82b484b0b7618e36d0f104d4d801e66d25 8.40kB / 8.40kB done
-    #4 sha256:6427b0634e7650a14afc322b71a37b4654b4471539d1f9a19cb16525a2fb2e56 850B / 850B done
-    #4 sha256:6e15488ac914a453a6e13f419cde418c67927d93d6b0a0f23b5c70c8ecda3fc6 1.26kB / 1.26kB done
-    #4 sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 0B / 12.78MB 1.3s
-    #4 sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 2.10MB / 12.78MB 1.8s
-    #4 sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 11.53MB / 12.78MB 1.9s
-    #4 sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 12.78MB / 12.78MB 2.0s
-    #4 sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 12.78MB / 12.78MB 5.9s done
-    #4 extracting sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9
-    #4 extracting sha256:8a2af9a64344571e7f712dde5e52bb25729d3ea0f3208ec86dd5af836b4ef1b9 0.5s done
-    #4 DONE 18.9s
-    
-    #5 [internal] load build definition from Dockerfile
-    #5 WARN: InvalidDefaultArgInFrom: Default value for ARG ${SMARTNIC_DPDK_IMAGE_URI} results in empty or invalid base image name (line 4)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 6)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 7)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 8)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 61)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 62)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 63)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 64)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 65)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 66)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 68)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 69)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 70)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 71)
-    #5 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 72)
-    #5 DONE 0.0s
-    
-    #6 [internal] load metadata for docker.io/library/smartnic-dpdk-docker:coder-dev
-    #6 DONE 0.0s
-    
-    #7 [internal] load .dockerignore
-    #7 DONE 0.0s
-    
-    #8 [internal] preparing inline document
-    #8 ...
-    
-    #9 [internal] load build context
-    #9 transferring context: 35.47MB 0.2s done
-    #9 ...
-    
-    #10 [stage-0 1/8] FROM docker.io/library/smartnic-dpdk-docker:coder-dev
-    #10 ...
-    
-    #8 [internal] preparing inline document
-    #8 DONE 11.7s
-    
-    #10 [stage-0 1/8] FROM docker.io/library/smartnic-dpdk-docker:coder-dev
-    #10 ...
-    
-    #9 [internal] load build context
-    #9 DONE 12.4s
-    
-    #10 [stage-0 1/8] FROM docker.io/library/smartnic-dpdk-docker:coder-dev
-    #10 DONE 31.3s
-    
-    #11 [stage-0 2/8] RUN <<EOT (set -ex...)
-    #11 7.562 + ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-    #11 7.564 + apt update -y
-    #11 7.568 
-    #11 7.568 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-    #11 7.568 
-    #11 7.691 Get:1 http://linux.mirrors.es.net/ubuntu focal InRelease [265 kB]
-    #11 7.748 Get:2 http://linux.mirrors.es.net/ubuntu focal-updates InRelease [128 kB]
-    #11 7.761 Get:3 http://linux.mirrors.es.net/ubuntu focal-backports InRelease [128 kB]
-    #11 7.774 Get:4 http://linux.mirrors.es.net/ubuntu focal-security InRelease [128 kB]
-    #11 7.838 Get:5 http://linux.mirrors.es.net/ubuntu focal/multiverse amd64 Packages [177 kB]
-    #11 7.858 Get:6 http://linux.mirrors.es.net/ubuntu focal/universe amd64 Packages [11.3 MB]
-    #11 7.955 Get:7 http://linux.mirrors.es.net/ubuntu focal/main amd64 Packages [1275 kB]
-    #11 7.964 Get:8 http://linux.mirrors.es.net/ubuntu focal/restricted amd64 Packages [33.4 kB]
-    #11 7.970 Get:9 http://linux.mirrors.es.net/ubuntu focal-updates/universe amd64 Packages [1593 kB]
-    #11 7.979 Get:10 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 Packages [4742 kB]
-    #11 8.012 Get:11 http://linux.mirrors.es.net/ubuntu focal-updates/restricted amd64 Packages [4607 kB]
-    #11 8.044 Get:12 http://linux.mirrors.es.net/ubuntu focal-updates/multiverse amd64 Packages [34.6 kB]
-    #11 8.044 Get:13 http://linux.mirrors.es.net/ubuntu focal-backports/universe amd64 Packages [28.6 kB]
-    #11 8.045 Get:14 http://linux.mirrors.es.net/ubuntu focal-backports/main amd64 Packages [55.2 kB]
-    #11 8.070 Get:15 http://linux.mirrors.es.net/ubuntu focal-security/main amd64 Packages [4266 kB]
-    #11 8.114 Get:16 http://linux.mirrors.es.net/ubuntu focal-security/multiverse amd64 Packages [30.9 kB]
-    #11 8.114 Get:17 http://linux.mirrors.es.net/ubuntu focal-security/restricted amd64 Packages [4418 kB]
-    #11 8.147 Get:18 http://linux.mirrors.es.net/ubuntu focal-security/universe amd64 Packages [1301 kB]
-    #11 9.616 Fetched 34.6 MB in 2s (17.0 MB/s)
-    #11 9.616 Reading package lists...
-    #11 10.60 Building dependency tree...
-    #11 10.79 Reading state information...
-    #11 10.81 84 packages can be upgraded. Run 'apt list --upgradable' to see them.
-    #11 10.81 + apt upgrade -y
-    #11 10.81 
-    #11 10.81 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-    #11 10.81 
-    #11 10.85 Reading package lists...
-    #11 11.84 Building dependency tree...
-    #11 12.05 Reading state information...
-    #11 12.07 Calculating upgrade...
-    #11 12.55 The following packages will be upgraded:
-    #11 12.55   apt base-files binutils binutils-common binutils-x86-64-linux-gnu bsdutils
-    #11 12.55   ca-certificates distro-info-data e2fsprogs fdisk libapt-pkg6.0 libbinutils
-    #11 12.55   libblkid1 libc-ares2 libc-bin libc-dev-bin libc6 libc6-dev libcap2
-    #11 12.55   libcap2-bin libcom-err2 libctf-nobfd0 libctf0 libexpat1 libext2fs2 libfdisk1
-    #11 12.55   libglib2.0-0 libgnutls30 libgssapi-krb5-2 libk5crypto3 libkrb5-3
-    #11 12.55   libkrb5support0 libmount1 libnghttp2-14 libpam-modules libpam-modules-bin
-    #11 12.55   libpam-runtime libpam0g libpcap-dev libpcap0.8 libpcap0.8-dev libperl5.30
-    #11 12.55   libprocps8 libpython3.8-minimal libpython3.8-stdlib libsmartcols1
-    #11 12.55   libsqlite3-0 libss2 libssh-gcrypt-4 libssl-dev libssl1.1 libsystemd0
-    #11 12.55   libtasn1-6 libtiff5 libudev1 libuuid1 libxml2 linux-libc-dev locales login
-    #11 12.55   logsave mount openssl passwd perl perl-base perl-modules-5.30 procps
-    #11 12.55   python-pip-whl python3-idna python3-pip python3-pkg-resources
-    #11 12.55   python3-setuptools python3-urllib3 python3.8 python3.8-minimal tar tzdata
-    #11 12.55   unzip util-linux vim-common vim-tiny wget xxd
-    #11 12.75 84 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-    #11 12.75 Need to get 46.2 MB of archives.
-    #11 12.75 After this operation, 234 kB of additional disk space will be used.
-    #11 12.75 Get:1 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libc6-dev amd64 2.31-0ubuntu9.17 [2521 kB]
-    #11 12.85 Get:2 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libc-dev-bin amd64 2.31-0ubuntu9.17 [71.8 kB]
-    #11 12.85 Get:3 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 linux-libc-dev amd64 5.4.0-208.228 [1118 kB]
-    #11 12.86 Get:4 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libc6 amd64 2.31-0ubuntu9.17 [2721 kB]
-    #11 12.89 Get:5 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 base-files amd64 11ubuntu5.8 [60.3 kB]
-    #11 12.89 Get:6 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 bsdutils amd64 1:2.34-0.1ubuntu9.6 [63.3 kB]
-    #11 12.89 Get:7 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 login amd64 1:4.8.1-1ubuntu5.20.04.5 [220 kB]
-    #11 12.89 Get:8 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libperl5.30 amd64 5.30.0-9ubuntu0.5 [3941 kB]
-    #11 12.93 Get:9 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 perl amd64 5.30.0-9ubuntu0.5 [224 kB]
-    #11 12.93 Get:10 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 perl-base amd64 5.30.0-9ubuntu0.5 [1514 kB]
-    #11 12.94 Get:11 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 perl-modules-5.30 all 5.30.0-9ubuntu0.5 [2739 kB]
-    #11 12.97 Get:12 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 tar amd64 1.30+dfsg-7ubuntu0.20.04.4 [240 kB]
-    #11 12.97 Get:13 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libblkid1 amd64 2.34-0.1ubuntu9.6 [137 kB]
-    #11 12.97 Get:14 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libuuid1 amd64 2.34-0.1ubuntu9.6 [20.0 kB]
-    #11 12.97 Get:15 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libfdisk1 amd64 2.34-0.1ubuntu9.6 [175 kB]
-    #11 12.97 Get:16 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libmount1 amd64 2.34-0.1ubuntu9.6 [149 kB]
-    #11 12.97 Get:17 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libsmartcols1 amd64 2.34-0.1ubuntu9.6 [100 kB]
-    #11 12.97 Get:18 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 fdisk amd64 2.34-0.1ubuntu9.6 [120 kB]
-    #11 12.98 Get:19 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 util-linux amd64 2.34-0.1ubuntu9.6 [1022 kB]
-    #11 12.99 Get:20 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 locales all 2.31-0ubuntu9.17 [3868 kB]
-    #11 13.02 Get:21 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libc-bin amd64 2.31-0ubuntu9.17 [634 kB]
-    #11 13.03 Get:22 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libsystemd0 amd64 245.4-4ubuntu3.24 [267 kB]
-    #11 13.03 Get:23 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libudev1 amd64 245.4-4ubuntu3.24 [75.2 kB]
-    #11 13.03 Get:24 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libapt-pkg6.0 amd64 2.0.10 [843 kB]
-    #11 13.04 Get:25 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libtasn1-6 amd64 4.16.0-2ubuntu0.1 [38.6 kB]
-    #11 13.04 Get:26 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libgnutls30 amd64 3.6.13-2ubuntu1.12 [829 kB]
-    #11 13.05 Get:27 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 apt amd64 2.0.10 [1280 kB]
-    #11 13.06 Get:28 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpam0g amd64 1.3.1-5ubuntu4.7 [55.4 kB]
-    #11 13.06 Get:29 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpam-modules-bin amd64 1.3.1-5ubuntu4.7 [41.2 kB]
-    #11 13.06 Get:30 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpam-modules amd64 1.3.1-5ubuntu4.7 [261 kB]
-    #11 13.06 Get:31 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 logsave amd64 1.45.5-2ubuntu1.2 [10.2 kB]
-    #11 13.06 Get:32 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libext2fs2 amd64 1.45.5-2ubuntu1.2 [183 kB]
-    #11 13.06 Get:33 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 e2fsprogs amd64 1.45.5-2ubuntu1.2 [527 kB]
-    #11 13.07 Get:34 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 mount amd64 2.34-0.1ubuntu9.6 [115 kB]
-    #11 13.07 Get:35 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libssl-dev amd64 1.1.1f-1ubuntu2.24 [1586 kB]
-    #11 13.09 Get:36 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libssl1.1 amd64 1.1.1f-1ubuntu2.24 [1323 kB]
-    #11 13.10 Get:37 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3.8 amd64 3.8.10-0ubuntu1~20.04.15 [387 kB]
-    #11 13.10 Get:38 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpython3.8-stdlib amd64 3.8.10-0ubuntu1~20.04.15 [1675 kB]
-    #11 13.12 Get:39 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3.8-minimal amd64 3.8.10-0ubuntu1~20.04.15 [1901 kB]
-    #11 13.13 Get:40 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpython3.8-minimal amd64 3.8.10-0ubuntu1~20.04.15 [720 kB]
-    #11 13.14 Get:41 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libsqlite3-0 amd64 3.31.1-4ubuntu0.6 [549 kB]
-    #11 13.15 Get:42 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libexpat1 amd64 2.2.9-1ubuntu0.8 [75.6 kB]
-    #11 13.15 Get:43 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpam-runtime all 1.3.1-5ubuntu4.7 [37.3 kB]
-    #11 13.15 Get:44 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 passwd amd64 1:4.8.1-1ubuntu5.20.04.5 [797 kB]
-    #11 13.16 Get:45 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libcom-err2 amd64 1.45.5-2ubuntu1.2 [9580 B]
-    #11 13.16 Get:46 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libprocps8 amd64 2:3.3.16-1ubuntu2.4 [33.1 kB]
-    #11 13.16 Get:47 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libss2 amd64 1.45.5-2ubuntu1.2 [11.3 kB]
-    #11 13.16 Get:48 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 procps amd64 2:3.3.16-1ubuntu2.4 [232 kB]
-    #11 13.16 Get:49 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 openssl amd64 1.1.1f-1ubuntu2.24 [621 kB]
-    #11 13.17 Get:50 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 ca-certificates all 20240203~20.04.1 [159 kB]
-    #11 13.17 Get:51 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 distro-info-data all 0.43ubuntu1.17 [5040 B]
-    #11 13.17 Get:52 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libcap2 amd64 1:2.32-1ubuntu0.2 [15.7 kB]
-    #11 13.17 Get:53 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libcap2-bin amd64 1:2.32-1ubuntu0.2 [26.2 kB]
-    #11 13.17 Get:54 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libglib2.0-0 amd64 2.64.6-1~ubuntu20.04.8 [1289 kB]
-    #11 13.18 Get:55 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libxml2 amd64 2.9.10+dfsg-5ubuntu0.20.04.9 [641 kB]
-    #11 13.19 Get:56 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3-setuptools all 45.2.0-1ubuntu0.2 [330 kB]
-    #11 13.19 Get:57 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3-pkg-resources all 45.2.0-1ubuntu0.2 [130 kB]
-    #11 13.19 Get:58 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 tzdata all 2024b-0ubuntu0.20.04.1 [299 kB]
-    #11 13.20 Get:59 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 vim-tiny amd64 2:8.1.2269-1ubuntu5.31 [580 kB]
-    #11 13.20 Get:60 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 xxd amd64 2:8.1.2269-1ubuntu5.31 [50.2 kB]
-    #11 13.20 Get:61 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 vim-common all 2:8.1.2269-1ubuntu5.31 [85.2 kB]
-    #11 13.20 Get:62 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libgssapi-krb5-2 amd64 1.17-6ubuntu4.9 [121 kB]
-    #11 13.20 Get:63 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libkrb5-3 amd64 1.17-6ubuntu4.9 [330 kB]
-    #11 13.21 Get:64 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libkrb5support0 amd64 1.17-6ubuntu4.9 [31.3 kB]
-    #11 13.21 Get:65 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libk5crypto3 amd64 1.17-6ubuntu4.9 [80.5 kB]
-    #11 13.21 Get:66 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpcap0.8-dev amd64 1.9.1-3ubuntu1.20.04.1 [244 kB]
-    #11 13.21 Get:67 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpcap0.8 amd64 1.9.1-3ubuntu1.20.04.1 [128 kB]
-    #11 13.22 Get:68 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 wget amd64 1.20.3-1ubuntu2.1 [349 kB]
-    #11 13.22 Get:69 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libctf0 amd64 2.34-6ubuntu1.10 [46.7 kB]
-    #11 13.22 Get:70 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 binutils-x86-64-linux-gnu amd64 2.34-6ubuntu1.10 [1613 kB]
-    #11 13.24 Get:71 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libbinutils amd64 2.34-6ubuntu1.10 [474 kB]
-    #11 13.24 Get:72 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 binutils amd64 2.34-6ubuntu1.10 [3380 B]
-    #11 13.24 Get:73 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 binutils-common amd64 2.34-6ubuntu1.10 [208 kB]
-    #11 13.24 Get:74 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libctf-nobfd0 amd64 2.34-6ubuntu1.10 [48.1 kB]
-    #11 13.24 Get:75 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libnghttp2-14 amd64 1.40.0-1ubuntu0.3 [79.9 kB]
-    #11 13.24 Get:76 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libpcap-dev amd64 1.9.1-3ubuntu1.20.04.1 [3492 B]
-    #11 13.24 Get:77 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libssh-gcrypt-4 amd64 0.9.3-2ubuntu2.5 [202 kB]
-    #11 13.25 Get:78 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libtiff5 amd64 4.1.0+git191117-2ubuntu0.20.04.14 [164 kB]
-    #11 13.25 Get:79 http://linux.mirrors.es.net/ubuntu focal-updates/universe amd64 python3-pip all 20.0.2-5ubuntu1.11 [231 kB]
-    #11 13.26 Get:80 http://linux.mirrors.es.net/ubuntu focal-updates/universe amd64 python-pip-whl all 20.0.2-5ubuntu1.11 [1808 kB]
-    #11 13.27 Get:81 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3-idna all 2.8-1ubuntu0.1 [36.2 kB]
-    #11 13.27 Get:82 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 python3-urllib3 all 1.25.8-2ubuntu0.4 [88.7 kB]
-    #11 13.27 Get:83 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 unzip amd64 6.0-25ubuntu1.2 [169 kB]
-    #11 13.27 Get:84 http://linux.mirrors.es.net/ubuntu focal-updates/main amd64 libc-ares2 amd64 1.15.0-1ubuntu0.5 [36.9 kB]
-    #11 16.79 debconf: delaying package configuration, since apt-utils is not installed
-    #11 18.37 Fetched 46.2 MB in 1s (64.5 MB/s)
-    (Reading database ... 16205 files and directories currently installed.)
-    #11 19.82 Preparing to unpack .../libc6-dev_2.31-0ubuntu9.17_amd64.deb ...
-    #11 21.25 Unpacking libc6-dev:amd64 (2.31-0ubuntu9.17) over (2.31-0ubuntu9.12) ...
-
 
 
 ```bash
@@ -1120,13 +763,13 @@ These steps should help you troubleshoot issues related to the pktgen-dpdk appli
 ---
 Now we reach the end of our tutorial.
 
-For more documentation, please refer to some other documentations that we have authored:
+For more information, please refer to some other documentations that we have authored:
 
-<h2 style="font-size: 24px; color: #4CAF50;">1. This tutorial our admins have authored on <a href="https://groundsada.github.io/esnet-smartnic-tutorial/" style="color: #007bff;">GitHub</a></h2>
+<h2 style="font-size: 24px; color: #4CAF50;">1. The tutorial on my <a href="https://groundsada.github.io/esnet-smartnic-tutorial/" style="color: #007bff;">GitHub</a></h2>
 
 <h2 style="font-size: 24px; color: #4CAF50;">2. The FABRIC Testbed ESnet SmartNIC docs: <a href="https://learn.fabric-testbed.net/knowledge-base/using-esnet-p4-workflow-on-fabric/" style="color: #007bff;">FABRIC ESnet SmartNIC docs</a></h2>
 
-<h2 style="font-size: 24px; color: #4CAF50;">3. This video tutorial our admins have recorded on <a href="https://www.youtube.com/watch?v=fiZMPPW_oRk&list=PL5Ght4QkHL8QK75R3ThqU7vzob5f65_Zi&ab_channel=MohammadFirasSada" style="color: #007bff;">YouTube</a></h2>
+<h2 style="font-size: 24px; color: #4CAF50;">3. The video tutorial on my <a href="https://www.youtube.com/watch?v=fiZMPPW_oRk&list=PL5Ght4QkHL8QK75R3ThqU7vzob5f65_Zi&ab_channel=MohammadFirasSada" style="color: #007bff;">YouTube</a></h2>
 
 
 

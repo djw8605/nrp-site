@@ -28,9 +28,6 @@ Before using the ESnet SmartNIC tools, kindly review the official [ESnet SmartNI
 echo "$BASH_VERSION"
 ```
 
-    5.0.17(1)-release
-
-
 If the above command doesn't show a bash version, **you may be running with a Python kernel. Please switch to a Bash kernel.**
 
 
@@ -38,9 +35,6 @@ If the above command doesn't show a bash version, **you may be running with a Py
 cd ~/esnet-smartnic/esnet-smartnic-hw/examples/p4_only
 ls
 ```
-
-    Makefile  p4  README.md
-
 
 Clone the `esnet-smartnic-hw` repository from ESnet.
 Checkout at the latest tested commit.
@@ -52,55 +46,6 @@ Checkout at the latest tested commit.
 cat Makefile
 ```
 
-    #------- Mandatory variables -------
-    
-    # SMARTNIC_DIR must be set to the pathname of smartnic root directory.
-    SMARTNIC_DIR := ../..
-    #SMARTNIC_DIR := $(CURDIR)/esnet-smartnic-hw
-    
-    #------- Optional variables -------
-    
-    # The following variables are optionally configured in this Makefile, or on the command line.
-    # If NOT configured, each of these variables gets a default value (as specified below)
-    
-    # APP_NAME - Application name. Used for default naming conventions below.
-    #export APP_NAME := $(notdir $(abspath $(CURDIR)))
-    
-    # P4_FILE - Full pathname of application p4 file.
-    #export P4_FILE := $(CURDIR)/p4/$(APP_NAME).p4
-    
-    # ARTIFACTS_DIR - Full pathname of root artifacts directory.
-    #export ARTIFACTS_DIR := $(CURDIR)/artifacts
-    
-    # BUILD_NAME - Name of subdirectory for artifacts of latest build i.e. artifacts go to $(ARTIFACTS_DIR)/$(BUILD_NAME)
-    #export BUILD_NAME := esnet-smartnic-$(APP_NAME)
-    
-    # BOARD - Name of AMD (Xilinx) Alveo board used for target application.
-    # Supports 'au280', 'au250' and 'au55c'.  Default is 'au280'.
-    #export BOARD := au280
-    
-    # EXAMPLE_TEST_DIR - Full pathname of p4 test directory used for example design generation.
-    export EXAMPLE_TEST_DIR := $(CURDIR)/p4/sim/test-fwd-p0
-    
-    #------- Targets -------
-    build:
-    	@$(MAKE) -s -C $(SMARTNIC_DIR) build APP_DIR=$(CURDIR)
-    
-    config:
-    	@$(MAKE) -s -C $(SMARTNIC_DIR) config APP_DIR=$(CURDIR)
-    
-    example:
-    	@$(MAKE) -s -C $(SMARTNIC_DIR) example APP_DIR=$(CURDIR)
-    
-    clean:
-    	@$(MAKE) -s -C $(SMARTNIC_DIR) clean_build APP_DIR=$(CURDIR)
-    
-    clean_artifacts:
-    	@$(MAKE) -s -C $(SMARTNIC_DIR) clean_artifacts APP_DIR=$(CURDIR)
-    
-    .PHONY: build example config clean clean_artifacts
-
-
 
 ```bash
 sed -i 's/^#export BOARD := au280/export BOARD := au55c/' Makefile
@@ -110,10 +55,6 @@ sed -i 's/^#export BOARD := au280/export BOARD := au55c/' Makefile
 ```bash
 cat Makefile | grep -i BOARD
 ```
-
-    # BOARD - Name of AMD (Xilinx) Alveo board used for target application.
-    export BOARD := au55c
-
 
 ### Step 3: Build the artifacts
 
@@ -158,33 +99,8 @@ For the sake of demonstration, we are simply going to use `make`. However, if th
 
 
 ```bash
-make
+#make
 ```
-
-    cp: cannot stat '/home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/extern': No such file or directory
-    ==============================================
-    Configuring P4 application 'p4_only':
-    ==============================================
-    APP_DIR      : /home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only
-    APP_NAME     : p4_only
-    APP_ROOT     : /home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/.app/src/p4_app
-    BOARD        : au55c
-    BUILD_NAME   : p4_only
-    ARTIFACTS_DIR: /home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/artifacts
-    P4_FILE      : /home/coder/esnet-smartnic/esnet-smartnic-hw/examples/p4_only/p4/p4_only.p4 
-    P4_OPTS      : CONFIG.PKT_RATE {150} CONFIG.OUTPUT_METADATA_FOR_DROPPED_PKTS {true}
-    
-    ****** Vivado v2023.1 (64-bit)
-      **** SW Build 3865809 on Sun May  7 15:04:56 MDT 2023
-      **** IP Build 3864474 on Sun May  7 20:36:21 MDT 2023
-      **** SharedData Build 3865790 on Sun May 07 13:33:03 MDT 2023
-        ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
-        ** Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
-    
-    make[1]: *** [/home/coder/esnet-smartnic/esnet-smartnic-hw/esnet-fpga-library/scripts/Makefiles/config_vivado.mk:44: vivado_license_check] Interrupt
-    make: *** [Makefile:33: build] Interrupt
-    
-
 
 Considering how long the logs are, we recommend running `make > building.logs`.
 
