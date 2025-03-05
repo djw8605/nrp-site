@@ -172,6 +172,9 @@ export default defineConfig({
               items: [
                 { label: "Vivado and Vitis", link: "documentation/userdocs/fpgas/vivado-vitis" },
                 { label: "ESnet SmartNIC", link: "documentation/userdocs/fpgas/esnet" },
+                { label: "SmartNIC: Development", link: "documentation/userdocs/fpgas/1_Development" },
+                { label: "SmartNIC: Building ", link: "documentation/userdocs/fpgas/2_Building" },
+                { label: "SmartNIC: Running", link: "documentation/userdocs/fpgas/3_Running" },
               ],
             },
             {

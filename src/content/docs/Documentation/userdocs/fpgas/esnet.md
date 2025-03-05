@@ -16,4 +16,6 @@ The ESnet SmartNIC framework provides a complete workflow for programming AMD/Xi
 1. **Development Workflow**: Compile your P4 programs into bitfiles using licensed Xilinx tools.
 2. **Deployment Workflow**: Load the generated bitfiles onto Alveo cards for experimental use.
 
-By following these workflows, you can effectively harness the capabilities of Alveo FPGAs within a high-performance networking environment. For more detailed guidance, refer to the full tutorial at [ESnet SmartNIC Tutorial](https://groundsada.github.io/esnet-smartnic-tutorial/).
+By following these workflows, you can effectively harness the capabilities of Alveo FPGAs within a high-performance networking environment.
+
+Please continue to our tutorial: [ESnet SmartNIC Tutorial](/documentation/userdocs/fpgas/1_Development).
