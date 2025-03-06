@@ -35,7 +35,7 @@ export default defineConfig({
       title: 'NRP Nautilus',
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       social: {
-      	gitlab: 'https://gitlab.nrp-nautilus.io/nrp-site',
+      	gitlab: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
         'matrix': 'https://matrix.nrp-nautilus.io/',
       },
       editLink: {
