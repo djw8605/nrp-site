@@ -5,7 +5,7 @@ description: FAQ
 
 > ###### I'm getting `failed to refresh token`, `oauth2`, `server_error` errors when trying to access the cluster with kubectl.
 
-Get the config file again.
+Get the config file again from the portal.  See [Getting Started](getting-started/)
 
 --------
 
@@ -19,7 +19,7 @@ Also it's possible CiLogon blocked your IP for abusing their service (if you wer
 
 > ###### I downloaded the config file from the portal and suddenly because guest.
 
-You should be consistent in which institution you choose from CILogon list. Even if UCSD is using Google for AD accounts, for CILogon Google and UCSD are two different institutions, which would result in two different accounts.
+This may happen if you chose a different institution during CILogon login than when you were added to a namespace. Even if UCSD is using Google for AD accounts, for CILogon Google and UCSD are two different institutions, which would result in two different accounts.
 
 --------
 
@@ -31,7 +31,7 @@ This happens for 2 reasons:
 In both cases you can ask an admin in matrix to look at your pod, or just wait for somebody to fix it.
 
 :::danger
-DO NOT USE `kubectl  delete --grace-period=0 --force` to delete stuck pods! Those will indefinitely remain on the node, and will require the node reboot (if you happen to know which node was it)
+DO NOT USE `kubectl  delete --grace-period=0 --force` to delete stuck pods! Those will indefinitely remain on the node, and will require the node to reboot in order to clear the pod.
 :::
 
 --------
