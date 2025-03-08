@@ -1,5 +1,5 @@
 ---
-publishDate: 2025-03-23T00:00:00Z
+publishDate: 2025-03-07T00:00:00Z
 title: Experiences from the National Research Platform
 excerpt: The media collected at 59th Meeting of the Asia Pacific Advanced Network
 category: Presentations
