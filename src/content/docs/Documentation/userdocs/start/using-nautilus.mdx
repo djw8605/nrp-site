@@ -2,20 +2,27 @@
 title: Using Nautilus
 description: guide to use the cluster using kubernetes, jupyterhib and coder
 ---
+import { LinkButton } from '@astrojs/starlight/components';
 
 NRP Nautilus is a Kubernetes cluster distributed all over the US and there are a few sites in Asia and Europe.
  Currently there are over 75 sites as part of the NRP. See all the sites on the <a href="https://dash.nrp-nautilus.io/" target="_blank">NRP dashdoard</a>.
 
-:::note[Cluster Summary]
-- **Total nodes:** 420
-- **Number of CPUs:** ~5000
-- **Number of GPUs:** ~375
-- **Number of FPGAs:** 32
+:::note[Cluster Resource Summary]
+The cluster has different types of resources including CPU, GPU,and
+ FPGAs.
+- **CPUs:** 16 - 384 cores / node
+- **GPUs:** max 16 in a node
+- **FPGAs:** max 4 in a node
+- **Memory (RAM):** 16 GB - 1.6 TB / node
+- **Disk Space (local scratch):** 107.3 GB - 17.8 TB / node
+
+Check the <a href="https://portal.nrp-nautilus.io/resources"  target="_blank">**Resources**</a> page on the portal to see the detailed summary of each node.
+- The page also shows the available resouces in real time.
 
 Check the cluster summary on <a href="https://grafana.nrp-nautilus.io/d/KQsJTWPiz/cluster-summary-nrp?orgId=1&from=now-1h&to=now&timezone=browser" target="_blank">**Grafana**</a> 
 :::
 
-## How to use the cluster
+## How to use the cluster 
 There are three main ways to use the computing resources on the NRP Nautilus cluster. 
 1. NRP-hosted [JupyterHub platform](https://jupyterhub-west.nrp-nautilus.io)
 2. NRP-hoster [Coder platform](https://coder.nrp-nautilus.io)
@@ -28,6 +35,10 @@ We will discuss these options below.
 
 [JupyterHub](/documentation/userdocs/jupyter/jupyterhub-service) is arguably the most user-friendly way to interact with the NRP Nautilus cluster. It allows you to run [Jupyter notebooks](https://jupyter.org/) in a web browser, without having to worry about the underlying infrastructure. You can access the NRP-hosted JupyterHub platform by visiting the [JupyterHub](https://jupyterhub-west.nrp-nautilus.io) link and logging in with your institutional credentials. Once authenticated, you can choose the hardware specs to spawn your instance and run Jupyter notebooks as usual.
 
+<center>
+<LinkButton href="https://jupyterhub-west.nrp-nautilus.io" target="_blank">Access the NRP-hosted JupyterHub</LinkButton>
+</center>
+
 :::tip[Points to Note]
 - You do not need to be part of any namespace to use the NRP-hosted JupyterHub service.
 - Your institution needs to be part of **`CILogon`**.
@@ -37,6 +48,10 @@ We will discuss these options below.
 
 ### Coder Platform
 [Coder](/documentation/userdocs/coder/coder) provides an easy-to-use, JupyterHub-like experience, and you can use the NRP Nautilus cluster without Kubernetes knowledge. [Coder](https://coder.com/) also runs on the web browser. You can run your code without worrying about the underlying infrastructure. You can access the NRP-hosted Coder platform by visiting the [Coder](https://coder.nrp-nautilus.io) link and logging in with your institutional credentials using **OpenID Connect** (once the cluster admins approve your account).
+
+<center>
+<LinkButton href="https://coder.nrp-nautilus.io/" target="_blank">Access the NRP-hosted Coder</LinkButton>
+</center>
 
 :::tip[Points to Note]
 - You do not need to be part of any namespace to use the NRP-hosted Coder service.
@@ -49,11 +64,10 @@ We will discuss these options below.
 ### Kubernetes
 
 This method gives you more control over the computing resources you use but also requires you to learn basic Kubernetes. You can create pods, jobs, and deployments, and specify the resources (CPU, GPU, Memory, etc) you need. This is useful when you need to run a specific software stack, or when you need to run a job that requires a specific amount of resources.
-:::note
 
-In almost every case, Kubernetes jobs are the preferred way to run processing on the NRP. This is because jobs are designed to run to completion, and can be scaled up or down as needed.
-
-:::
+<center>
+<LinkButton href="/documentation/userdocs/start/getting-started" target="_blank">Get started with Kubernetes setup </LinkButton>
+</center>
 
 :::tip[Points to Note]
 - You need to be part of at least one namespace. Follow the [Getting started](/documentation/userdocs/start/getting-started) page
@@ -66,6 +80,7 @@ In almost every case, Kubernetes jobs are the preferred way to run processing on
 ## Kubernetes concepts
 
 This section highlights some of the Kubernetes concepts that are essential to start using the Nautilus cluster.
+You can learn more about these components in the [tutorial sections]((/documentation/userdocs/tutorial/basic/)). 
 If you are new to Kubernetes and like to learn about the Kubernetes concepts in detail, please follow the <a href="https://kubernetes.io/docs/concepts/" target="_blank">**Concepts page from Kubernetes Documentation**</a>.
 
 
@@ -117,7 +132,7 @@ Deleting a job will clean up all the jobs it created.
 - If you find an issue in your job, delete the job otherwise it will keep creating pods.
 :::
 
-A <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank">Kubernetes job</a> manages the lifecycle of application workloads by ensuring the desired number of pod replicas are running and up to date.
+A <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank">Kubernetes deployment</a> manages the lifecycle of application workloads by ensuring the desired number of pod replicas are running and up to date.
 It supports rolling updates, rollbacks, and scaling to maintain application availability.
 Deployments automatically replace failed or outdated pods, making them ideal for managing stateless applications in a cluster.
 
@@ -126,6 +141,11 @@ Deployments automatically replace failed or outdated pods, making them ideal for
 - Use deployments if you need to run [long-running idle pods](/documentation/userdocs/running/long-idle/).
 :::
 
+:::note
+
+In almost every case, **Kubernetes jobs are the preferred way to run large-scale processing on the NRP**. This is because jobs are designed to run to completion, and can be scaled up or down as needed.
+
+:::
 
 | Feature | Job | Pod | Deployment |
 |---------|-----|-----|------------|

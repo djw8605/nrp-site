@@ -11,6 +11,10 @@ import { Steps } from '@astrojs/starlight/components';
 - Use [**`Deployment`**](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/documentation/userdocs/running/long-idle/) and set **minimal** resources request.
 - Use [monitoring](/documentation/userdocs/running/monitoring/) to accurately set the resource requests.
 - Avoid wasting resources: if you’ve requested something, use it, and free it up once computation is done.  Admins monitor resource utilization and will ban namespaces with under-utilized resources requests.
+- A single user can't submit more than 4 pods violating the following limits (1 is 100%):
+    - GPU: > 0.4
+    - CPU: 0.2 - 2
+    - Memory: 0.2 - 1.5
 - **Users running a Job with `sleep` command or equivalent (script ending with "sleep") will be banned from using the cluster.**
 :::
 
@@ -51,6 +55,28 @@ Choose the resource `requests` and `limits` carefully.
 7. Admins actively monitor resource usage and namespaces with consistently underutilized requests risk being banned.
 
 </Steps>
+
+### Resource usage violations
+
+<Steps>
+1. A single user can't submit more than 4 pods violating the following requirements (1 is 100%):
+    - **GPU:** > 0.4   
+        &#8658; GPU utilization should be > 40% of `request` most of the time.
+    - **CPU:** 0.2 - 2    
+        &#8658; CPU usage should >20% and < 200% of the `request`.   
+    - **Memory:** 0.2 - 1.5    
+        &#8658; memory usuage should be > 20% and < 150% of the `request`.
+2. These restrictions are not applied on pods with 1 cpu core and 2GB memory.
+3. Keep checking the <a href="https://portal.nrp-nautilus.io/violations"  target="_blank">**Violations**</a>  page on the Nautilus portal to see if your pods are violating the usage policies.
+</Steps>
+
+:::note
+- CPU `limit` must be < 200% of the `request`. Example: if you request 4 cores, your limit should not be more than 8 cores.
+- Memory (RAM) `limit` must be < 150% of the `request`
+- **We strongly recommend to keep `limit` wihtin 20% of the `request`**.
+:::
+
+
 
 ### Interactive use (6 hours max runtime)
 
