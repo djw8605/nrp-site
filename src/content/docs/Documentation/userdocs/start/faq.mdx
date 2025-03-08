@@ -26,7 +26,7 @@ Also it's possible `CILogon` blocked your IP for abusing their service (if you w
 > This happens for a few reasons, such as:
 > * The node running your pod went offline. The pod will finish terminating once the node is back online.
 > * The storage attached to the pod can't be unmounted.
-> * Due to the high load on the node, your pod termination process could be completed. 
+> * Due to the high load on the node, your pod termination process could not be completed. 
 > In all these cases, you should ask a cluster admin in [Matrix](/contact) chat to look at your pod, or just wait for somebody to fix it.
 >    :::danger[Do Not Force delete your pod]
 >    Do not use `kubectl  delete --grace-period=0 --force` to delete stuck pods!    

@@ -63,14 +63,16 @@ We will discuss these options below.
 
 ### Kubernetes
 
-This method gives you more control over the computing resources you use but also requires you to learn basic Kubernetes. You can create pods, jobs, and deployments, and specify the resources (CPU, GPU, Memory, etc) you need. This is useful when you need to run a specific software stack, or when you need to run a job that requires a specific amount of resources.
+This method provides greater control over your computing resources but requires basic Kubernetes knowledge.
+You can create pods, jobs, and deployments while specifying the required CPU, GPU, memory, and other resources.
+This is particularly useful for running custom software stacks or jobs with specific resource requirements.
 
 <center>
 <LinkButton href="/documentation/userdocs/start/getting-started" target="_blank">Get started with Kubernetes setup </LinkButton>
 </center>
 
 :::tip[Points to Note]
-- You need to be part of at least one namespace. Follow the [Getting started](/documentation/userdocs/start/getting-started) page
+- You need to be part of at least one namespace. Follow the [Getting Started](/documentation/userdocs/start/getting-started) page
 - Your institution needs to be part of **`CILogon`**.
 - Need to know basic Kubernetes.
 - Complete the [**Basic Kubernetes**](/documentation/userdocs/tutorial/basic) tutorial.
@@ -89,24 +91,24 @@ If you are new to Kubernetes and like to learn about the Kubernetes concepts in 
 One of the main concepts of running workloads in Kubernetes is a namespace. A namespace creates an
 isolated environment in which you can run your pods. It is possible to invite other users to your namespace
 and it is possible to have access to multiple namespaces.
- Each namespace has at least one namespace admin (usually reserachers, engineers or faculties).
- If you are new to the cluster, please follow the instructions on the [Getting started](getting-started#get-access-and-log-in) page.
+ Each namespace has at least one namespace admin (usually researchers, engineers, or faculties).
+ If you are new to the cluster, please follow the instructions on the [Getting Started](getting-started#get-access-and-log-in) page.
 
 :::tip[Who can be a Namespace Admin]
 - A **faculty member, researcher, or postdoc**. Contact us in [Matrix](/contact). 
-- A student (preferably Ph.D. or Mastars student) can be namespace admin if their supervisor requests us via email or [Matrix](/contact).
+- A student (preferably a Ph.D. or Mastars student) can be a namespace admin if their supervisor requests us via email or [Matrix](/contact).
 
 :::
 
 
 ### Container images
 
-A container image is a lightweight, standalone, and executable software package containing everything needed to run a piece of software: the code, runtime, libraries, dependencies and default values for any essential settings.
+A container image is a lightweight, standalone, and executable software package containing everything needed to run a piece of software: the code, runtime, libraries, dependencies, and default values for any essential settings.
 Images are typically stored in container registries (e.g., Docker Hub, GitLab Container Registry) and can be pulled by Kubernetes nodes when running your code.
 
 :::tip
 - Create an image (e.g. Docker image) to run your code on Nautilus.
-- Store it in one of the container registries. You can sue [NRP-hosted GitLab](https://gitlab.nrp-nautilus.io/) to store your container image. 
+- Store it in one of the container registries. You can use [NRP-hosted GitLab](https://gitlab.nrp-nautilus.io/) to store your container image. 
 :::
 
 ### Pod, Job and Deployment
@@ -116,8 +118,8 @@ A pod can contain one or more tightly coupled containers that share the same net
 If you frequently deploy single-container pods, you can generally replace the word "pod" with "container."
 
 :::caution
-Single pod without any Workload Controllers will be destroyed after **6 hours**. Look at the [**cluster policies**](policies#interactive-use-6-hours-max-runtime). 
-- Pods are ephemeral and gets deleted or evicted due lack of resources on the node or other node issues. 
+Single pods without any Workload Controllers will be destroyed after **6 hours**. Look at the [**cluster policies**](policies#interactive-use-6-hours-max-runtime). 
+- Pods are ephemeral and get deleted or evicted due lack of resources on the node or other node issues. 
 - Be careful while using a single pod without any controller.
 :::
 
@@ -137,7 +139,7 @@ It supports rolling updates, rollbacks, and scaling to maintain application avai
 Deployments automatically replace failed or outdated pods, making them ideal for managing stateless applications in a cluster.
 
 :::caution
-- Deployments are automatically deleted after 2 weeks, unless you ask for exception.
+- Deployments are automatically deleted after 2 weeks unless you ask for an exception.
 - Use deployments if you need to run [long-running idle pods](/documentation/userdocs/running/long-idle/).
 :::
 
@@ -164,8 +166,8 @@ For all the abovementioned Kubernetes objects (pods, jobs, deployments, etc) you
 
 :::caution
 - If a node cannot satisfy the resource requests, the pod will not be scheduled on that node.
-- If a container exceeds the memory imit, it will be killed (OOM - Out of Memory).
-- If a container exceeds the CPU limit, Kubernetes throttles it (slows down execution)
+- If a container exceeds the memory limit, it will be killed (OOMKilled - Out of Memory).
+- If a container exceeds the CPU limit, Kubernetes throttles it (slows down execution).
 :::
 
 
