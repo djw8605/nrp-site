@@ -15,7 +15,8 @@ import { Steps } from '@astrojs/starlight/components';
     - GPU: > 0.4
     - CPU: 0.2 - 2
     - Memory: 0.2 - 1.5
-- **Users running a Job with `sleep` command or equivalent (script ending with "sleep") will be banned from using the cluster.**
+- Users running a **Job with `sleep` command** or equivalent (script ending with "sleep") will be banned from using the cluster.
+- Clean up your data frequently. Any storage volume that was **not accessed for 6 months can be purged without notification**.
 :::
 
 ### Acceptable Use Policy
@@ -146,6 +147,17 @@ be deleted. Any data in persistent volumes will remain.
 - To reduce the misuse the quota for using A100 GPUs is set to 0 for every namespace.
 - If you want to use A100 GPUs, you need to fill out the [A100 access](/reservations) request form online. 
 :::
+
+
+### Data purging
+
+<Steps>
+1. Please [purge](/documentation/userdocs/storage/purging/) any data you do not need. You should clean up your storage at regular intervals.
+2. NRP resources should not be used as archival storage. You can only store the data actively used for computations.
+
+3. Any volume that was **not accessed for 6 months can be purged without notification**.
+</Steps>
+
 
 ### System load
 
