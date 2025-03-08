@@ -11,10 +11,10 @@ import { Steps } from '@astrojs/starlight/components';
 - Use [**`Deployment`**](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) if you need a [**long-running pod**](/documentation/userdocs/running/long-idle/) and set **minimal** resources request.
 - Use [monitoring](/documentation/userdocs/running/monitoring/) to accurately set the resource requests.
 - Avoid wasting resources: if you’ve requested something, use it, and free it up once computation is done.  Admins monitor resource utilization and will ban namespaces with under-utilized resources requests.
-- A single user can't submit more than 4 pods violating the following limits (1 is 100%):
-    - GPU: > 0.4
-    - CPU: 0.2 - 2
-    - Memory: 0.2 - 1.5
+- A single user can't submit **more than 4 pods** violating the following limits:
+    - GPU utilization is more than 40% of the requested GPUs.
+    - CPU usage is within 20-200% of the requested CPUs.
+    - Memory (RAM) usage is  within 20-150% of the requested memory.
 - Users running a **Job with `sleep` command** or equivalent (script ending with "sleep") will be banned from using the cluster.
 - Clean up your data frequently. Any storage volume that was **not accessed for 6 months can be purged without notification**.
 :::
@@ -60,22 +60,20 @@ Choose the resource `requests` and `limits` carefully.
 ### Resource usage violations
 
 <Steps>
-1. A single user can't submit more than 4 pods violating the following requirements (1 is 100%):
-    - **GPU:** > 0.4   
-        &#8658; GPU utilization should be > 40% of `request` most of the time.
-    - **CPU:** 0.2 - 2    
-        &#8658; CPU usage should be >20% and < 200% of the `request`.   
-    - **Memory:** 0.2 - 1.5    
-        &#8658; memory usuage should be > 20% and < 150% of the `request`.
-2. These restrictions are not applied on pods with 1 cpu core and 2GB memory.
+1. A user can not submit **more than 4 pods**, violating the following conditions:
+    - **GPU** utilization is more than 40% of the requested GPUs. 
+    - **CPU** usage is within 20-200% of the requested CPUs.   
+    - **Memory (RAM)** usage is within 20-150% of the requested memory.
+2. These restrictions **do not apply** to pods requesting **1 CPU core and 2GB memory**.
 3. Keep checking the <a href="https://portal.nrp-nautilus.io/violations"  target="_blank">**Violations**</a>  page on the Nautilus portal to see if your pods are violating the usage policies.
 </Steps>
 
 :::note
-- CPU `limit` must be < 200% of the `request`.
-    - Example: if you request 4 cpu cores, your limit must not be more than 8 cpu cores.
-- Memory (RAM) `limit` must be < 150% of the `request`.
-- **We strongly recommend to keep `limit` wihtin 20% of the `request`**.
+The above usage limits implies:
+- CPU `limit` must be less than 200% of the `request`.
+    - For example: if you request 4 CPU cores, your limit must be 8 or less.
+- Memory (RAM) `limit` must be less than 150% of the `request`.
+- **We strongly recommend keeping resource `limits` within 20% of the `requests` for optimal performance.**.
 :::
 
 
