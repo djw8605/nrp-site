@@ -5,21 +5,23 @@ description: Guide to provision an L2 path using SENSE and Multus for network at
 
 Follow these steps to provision an L2 path using SENSE and Multus.
 
-## Step 1: Verify SENSE Path
-Ensure that a plumbed SENSE path exists between the source and destination (e.g., two NRP nodes or an NRP node and FABRIC Facility Port). Contact Nautilus Support on Matrix if necessary.
+:::note
+Before starting, make sure you have access to the Sense Orchestrator either on [sense-o](https://sense-o.es.net:8443/StackV-web/portal/) or [sense-o-dev](https://sense-o-dev.es.net:8443/StackV-web/portal/). If you don't have access, please request access from [sense-info@es.net](mailto:sense-info@es.net).
+:::
+
+## Step 1: Create the SENSE path:
+
+Login into the orchestrator's online portal at [sense-o](https://sense-o.es.net:8443/StackV-web/portal/) or [sense-o-dev](https://sense-o-dev.es.net:8443/StackV-web/portal/) (Credentials provided by ESnet).
+
 
 ## Step 2: Configure the Node
-On the relevant node, execute the following commands, replacing placeholders with actual values:
+
+You will see the interface(s) show up on the node(s) specified in the URI(s). Example:
 
 ```bash
-# Add a MACVLAN interface
-sudo ip link add link <interface> name <macvlan> type macvlan mode bridge
-
-# Assign an IPv6 address
-sudo ip -6 addr add <ipv6-address>/<prefix-length> dev <macvlan>
-
-# Set the interface up
-sudo ip link set up <macvlan>
+nautilus@node-2-7:~$ ifconfig | grep -i vlan
+vlan.3110: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9000
+vlan.3110-ifb: flags=195<UP,BROADCAST,RUNNING,NOARP>  mtu 1500
 ```
 
 ## Step 3: Create a Multus NetworkAttachmentDefinition
