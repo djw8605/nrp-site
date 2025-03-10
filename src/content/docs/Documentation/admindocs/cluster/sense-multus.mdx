@@ -13,6 +13,39 @@ Before starting, make sure you have access to the Sense Orchestrator either on [
 
 Login into the orchestrator's online portal at [sense-o](https://sense-o.es.net:8443/StackV-web/portal/) or [sense-o-dev](https://sense-o-dev.es.net:8443/StackV-web/portal/) (Credentials provided by ESnet).
 
+#### Create a new instance from the "+" button in the bottom right corner.
+
+![Create New Instance](../../../../assets/images/sense/sense1.png)
+
+#### Select the service profile you want. (These will be provided and already populated by the ESnet SENSE Team).
+
+![Select Service Profile](../../../../assets/images/sense/sense2.png)
+
+#### Fill in the fields specifying the configuration for the L2 path you want. (You can view and search for URIs in the `Visualization` tab).
+
+![Fill Configuration](../../../../assets/images/sense/sense3.png)
+
+`uri`: The node's Uniform Resource Identifier. Can be looked up in search. Will contain the NRP node name and corresponding NIC interface in the name. Example: `urn:ogf:network:nrp-nautilus.io:2020:node-2-7.sdsc.optiputer.net:enp65s0f1np1`.
+
+`assign_ip`: Whether or not the orchestrator should assign IPs.
+
+`vlan_tag`: Can be any VLAN that doesn't already have a path on it. If the user specifies `any`, the orchestrator will pick an available VLAN tag.
+
+`bandwidth.capacity`: QoS bandwidth and **not** an upper cap.
+
+#### Specify an alias for the instance (name).
+
+![Specify Alias](../../../../assets/images/sense/sense4.png)
+
+#### You can view the status (failure/success) and logs after hitting submit.
+
+![View Status](../../../../assets/images/sense/sense5.png)
+
+## Step 1A (Extra): Using the API
+
+You can also acheieve the same results using the [sense-o-api](https://pypi.org/project/sense-o-api/), or the [sense-o-py-client](https://github.com/sdn-sense/sense-o-py-client/).
+
+A detailed step-by-step guide on using the Python client can be found [here](/SENSE.pdf).
 
 ## Step 2: Configure the Node
 
@@ -23,6 +56,7 @@ nautilus@node-2-7:~$ ifconfig | grep -i vlan
 vlan.3110: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9000
 vlan.3110-ifb: flags=195<UP,BROADCAST,RUNNING,NOARP>  mtu 1500
 ```
+No further configuration on the node is necessary.
 
 ## Step 3: Create a Multus NetworkAttachmentDefinition
 Define a Multus `NetworkAttachmentDefinition` using the MACVLAN interface. Save the following YAML as `network.yaml`:
@@ -37,16 +71,13 @@ spec:
   config: '{
     "cniVersion": "0.3.1",
     "type": "macvlan",
-    "master": "<interface>",
+    "master": "vlan.3110",
     "mode": "bridge",
     "ipam": {
-      "type": "static",
-      "addresses": [
-        {
-          "address": "<ipv6-address>/<prefix-length>",
-          "gateway": "<gateway-ip>"
-        }
-      ]
+      "type": "host-local",
+      "subnet": "192.168.1.0/24",
+      "rangeStart": "192.168.1.1",
+      "rangeEnd": "192.168.1.50"
     }
   }'
 ```
@@ -95,4 +126,4 @@ kubectl apply -f pod.yaml
 kubectl exec -it macvlan-pod -n <namespace> -- sh
 ```
 
-2. Test connectivity using `ping6` or other tools.
+2. Test connectivity using `ping`, `iperf` or other tools.
