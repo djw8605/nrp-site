@@ -184,3 +184,18 @@ Users need to create their own [PersistentVolumeClaim (PVC)](/documentation/user
 - Complete the Storage section from [the tutorial](/documentation/userdocs/tutorial/storage).
 - Read more about the different [storage options](/documentation/userdocs/storage/intro) on Nautilus.
 :::
+
+### System load
+
+
+While you are welcome to use as many resources as needed, using those inefficiently is causing problems to others. The CPU load of the system consists of user load, system load, and several others. If you run `top`, you'll see something like:
+
+```bash
+%Cpu(s): 26.9 us,  1.5 sy,  0.0 ni, 71.5 id,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st
+```
+
+This means 26.9% of all system CPU time is spent on user tasks (computing), 1.5% on system stuff (kernel tasks), 71.5 idle, and so on. If the system (kernel) load is more than \~15%, it indicates a problem with the user's code. Usually, it is caused by too many threads (the system is spending too much time just switching between those), inefficient file I/O (lots of small files processed by too many workers), or something similar. In this case, the system time is wasted not on processing.
+
+
+> If you were told your pod is causing too much load, look at your code and try to figure out why it is spending too much kernel time instead of computations.
+
