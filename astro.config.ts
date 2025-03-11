@@ -31,9 +31,13 @@ export default defineConfig({
 
   integrations: [
     starlight({
-      favicon: '/static/favicon.ico',
+      favicon: '/favicon.ico',
       title: 'NRP Nautilus',
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
+      social: {
+      	gitlab: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
+        'matrix': 'https://matrix.nrp-nautilus.io/',
+      },
       editLink: {
         baseUrl: 'https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main',
       },
@@ -170,6 +174,9 @@ export default defineConfig({
               items: [
                 { label: "Vivado and Vitis", link: "documentation/userdocs/fpgas/vivado-vitis" },
                 { label: "ESnet SmartNIC", link: "documentation/userdocs/fpgas/esnet" },
+                { label: "SmartNIC: Development", link: "documentation/userdocs/fpgas/esnet_development" },
+                { label: "SmartNIC: Building ", link: "documentation/userdocs/fpgas/esnet_building" },
+                { label: "SmartNIC: Running", link: "documentation/userdocs/fpgas/esnet_running" },
               ],
             },
             {
@@ -256,7 +263,8 @@ export default defineConfig({
                 { "label": "Ceph Recover", "link": "documentation/admindocs/storage/ceph" },
                 { "label": "Ceph Performance", "link": "documentation/admindocs/storage/ceph-performance" },
                 { "label": "Volume Mounting", "link": "documentation/admindocs/storage/volume-mounting" },
-                { "label": "Origin SyncThing", "link": "documentation/admindocs/storage/origin-sync" }
+                { "label": "Origin SyncThing", "link": "documentation/admindocs/storage/origin-sync" },
+                { "label": "User PVC Issues", "link": "documentation/admindocs/storage/user-pvc-issues" }
               ]
             },
             {

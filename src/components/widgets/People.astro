@@ -17,22 +17,22 @@ const {
 } = Astro.props;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
-  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+<Headline title={title} subtitle={subtitle} tagline={tagline} />
 
-  <div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
-    {
-      people &&
-        people.map(
-          (person) =>
-            person && (
+<div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
+  {
+    people &&
+      people.map(
+        (person) =>
+          person && (
+            <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
               <div class="max-w-md w-full">
                 <Image src={person.img} alt="" class="h-30 mx-auto object-cover rounded-full w-30" width={170} height={170}  layout="fixed" />
                 <Headline class="flex flex-wrap justify-center" title={person.name}></Headline>
                 <Headline class="flex flex-wrap justify-center" subtitle={person.title}></Headline>
               </div>
-            )
-        )
-    }
-  </div>
-</WidgetWrapper>
+            </WidgetWrapper>
+          )
+      )
+  }
+</div>

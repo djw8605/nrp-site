@@ -83,23 +83,22 @@ Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from 
     Finally, you should have the Nautilus Kubernetes config on your machine (laptop, desktop) as `~/.kube/config`
 
 4. Make sure you are using the correct config file.
-    - Run the following command to list available Kubernetes contexts.
-    ```bash
-    kubectl config get-contexts
-    ```
-    You should see an output like this:
-    ```bash
-    CURRENT   NAME       CLUSTER    AUTHINFO                                  NAMESPACE
-    *         nautilus   nautilus   http://cilogon.org/serverE/users/XXXX     XXXX
-    ```
+    - Run the following command to list available Kubernetes contexts:
+
+        ```bash title="Get Contexts"
+        $ kubectl config get-contexts
+        CURRENT   NAME       CLUSTER    AUTHINFO                                  NAMESPACE
+        *         nautilus   nautilus   http://cilogon.org/serverE/users/XXXX     XXXX
+
     - If you have access to multiple Kubernetes clusters, you need to choose `use-context nautilus` by doing
-    ```bash
-    kubectl config use-context nautilus
-    ```
+
+        ```bash title="Set Context"
+        kubectl config use-context nautilus
+        ```
 
 6. Verify cluster access using `kubectl`. Run the following command on your terminal.
 
-    ```bash
+    ```bash title="Get Pods"
     kubectl get pods -n <YOUR_NAMESPACE>
     ```
 
