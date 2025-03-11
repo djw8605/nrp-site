@@ -54,10 +54,8 @@ export default defineConfig({
               collapsed: true,
               items: [
                 { label: "Getting Started", link: "documentation/userdocs/start/getting-started" },
-                // { label: "Get Access", link: "documentation/userdocs/start/get-access" },
-                // { label: "Quick Start", link: "documentation/userdocs/start/quickstart" },
-                { label: "How Should I Use Nautilus?", link: "documentation/userdocs/start/how-to-use-nautilus" },
-                { label: "Policies", link: "documentation/userdocs/start/policies" },
+                { label: "Using Nautilus", link: "documentation/userdocs/start/using-nautilus" },
+                { label: "Cluster Policies", link: "documentation/userdocs/start/policies" },
                 { label: "Deployed Services", link: "documentation/userdocs/start/resources" },
                 { label: "Glossary", link: "documentation/userdocs/start/glossary" },
                 { label: "FAQ", link: "documentation/userdocs/start/faq" },
