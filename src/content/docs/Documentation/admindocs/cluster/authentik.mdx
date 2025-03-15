@@ -1,0 +1,34 @@
+---
+title: Configuring OAuth Authentik Clients
+description: A guide for setting up OAuth Authentik Clients
+---
+
+Sample JH code:
+
+```YAML
+hub:
+  config:
+    OAuthenticator:
+      login_service: "Authentik"
+      oauth_callback_url: "https://pfc.nrp-nautilus.io/hub/oauth_callback"
+      authorize_url: "https://authentik.nrp-nautilus.io/application/o/authorize/"
+      token_url: "https://authentik.nrp-nautilus.io/application/o/token/"
+      userdata_url: "https://authentik.nrp-nautilus.io/application/o/userinfo/"
+      client_id: "XYZ"
+      client_secret: "XYZ"
+      username_claim: "email"
+      allowed_users: []
+      admin_users: []
+      manage_groups: true  
+      allow_all: true
+      allowed_groups:
+        - "authentik Admins"
+      admin_groups:
+        - "authentik Admins"
+
+```
+
+Filteration (blacklists/whitelists/user_scopes) is done through what is called an expression policy, which is python code that returns Boolean.
+
+https://docs.goauthentik.io/docs/customize/policies/expression
+
