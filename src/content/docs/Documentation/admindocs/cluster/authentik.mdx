@@ -3,6 +3,17 @@ title: Configuring OAuth Authentik Clients
 description: A guide for setting up OAuth Authentik Clients
 ---
 
+Follow these steps to configure an OAuth Client via Authentik.
+
+1. You have to be an admin on [authentik] (authentik.nrp-nautlus.io).
+
+2. You create an `Application`. Each `Application` instance will create a `Provider` instance. Pick `OAuth2` for Provider.
+
+Choose an Authorization Flow: `default-provider-authorization-explicit-consent (Authorize Application)`
+
+
+
+
 Sample JH code:
 
 ```YAML
