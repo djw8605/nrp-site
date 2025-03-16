@@ -3,43 +3,153 @@ title: Configuring OAuth Authentik Clients
 description: A guide for setting up OAuth Authentik Clients
 ---
 
+## Overview
+
 Follow these steps to configure an OAuth Client via Authentik.
 
-1. You have to be an admin on [authentik] (authentik.nrp-nautlus.io).
+## Prerequisites
 
-2. You create an `Application`. Each `Application` instance will create a `Provider` instance. Pick `OAuth2` for Provider.
+1. You must be an **admin** on [Authentik](https://authentik.nrp-nautlus.io).
 
-Choose an Authorization Flow: `default-provider-authorization-explicit-consent (Authorize Application)`
+## Step 1: Create an Application
 
+- Navigate to **Applications** in Authentik.
+- Create a new `Application`.
+- Each `Application` will create a corresponding `Provider`.
+- Choose `OAuth2` as the `Provider` type.
 
+### Authorization Flow
 
+- Select: `default-provider-authorization-explicit-consent (Authorize Application)`.
+- Make the client **confidential**.
+- Retrieve the `Client ID` and `Client Secret` (needed for integration).
 
-Sample JH code:
+## Step 2: Configure JupyterHub (Example)
 
-```YAML
-hub:
-  config:
-    OAuthenticator:
-      login_service: "Authentik"
-      oauth_callback_url: "https://pfc.nrp-nautilus.io/hub/oauth_callback"
-      authorize_url: "https://authentik.nrp-nautilus.io/application/o/authorize/"
-      token_url: "https://authentik.nrp-nautilus.io/application/o/token/"
-      userdata_url: "https://authentik.nrp-nautilus.io/application/o/userinfo/"
-      client_id: "XYZ"
-      client_secret: "XYZ"
-      username_claim: "email"
-      allowed_users: []
-      admin_users: []
-      manage_groups: true  
-      allow_all: true
-      allowed_groups:
-        - "authentik Admins"
-      admin_groups:
-        - "authentik Admins"
+Below is a sample JupyterHub configuration using Authentik as the OAuth provider:
 
+```yaml
+  hub:
+    config:
+      OAuthenticator:
+        login_service: "Authentik" # This is what shows on JH UI
+        oauth_callback_url: "https://XYZ.nrp-nautilus.io/hub/oauth_callback" # This is inputted by user
+        authorize_url: "https://authentik.nrp-nautilus.io/application/o/authorize/" # This is provided by Authentik
+        token_url: "https://authentik.nrp-nautilus.io/application/o/token/"  # This is provided by Authentik
+        userdata_url: "https://authentik.nrp-nautilus.io/application/o/userinfo/"  # This is provided by Authentik
+        client_id: "XYZ"  # This is provided by Authentik
+        client_secret: "XYZ"  # This is provided by Authentik
+        username_claim: "email"
 ```
 
-Filteration (blacklists/whitelists/user_scopes) is done through what is called an expression policy, which is python code that returns Boolean.
+## Step 3: Configure Bindings (Filters & Policies)
 
-https://docs.goauthentik.io/docs/customize/policies/expression
+- In **Configure Bindings**, define filtering rules (`blacklists`, `whitelists`, `user scopes`).
+- Authentik uses **Expression Policies** (Python-based) to control access.
 
+ore details on Expression Policies: [Authentik Docs](https://docs.goauthentik.io/docs/customize/policies/expression)
+
+For now, finish creating the **Application** without attaching a policy. Next, you'll create the policy and bind it.
+
+## Step 4: Create an Expression Policy
+
+- Navigate to **Customization → Policies → Create → Expression Policy**.
+- In the **Expression** field, enter your filtering logic.
+  
+Example:
+
+```python
+# Allowed emails (bypass restrictions)
+allowed_emails = ["example@example.edu"]
+
+# Whitelist/blacklist domains
+whitelist_domains = ["example.edu", "example.com"]
+blacklist_domains = ["bad-domain.com"]
+banned_users = ["banned.user@example.edu"]
+allowed_exceptions = ["research-team@bad-domain.com"]
+
+# Normalize lists
+whitelist_lower = [d.lower().strip() for d in whitelist_domains]
+blacklist_lower = [d.lower().strip() for d in blacklist_domains]
+banned_lower = [b.lower().strip() for b in banned_users]
+allowed_lower = [a.lower().strip() for a in allowed_emails]
+allowed_exceptions_lower = [e.lower().strip() for e in allowed_exceptions]
+
+# User context
+user = request.context.get("pending_user", request.user)
+
+# Validate user
+if not user or not user.email:
+    ak_message("Access denied: Invalid credentials")
+    return False
+
+email = user.email.lower().strip()
+username, domain = email.split("@")
+
+# Access rules
+if email in allowed_lower:
+    ak_message("Access granted")
+    return True
+elif email in banned_lower:
+    ak_message("Account suspended - contact admins")
+    return False
+elif whitelist_lower and domain not in whitelist_lower:
+    if email in allowed_exceptions_lower:
+        ak_message("Special access granted")
+        return True
+    ak_message(f"@{domain} not authorized")
+    return False
+elif domain in blacklist_lower and email not in allowed_exceptions_lower:
+    ak_message(f"@{domain} blocked")
+    return False
+
+ak_message("Access granted")
+return True
+```
+
+## Policy Logic Flow
+
+```text
+[Start]
+  │
+  ▼
+Allowed Email Check → Approved? ✅ → Allow
+  |                  → Not listed ❌ → Deny
+  │
+  ▼
+Banned User Check → Blocked? ❌ → Deny
+  │
+  ▼	
+Domain Mode Check
+  ├─ Whitelist Mode:
+  │    ├─ Domain Approved? ✅ → Allow
+  │    ├─ Exception User? ✅ → Allow
+  │    └─ Else ❌ → Deny
+  │
+  └─ Blacklist Mode:
+       ├─ Domain Blocked?
+       │    ├─ Exception User? ✅ → Allow
+       │    └─ Else ❌ → Deny
+       └─ Default ✅ → Allow
+```
+
+## Policy Rules Explanation
+
+🔹 **Allowed Emails Take Priority**  
+If `allowed_emails` is not empty, only those emails will be allowed.
+
+🔹 **Banned Users Are Always Blocked**  
+Regardless of other conditions.
+
+🔹 **Whitelist Mode vs Blacklist Mode**  
+- If `whitelist_domains` is defined, only those domains are allowed (except explicitly allowed exceptions).
+- If `whitelist_domains` is empty, the system defaults to **blacklist mode**, where blocked domains deny access unless overridden.
+
+## Step 5: Bind the Policy to Your Application
+
+- Go back to your **Application**.
+- Open **Policy / Group / User Bindings**.
+- Bind the **Expression Policy** you just created.
+- In the **Application Overview**, use the **Test** button to verify user access.
+
+---
