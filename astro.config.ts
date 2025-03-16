@@ -290,6 +290,7 @@ export default defineConfig({
               "items": [
                 { "label": "Cluster user management", "link": "documentation/admindocs/cluster/cluster-user-mgmt" },
                 { "label": "Cluster node management", "link": "documentation/admindocs/cluster/node-mgmt" },
+                { "label": "Authentik", "link": "documentation/admindocs/cluster/authentik" },
                 { "label": "JupyterLab", "link": "documentation/admindocs/cluster/jupyterlab-admin" },
                 { "label": "KubeVirt", "link": "documentation/admindocs/cluster/kubevirt-gpu" },
                 { "label": "Services topology", "link": "documentation/admindocs/cluster/cdn-svc" },
