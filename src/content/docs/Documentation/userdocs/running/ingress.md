@@ -73,7 +73,7 @@ spec:
 
 You can choose the host subdomain to be whatever you want (`<whatever>.nrp-nautilus.io`). This is enough to have your pod served under `test-service.nrp-nautilus.io`.  You can test this example via curl (`curl https://test-service.nrp-nautilus.io`)
 
-#### Using my own domain name
+## Using my own domain name
 
 If you need to use your own domain, you would have to also provide a valid certificate in a secret in your namespace:
 
@@ -118,7 +118,7 @@ spec:
 
 Create the CNAME DNS record for your domain pointing to `nrp-nautilus.io` (for geo-balanced multi-region DNS record) or `east.nrp-nautilus.io` (just the eastern region).
 
-#### Auto renewing the certificate
+## Auto renewing the certificate
 
 The [Cert Manager](https://cert-manager.io) installed in our cluster supports auto retrieving and updating [ACME Let's Encrypt](https://letsencrypt.org/docs/client-options/) certificates. To set up the HTTP challenge, create an issuer:
 

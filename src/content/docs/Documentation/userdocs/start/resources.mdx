@@ -1,0 +1,83 @@
+---
+title: Deployed Services
+description: Deployed Services
+---
+import { Badge } from '@astrojs/starlight/components';
+
+Although you can run your own containers, there are services and resources 
+already deployed by cluster admins that you can use without creating those yourself.
+
+:::caution
+Most services require additional registration.
+:::
+
+<Badge text="Stable" variant="success" /> - Service is **generally supported**. You can report issues with the service.
+
+<Badge text="Unsupported" variant="caution" /> - Service is provided **as is**. You can report the issues but those will be checked with lowest priority. The service might be removed soon.
+
+<Badge text="Experimental" variant="tip" /> - The service is added **for testing**. Likely to have bugs or change at any time. Also might be removed without any notification.
+
+**Please report broken services in [Matrix Support](/contact).**
+
+## Computations
+
+- [<Badge text="Stable" variant="success" /> JupyterHub][1] [(Docs)](/documentation/userdocs/jupyter/jupyterhub-service)
+- [<Badge text="Stable" variant="success" /> Coder: remote development environment][13] [(Docs)](/documentation/userdocs/coder/coder)
+- [<Badge text="Stable" variant="success" /> Kubvirt: Virtual Machines][2]
+- [<Badge text="Unsupported" variant="caution" /> WebODM (Web Open Drone Map): Drone Images stitching][4]
+
+## Data sharing and collaboration tools
+- [<Badge text="Stable" variant="success" /> GitLab: code and containers repository][5]
+- [<Badge text="Stable" variant="success" /> Overleaf: LaTeX collaboration][12]
+- [<Badge text="Stable" variant="success" /> EtherPad: notebooks][3] 
+- [<Badge text="Stable" variant="success" /> Jitsi: Video conferencing][10]
+- [<Badge text="Stable" variant="success" /> Nextcloud: File sharing][6]
+- [<Badge text="Unsupported" variant="caution" /> SyncThing: File sync][8] ([Contact us to set up](/documentation/userdocs/start/contact))
+- [<Badge text="Unsupported" variant="caution" /> Hedgedoc: collaborative markdown editor][14]
+
+## Artificial intelligence and LLM
+
+- [<Badge text="Stable" variant="success" /> NRP-Managed LLMs and services](/documentation/userdocs/ai/llm-managed)
+
+## Network monitoring
+- [<Badge text="Stable" variant="success" /> PerfSONAR][11]
+- [<Badge text="Unsupported" variant="caution" /> Traceroute tool][7]
+
+## Kubernetes operators (CRDs)
+
+### Databases
+
+- <Badge text="Stable" variant="success" /> [PostgreSQL (zalan.do)](/documentation/userdocs/running/postgres)
+- <Badge text="Stable" variant="success" /> [Elasticsearch](https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-elasticsearch-specification.html)
+- <Badge text="Stable" variant="success" /> [Prometheus](https://prometheus-operator.dev) (users are allowed to create [`ServiceMonitors`](https://prometheus-operator.dev/docs/api-reference/api/#monitoring.coreos.com/v1.ServiceMonitor))
+- <Badge text="Experimental" variant="tip" /> [Nebula graph](https://www.nebula-graph.io)
+- <Badge text="Experimental" variant="tip" /> [ScyllaDB](https://operator.docs.scylladb.com/stable/resources/scyllaclusters/index.html)
+
+### Compute
+
+- <Badge text="Stable" variant="success" /> [Ray](/documentation/userdocs/running/ray-cluster)
+- <Badge text="Stable" variant="success" /> [Dask](/documentation/userdocs/running/dask-cluster)
+- <Badge text="Stable" variant="success" /> [Kubeflow](/documentation/userdocs/running/kubeflow)
+
+### Others
+
+- <Badge text="Stable" variant="success" /> [Cert-manager](/documentation/userdocs/running/ingress#auto-renewing-the-certificate)
+- <Badge text="Stable" variant="success" /> [Sealed secrets](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#usage)
+- <Badge text="Stable" variant="success" /> [Multus](https://github.com/k8snetworkplumbingwg/multus-cni)
+- <Badge text="Stable" variant="success" /> [Admiralty federation](https://admiralty.io)
+- <Badge text="Experimental" variant="tip" /> [Clabernetes Containerlab](https://containerlab.dev/manual/topo-def-file/)
+- <Badge text="Experimental" variant="tip" /> [keda.sh autoscaling](https://keda.sh)
+
+[1]: https://jupyterhub-west.nrp-nautilus.io
+[2]: /documentation/userdocs/running/virtualization-general
+[3]: https://etherpad.nrp-nautilus.io
+[4]: https://webodm.nrp-nautilus.io
+[5]: https://gitlab.nrp-nautilus.io
+[6]: https://nextcloud.nrp-nautilus.io
+[7]: https://traceroute.nrp-nautilus.io
+[8]: https://syncthing.net
+[10]: https://jitsi.nrp-nautilus.io
+[11]: https://perfsonar.nrp-nautilus.io/maddash-webui/
+[12]: https://overleaf.nrp-nautilus.io
+[13]: https://coder.nrp-nautilus.io
+[14]: https://hedgedoc.nrp-nautilus.io
