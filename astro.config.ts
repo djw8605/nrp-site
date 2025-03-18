@@ -209,7 +209,8 @@ export default defineConfig({
                   collapsed: true,
                   "items": [
                     { "label": "Moving data", "link": "documentation/userdocs/storage/move-data" },
-                    { "label": "Purging", "link": "documentation/userdocs/storage/purging" }
+                    { "label": "Purging", "link": "documentation/userdocs/storage/purging" },
+                    { "label": "Managing Tokens", "link": "documentation/userdocs/storage/jwt-credential" },
                   ]
                 }
               ]
