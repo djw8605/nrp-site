@@ -169,6 +169,13 @@ export default defineConfig({
               ],
             },
             {
+              label: "Networks",
+              collapsed: true,
+              items: [
+                { label: "FABRIC Integration", link: "documentation/userdocs/networks/fabric" },
+              ],
+            },
+            {
               label: "FPGA",
               collapsed: true,
               items: [
