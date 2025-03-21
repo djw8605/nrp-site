@@ -31,7 +31,7 @@ Follow the [install guide](https://zero-to-jupyterhub.readthedocs.io/en/stable/j
 
 1. Run `openssl rand -hex 32` and replace the `secret_token` in the yaml file with the generated key
 2. Minimally set the `client_id`, `client_secret`, `admin_users`, `secret_token`, `oauth_callback_url`, `ingress.hosts` fields.
-3. Add security with either `allowed_idps` or `allowed_users`. Do NOT leave your JupyterHub instance open for anyone to sign in, this may result in locking of your namespace.
+3. Add security with either `allowed_idps` or `allowed_users`. Do NOT leave your JupyterHub instance open for anyone to sign in, this may result in locking of your namespace. You may find your IDP at https://cilogon.org/idplist
 4. `helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/ && helm repo update`
 5. `helm upgrade --cleanup-on-fail --install jhub jupyterhub/jupyterhub --namespace <namespace> --version=3.3.7 --values config.yaml`
 
