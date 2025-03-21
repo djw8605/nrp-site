@@ -24,7 +24,7 @@ Here's the full list of taints on the nodes. To run on the node having a taint, 
 | nautilus.io/sdsc-llm | Reserved for an SDSC LLMs | sdsc-llm |
 | nautilus.io/suncave-head | Suncave head node is only used for suncave operations | suncave |
 | nautilus.io/suncave | Suncave operations until June 1st | suncave |
-| nautilus.io/smash-hackathon| UCSD SMASH Hackathon (Jan 10th..12th 2025) | @ekhoda, @msada |
+| nautilus.io/operations | NRP Admins Operations Testing | @msada |
 | nautilus.io/genai-lab | genai-lab, till 02-14-2025 | [Daniel Salas](mailto:salas.daniel@bcg.com	) [Olivia Alexander](mailto:oalexander@usra.edu)| 
 | msu-cache, um-cache | Michigan State Cache for ATLAS | @ivukotic |
 | **Set by system to user jobs** |||
