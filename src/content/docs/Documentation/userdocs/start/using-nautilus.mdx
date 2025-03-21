@@ -5,7 +5,7 @@ description: guide to use the cluster using kubernetes, jupyterhub and coder
 import { LinkButton } from '@astrojs/starlight/components';
 
 NRP Nautilus is a Kubernetes cluster distributed all over the US and there are a few sites in Asia and Europe.
- Currently there are over 75 sites as part of the NRP. See all the sites on the <a href="https://dash.nrp-nautilus.io/" target="_blank">NRP dashdoard</a>.
+ Currently there are over 75 sites as part of the NRP. See all the sites on the <a href="https://dash.nrp-nautilus.io/" target="_blank">NRP dashboard</a>.
 
 :::note[Cluster Resource Summary]
 The cluster has different types of resources including CPU, GPU,and
@@ -56,7 +56,7 @@ We will discuss these options below.
 
 :::tip[Points to Note]
 - You do not need to be part of any namespace to use the NRP-hosted Coder service.
-- Cluster admins need to approve your account. As for access in [Matrix](/contact).
+- Cluster admins need to approve your account. Ask for access in [Matrix](/contact).
 - Your institution needs to be part of **`CILogon`**.
 - Look at the [**Coder documentation**](/documentation/userdocs/coder/coder) to learn more about this option.
 :::
@@ -97,7 +97,7 @@ and it is possible to have access to multiple namespaces.
 
 :::tip[Who can be a Namespace Admin]
 - A **faculty member, researcher, or postdoc**. Contact us in [Matrix](/contact). 
-- A student (preferably a Ph.D. or Mastars student) can be a namespace admin if their supervisor requests us via email or [Matrix](/contact).
+- A student (preferably a Ph.D. or Masters student) can be a namespace admin if their supervisor sends us a request via email or [Matrix](/contact).
 
 :::
 
@@ -189,7 +189,7 @@ Users need to create their own [PersistentVolumeClaim (PVC)](/documentation/user
 ### System load
 
 
-While you are welcome to use as many resources as needed, using those inefficiently is causing problems to others. The CPU load of the system consists of user load, system load, and several others. If you run `top`, you'll see something like:
+While you are welcome to use as many resources as needed, using those inefficiently causes problems for others. The CPU load of the system consists of user load, system load, and several others. If you run `top`, you'll see something like:
 
 ```bash
 %Cpu(s): 26.9 us,  1.5 sy,  0.0 ni, 71.5 id,  0.0 wa,  0.0 hi,  0.1 si,  0.0 st
