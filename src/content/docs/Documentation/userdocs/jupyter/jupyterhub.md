@@ -5,6 +5,10 @@ description: Deploy JupyterHub
 
 This guide is based on [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. You must be the admin of the namespace you’re deploying to.
 
+:::note
+There's work going on making JupyterHub scalable and HA in this issue: https://github.com/jupyterhub/jupyterhub/issues/1932
+:::
+
 Start from choosing the name for your project. It will look like `your_name.nrp-nautilus.io`
 
 #### Register CiLogon application
