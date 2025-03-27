@@ -67,9 +67,9 @@ Slides collected and compiled by Tom DeFanti 2-4-2025
 | 9:00 AM   | Raffi Nazikian                              | [Presentation](https://media.nrp.ai/6nrp-slides/Thurs%209am%20Raffi%20Nazikian_NRP_Jan_30_2025_V3.pdf)       |
 | 9:45 AM   | Larry Smarr, Frank Wuerthwein               | [ML on Science Data](https://media.nrp.ai/6nrp-slides/Thurs%209-45am%20Larry%20Smarr%20and%20Frank%20Wuerthwein%206NRP%20ML%20on%20science%20data.pptx) |
 | 11:00 AM  | David Goldberg                              | [Slides](https://media.nrp.ai/6nrp-slides/Thurs%2011am%20David%20Goldberg%20Slides%206NRP%202025.pdf)       |
-| Noon      | Maxine Brown, Joe Mambretti, Julio Ibarra, Jeonghoon Moon, Cees de Laat | [GRP Overview](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20MAMBRETTI-%206NRP-GRP_Overview.pdf)        |
-|           |                                             | [International Extensions](https://media.nrp.ai/6nrp-slides/Thurs%20noon%20Julio%20IBARRA-6NRP-International_Extensions_NRP.pdf) |
-|           |                                             | [Update](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20DeLAAT-6NRP-International_Extensions_NRP-UPDATE.pdf) |
+| Noon      | Joe Mambretti                               | [GRP Overview](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20MAMBRETTI-%206NRP-GRP_Overview.pdf)        |
+|           | Julio Ibarra                                | [AmLight-ExP and AtlanticWave-SDX](https://media.nrp.ai/6nrp-slides/Thurs%20noon%20Julio%20IBARRA-6NRP-International_Extensions_NRP.pdf) |
+|           | Cees de Laat                                | [Cyberinfrastucture Challenges](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20DeLAAT-6NRP-International_Extensions_NRP-UPDATE.pdf) |
 | 1:30 PM   | Mohammad Sada                               | [Advanced Compute Architectures](https://media.nrp.ai/6nrp-slides/Thurs%201-30pm%20%20Mohammad%20Sada%20advanced_compute_arch.pptx) |
 | 2:00 PM   | Tom Lehman, Justas Balcas, Joe Mambretti, Harvey Newman, Mohammad Sada | [SmartNIC Panel](https://media.nrp.ai/6nrp-slides/Thurs%202pm%20Tom%20Lehman%20et%20al%20-%20SmartNIC%20Panel%20-%20January%2030,%202025.pdf) |
 | 2:40 PM   | Tajana Rosing                              | [Bio Acceleration](https://media.nrp.ai/6nrp-slides/Thurs%202-40pm%20Tajana%20Rosing%2025%20Bio%20accel%20UCSD.pptx) |
