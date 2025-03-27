@@ -70,6 +70,7 @@ Slides collected and compiled by Tom DeFanti 2-4-2025
 | Noon      | Joe Mambretti                               | [GRP Overview](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20MAMBRETTI-%206NRP-GRP_Overview.pdf)        |
 |           | Julio Ibarra                                | [AmLight-ExP and AtlanticWave-SDX](https://media.nrp.ai/6nrp-slides/Thurs%20noon%20Julio%20IBARRA-6NRP-International_Extensions_NRP.pdf) |
 |           | Cees de Laat                                | [Cyberinfrastucture Challenges](https://media.nrp.ai/6nrp-slides/Thursday%20noon%20DeLAAT-6NRP-International_Extensions_NRP-UPDATE.pdf) |
+|           | Jeonghoon Moon                              | [Asia-Pacific Research Platform](https://media.nrp.ai/6nrp-slides/MOON-6NRP_AsiaPacificRP.pdf) |
 | 1:30 PM   | Mohammad Sada                               | [Advanced Compute Architectures](https://media.nrp.ai/6nrp-slides/Thurs%201-30pm%20%20Mohammad%20Sada%20advanced_compute_arch.pptx) |
 | 2:00 PM   | Tom Lehman, Justas Balcas, Joe Mambretti, Harvey Newman, Mohammad Sada | [SmartNIC Panel](https://media.nrp.ai/6nrp-slides/Thurs%202pm%20Tom%20Lehman%20et%20al%20-%20SmartNIC%20Panel%20-%20January%2030,%202025.pdf) |
 | 2:40 PM   | Tajana Rosing                              | [Bio Acceleration](https://media.nrp.ai/6nrp-slides/Thurs%202-40pm%20Tajana%20Rosing%2025%20Bio%20accel%20UCSD.pptx) |
