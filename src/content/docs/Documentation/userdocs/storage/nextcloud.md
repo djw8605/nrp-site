@@ -12,6 +12,8 @@ Note that large files may take a long time to show up after the upload because t
 
 To access your Nextcloud storage from shell (or Jupyter), you can use the [rclone](https://rclone.org/) tool. It's already installed in our [Jupyterlab](https://jupyterhub-west.nrp-nautilus.io) service. While the web interface is also possible to use, rclone with WebDAV may be more reliable for many or large files.
 
+For updated information about accessing NextCloud with WebDAV, always refer to [Nextcloud's official documentation.](https://docs.nextcloud.com/server/latest/user_manual/en/files/access_webdav.html)
+
 To get access, create new rclone config:
 
 ```bash
@@ -89,7 +91,7 @@ Enter a string value. Press Enter for the default ("").
 Choose a number from below, or type in your own value
  1 / Connect to example.com
    &#92; "https://example.com"
-url> https://nextcloud.nrp-nautilus.io/remote.php/webdav/
+url> https://nextcloud.nrp-nautilus.io/remoremote.php/dav/files/USERNAME/
 Name of the Webdav site/service/software you are using
 Enter a string value. Press Enter for the default ("").
 Choose a number from below, or type in your own value
@@ -121,7 +123,7 @@ Remote config
 --------------------
 [nextcloud]
 type = webdav
-url = https://nextcloud.nrp-nautilus.io/remote.php/webdav/
+url = https://nextcloud.nrp-nautilus.io/remoremote.php/dav/files/USERNAME/
 vendor = nextcloud
 user = {YOURUSER}
 pass =  ENCRYPTED 
