@@ -270,7 +270,7 @@ export default defineConfig({
                 { "label": "Ceph S3", "link": "documentation/admindocs/storage/ceph-s3" },
                 { "label": "Ceph Recover", "link": "documentation/admindocs/storage/ceph" },
                 { "label": "Ceph Performance", "link": "documentation/admindocs/storage/ceph-performance" },
-                { "label": "Volume Mounting", "link": "documentation/admindocs/storage/volume-mounting" },
+                { "label": "Volume Mounting Troubleshooting", "link": "documentation/admindocs/storage/volume-mounting" },
                 { "label": "Origin SyncThing", "link": "documentation/admindocs/storage/origin-sync" },
                 { "label": "User PVC Issues", "link": "documentation/admindocs/storage/user-pvc-issues" }
               ]
@@ -305,6 +305,7 @@ export default defineConfig({
                 { "label": "KubeRay operator", "link": "documentation/admindocs/cluster/ray-operator" },
                 { "label": "SENSE/Multus", "link": "documentation/admindocs/cluster/sense-multus" },
                 { "label": "Partitioning MIG GPUs", "link": "documentation/admindocs/cluster/mig-gpus" },
+                { "label": "Security Tools", "link": "documentation/admindocs/cluster/security-tools"},
                 {
                   "label": "Upgrades",
                   collapsed: true,
