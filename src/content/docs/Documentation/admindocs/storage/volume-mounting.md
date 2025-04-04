@@ -3,53 +3,85 @@ title: Volume Mounting Troubleshooting
 description: Volume Mounting Troubleshooting
 ---
 
-This article describes how to resolve stuck Ceph RBD volumes and CephFS volumes.
+This article describes how to resolve pods that are in status of `ContainerCreating`, and command `kubectl describe pod <pod-name>` indicates volume mounting failures in the events.
 
-# Get the volume's StorageClass
+## Mount failed for "PVC already exists"
 
-You'll need to get the storageclass to determine how to debug this. Block storage means it should be on one node at a time, and thus if it's stuck on a node it will prevent other nodes from using it. The non-blocked class should allow other nodes to mount as well.
+The error message is similar to 
 
-    kubectl describe -n mizzou pvc/claim-hikf3-40mail-2emissouri-2eedu | grep StorageClass
+```
+Warning  FailedMount  2m9s (x238 over 7h52m)  kubelet  MountVolume.MountDevice failed for volume "pvc-2f77910e-068f-488c-9e5e-929f88564a76" : rpc error: code = Aborted desc = an operation with the given Volume ID 0001-000c-rook-central-0000000000000001-580865e7-8ef0-4eca-aecb-829f9712f4ee already exists
+```
 
-    StorageClass:  rook-ceph-block
+This type of failure is caused by networking issues. Here are some work arounds to fix the issue:
 
-Here we're getting the storage class via a PVC name. The namespace here is mizzou, and the PVC name is claim-hikf3-40mail-2emissouri-2eedu
+1.  Restart the `kube-proxy` pod, and the `csi-cephfsplugin` pod or `csi-rbdplugin` pod on the node.
 
-If you have the pv name, that can also be used the same way:
+Examine the log of the `kube-proxy` pod, if there are repeating errors connecting to the API server at https://67.58.53.147:6443:
 
-    kubectl describe -n mizzou pv/pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7 | grep StorageClass
+```
+E0403 10:47:08.012312       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.Node: failed to list *v1.Node: Get "https://67.58.53.147:6443/api/v1/nodes?fieldSelector=metadata.name%3Dhcc-nrp-shor-c5934.unl.edu&resourceVersion=9989991954": dial tcp 67.58.53.147:6443: connect: no route to host
 
-    StorageClass:    rook-ceph-block
+```
+Delete the `kube-proxy` pod and wait for it to restart. 
 
-Here the storage class is rook-ceph-block, but there are variations of storage class based on the region the ceph cluster is in. For example, rook-ceph-block-central, rook-ceph-block-east. Basically you want to be looking for whether it says block or not.
+Then delete the `csi-*plugin` pod depending on the StorageClass of the volume. If it's a `cephfs` storage, delete the `csi-cephfsplugin` pod. If it's a 
+Get the volume's StorageClass by command `kubectl describe pv`, e.g.:
 
-# If the StorageClass is rook-ceph-block
+```
+kubectl describe pv/pvc-f67277a5-dd6e-4150-9937-aac1b88b8bf9 | grep StorageClass
+StorageClass:    rook-ceph-block-east
+```
+In the above example, its a ceph block storage, so delete the `csi-rbdplugin` pod. If it's a cephfs storage, delete the `csi-cephfsplugin` pod. Monitor the pods to start.
 
-## Get the name of PV:
+2. Delete the `volumeattachment` and restart the `csi-cephfsplugin` or `csi-cephfsplugin` pod.
 
-If you only have the PVC name, you can find the pv name by doing the following command:
+Run command `kubectl get volumeattachment | grep <PVC-name>` to get the `volumeattachment` of the volume, and then run `kubectl delete volumeattachment csi-xxx` to delete the volumeattachment. After this, delete the `csi-cephfsplugin` or `csi-cephfsplugin` pod depending on the StorageClass and wait for the volume to mount.
 
-    kubectl get pv | grep claim-hikf3-40mail-2emissouri-2eedu
+## Multi-Attach error
 
-    pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7                                    5Gi                    RWO            Delete           Bound      mizzou/claim-hikf3-40mail-2emissouri-2eedu                                               rook-ceph-block                          185d
+Multi-attach error only applies to block volume, since they are not allowed to be attached to multiple pods. The error message looks like:
+``` 
+[Warning] Multi-Attach error for volume "pvc-24d9f8f7-82ac-411c-9f2b-25ee93e7259e" Volume is already exclusively attached to one node and can't be attached to another.
+```
+First, examine if it is really attached to a running pod. If there is no running pod that mounts this volume, find the where the volume is attached to, and apply the steps in as the "PVC already exists" case. the command to find the attachment is `kubectl get volumeattachment | grep <PVC-name>` and the node should be listed there.
 
-Here in this example the PVC name is claim-hikf3-40mail-2emissouri-2eedu and the pv name is pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7
+There is a chance that the pod still could not mount the volume with the same multi-attach error, but `kubectl get volumeattachment | grep <PVC-name>` could not find the attachment anymore. In this case reboot the node with the attachment previously.
 
-## Find Node a pv is currently mounted on:
+## "Permission denied" error
 
-We can get the volume attachments and grep for the pv name to find what nodes it's attached to:
+The error message is similar to:
+```
+ MountVolume.SetUp failed for volume "pvc-5b0a3f01-7914-45c3-913b-28a49fe3336f" : rpc error: code = Internal desc = stat /var/lib/kubelet/plugins/kubernetes.io/csi/rook-system.ceph fs.csi.ceph.com/e34a4060e2564977fbf8af9a8e7fde65500d9c79898a1739854084c48ade1c6f/globalmount: permission denied
+```
+If this happens, reboot the node.
 
-    kubectl get volumeattachments | grep pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7
+## Errors in ceph clusters
 
-    csi-68ba7951a0c04649cd3e80156c355e899e753e50b9030a424dbe8dd872061067   rook-system.rbd.csi.ceph.com      pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7   k8s-bharadia-02.sdsc.optiputer.net     true       2d19h
+If the above steps didn't get the volume issues fixed, check the status of the ceph cluster. For example, get into the shell of the `ceph-tools` pod of the corresponding ceph cluster, and run `ceph -s` command to check the status. If there are errors regarding `mds` or `mgr` services, restart the corresponding pods.
 
-Here the pv name is pvc-ae8904a6-23f2-46d0-ac5c-4e9e9271c6f7 and the node it's attached to is k8s-bharadia-02.sdsc.optiputer.net 
+## StorageClass and accessModes mismatch
 
-## Rebooting the node:
+User configuration error is another reason for volumes fail to mount. StorageClass `cephfs` allows multiple pods to attach the same volume, so the accessModes should be `ReadWriteMany`. StorageClass `ceph-block` is block storage and can only be attached to a single pod, so the accessModes should be `ReadWriteOnce`. If the StorageClass and access mode are mismatched, the volume could not mount. 
 
-Reach out to an admin to reboot the node the volume is attached to. 
+Here's an example for how to check the accessModes:
 
-If you have permissions to reboot yourself, you can do the following:
+```
+kubectl get -n mizzou pvc/claim-hikf3-40mail-2emissouri-2eedu -o yaml | grep accessModes: -A 1
+```
+
+Here the PVC name is claim-hikf3-40mail-2emissouri-2eedu, namespace is mizzou, and I added a -A 1 to the end to display the line below accessModes
+
+    accessModes:
+    - ReadWriteOnce
+
+Advise the user to update the configuration.
+
+## How to reboot a node:
+
+Admins can reboot a node using the Ansible playbook: `ansible-playbook reboot.yaml -l {node name}`
+
+Steps to reboot a node manually:
 
 Drain node: `kubectl drain {node name} --ignore-daemonsets --delete-emptydir-data --force`
 
@@ -59,17 +91,3 @@ If GPU, check if nvidia-smi is up: `nvidia-smi`
 
 Uncordon Node: `kubectl uncordon {node name}`
 
-Or use the Ansible playbook: `ansible-playbook reboot.yaml -l {node name}`
-
-# If the StorageClass is rook-cephfs
-
-Since this type of storage class allows the Ceph volume to be mounted on multiple nodes, a stuck node is likely not the issue. The most common issue is that the user has configured their volume incorrectly, and their access mode is set to ReadWriteOnce when it should be set to ReadWriteMany for this type of storageclass. 
-
-You can do this by outputting the config for a PVC or PV and grepping for the `accessMode` as I do in the following:
-
-    kubectl get -n mizzou pvc/claim-hikf3-40mail-2emissouri-2eedu -o yaml | grep accessModes: -A 1
-
-Here the PVC name is claim-hikf3-40mail-2emissouri-2eedu, namespace is mizzou, and I added a -A 1 to the end to display the line below accessModes
-
-    accessModes:
-    - ReadWriteOnce
