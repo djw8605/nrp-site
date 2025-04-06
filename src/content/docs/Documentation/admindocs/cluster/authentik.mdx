@@ -40,7 +40,7 @@ Below is a sample JupyterHub configuration using Authentik as the OAuth provider
         client_id: "XYZ"  # This is provided by Authentik
         client_secret: "XYZ"  # This is provided by Authentik
         username_claim: "email"
-        allow_all: "True"
+        allow_all: true
       JupyterHub:
         admin_access: true
         authenticator_class: oauthenticator.generic.GenericOAuthenticator
