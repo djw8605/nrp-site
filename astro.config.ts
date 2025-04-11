@@ -34,6 +34,9 @@ export default defineConfig({
       favicon: '/favicon.ico',
       title: 'NRP Nautilus',
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
+      components: {
+        Footer: './src/components/DocsFooter.astro',
+      },
       social: {
       	gitlab: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
         'matrix': 'https://element.nrp-nautilus.io/',

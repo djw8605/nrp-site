@@ -1,0 +1,48 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+
+export interface Props {
+  links: Array<any>;
+  secondaryLinks: Array<any>;
+  socialLinks: Array<any>;
+  footNote?: string;
+  theme?: string;
+  pagination?: {
+    prev?: { href: string; title: string };
+    next?: { href: string; title: string };
+  };
+}
+
+const { links, secondaryLinks, socialLinks, footNote, theme, pagination } = Astro.props;
+---
+
+<div>
+  <!-- Reuse the Default Footer and pass all required props -->
+  <Default 
+    links={links} 
+    secondaryLinks={secondaryLinks} 
+    socialLinks={socialLinks} 
+    footNote={footNote} 
+    theme={theme}
+    pagination={pagination}
+  >
+    <slot />
+  </Default>
+
+  <!-- NSF Acknowledgment Section -->
+  <div class="flex items-center justify-between mt-8 gap-2">
+    <!-- NSF Logo -->
+    <div class="flex items-center">
+      <img
+        src="/nsf-logo.png" 
+        alt="NSF Logo"
+        class="h-20 w-auto object-contain"
+      />
+    </div>
+  
+    <!-- Footer Text -->
+    <div class="text-sm text-gray-600 dark:text-gray-400">
+        This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
+    </div>
+  </div>
+</div>
