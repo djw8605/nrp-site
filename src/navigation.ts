@@ -117,6 +117,22 @@ export const footerData = {
     { ariaLabel: 'GitLab', icon: 'tabler:brand-gitlab', href: 'https://gitlab.nrp-nautilus.io/prp' },
   ],
   footNote: `
+  <div class="flex items-center justify-between gap-5">
+  <!-- NSF Logo -->
+  <div class="flex items-center">
+    <img
+      src="/nsf-logo.png" 
+      alt="NSF Logo"
+      class="h-20 w-20 object-contain"
+    />
+  </div>
+
+  <!-- Footer Text -->
+  <div class="text-sm text-gray-600 dark:text-gray-400">
     This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
+  </div>
+</div>
+
+    
   `,
 };
