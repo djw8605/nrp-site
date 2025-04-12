@@ -29,7 +29,7 @@ If Helm is not already installed, follow the [official Helm installation guide](
 
 ### 4. Set Up PostgreSQL
 
-Create a PostgreSQL instance in your namespace by following the [PostgreSQL setup guide](userdocs/running/postgres/).
+Create a PostgreSQL instance in your namespace by following the [PostgreSQL setup guide](https://nrp.ai/documentation/userdocs/running/postgres/).
 
 - **Requirements**: 
   - Namespace: Your project namespace
