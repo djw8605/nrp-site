@@ -93,7 +93,7 @@ One of the main concepts of running workloads in Kubernetes is a namespace. A na
 isolated environment in which you can run your pods. It is possible to invite other users to your namespace
 and it is possible to have access to multiple namespaces.
  Each namespace has at least one namespace admin (usually researchers, engineers, or faculties).
- If you are new to the cluster, please follow the instructions on the [Getting Started](getting-started#get-access-and-log-in) page.
+ If you are new to the cluster, please follow the instructions on the [Getting Started](/documentation/userdocs/start/getting-started#get-access-and-log-in) page.
 
 :::tip[Who can be a Namespace Admin]
 - A **faculty member, researcher, or postdoc**. Contact us in [Matrix](/contact). 
@@ -119,7 +119,7 @@ A pod can contain one or more tightly coupled containers that share the same net
 If you frequently deploy single-container pods, you can generally replace the word "pod" with "container."
 
 :::caution
-Single pods without any Workload Controllers will be destroyed after **6 hours**. Look at the [**cluster policies**](policies#interactive-use-6-hours-max-runtime). 
+Single pods without any Workload Controllers will be destroyed after **6 hours**. Look at the [**cluster policies**](/documentation/userdocs/start/policies#interactive-use-6-hours-max-runtime). 
 - Pods are ephemeral and get deleted or evicted due lack of resources on the node or other node issues. 
 - Be careful while using a single pod without any controller.
 :::
@@ -130,7 +130,7 @@ It tracks completed pods and terminates once the specified number of successes i
 Deleting a job will clean up all the jobs it created.
 
 :::caution
-- Do not run long `sleep` inside a job. See the Look at the [**cluster policies**](policies#batch-jobs)
+- Do not run long `sleep` inside a job. See the Look at the [**cluster policies**](/documentation/userdocs/start/policies#batch-jobs)
 - Do not submit more than 400 Jobs at once.
 - If you find an issue in your job, delete the job otherwise it will keep creating pods.
 :::
