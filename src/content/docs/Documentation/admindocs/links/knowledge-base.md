@@ -25,13 +25,13 @@ description: Knowledge Base
 - [HPCWire][hpcwire] - BigData Express research team, Fermilab Mar 8, 2019
 
 
-[matrix]: /userdocs/start/contact/
+[matrix]: https://nrp.ai/contact/
 [esnet]: http://fasterdata.es.net
 [prp]: http://prp.ucsd.edu/
 [epoc]: https://epoc.global
 [discover]: https://www.thequilt.net
 [perfsonar]: http://docs.perfsonar.net
 [campuschampions]: https://campuschampions.cyberinfrastructure.org/
-[list]:   https://mailman.ucsd.edu/mailman/listinfo/prp-l.
+[list]:   https://groups.google.com/a/ucsd.edu/g/prp-l
 [hpcwire]: https://www.hpcwire.com/
 [internet2events]: https://internet2.edu/upcomingevents/
