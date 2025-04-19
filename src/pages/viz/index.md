@@ -9,5 +9,6 @@ layout: '~/layouts/MarkdownLayout.astro'
 
 ## Storage
 
-- [All storage](/viz/storageall)
-- [Ceph storage](/viz/storageceph)
+- [All storage bar chart](/viz/storageall)
+- [Ceph storage bar chart](/viz/storageceph)
+- [Ceph storage volumes usage by pool and namespace table](/viz/storage-usage)

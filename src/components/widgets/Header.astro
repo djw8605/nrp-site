@@ -9,6 +9,8 @@ import { getHomePermalink } from '~/utils/permalinks';
 import { trimSlash, getAsset } from '~/utils/permalinks';
 import type { CallToAction } from '~/types';
 
+import LoginButton from '~/components/vue/LoginButton.vue';
+
 interface Link {
   text?: string;
   href?: string;
@@ -161,6 +163,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
             ''
           )
         }
+        <LoginButton client:only="vue"/>
       </div>
     </div>
   </div>
