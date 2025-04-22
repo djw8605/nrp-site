@@ -1,0 +1,14 @@
+---
+import Resources from '~/components/vue/Resources.vue';
+import Layout from '~/layouts/PageLayout.astro';
+
+export const baseUrl = import.meta.env.PUBLIC_SVC_URL;
+
+const metadata = {
+  title: 'Resources',
+};
+---
+
+<Layout metadata={metadata}>
+  <Resources client:only="vue" baseUrl={baseUrl}/>
+</Layout>

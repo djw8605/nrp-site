@@ -1,0 +1,14 @@
+---
+import Storage from '~/components/vue/Storage.vue';
+import Layout from '~/layouts/PageLayout.astro';
+
+export const baseUrl = import.meta.env.PUBLIC_SVC_URL;
+
+const metadata = {
+  title: 'Storage',
+};
+---
+
+<Layout metadata={metadata}>
+  <Storage client:only="vue" baseUrl={baseUrl}/>
+</Layout>

@@ -17,6 +17,8 @@ import astrowind from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
+import vue from "@astrojs/vue";
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -376,7 +378,7 @@ export default defineConfig({
       Logger: 1,
     }), astrowind({
       config: './src/config.yaml',
-    })],
+    }), vue()],
 
   image: {
     domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp-nautilus.io'],
