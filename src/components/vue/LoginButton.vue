@@ -1,9 +1,9 @@
 <template>
     <div v-if="user">
-        <button @click="handleLogout">Log Out {{user.email}}</button>
+        <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogout">Log Out</button>
     </div>
     <div v-else>
-        <button @click="handleLogin">Log In</button>
+        <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogin">Log In</button>
     </div>
 </template>
 

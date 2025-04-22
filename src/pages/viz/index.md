@@ -12,3 +12,6 @@ layout: '~/layouts/MarkdownLayout.astro'
 - [All storage bar chart](/viz/storageall)
 - [Ceph storage bar chart](/viz/storageceph)
 - [Ceph storage volumes usage by pool and namespace table](/viz/storage-usage)
+
+## Administration
+- [Resources](/viz/resources)
