@@ -11,9 +11,10 @@ export interface Props {
     prev?: { href: string; title: string };
     next?: { href: string; title: string };
   };
+  editUrl?: string;
 }
 
-const { links, secondaryLinks, socialLinks, footNote, theme, pagination } = Astro.props;
+const { links, secondaryLinks, socialLinks, footNote, theme, pagination, editUrl } = Astro.props;
 ---
 
 <div>
@@ -25,6 +26,7 @@ const { links, secondaryLinks, socialLinks, footNote, theme, pagination } = Astr
     footNote={footNote} 
     theme={theme}
     pagination={pagination}
+    editUrl={editUrl}
   >
     <slot />
   </Default>
