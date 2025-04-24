@@ -7,7 +7,7 @@ const metadata = {
 };
 
 import clientjs from '@open-rpc/client-js';
-const transport = new clientjs.HTTPTransport("https://portal.nrp-nautilus.io/rpc");
+const transport = new clientjs.HTTPTransport("https://portal.nrp.ai/rpc");
 const client = new clientjs.Client(new clientjs.RequestManager([transport]));
 const allNamespaces = await client.request({method: 'guest.ListNsInfo', params: []}).then(res => res.Namespaces);
 ---

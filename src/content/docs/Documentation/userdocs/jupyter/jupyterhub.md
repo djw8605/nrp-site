@@ -27,7 +27,7 @@ Save the client ID and Secret.
 
 #### Create the namespace
 
-Create a namespace for your project on [Nautilus portal](https://portal.nrp-nautilus.io/profileN) and annotate it with all information.
+Create a namespace for your project on [Nautilus portal](https://portal.nrp.ai/profileN) and annotate it with all information.
 
 #### Install helm and download the helm chart
 

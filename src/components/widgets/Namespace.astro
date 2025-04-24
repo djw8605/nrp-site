@@ -44,7 +44,7 @@ const urlExists = async function (url) {
     });
   }
 
-const imageExists = await urlExists("https://portal.nrp-nautilus.io/avatars/"+namespace.Name+".png");
+const imageExists = await urlExists("https://portal.nrp.ai/avatars/"+namespace.Name+".png");
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
@@ -57,7 +57,7 @@ const imageExists = await urlExists("https://portal.nrp-nautilus.io/avatars/"+na
             </p>
             {
               imageExists && (
-                <img src={"https://portal.nrp-nautilus.io/avatars/"+namespace.Name+".png"} class="h-48 w-96 object-contain" />
+                <img src={"https://portal.nrp.ai/avatars/"+namespace.Name+".png"} class="h-48 w-96 object-contain" />
               )
             }
           </div>

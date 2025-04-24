@@ -37,6 +37,6 @@ Please note, you'll be the one responsible for all activity happening in your na
 
 1. Follow [quick start][2] page to start using kubernetes.
 
-[1]: https://portal.nrp-nautilus.io
+[1]: https://portal.nrp.ai
 
 [2]: /documentation/userdocs/start/quickstart/

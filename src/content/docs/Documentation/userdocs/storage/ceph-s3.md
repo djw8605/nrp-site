@@ -23,7 +23,7 @@ new Runtime().module(define, name => {
 
 ## Access
 
-You can get your **credentials** (key and secret) in the [user portal](https://portal.nrp-nautilus.io), `Storage->S3 Keys` page for public Ceph pools. To get credentials for private ones, contact the admin managing the particular S3 storage.
+You can get your **credentials** (key and secret) in the [user portal](https://portal.nrp.ai), `Storage->S3 Keys` page for public Ceph pools. To get credentials for private ones, contact the admin managing the particular S3 storage.
 
 ## S3 regions settings
 

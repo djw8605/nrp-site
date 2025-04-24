@@ -14,7 +14,7 @@ This document outlines the steps to manage user roles and permissions within the
 
 After authentication, a user is designated as a **guest**. Admins can promote the user to a **user** by adding them to a namespace.
 
-Open the [Namespace Manager](https://portal.nrp-nautilus.io/profileN), select the desired namespace:
+Open the [Namespace Manager](https://portal.nrp.ai/profileN), select the desired namespace:
 
 <Image src="~/assets/images/docs/select-namespace.png" alt="Select namespace"/>
 
@@ -32,9 +32,9 @@ kubectl edit prpuser
 
 This opens **vi** to edit the user details. Search for the user's email and change the **Role** in the **spec** section to **admin**.
 
-As an admin, the user can create namespaces in the [Namespace Manager](https://portal.nrp-nautilus.io/profileN). If added to a namespace, they will have admin rights for that namespace.
+As an admin, the user can create namespaces in the [Namespace Manager](https://portal.nrp.ai/profileN). If added to a namespace, they will have admin rights for that namespace.
 
-To promote a user from **user** to **admin** of the same namespace, change the role, then remove the user from the namespace and re-add them via [Namespace Manager](https://portal.nrp-nautilus.io/profileN).
+To promote a user from **user** to **admin** of the same namespace, change the role, then remove the user from the namespace and re-add them via [Namespace Manager](https://portal.nrp.ai/profileN).
 
 ## Demote an Admin to User
 
@@ -43,4 +43,4 @@ To demote an admin to a **user**, run the following command:
 kubectl edit prpuser
 ```
 
-Change the **Role** to **user**, then remove the user from the namespace and re-add them via [Namespace Manager](https://portal.nrp-nautilus.io/profileN).
+Change the **Role** to **user**, then remove the user from the namespace and re-add them via [Namespace Manager](https://portal.nrp.ai/profileN).

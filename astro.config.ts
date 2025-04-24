@@ -381,7 +381,7 @@ export default defineConfig({
     }), vue()],
 
   image: {
-    domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp-nautilus.io'],
+    domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp.ai'],
   },
 
   markdown: {
