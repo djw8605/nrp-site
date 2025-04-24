@@ -151,6 +151,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
               </a>
             )
           }
+          <LoginButton client:only="vue"/>
         </div>
         {
           actions?.length ? (
