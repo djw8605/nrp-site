@@ -5,7 +5,7 @@ description: NRP-Managed LLMs
 
 import Image from '~/components/common/Image.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
-import { Steps, LinkCard, CardGrid } from '@astrojs/starlight/components';
+import { Steps, LinkCard, CardGrid, LinkButton } from '@astrojs/starlight/components';
 
 The NRP provides several hosted open-weights LLM for either API access, or use with our hosted chat interfaces.
 
@@ -22,10 +22,15 @@ The NRP provides several hosted open-weights LLM for either API access, or use w
 
 ## Chat Interfaces
 
-If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com/), we provide 2 options:
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com/), we provide [LibreChat](https://librechat.nrp-nautilus.io), based on the [LibreChat](https://www.librechat.ai/) project.  This is a simple chat interface for all of the NRP hosted models.  You can use it to chat with the models, or to test out the models.
 
-1. [LibreChat](https://librechat.nrp-nautilus.io) - A simple chat interface for all of the NRP hosted models.  **Status:** Pre-production: We are working to improve librechat.
-2. [AnythingLLM](https://nrp-llm-chat.nrp-nautilus.io) - A chat interface that allows the uploading of documents in order to chat with documents.
+<LinkButton
+  href="https://librechat.nrp-nautilus.io"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the LibreChat interface
+</LinkButton>
 
 ## API Access to LLMs
 
@@ -40,6 +45,14 @@ API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) 
 3. With the API key, you are able to access the API through the endpoint `https://llm.nrp-nautilus.io/`.  An example of how to use the API is below [Python code](#example-python-code).
 
 </Steps>
+
+<LinkButton
+  href="https://llm.nrp-nautilus.io/ui"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the NRP LiteLLM interface
+</LinkButton>
 
 ## Example Python Code
 
