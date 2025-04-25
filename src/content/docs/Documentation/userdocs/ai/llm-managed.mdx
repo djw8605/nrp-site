@@ -5,30 +5,73 @@ description: NRP-Managed LLMs
 
 import Image from '~/components/common/Image.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import { Steps, LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-<CallToAction>
+The NRP provides several hosted open-weights LLM for either API access, or use with our hosted chat interfaces.
 
-<Fragment slot="title">
-    Accessing NRP LiteLLM
-</Fragment>
+<CardGrid>
+  <LinkCard 
+    title="Chat with NRP LLMs" 
+    href="https://librechat.nrp-nautilus.io"
+    description="Use the LibreChat interface to chat with NRP hosted LLMs" />
+    <LinkCard 
+    title="Get an API token for NRP LLMs" 
+    href="#api-access-to-llms"
+    description="Get an API token to programically interact with the LLMs or use the LLMs in other apps" />
+</CardGrid>
 
-<Fragment slot="subtitle">
-<p>
-<a href="https://llm.nrp-nautilus.io/ui/"><Image src="~/assets/images/docs/litellm-logo.png" alt="LiteLLM Logo"/></a>
-We use the [LiteLLM](https://www.litellm.ai) proxy to provide access to the LLMs we're running on nautilus.
+## Chat Interfaces
 
-You can start from logging to the [NRP litellm UI](https://llm.nrp-nautilus.io/ui/). If you're coming from an .edu domain, you'll be placed into NRP team unless you're in a special SDSC list, in which case you'll be placed in the SDSC team. Otherwise request in [Matrix](/contact) to be assigned to a Team. 
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com/), we provide 2 options:
 
-Once you're a member of a team, you can create the tokens and access the models.
+1. [LibreChat](https://librechat.nrp-nautilus.io) - A simple chat interface for all of the NRP hosted models.  **Status:** Pre-production: We are working to improve librechat.
+2. [AnythingLLM](https://nrp-llm-chat.nrp-nautilus.io) - A chat interface that allows the uploading of documents in order to chat with documents.
 
-To create a token, open the Virtual Keys tab and create a new token to access the API. There are also examples on using the API.
+## API Access to LLMs
 
-The base URL for all models is _https://llm.nrp-nautilus.io_.
-</p>
-</Fragment>
-</CallToAction>
+API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) proxy.  In order to access our LLMs, you need to:
+
+<Steps>
+
+1. Login to [NRP's LiteLLM](https://llm.nrp-nautilus.io/ui) instance.
+
+2. Create an API key. During key creation, you will select the models that the key is allowed to access (or all models).
+
+3. With the API key, you are able to access the API through the endpoint `https://llm.nrp-nautilus.io/`.  An example of how to use the API is below [Python code](#example-python-code).
+
+</Steps>
+
+## Example Python Code
+
+To access the NRP LLMs, you can use the [OpenAI Python client](https://github.com/openai/openai-python).  Below is an example of how to use the OpenAI Python client to access the NRP LLMs.
+
+```python title="nrp-llm.py"
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key = os.environ.get("OPENAI_API_KEY"),
+    base_url = "https://llm.nrp-nautilus.io/"
+)
+
+completion = client.chat.completions.create(
+    model="gemma3",
+    messages=[
+        {"role": "developer", "content": "Talk like a pirate."},
+        {
+            "role": "user",
+            "content": "How do I check if a Python object is an instance of a class?",
+        },
+    ],
+)
+
+print(completion.choices[0].message.content)
+```
 
 
+
+## Available Models
 
 | LiteLLM name | Model | Features |
 | ----------- | ----------- | ---------- |
@@ -42,73 +85,7 @@ The base URL for all models is _https://llm.nrp-nautilus.io_.
 | olmo | [allenai/OLMo-2-0325-32B-Instruct](https://allenai.org/blog/olmo2-32B) | open source |
 | phi3 | [microsoft/Phi-3.5-vision-instruct](https://huggingface.co/microsoft/Phi-3.5-vision-instruct) | vision |
 
-<section class="bg-blue-50 dark:bg-slate-800 not-prose">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium">
-    <span class="font-bold">
-      The following apps provide access to models with no additional tokens.
-    </span>
-  </div>
-</section>
 
-<CallToAction>
-
-    <Fragment slot="title">
-        NRP LibreChat
-    </Fragment>
-
-    <Fragment slot="subtitle">
-        <p>
-            <a href="https://librechat.nrp-nautilus.io"><Image src="~/assets/images/docs/LibreChat-logo.jpg" alt="LibreChat Logo" width={170}/></a>
-            https://librechat.nrp-nautilus.io - LibreChat
-        </p>
-    </Fragment>
-</CallToAction>
-
-<CallToAction>
-
-    <Fragment slot="title">
-        NRP AnythingLLM
-    </Fragment>
-
-    <Fragment slot="subtitle">
-        <p>
-            <a href="https://nrp-llm-chat.nrp-nautilus.io"><Image src="~/assets/images/docs/anythingllm-logo.png" alt="AnythingLLM Logo" width={170}/></a>
-            https://nrp-llm-chat.nrp-nautilus.io - AnythingLLM (chat with documents)
-        </p>
-    </Fragment>
-</CallToAction>
-
-<CallToAction>
-
-    <Fragment slot="title">
-        NRP OpenWebUI
-    </Fragment>
-
-    <Fragment slot="subtitle">
-        <p>
-            <a href="https://nrp-openwebui.nrp-nautilus.io"><Image src="~/assets/images/docs/openwebui-logo.png" alt="OpenwebUI Logo" width={170}/></a>
-            https://nrp-openwebui.nrp-nautilus.io - OpenWebUI chat. Deprecated in favor of LibreChat.
-        </p>
-    </Fragment>
-</CallToAction>
-
-## Chat UIs using LiteLLM tokens
-
-<CallToAction>
-
-<Fragment slot="title">
-    ChatBox
-</Fragment>
-
-<Fragment slot="subtitle">
-<p>
-<a href="https://chatboxai.app"><Image src="~/assets/images/docs/chatbox-logo.png" alt="ChatBox Logo" width={170}/></a>
-
-You can also create your own token and use it via the [Chatbox AI app](https://chatboxai.app)
-
-</p>
-</Fragment>
-</CallToAction>
 
 
 
