@@ -5,6 +5,15 @@ stages:
 build:
   stage: build
   image: node:lts
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - changes:
+        - .gitignore
+        - .gitlab-ci.yml
+        - LICENSE.md
+        - README.md
+      when: never
   before_script:
     - npm ci
     - npm i wrangler --location=global
