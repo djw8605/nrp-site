@@ -3,6 +3,7 @@ import CallToAction from '~/components/widgets/CallToAction.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import NextOfficeHours from '~/components/widgets/NextOfficeHours.astro';
 
 const metadata = {
   title: 'Educational Resources',
@@ -19,6 +20,15 @@ const metadata = {
     tagline='Educational Resources' 
     image={{ src: '~/assets/images/classroom.jpg', alt: 'Education image' }}
     >
+    <Fragment slot="alert">
+      Ready to learn more about the NRP and how to get started? Join our office hours on <NextOfficeHours/>.
+      <a
+        class="text-blue-500 hover:text-blue-700 font-bold"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://ucsd.zoom.us/j/96377381436">Join Here</a>
+    </Fragment>
+
     <Fragment slot="title">
       Get access to GPUs and compute resources for your <span class="text-accent dark:text-white highlight">classroom</span>
     </Fragment>
@@ -55,15 +65,6 @@ const metadata = {
       }
     },
     {
-      title: 'Coder Hosted IDE',
-      description: 'Coder is a powerful web-based integrated development environment, based on VS Code, that allows you to write, run and debug code in the cloud. The NRP provides a hosted version of Coder that you can use in your classroom.',
-      icon: 'tabler:cpu',
-      callToAction: {
-        text: 'Learn more',
-        href: '/documentation/userdocs/coder/coder'
-      }
-    },
-    {
       title: 'Hosted LLM Service',
       description: 'The NRP provides a hosted LLM service with many open models to choose from.',
       icon: 'tabler:cpu',
@@ -79,6 +80,15 @@ const metadata = {
       callToAction: {
         text: 'Learn more',
         href: '/documentation/userdocs/running/gpu-pods'
+      }
+    },
+    {
+      title: 'Coder Hosted IDE',
+      description: 'Coder is a powerful web-based integrated development environment, based on VS Code, that allows you to write, run and debug code in the cloud. The NRP provides a hosted version of Coder that you can use in your classroom.',
+      icon: 'tabler:cpu',
+      callToAction: {
+        text: 'Learn more',
+        href: '/documentation/userdocs/coder/coder'
       }
     },
   ]}
