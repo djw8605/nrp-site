@@ -5,6 +5,14 @@ stages:
 build:
   stage: build
   image: node:lts
+  rules:
+    - changes:
+        - .gitignore
+        - .gitlab-ci.yml
+        - LICENSE.md
+        - README.md
+      when: never
+    - when: on_success
   before_script:
     - npm ci
     - npm i wrangler --location=global
