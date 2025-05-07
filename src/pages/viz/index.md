@@ -15,3 +15,5 @@ layout: '~/layouts/MarkdownLayout.astro'
 
 ## Administration
 - [Resources](/viz/resources)
+- [Namespaces Tree](/viz/namespaces)
+
