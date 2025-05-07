@@ -30,6 +30,8 @@ Finished defragmenting etcd member[https://127.0.0.1:2379]
    Etcd change not in config now: `- --quota-backend-bytes=5368709120`
 
    Controller-manager: `- --allocate-node-cidrs=false`
+   
+   Api-server: `- --feature-gates=JobBackoffLimitPerIndex=true`
 
 5. Do the last step in the upgrade manual to restart the control place again.
 
