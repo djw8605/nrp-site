@@ -19,7 +19,22 @@
     style: "font-size: 1em",
     axis: null,
     marks: [
-      Plot.tree(namespaces.Namespaces, {path: "Name", delimiter: "/"}),
+      Plot.tree(namespaces.Namespaces, {
+        path: "Name", 
+        delimiter: "/",
+        title: "",
+        symbol: node => {
+          if (node.IsK8sNamespace && node.IsLiteLLMOrg) {
+            return "hexagon";
+          } else if (node.IsK8sNamespace) {
+            return "square";
+          } else if (node.IsLiteLLMOrg) {
+            return "triangle-up";
+          } else {
+            return "circle";
+          }
+        },
+      }),
     ],
   });
 
