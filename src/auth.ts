@@ -2,6 +2,8 @@ import { atom } from 'nanostores';
 
 export interface User {
   email: string;
+  idp: string;
+  pic: string;
 }
 
 export const baseUrl = import.meta.env.PUBLIC_SVC_URL;

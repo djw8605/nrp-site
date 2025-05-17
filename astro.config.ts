@@ -378,7 +378,7 @@ export default defineConfig({
       Logger: 1,
     }), astrowind({
       config: './src/config.yaml',
-    }), vue()],
+    }), vue({ appEntrypoint: '/src/pages/_app' })],
 
   image: {
     domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp.ai'],

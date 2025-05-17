@@ -1,6 +1,19 @@
 <template>
     <div v-if="user">
-        <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogout">Log Out</button>
+        <!--  -->
+        <Button type="button" label="Logged in" variant="outlined" @click="toggle">
+            <img :src="user.pic"/>
+        </Button>
+
+        <Popover ref="op">
+            <div class="flex flex-col gap-4 w-[15rem]">
+                <div>
+                    {{ user.email }}<br/>
+                    {{ user.idp }}
+                </div>
+                <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogout">Log Out</button>
+            </div>
+        </Popover>         
     </div>
     <div v-else>
         <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogin">Log In</button>
@@ -10,7 +23,12 @@
 <script setup lang="ts">
     import { useStore } from '@nanostores/vue';
     import { baseUrl, userStore, setUser } from '../../auth.ts';
-    import { onMounted, onUnmounted } from 'vue';
+    import { onMounted, onUnmounted, ref } from 'vue';
+
+    import CryptoJS from 'crypto-js';
+
+    import Popover from "primevue/popover";
+    import Button from "primevue/button";
 
     const user = useStore(userStore);
 
@@ -27,8 +45,10 @@
             credentials: 'include'
         });
         if (response.ok) {
-            const data = await response.text();
-            setUser({'email': data});
+            const data = await response.json();
+            const gravatarUrl = "https://www.gravatar.com/avatar/"+CryptoJS.SHA256( data.Email )+"?d=robohash&s=35";
+
+            setUser({'email': data.Email, 'idp': data.IDP, 'pic': gravatarUrl});
         } else {
             setUser(null);
         }
@@ -46,4 +66,15 @@
             clearInterval(intervalId);
         }
     });
+
+    const op = ref();
+    const members = ref([
+        { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
+        { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
+        { name: 'Ioni Bowcher', image: 'ionibowcher.png', email: 'ioni@email.com', role: 'Viewer' }
+    ]);
+
+    const toggle = (event) => {
+        op.value.toggle(event);
+    }
 </script>

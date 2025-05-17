@@ -40,7 +40,7 @@ export const headerData = {
         },
         {
           text: 'Science Enabled',
-          href: getPermalink('/namespaces'),
+          href: getPermalink('/science'),
         },
       ],
     },
@@ -87,9 +87,18 @@ export const headerData = {
       ],
     },
     {
-      text: 'Reservations',
-      href: getPermalink('/reservations'),
-    },
+      text: 'User',
+      links: [
+        {
+          text: 'Reservations',
+          href: getPermalink('/reservations'),
+        },
+        {
+          text: 'Namespaces',
+          href: getPermalink('/namespaces'),
+        },
+      ]
+  },
     {
       text: 'Docs',
       href: getPermalink('/documentation'),

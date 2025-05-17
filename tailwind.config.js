@@ -1,9 +1,12 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
 import typographyPlugin from '@tailwindcss/typography';
+import PrimeUI from 'tailwindcss-primeui';
 
 export default {
-  content: ['./src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}'],
+  content: [
+    './src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -36,6 +39,7 @@ export default {
     plugin(({ addVariant }) => {
       addVariant('intersect', '&:not([no-intersect])');
     }),
+    PrimeUI,
   ],
   darkMode: 'class',
 };

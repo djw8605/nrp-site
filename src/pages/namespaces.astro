@@ -1,19 +1,18 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import Namespace from '~/components/widgets/Namespace.astro';
+import Namespace from '~/components/vue/Namespace.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
   title: 'Namespaces',
 };
 
-import clientjs from '@open-rpc/client-js';
-const transport = new clientjs.HTTPTransport("https://portal.nrp.ai/rpc");
-const client = new clientjs.Client(new clientjs.RequestManager([transport]));
-const allNamespaces = await client.request({method: 'guest.ListNsInfo', params: []}).then(res => res.Namespaces);
 ---
 
 <Layout metadata={metadata}>
-    {allNamespaces.map((ns) => (
-        <Namespace namespace={ns}/>
-    ))}
+  <WidgetWrapper
+    title="Namespaces"
+    description="Namespaces are a way to group related resources in a Kubernetes cluster. They provide a mechanism for isolating resources and managing access to them.">
+    <Namespace client:only="vue" />
+  </WidgetWrapper>
 </Layout>
