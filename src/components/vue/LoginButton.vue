@@ -1,9 +1,6 @@
 <template>
     <div v-if="user">
-        <!--  -->
-        <Button type="button" label="Logged in" variant="outlined" @click="toggle">
-            <img :src="user.pic"/>
-        </Button>
+        <Avatar :image="user.pic"  class="mr-2 flex items-center justify-center cursor-pointer" size="large" @click="toggle"/>
 
         <Popover ref="op">
             <div class="flex flex-col gap-4 w-[15rem]">
@@ -28,7 +25,7 @@
     import CryptoJS from 'crypto-js';
 
     import Popover from "primevue/popover";
-    import Button from "primevue/button";
+    import Avatar from "primevue/avatar";
 
     const user = useStore(userStore);
 
@@ -46,7 +43,7 @@
         });
         if (response.ok) {
             const data = await response.json();
-            const gravatarUrl = "https://www.gravatar.com/avatar/"+CryptoJS.SHA256( data.Email )+"?d=robohash&s=35";
+            const gravatarUrl = "https://www.gravatar.com/avatar/"+CryptoJS.SHA256( data.Email.trim().toLowerCase() )+"?d=robohash&s=65";
 
             setUser({'email': data.Email, 'idp': data.IDP, 'pic': gravatarUrl});
         } else {

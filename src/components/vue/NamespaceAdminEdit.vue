@@ -2,7 +2,7 @@
     <Card class="my-8">
         <template #title>Editing {{ selectedNamespace.Name }}</template>
         <template #content>
-            <Form v-slot="$form" :resolver :initialValues @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
+            <Form v-slot="$form" ref="form" :resolver :initialValues @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
                 <div class="flex flex-col gap-1">
                     <FloatLabel variant="on">
                         <InputText name="pi" id="pi" fluid />
@@ -18,7 +18,7 @@
                     </FloatLabel>
                     <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{ $form.description.error?.message }}</Message>
                     <FloatLabel variant="on">
-                        <AutoComplete name="institution" id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizations" fluid />
+                        <AutoComplete name="institution" forceSelection id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizationsFilter" fluid />
                         <label for="institution">Institution</label>
                     </FloatLabel>
                     <Message v-if="$form.institution?.invalid" severity="error" size="small" variant="simple">{{ $form.institution.error?.message }}</Message>
@@ -27,7 +27,7 @@
                         <label for="software">Software</label>
                     </FloatLabel>
                     <FloatLabel variant="on">
-                        <Textarea name="publications" id="publications" rows="8" fluid />
+                        <Textarea name="publications" id="publications" rows="8" fluid></Textarea>
                         <label for="publications">Publications</label>
                     </FloatLabel>
                     <Message v-if="$form.publications?.invalid" severity="error" size="small" variant="simple">{{ $form.publications.error?.message }}</Message>
@@ -36,10 +36,50 @@
             </Form>
         </template>
     </Card>
-    <Card>
+    <!-- <Card>
         <template #title>Namespace Logo</template>
         <template #content>
             <FileUpload ref="fileupload" mode="basic" name="avatar" @select="onFileChange" customUpload accept="image/*" :maxFileSize="1000000" @upload="onFileChange" :auto="true"/>
+        </template>
+    </Card> -->
+    <Card>
+        <template #title>Users</template>
+        <template #content>
+            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
+                <InputGroup>
+                    <FloatLabel variant="on">
+                        <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid />
+                        <label for="newUser">Add New User</label>
+                    </FloatLabel>
+                    <Button label="Add" @click="addUser" />
+                </InputGroup>
+            </div>
+            <DataView :value="users">
+                <template #list="slotProps">
+                    <div class="flex flex-col">
+                        <div v-for="(item, index) in slotProps.items" :key="index">
+                            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
+                                <div class="md:w-20 relative">
+                                    <img class="block xl:block mx-auto rounded w-full" :src="`https://www.gravatar.com/avatar/${CryptoJS.SHA256( item.Email )}?d=robohash&s=80`" />
+                                </div>
+                                <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                    <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                        <div>
+                                            <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.Email }}</span>
+                                            <div class="text-lg font-medium mt-2">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/></div>                                                                                       
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col md:items-end gap-8">
+                                        <div class="flex flex-row-reverse md:flex-row gap-2">
+                                            <Button icon="pi pi-trash" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </DataView>
         </template>
     </Card>
 </template>
@@ -49,25 +89,32 @@ import {Form} from '@primevue/forms';
 import { useToast } from 'primevue/usetoast';
 import AutoComplete from "primevue/autocomplete";
 import InputText from "primevue/inputtext";
-import Listbox from "primevue/listbox";
 import Button from "primevue/button";
 import Textarea from "primevue/textarea";
 import FloatLabel from "primevue/floatlabel";
 import FileUpload from 'primevue/fileupload';
 import Card from 'primevue/card';
+import DataView from 'primevue/dataview';
+import InputGroup from 'primevue/inputgroup';
+import Badge from 'primevue/badge';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
+
+import CryptoJS from 'crypto-js';
 
 import {ref, onMounted, watch} from 'vue';
 import { reactive } from 'vue';
 
-
 const props = defineProps(['selectedNamespace']);
 
-const value = ref(null);
-const items = ref([]);
+const form = ref();
+
+const users = ref([]);
+
+const newUser = ref(null);
 
 const filteredOrganizations = ref([]);
+const filteredUsers = ref([]);
 
 const toast = useToast();
 
@@ -75,20 +122,30 @@ const initialValues = reactive({
 });
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
-  const transport = new HTTPTransport(baseUrl+"/rpc",
-    {
-      credentials: 'include',
-    },
-  );
+const transport = new HTTPTransport(baseUrl+"/rpc",
+{
+    credentials: 'include',
+},
+);
+const client = new Client(new RequestManager([transport]));
 
-const onFormSubmit = ({ valid }) => {
+const onFormSubmit = async ({ valid, states, values }) => {
     if (valid) {
+        const nsNameSplit = props["selectedNamespace"].Name.split("/");
+        const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+        values.Namespace = nsName;
+
+        const namespaceInfo = await client.request({
+            method: "admin.SetNamespaceInfo",
+            params: values,
+        });
+
         toast.add({
             severity: 'success',
             summary: 'Form is submitted.',
             life: 3000
         });
-        console.log($form);
     }
 };
 
@@ -130,7 +187,7 @@ const onFileChange = (e) => {
 
 };
 
-const getOrganizations = (org) => {
+const getOrganizationsFilter = (org) => {
     return new Promise((resolve, reject) => {
         if(!org.query.trim().length) {
             return;
@@ -157,9 +214,34 @@ const getOrganizations = (org) => {
     });
 };
 
-onMounted(async () => {
-    const client = new Client(new RequestManager([transport]));
+const getUsersFilter = (org) => {
+    return new Promise((resolve, reject) => {
+        if(org.query.trim().length < 3) {
+            resolve();
+            return;
+        }
 
+        const nsNameSplit = props["selectedNamespace"].Name.split("/");
+        const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+        const namespaceInfo = client.request({
+            method: "admin.ListUsersAC",
+            params: {Term: org.query.trim()},
+        }).then((response) => {
+            if (response.error) {
+                console.error('Error fetching users:', response.error);
+                reject(response.error);
+                return;
+            } else {
+                filteredUsers.value = response.Users;
+                resolve();
+                return;
+            }
+        });
+    });
+};
+
+onMounted(async () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
@@ -170,31 +252,34 @@ onMounted(async () => {
         }
     });
     Object.assign(initialValues, namespaceInfo);
+    form.value?.reset();
+
+    const namespaceUsers = await client.request({
+        method: "admin.GetNSUsers",
+        params: {
+            Namespace: nsName
+        }
+    });
+    if(namespaceUsers.Admins) {
+        namespaceUsers.Admins.forEach((user) => {
+            user.IsAdmin = true;
+        });
+        users.value.push(...namespaceUsers.Admins);
+    }
+    if(namespaceUsers.Users) {
+        namespaceUsers.Users.forEach((user) => {
+            user.IsAdmin = false;
+        });
+        users.value.push(...namespaceUsers.Users);
+    }
 });
 
-// watch(() => props.selectedNamespace, async (newValue, oldValue) => {
-//     const client = new Client(new RequestManager([transport]));
-
-//     const nsNameSplit = newValue.Name.split("/");
-//     const nsName = nsNameSplit[nsNameSplit.length - 1];
-
-//     const namespaceInfo = await client.request({
-//         method: "admin.GetNamespaceInfo",
-//         params: {
-//             Namespace: nsName
-//         }
-//     });
-//     Object.assign(initialValues, namespaceInfo);
-// });
-
-const resolver = ({ values }) => {
+const resolver = ({ states, values }) => {
     const errors = {};
 
     if (!values.description) {
         errors.description = [{ message: 'Description is required.' }];
-    }
-
-    if (values.description.length < 50) {
+    } else if (values.description.length < 50) {
         errors.description = [{ message: 'Please provide a longer meaningful description.' }];
     }
 
@@ -210,5 +295,76 @@ const resolver = ({ values }) => {
         values,
         errors
     };
+};
+
+const addUser = async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    if (!newUser.value) {
+        return;
+    }
+
+    const response = await client.request({
+        method: "admin.AddNSUser",
+        params: {
+            Namespace: nsName,
+            UserID: newUser.value.ID
+        }
+    });
+
+    if (response.error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error adding user',
+            detail: response.error.message,
+            life: 3000
+        });
+    } else {
+        users.value.push({
+            ID: newUser.value.ID,
+            Name: newUser.value.Name,
+            Email: newUser.value.Email,
+            IsAdmin: newUser.value.IsAdmin,
+        });
+        toast.add({
+            severity: 'success',
+            summary: 'User added successfully',
+            life: 3000
+        });
+    }
+};
+
+const delUser = async (user, index) => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    if (!user) {
+        return;
+    }
+
+    const response = await client.request({
+        method: "admin.DeleteNSUser",
+        params: {
+            Namespace: nsName,
+            UserID: user.ID,
+        }
+    });
+
+    if (response.error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error adding user',
+            detail: response.error.message,
+            life: 3000
+        });
+    } else {
+        users.value.splice(index, 1);
+        toast.add({
+            severity: 'success',
+            summary: 'User added successfully',
+            life: 3000
+        });
+    }
 };
 </script>

@@ -1,10 +1,13 @@
 <template>
   <Toast />
   <div v-if="!user">
-    <center>Please log in to see your namespaces.</center>
+    <div class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">Please log in to see your namespaces.</div>
   </div>
   <div v-if="isNoNamespaces">
-    <center>You don't have assigned namespaces yet.</center>
+    <div class="mx-auto max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+      You don't have assigned namespaces yet.
+      Please refer to <a class="text-blue-500 hover:text-blue-700 font-bold cursor-pointer" href="/documentation/userdocs/start/getting-started">documentation</a> on how to join a namespace or create a new one.
+    </div>
   </div>
   <div v-if="user" id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
   <NamespaceAdminEdit :selectedNamespace="selectedNamespace" v-if="selectedNamespace" :key="selectedNamespace.Name"/>
@@ -91,16 +94,13 @@
       }
     })
     .on("click", function (event, d) {
-      if (d.IsMember) {
-        console.log("click", d);
-        selectedNamespace.value = d;
-      }
-      // plot.value = data[i];
-      // plot.dispatchEvent(new CustomEvent("input"));
+      // if (d.IsMember) {
+      selectedNamespace.value = d;
+      // }
     }).style("cursor", function(d) {
-      if (d.IsMember) {
-        return "pointer";
-      }
+      // if (d.IsMember) {
+      return "pointer";
+      // }
     }).style("fill", function(d) {
       if (d.IsK8sNamespace && d.IsLiteLLMOrg) {
         return "green";
