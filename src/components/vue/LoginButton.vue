@@ -1,4 +1,5 @@
 <template>
+    <Toast />
     <div v-if="user">
         <Avatar :image="user.pic"  class="mr-2 flex items-center justify-center cursor-pointer" size="large" @click="toggle"/>
 
@@ -24,6 +25,7 @@
 
     import CryptoJS from 'crypto-js';
 
+    import Toast from "primevue/toast";
     import Popover from "primevue/popover";
     import Avatar from "primevue/avatar";
 
