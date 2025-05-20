@@ -245,33 +245,49 @@ onMounted(async () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
-    const namespaceInfo = await client.request({
+    client.request({
         method: "admin.GetNamespaceInfo",
         params: {
             Namespace: nsName
         }
+    }).then((namespaceInfo) => {
+        Object.assign(initialValues, namespaceInfo);
+        form.value?.reset();
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error fetching namespace info',
+            detail: err.message,
+            life: 3000
+        });
     });
-    Object.assign(initialValues, namespaceInfo);
-    form.value?.reset();
 
-    const namespaceUsers = await client.request({
+    client.request({
         method: "admin.GetNSUsers",
         params: {
             Namespace: nsName
         }
+    }).then((namespaceUsers) => {
+        if(namespaceUsers.Admins) {
+            namespaceUsers.Admins.forEach((user) => {
+                user.IsAdmin = true;
+            });
+            users.value.push(...namespaceUsers.Admins);
+        }
+        if(namespaceUsers.Users) {
+            namespaceUsers.Users.forEach((user) => {
+                user.IsAdmin = false;
+            });
+            users.value.push(...namespaceUsers.Users);
+        }
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error fetching users',
+            detail: err.message,
+            life: 3000
+        });
     });
-    if(namespaceUsers.Admins) {
-        namespaceUsers.Admins.forEach((user) => {
-            user.IsAdmin = true;
-        });
-        users.value.push(...namespaceUsers.Admins);
-    }
-    if(namespaceUsers.Users) {
-        namespaceUsers.Users.forEach((user) => {
-            user.IsAdmin = false;
-        });
-        users.value.push(...namespaceUsers.Users);
-    }
 });
 
 const resolver = ({ states, values }) => {
@@ -362,7 +378,7 @@ const delUser = async (user, index) => {
         users.value.splice(index, 1);
         toast.add({
             severity: 'success',
-            summary: 'User added successfully',
+            summary: 'User removed successfully',
             life: 3000
         });
     }
