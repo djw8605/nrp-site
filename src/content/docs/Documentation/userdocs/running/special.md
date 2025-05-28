@@ -1,49 +1,81 @@
 ---
 title: Special Use
-description: Special Use
+description: Special Use Taints and Tolerations
 ---
 
-Our cluster combines various hardware resources from multiple universities and other organizations. By default you can only use the nodes **having NO Taints** (see the [resources page](https://portal.nrp.ai/resources) of the portal).
+Our cluster combines various hardware resources from multiple universities and other organizations. 
 
-#### All taints
+:::caution
 
-Here's the full list of taints on the nodes. To run on the node having a taint, you need to [use the node toleration in your pod](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). Some are set automatically on deployed jobs by our cluster, some can only be used by privileged users. Please refer to this list and **only set the ones you were allowed to use by cluster admins**.
+  By default you can only use the nodes **having NO Taints** (see the [resources page](https://portal.nrp.ai/resources) of the portal).
 
-| Taint | Purpose | Who can set manually |
-|--|--|--|
-| **Public** |||
-| nautilus.io/arm64 | ARM64 node, make sure your image supports ARM64. If you want to solely use ARM nodes in your pod, set the affinity `kubernetes.io/arch=arm64`, automatically tolerating this taint. | All |
-| **Reserved for group use** |||
-| nautilus.io/bluefield2 | Measuring and monitoring for SENSE | @jjgraham |
-| nautilus.io/cogrob | cogrob namespace | cogrob namespace |
-| nautilus.io/csu-tide | Reserved for the TIDE cluster | @youngsu_kim |
-| nautilus.io/csusb | CSUSB reserved nodes. | Namespaces: csusb-chaseci, csusb-hpc, csusb-cousins-lab, csusb-jupyterhub, csusb-mpi, csusb-salloum, prp-dvu-csusb |
-| nautilus.io/fpga-testing | Reserved for FPGA experiments and flashing | @jjgraham, @msada |
-| nautilus.io/mizzou | Private use by Missouri researchers on Missouri resources | Missouri Researchers |
-| nautilus.io/prism-center | RESERVED for PRISM Center | @jjgraham |
-| nautilus.io/stashcache | Private OSG nodes | @fandri |
-| nautilus.io/sdsc-llm | Reserved for an SDSC LLMs | sdsc-llm |
-| nautilus.io/suncave-head | Suncave head node is only used for suncave operations | suncave |
-| nautilus.io/suncave | Suncave operations until June 1st | suncave |
-| nautilus.io/genai-lab | genai-lab, till 02-14-2025 | [Daniel Salas](mailto:salas.daniel@bcg.com	) [Olivia Alexander](mailto:oalexander@usra.edu)| 
-| msu-cache, um-cache | Michigan State Cache for ATLAS | @ivukotic |
-| **Set by system to user jobs** |||
-| nvidia.com/gpu=Exists:PreferNoSchedule | Fence GPU nods from CPU jobs (Preferred! Jobs can still go on the node if there are no free CPU nodes) | No |
-| nautilus.io/large-gpu | Node accepts 4- and 8-GPU jobs only. Set automatically. | No |
-| **Reserved for system use** |||
-| gitlab.com/issue | There's a GitLab issue describing the problem | No |
-| nautilus.io/ceph | Don't run any user jobs on ceph storage nodes | No |
-| nautilus.io/gitlab-issue | There's a GitLab issue describing the problem | No |
-| nautilus.io/linstor-server | Don't run any user jobs on linstor storage nodes | No |
+:::
+
+#### All Taints
+
+:::caution
+
+**We are changing the taint naming convention to a new, clearer system. This documentation reflects the new scheme, but it is still a work in progress.**  
+Please use caution when applying tolerations and only tolerate taints for which you have explicit authorization from cluster administrators. Tolerating the wrong taints may cause your workloads to land on unintended or restricted nodes, leading to failures or policy violations.
+
+:::
+
+Here's the new taint system and their descriptions. To run on a node with a taint, you need to [use the node toleration in your pod](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). Users **may only tolerate values they are authorized for by cluster admins**.
+
+| Taint Key | Description |
+|--|--|
+| **nautilus.io/reservation** | For user-facing reservations. Users can only tolerate a value here if they are part of an approved group. If unsure, toleration is not allowed. |
+| **nautilus.io/hardware** | For special hardware nodes that users should not land on by default but are permitted to tolerate if needed. |
+| **nautilus.io/system** | For system services or any infrastructure nodes that users should never schedule onto. Toleration is not permitted. |
+| **nautilus.io/issue** | For nodes with temporary issues that should not accept user workloads. This also consolidates the old `gitlab-issue` taints. Numeric values indicate GitLab issues, strings indicate other issues. Users cannot tolerate these. |
+
+---
+
+##### Examples of taint name changes from old to new system
+
+| Old Taint | New Taint |
+|--|--|
+| nautilus.io/ceph=true | nautilus.io/system=storage:NoSchedule |
+| nautilus.io/stashcache=true | nautilus.io/reservation=osdf:NoSchedule |
+| nautilus.io/csu-tide=true | nautilus.io/reservation=csu-tide:NoSchedule |
+| nautilus.io/bluefield2=true | nautilus.io/reservation=bluefield2:NoSchedule |
+| nautilus.io/perfsonar=true | nautilus.io/system=perfsonar:NoSchedule |
+| nautilus.io/genai-lab=true | nautilus.io/reservation=genai-lab:NoSchedule |
+| node.kubernetes.io/unreachable=undefined | node.kubernetes.io/unreachable=undefined:NoSchedule |
+| nautilus.io/sense=true | nautilus.io/system=sense:NoSchedule |
+| nautilus.io/arm64=true | nautilus.io/hardware=arm64:NoSchedule |
+| nautilus.io/large-gpu=true | nautilus.io/hardware=large-gpu:NoSchedule |
+| nautilus.io/testing=true | nautilus.io/issue=testing:NoSchedule |
+| nautilus.io/ceph-external=true | nautilus.io/system=ceph-external:NoSchedule |
+| nautilus.io/linstor-server=true | nautilus.io/system=storage:NoSchedule |
+| nautilus.io/gitlab-issue=1234 | nautilus.io/issue=1234:NoSchedule |
+| nautilus.io/mizzou=true | nautilus.io/reservation=mizzou:NoSchedule |
+| nautilus.io/prism-center=true | nautilus.io/reservation=prism-center:NoSchedule |
+| nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
+| nautilus.io/disk-swap=true | nautilus.io/issue=disk-swap:NoSchedule |
+| nautilus.io/csusb=true | nautilus.io/reservation=csusb:NoSchedule |
+| nautilus.io/jump=true | nautilus.io/system=jump:NoSchedule |
+| nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
+| msu-cache=true | nautilus.io/reservation=msu-cache:NoSchedule |
+| nautilus.io/nrp-llm=true | nautilus.io/system=nrp-llm:NoSchedule |
+| nautilus.io/sdsc-llm=true | nautilus.io/reservation=sdsc-llm:NoSchedule |
+| nautilus.io/fpga-tutorial=true | nautilus.io/reservation=fpga-tutorial:NoSchedule |
+| nautilus.io/qaic=undefined | nautilus.io/reservation=qaic:NoSchedule |
+| nautilus.io/5g=true | nautilus.io/system=5g:NoSchedule |
+| nautilus.io/slow-network=true | nautilus.io/issue=slow-network:NoSchedule |
+| um-cache=true | nautilus.io/reservation=um-cache:NoSchedule |
+| nautilus.io/upgrading=true | nautilus.io/issue=upgrading:NoSchedule |
+| nautilus.io/suncave=true | nautilus.io/reservation=suncave:NoSchedule |
+| nautilus.io/suncave-head=true | nautilus.io/reservation=suncave-head:NoSchedule |
+
 
 [Observable notebook with taints summary](https://observablehq.com/d/1cb451398e09c3ff)
 
-#### Running in group namespaces
-
+#### Reservations
 
 Our cluster contains several sets of nodes dedicated to certain groups.
 
-User can target **ONLY THE GROUP NODES** by using the nodeAffinity such as:
+Users can target **ONLY THE GROUP NODES** by using `nodeAffinity`, for example:
 
 ```yaml
 spec:
@@ -52,13 +84,21 @@ spec:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: nautilus.io/group
+          - key: nautilus.io/reservation
             operator: In
             values:
             - group1
 ```
 
-for large jobs to avoid taking over all shared cluster resources. Optionally a higher priority can be used for such jobs (talk to admins before using one).
+For large jobs, this helps avoid consuming all shared cluster resources. Optionally, a higher priority can be used (contact the admins before using one).
+
+In addition, **groups may request exclusive access to entire nodes** if their workloads justify it.
+Such nodes can be reserved by setting the following `taint` and corresponding `toleration`:
+
+- **Taint on reserved nodes:**  
+  `nautilus.io/reservation=group:NoSchedule`
+
+Please reach out to the admins if your group has a use case that would benefit from whole-node reservations.
 
 #### Other taints
 
