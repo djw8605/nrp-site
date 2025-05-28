@@ -54,6 +54,20 @@
                     <Button label="Add" @click="addUser" />
                 </InputGroup>
             </div>
+            <Inplace class="p-3">
+                <template #display severity="secondary">
+                    <Button>Open bulk users add form</Button>
+                </template>
+                <template #content="{ closeCallback }">
+                    <div class="flex flex-col w-full items-center gap-2">
+                        <FloatLabel variant="on"  class="w-full">
+                            <Textarea v-model="bulkUsers" name="bulkUsers" id="bulkUsers" class="w-full" rows="12" autofocus></Textarea>
+                            <label for="bulkUsers">Users emails, one per line</label>
+                        </FloatLabel>
+                        <Button text="Add" class="w-full" @click="bulkAddUsers">Bulk add users by email</Button>
+                    </div>
+                </template>
+            </Inplace>
             <DataView :value="users">
                 <template #list="slotProps">
                     <div class="flex flex-col">
@@ -97,6 +111,7 @@ import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import InputGroup from 'primevue/inputgroup';
 import Badge from 'primevue/badge';
+import Inplace from 'primevue/inplace';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
@@ -115,6 +130,8 @@ const newUser = ref(null);
 
 const filteredOrganizations = ref([]);
 const filteredUsers = ref([]);
+
+const bulkUsers = ref("");
 
 const toast = useToast();
 
@@ -262,12 +279,17 @@ onMounted(async () => {
         });
     });
 
+    readNSUsers(nsName);
+});
+
+const readNSUsers = (nsName) => {
     client.request({
         method: "admin.GetNSUsers",
         params: {
             Namespace: nsName
         }
     }).then((namespaceUsers) => {
+        users.value.splice(0);
         if(namespaceUsers.Admins) {
             namespaceUsers.Admins.forEach((user) => {
                 user.IsAdmin = true;
@@ -288,7 +310,7 @@ onMounted(async () => {
             life: 3000
         });
     });
-});
+}
 
 const resolver = ({ states, values }) => {
     const errors = {};
@@ -382,5 +404,63 @@ const delUser = async (user, index) => {
             life: 3000
         });
     }
+};
+
+const bulkAddUsers = async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    if (!bulkUsers.value) {
+        return;
+    }
+
+    client.request({
+        method: "admin.BulkAddNSUsers",
+        params: {
+            Namespace: nsName,
+            Users: bulkUsers.value.split("\n").map(user => user.trim()),
+        }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error adding users',
+                detail: response.error.message,
+                life: 3000
+            });
+            return;
+        }
+        
+        if (response.Success.length === 0) {
+            toast.add({
+                severity: 'error',
+                summary: 'No users added',
+                life: 3000
+            });
+        } else {
+            toast.add({
+                severity: 'success',
+                summary: 'Successfully added '+response.Success.length+' users',
+                life: 3000
+            });
+            users.value.push(...response.Success);
+        }
+        if (response.NotFound.length > 0) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error adding '+response.NotFound.length+' users',
+                detail: response.NotFound.join(", "),
+                life: 3000
+            });
+        }
+        // readNSUsers();
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error adding users',
+            detail: err,
+            life: 3000
+        });
+    });
 };
 </script>

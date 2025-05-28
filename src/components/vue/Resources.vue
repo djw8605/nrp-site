@@ -51,7 +51,7 @@
         { headerName: "Taints", minWidth: 130, flex: 2, valueGetter: params => 
             {
                 if(params.data.Taints != null) {
-                    return params.data.Taints.filter((taint) => taint.effect != "PreferNoSchedule").map((taint) => taint.key).join(" ");
+                    return params.data.Taints.filter((taint) => taint.effect != "PreferNoSchedule").map((taint) => `${taint.key}=${taint.value}`).join(" ");
                 }
                 return "";
             },
