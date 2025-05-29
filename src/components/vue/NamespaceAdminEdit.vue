@@ -3,6 +3,7 @@
         <template #title>Editing {{ selectedNamespace.Name }}</template>
         <template #content>
             <Form v-slot="$form" ref="form" :resolver :initialValues @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
+                <VueSpinnerPie v-if="isFormLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
                 <div class="flex flex-col gap-1">
                     <FloatLabel variant="on">
                         <InputText name="pi" id="pi" fluid />
@@ -32,7 +33,7 @@
                     </FloatLabel>
                     <Message v-if="$form.publications?.invalid" severity="error" size="small" variant="simple">{{ $form.publications.error?.message }}</Message>
                 </div>
-                <Button type="submit" severity="secondary" label="Save" />
+                <Button type="submit" :loading="saveLoading" severity="secondary" label="Save" />
             </Form>
         </template>
     </Card>
@@ -42,16 +43,17 @@
             <FileUpload ref="fileupload" mode="basic" name="avatar" @select="onFileChange" customUpload accept="image/*" :maxFileSize="1000000" @upload="onFileChange" :auto="true"/>
         </template>
     </Card> -->
-    <Card>
+    <Card class="my-8">
         <template #title>Users</template>
         <template #content>
+            <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
                 <InputGroup>
                     <FloatLabel variant="on">
                         <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid />
                         <label for="newUser">Add New User</label>
                     </FloatLabel>
-                    <Button label="Add" @click="addUser" />
+                    <Button label="Add" :loading="addUserLoading" @click="addUser" />
                 </InputGroup>
             </div>
             <Inplace class="p-3">
@@ -64,7 +66,7 @@
                             <Textarea v-model="bulkUsers" name="bulkUsers" id="bulkUsers" class="w-full" rows="12" autofocus></Textarea>
                             <label for="bulkUsers">Users emails, one per line</label>
                         </FloatLabel>
-                        <Button text="Add" class="w-full" @click="bulkAddUsers">Bulk add users by email</Button>
+                        <Button text="Add" class="w-full" :loading="addBulkUserLoading" @click="bulkAddUsers">Bulk add users by email</Button>
                     </div>
                 </template>
             </Inplace>
@@ -85,7 +87,7 @@
                                     </div>
                                     <div class="flex flex-col md:items-end gap-8">
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <Button icon="pi pi-trash" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
+                                            <Button icon="pi pi-trash" :loading="delUserLoading" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
                                         </div>
                                     </div>
                                 </div>
@@ -94,6 +96,18 @@
                     </div>
                 </template>
             </DataView>
+        </template>
+    </Card>
+    <Card>
+        <template #title>Create namespace</template>
+        <template #content>
+            <InputGroup>
+                <FloatLabel variant="on">
+                    <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
+                    <label for="newNamespace">New namespace (should not exist already)</label>
+                </FloatLabel>
+                <Button label="Create" @click="createNamespace" />
+            </InputGroup>
         </template>
     </Card>
 </template>
@@ -112,12 +126,13 @@ import DataView from 'primevue/dataview';
 import InputGroup from 'primevue/inputgroup';
 import Badge from 'primevue/badge';
 import Inplace from 'primevue/inplace';
+import {VueSpinnerPie} from 'vue3-spinners';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
 import CryptoJS from 'crypto-js';
 
-import {ref, onMounted, watch} from 'vue';
+import {ref, onMounted, defineEmits, watch} from 'vue';
 import { reactive } from 'vue';
 
 const props = defineProps(['selectedNamespace']);
@@ -135,19 +150,31 @@ const bulkUsers = ref("");
 
 const toast = useToast();
 
+const emit = defineEmits(['onNSChanged']);
+
+const newNamespace = ref("");
+
 const initialValues = reactive({
-});
+    });
+
+const addUserLoading = ref(false);
+const delUserLoading = ref(false);
+const addBulkUserLoading = ref(false);
+const saveLoading = ref(false);
+const isFormLoading = ref(true);
+const isUsersLoading = ref(true);
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 const transport = new HTTPTransport(baseUrl+"/rpc",
-{
-    credentials: 'include',
-},
+    {
+        credentials: 'include',
+    },
 );
 const client = new Client(new RequestManager([transport]));
 
 const onFormSubmit = async ({ valid, states, values }) => {
     if (valid) {
+        saveLoading.value = true;
         const nsNameSplit = props["selectedNamespace"].Name.split("/");
         const nsName = nsNameSplit[nsNameSplit.length - 1];
 
@@ -160,9 +187,10 @@ const onFormSubmit = async ({ valid, states, values }) => {
 
         toast.add({
             severity: 'success',
-            summary: 'Form is submitted.',
+            summary: 'Namespace information is saved.',
             life: 3000
         });
+        saveLoading.value = false;
     }
 };
 
@@ -262,6 +290,7 @@ onMounted(async () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
+    isFormLoading.value = true;
     client.request({
         method: "admin.GetNamespaceInfo",
         params: {
@@ -277,12 +306,15 @@ onMounted(async () => {
             detail: err.message,
             life: 3000
         });
+    }).finally(() => {
+        isFormLoading.value = false;
     });
 
     readNSUsers(nsName);
 });
 
 const readNSUsers = (nsName) => {
+    isUsersLoading.value = true;
     client.request({
         method: "admin.GetNSUsers",
         params: {
@@ -309,7 +341,9 @@ const readNSUsers = (nsName) => {
             detail: err.message,
             life: 3000
         });
-    });
+    }).finally(() => {
+        isUsersLoading.value = false;
+    });;
 }
 
 const resolver = ({ states, values }) => {
@@ -343,6 +377,7 @@ const addUser = async () => {
         return;
     }
 
+    addUserLoading.value = true;
     const response = await client.request({
         method: "admin.AddNSUser",
         params: {
@@ -371,6 +406,7 @@ const addUser = async () => {
             life: 3000
         });
     }
+    addUserLoading.value = false;
 };
 
 const delUser = async (user, index) => {
@@ -380,6 +416,8 @@ const delUser = async (user, index) => {
     if (!user) {
         return;
     }
+
+    delUserLoading.value = true;
 
     const response = await client.request({
         method: "admin.DeleteNSUser",
@@ -404,6 +442,7 @@ const delUser = async (user, index) => {
             life: 3000
         });
     }
+    delUserLoading.value = false;
 };
 
 const bulkAddUsers = async () => {
@@ -413,6 +452,8 @@ const bulkAddUsers = async () => {
     if (!bulkUsers.value) {
         return;
     }
+
+    addBulkUserLoading.value = true;
 
     client.request({
         method: "admin.BulkAddNSUsers",
@@ -458,6 +499,52 @@ const bulkAddUsers = async () => {
         toast.add({
             severity: 'error',
             summary: 'Error adding users',
+            detail: err,
+            life: 3000
+        });
+    }).finally(() => {
+        addBulkUserLoading.value = false;
+    });
+};
+
+const createNamespace = () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    console.log("Creating namespace", nsName, newNamespace.value);
+
+    if (!newNamespace.value) {
+        return;
+    }
+
+    client.request({
+        method: "admin.CreateNamespace",
+        params: {
+            Namespace: nsName,
+            NewNamespace: newNamespace.value,
+        }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error creating namespace',
+                detail: response.error.message,
+                life: 3000
+            });
+            return;
+        }
+        
+        toast.add({
+            severity: 'success',
+            summary: 'Successfully created namespace '+newNamespace.value,
+            life: 3000
+        });
+        emit('onNSChanged');
+
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error creating namespace',
             detail: err,
             life: 3000
         });
