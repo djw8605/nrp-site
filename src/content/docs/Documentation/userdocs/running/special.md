@@ -98,7 +98,7 @@ Such nodes can be reserved by setting the following `taint` and corresponding `t
 - **Taint on reserved nodes:**  
   `nautilus.io/reservation=group:NoSchedule`
 
-Please reach out to the admins if your group has a use case that would benefit from whole-node reservations.
+Please fill out the (node reservation form)[https://nrp.ai/reservations/] if your group has a use case that would benefit from whole-node reservations.
 
 #### Other taints
 
