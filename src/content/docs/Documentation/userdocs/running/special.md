@@ -28,6 +28,7 @@ Here's the new taint system and their descriptions. To run on a node with a tain
 | **nautilus.io/hardware** | For special hardware nodes that users should not land on by default but are permitted to tolerate if needed. |
 | **nautilus.io/system** | For system services or any infrastructure nodes that users should never schedule onto. Toleration is not permitted. |
 | **nautilus.io/issue** | For nodes with temporary issues that should not accept user workloads. This also consolidates the old `gitlab-issue` taints. Numeric values indicate GitLab issues, strings indicate other issues. Users cannot tolerate these. |
+| **nautilus.io/storage** | For nodes dedicated to storage services like Ceph and LINSTOR. Users should not schedule general workloads here. Toleration is not permitted unless explicitly authorized for co-location. |
 
 ---
 
@@ -35,38 +36,42 @@ Here's the new taint system and their descriptions. To run on a node with a tain
 
 | Old Taint | New Taint |
 |--|--|
-| nautilus.io/ceph=true | nautilus.io/system=storage:NoSchedule |
-| nautilus.io/stashcache=true | nautilus.io/reservation=osdf:NoSchedule |
-| nautilus.io/csu-tide=true | nautilus.io/reservation=csu-tide:NoSchedule |
-| nautilus.io/bluefield2=true | nautilus.io/reservation=bluefield2:NoSchedule |
-| nautilus.io/perfsonar=true | nautilus.io/system=perfsonar:NoSchedule |
-| nautilus.io/genai-lab=true | nautilus.io/reservation=genai-lab:NoSchedule |
-| node.kubernetes.io/unreachable=undefined | node.kubernetes.io/unreachable=undefined:NoSchedule |
-| nautilus.io/sense=true | nautilus.io/system=sense:NoSchedule |
-| nautilus.io/arm64=true | nautilus.io/hardware=arm64:NoSchedule |
-| nautilus.io/large-gpu=true | nautilus.io/hardware=large-gpu:NoSchedule |
-| nautilus.io/testing=true | nautilus.io/issue=testing:NoSchedule |
-| nautilus.io/ceph-external=true | nautilus.io/system=ceph-external:NoSchedule |
-| nautilus.io/linstor-server=true | nautilus.io/system=storage:NoSchedule |
-| nautilus.io/gitlab-issue=1234 | nautilus.io/issue=1234:NoSchedule |
-| nautilus.io/mizzou=true | nautilus.io/reservation=mizzou:NoSchedule |
-| nautilus.io/prism-center=true | nautilus.io/reservation=prism-center:NoSchedule |
-| nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
-| nautilus.io/disk-swap=true | nautilus.io/issue=disk-swap:NoSchedule |
-| nautilus.io/csusb=true | nautilus.io/reservation=csusb:NoSchedule |
-| nautilus.io/jump=true | nautilus.io/system=jump:NoSchedule |
-| nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
-| msu-cache=true | nautilus.io/reservation=msu-cache:NoSchedule |
-| nautilus.io/nrp-llm=true | nautilus.io/system=nrp-llm:NoSchedule |
-| nautilus.io/sdsc-llm=true | nautilus.io/reservation=sdsc-llm:NoSchedule |
-| nautilus.io/fpga-tutorial=true | nautilus.io/reservation=fpga-tutorial:NoSchedule |
-| nautilus.io/qaic=undefined | nautilus.io/reservation=qaic:NoSchedule |
 | nautilus.io/5g=true | nautilus.io/system=5g:NoSchedule |
-| nautilus.io/slow-network=true | nautilus.io/issue=slow-network:NoSchedule |
-| um-cache=true | nautilus.io/reservation=um-cache:NoSchedule |
-| nautilus.io/upgrading=true | nautilus.io/issue=upgrading:NoSchedule |
+| nautilus.io/ceph=true | nautilus.io/system=storage:NoSchedule |
+| nautilus.io/ceph-external=true | nautilus.io/system=ceph-external:NoSchedule |
+| nautilus.io/jump=true | nautilus.io/system=jump:NoSchedule |
+| nautilus.io/nrp-llm=true | nautilus.io/system=nrp-llm:NoSchedule |
+| nautilus.io/perfsonar=true | nautilus.io/system=perfsonar:NoSchedule |
+| nautilus.io/sense=true | nautilus.io/system=sense:NoSchedule |
+| nautilus.io/linstor-server=true | nautilus.io/system=storage:NoSchedule |
+
+| nautilus.io/bluefield2=true | nautilus.io/reservation=bluefield2:NoSchedule |
+| nautilus.io/csusb=true | nautilus.io/reservation=csusb:NoSchedule |
+| nautilus.io/csu-tide=true | nautilus.io/reservation=csu-tide:NoSchedule |
+| nautilus.io/fpga-tutorial=true | nautilus.io/reservation=fpga-tutorial:NoSchedule |
+| nautilus.io/genai-lab=true | nautilus.io/reservation=genai-lab:NoSchedule |
+| nautilus.io/mizzou=true | nautilus.io/reservation=mizzou:NoSchedule |
+| msu-cache=true | nautilus.io/reservation=msu-cache:NoSchedule |
+| nautilus.io/prism-center=true | nautilus.io/reservation=prism-center:NoSchedule |
+| nautilus.io/qaic=undefined | nautilus.io/reservation=qaic:NoSchedule |
+| nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
+| nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
+| nautilus.io/sdsc-llm=true | nautilus.io/reservation=sdsc-llm:NoSchedule |
+| nautilus.io/stashcache=true | nautilus.io/reservation=osdf:NoSchedule |
 | nautilus.io/suncave=true | nautilus.io/reservation=suncave:NoSchedule |
 | nautilus.io/suncave-head=true | nautilus.io/reservation=suncave-head:NoSchedule |
+| um-cache=true | nautilus.io/reservation=um-cache:NoSchedule |
+
+| nautilus.io/arm64=true | nautilus.io/hardware=arm64:NoSchedule |
+| nautilus.io/large-gpu=true | nautilus.io/hardware=large-gpu:NoSchedule |
+
+| nautilus.io/disk-swap=true | nautilus.io/issue=disk-swap:NoSchedule |
+| nautilus.io/gitlab-issue=1234 | nautilus.io/issue=1234:NoSchedule |
+| nautilus.io/slow-network=true | nautilus.io/issue=slow-network:NoSchedule |
+| nautilus.io/testing=true | nautilus.io/issue=testing:NoSchedule |
+| nautilus.io/upgrading=true | nautilus.io/issue=upgrading:NoSchedule |
+
+| node.kubernetes.io/unreachable=undefined | node.kubernetes.io/unreachable=undefined:NoSchedule |
 
 
 [Observable notebook with taints summary](https://observablehq.com/d/1cb451398e09c3ff)
