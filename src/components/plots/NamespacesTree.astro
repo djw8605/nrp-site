@@ -10,9 +10,11 @@
   const transport = new HTTPTransport(baseUrl+"/rpc");
   const client = new Client(new RequestManager([transport]));
   const namespaces = await client.request({method: "guest.ListNsTree"});
+  const calculatedHeight = namespaces.Namespaces.length * 15;
 
   const plot = Plot.plot({
     width: 1200,
+    height: calculatedHeight,
     margin: 10,
     marginLeft: 80,
     marginRight: 360,
