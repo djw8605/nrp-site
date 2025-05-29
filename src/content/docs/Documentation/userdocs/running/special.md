@@ -44,7 +44,7 @@ Here's the new taint system and their descriptions. To run on a node with a tain
 | nautilus.io/perfsonar=true | nautilus.io/system=perfsonar:NoSchedule |
 | nautilus.io/sense=true | nautilus.io/system=sense:NoSchedule |
 | nautilus.io/linstor-server=true | nautilus.io/system=storage:NoSchedule |
-
+|--|--|
 | nautilus.io/bluefield2=true | nautilus.io/reservation=bluefield2:NoSchedule |
 | nautilus.io/csusb=true | nautilus.io/reservation=csusb:NoSchedule |
 | nautilus.io/csu-tide=true | nautilus.io/reservation=csu-tide:NoSchedule |
@@ -61,16 +61,16 @@ Here's the new taint system and their descriptions. To run on a node with a tain
 | nautilus.io/suncave=true | nautilus.io/reservation=suncave:NoSchedule |
 | nautilus.io/suncave-head=true | nautilus.io/reservation=suncave-head:NoSchedule |
 | um-cache=true | nautilus.io/reservation=um-cache:NoSchedule |
-
+|--|--|
 | nautilus.io/arm64=true | nautilus.io/hardware=arm64:NoSchedule |
 | nautilus.io/large-gpu=true | nautilus.io/hardware=large-gpu:NoSchedule |
-
+|--|--|
 | nautilus.io/disk-swap=true | nautilus.io/issue=disk-swap:NoSchedule |
 | nautilus.io/gitlab-issue=1234 | nautilus.io/issue=1234:NoSchedule |
 | nautilus.io/slow-network=true | nautilus.io/issue=slow-network:NoSchedule |
 | nautilus.io/testing=true | nautilus.io/issue=testing:NoSchedule |
 | nautilus.io/upgrading=true | nautilus.io/issue=upgrading:NoSchedule |
-
+|--|--|
 | node.kubernetes.io/unreachable=undefined | node.kubernetes.io/unreachable=undefined:NoSchedule |
 
 
