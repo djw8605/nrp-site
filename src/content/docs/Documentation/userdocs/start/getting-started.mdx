@@ -110,6 +110,59 @@ Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from 
 
 </Steps>
 
+### Cluster access via kubectl (alternative)
+
+<Steps>
+1. [Install][1] the Kubernetes command-line tool, `kubectl`.
+
+2. [Install](https://github.com/int128/kubelogin?tab=readme-ov-file#setup) the kubelogin plugin
+
+2. Save the [config file](/config) as **`config`** (without any extension) and put it in your `$HOME/.kube` folder. 
+
+    This folder may not exist on your machine, to create it execute:
+
+    ```bash
+    mkdir ~/.kube
+    ```
+    Finally, you should have the Nautilus Kubernetes config on your machine (laptop, desktop) as `~/.kube/config`
+
+3. Make sure you are using the correct config file.
+    - Run the following command to list available Kubernetes contexts:
+
+        ```bash title="Get Contexts"
+        $ kubectl config get-contexts
+        CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+        *         nautilus   nautilus   oidc
+
+    - If you have access to multiple Kubernetes clusters, you need to choose `use-context nautilus` by doing
+
+        ```bash title="Set Context"
+        kubectl config use-context nautilus
+        ```
+
+4. Issue the kubectl command. It will authenticate via CiLogon by opening the browser window, and close one in the end.
+
+    ```
+    kubectl get nodes
+    ```
+
+5. Verify cluster access using `kubectl`. Run the following command on your terminal.
+
+    ```bash title="Get Pods"
+    kubectl get pods -n <YOUR_NAMESPACE>
+    ```
+
+    If you see the message "No resources found in your namespace" it means there are no pods in your namespace yet. This indicates that you have access to the resources of your namespace.
+
+6. If you know you're a member of a namespace, you can set it as default.
+
+    ```
+    kubectl config set contexts.nautilus.namespace <YOUR NAMESPACE>
+    ```
+
+</Steps>
+
+
 :::caution[Read it before using the cluster]
 - Containers are stateless. 
     - **All your data will be gone forever when the container restarts**, unless you store it in a persistent volume.
