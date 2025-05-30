@@ -77,7 +77,7 @@ Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from 
         Make sure you use the same provider and account you used to login to the portal. If you use a different provider with the same email, your account in the system will still be different and your namespaces membership will change.
     :::
 
-3. Save the file as **`config`** (without any extension) and put it in your `$HOME/.kube` folder. (Right click the link, "Download linked file").
+3. Save the file as **`config`** (without any extension) and put it in your `$HOME/.kube` folder.
 
     This folder may not exist on your machine, to create it execute:
 
@@ -100,7 +100,7 @@ Nautilus is a Kubernetes cluster. You will be accessing the Kubernetes API from 
         kubectl config use-context nautilus
         ```
 
-6. Verify cluster access using `kubectl`. Run the following command on your terminal.
+5. Verify cluster access using `kubectl`. Run the following command on your terminal.
 
     ```bash title="Get Pods"
     kubectl get pods -n <YOUR_NAMESPACE>
