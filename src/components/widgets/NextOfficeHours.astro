@@ -34,7 +34,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
     // IMPORTANT: Month is 0-indexed in Date.UTC/Date, so 4 = May
-    const knownOfficeStartUTC = Date.UTC(2025, 4, 19, 17); // May 12, 2025 at 10am PDT == 17:00 UTC
+    const knownOfficeStartUTC = Date.UTC(2025, 5, 2, 17); // May 12, 2025 at 10am PDT == 17:00 UTC
 
     const nowUTC = Date.now();
     let nextOfficeUTC = knownOfficeStartUTC;
