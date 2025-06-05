@@ -2,25 +2,6 @@
 title: FAQ
 description: FAQ
 ---
-
-**I am getting `failed to refresh token`, `oauth2`, `server_error` errors when trying to access the cluster with kubectl.**
->  Download the config file from the portal again and replace the old one. See [Getting Started](getting-started/)
-
---------
-
-**This happens too often, and I need to pull the config file over and over again.**
-
-> You are probably using `kubectl` concurrently (from several shells in parallel), which breaks the token update mechanism. [Consider using ServiceAccounts](/documentation/userdocs/running/scripts/) for scripts.
-Also it's possible `CILogon` blocked your IP for abusing their service (if you were using the config via some scripts and some library tried to update the token too frequently).
-
---------
-
-**I downloaded the config file from the portal and suddenly became guest.**
-
-> This may happen if you chose a different institution during `CILogon` login than when you were added to a namespace. Even if UCSD is using Google for AD accounts, for `CILogon` Google and UCSD are two different institutions, which would result in two different accounts.
-
---------
-
 **My pod is stuck Terminating.**
 
 > This happens for a few reasons, such as:
