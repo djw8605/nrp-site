@@ -97,6 +97,10 @@ export const headerData = {
           text: 'Namespaces',
           href: getPermalink('/namespaces'),
         },
+        {
+          text: 'Resources',
+          href: getPermalink('/viz/resources'),
+        },
       ]
   },
     {
@@ -115,6 +119,14 @@ export const footerData = {
         { text: 'Contact', href: '/contact' },
         { text: 'Network Requirements', href: '/documentation/admindocs/participating/network/' },
         { text: 'New Contributor Guide', href: '/documentation/admindocs/participating/new-contributor-guide/' },
+      ],
+    },
+    {
+      title: 'Cluster',
+      links: [
+        { text: 'Namespaces management', href: '/namespaces' },
+        { text: 'Reservations', href: '/reservations' },
+        { text: 'Available resources', href: '/viz/resources/' },
       ],
     },
   ],
