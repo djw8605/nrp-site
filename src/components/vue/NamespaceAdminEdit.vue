@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="flex flex-col md:items-end gap-8">
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <Button icon="pi pi-trash" :loading="delUserLoading" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
+                                            <Button icon="pi pi-trash" :loading="delUserLoading[item.Email]" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@ const initialValues = reactive({
     });
 
 const addUserLoading = ref(false);
-const delUserLoading = ref(false);
+const delUserLoading = ref({});
 const addBulkUserLoading = ref(false);
 const saveLoading = ref(false);
 const isFormLoading = ref(true);
@@ -417,7 +417,7 @@ const delUser = async (user, index) => {
         return;
     }
 
-    delUserLoading.value = true;
+    delUserLoading.value[user.Email] = true;
 
     const response = await client.request({
         method: "admin.DeleteNSUser",
@@ -442,7 +442,7 @@ const delUser = async (user, index) => {
             life: 3000
         });
     }
-    delUserLoading.value = false;
+    delUserLoading.value[user.Email] = false;
 };
 
 const bulkAddUsers = async () => {
