@@ -180,17 +180,36 @@ const onFormSubmit = async ({ valid, states, values }) => {
 
         values.Namespace = nsName;
 
-        const namespaceInfo = await client.request({
+        client.request({
             method: "admin.SetNamespaceInfo",
             params: values,
-        });
+        }).then((response) => {
+            if (response.error) {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error saving namespace info',
+                    detail: response.error.message,
+                    life: 3000
+                });
+                return;
+            }
 
-        toast.add({
-            severity: 'success',
-            summary: 'Namespace information is saved.',
-            life: 3000
+            toast.add({
+                severity: 'success',
+                summary: 'Namespace information is saved.',
+                life: 3000
+            });
+
+        }).catch((err) => {
+            toast.add({
+                severity: 'error',
+                summary: 'Error saving namespace info',
+                detail: err.message,
+                life: 3000
+            });
+        }).finally(() => {
+            saveLoading.value = false;
         });
-        saveLoading.value = false;
     }
 };
 
@@ -378,35 +397,43 @@ const addUser = async () => {
     }
 
     addUserLoading.value = true;
-    const response = await client.request({
+    client.request({
         method: "admin.AddNSUser",
         params: {
             Namespace: nsName,
             UserID: newUser.value.ID
         }
-    });
-
-    if (response.error) {
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error adding user',
+                detail: response.error.message,
+                life: 3000
+            });
+        } else {
+            users.value.push({
+                ID: newUser.value.ID,
+                Name: newUser.value.Name,
+                Email: newUser.value.Email,
+                IsAdmin: newUser.value.IsAdmin,
+            });
+            toast.add({
+                severity: 'success',
+                summary: 'User added successfully',
+                life: 3000
+            });
+        }
+    }).catch((err) => {
         toast.add({
             severity: 'error',
             summary: 'Error adding user',
-            detail: response.error.message,
+            detail: err.message,
             life: 3000
         });
-    } else {
-        users.value.push({
-            ID: newUser.value.ID,
-            Name: newUser.value.Name,
-            Email: newUser.value.Email,
-            IsAdmin: newUser.value.IsAdmin,
-        });
-        toast.add({
-            severity: 'success',
-            summary: 'User added successfully',
-            life: 3000
-        });
-    }
-    addUserLoading.value = false;
+    }).finally(() => {
+        addUserLoading.value = false;
+    });
 };
 
 const delUser = async (user, index) => {
@@ -419,30 +446,39 @@ const delUser = async (user, index) => {
 
     delUserLoading.value[user.Email] = true;
 
-    const response = await client.request({
+    client.request({
         method: "admin.DeleteNSUser",
         params: {
             Namespace: nsName,
             UserID: user.ID,
         }
-    });
-
-    if (response.error) {
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error removing user',
+                detail: response.error.message,
+                life: 3000
+            });
+        } else {
+            users.value.splice(index, 1);
+            toast.add({
+                severity: 'success',
+                summary: 'User removed successfully',
+                life: 3000
+            });
+        }
+    }).catch((err) => {
         toast.add({
             severity: 'error',
-            summary: 'Error adding user',
-            detail: response.error.message,
+            summary: 'Error removing user',
+            detail: err.message,
             life: 3000
         });
-    } else {
-        users.value.splice(index, 1);
-        toast.add({
-            severity: 'success',
-            summary: 'User removed successfully',
-            life: 3000
-        });
-    }
-    delUserLoading.value[user.Email] = false;
+    }).finally(() => {
+        delUserLoading.value[user.Email] = false;
+    });
+
 };
 
 const bulkAddUsers = async () => {
