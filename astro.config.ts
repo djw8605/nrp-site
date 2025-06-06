@@ -60,6 +60,7 @@ export default defineConfig({
               items: [
                 { label: "Getting Started", link: "documentation/userdocs/start/getting-started" },
                 { label: "Using Nautilus", link: "documentation/userdocs/start/using-nautilus" },
+                { label: "Hierarchical resources", link: "documentation/userdocs/start/hierarchy" },
                 { label: "Cluster Policies", link: "documentation/userdocs/start/policies" },
                 { label: "Deployed Services", link: "documentation/userdocs/start/resources" },
                 { label: "Glossary", link: "documentation/userdocs/start/glossary" },
