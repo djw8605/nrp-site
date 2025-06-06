@@ -1,7 +1,7 @@
 <template>
     <Toast />
     <div v-if="user">
-        <Avatar :image="user.pic"  class="mr-2 flex items-center justify-center cursor-pointer" size="large" @click="toggle"/>
+        <Avatar id="user-avatar" :image="user.pic"  class="mr-2 flex items-center justify-center cursor-pointer" size="large" @click="toggle"/>
 
         <Popover ref="op">
             <div class="flex flex-col gap-4 w-[15rem]">
@@ -29,6 +29,9 @@
     import Popover from "primevue/popover";
     import Avatar from "primevue/avatar";
 
+    import {Hovercards} from '@gravatar-com/hovercards';
+    import '@gravatar-com/hovercards/dist/style.css';
+
     const user = useStore(userStore);
 
     const handleLogin = () => {
@@ -53,11 +56,16 @@
         }
     };
 
+    const op = ref(false);
+
     let intervalId: number | null = null;
     onMounted(() => {
         checkLoginStatus(); // Check immediately on mount
         intervalId = setInterval(checkLoginStatus, 60 * 1000); // Check every 60 seconds
+        hovercards.attach( document.getElementById( 'user-avatar' ) );
     });
+
+    const hovercards = new Hovercards( { additionalClass: '-z-100' } );
 
     // Clean up interval on unmount
     onUnmounted(() => {
@@ -66,7 +74,6 @@
         }
     });
 
-    const op = ref();
     const members = ref([
         { name: 'Amy Elsner', image: 'amyelsner.png', email: 'amy@email.com', role: 'Owner' },
         { name: 'Bernardo Dominic', image: 'bernardodominic.png', email: 'bernardo@email.com', role: 'Editor' },
@@ -76,4 +83,5 @@
     const toggle = (event) => {
         op.value.toggle(event);
     }
+
 </script>
