@@ -2,8 +2,11 @@
 title: Node Management
 description: Guide for managing and rebooting nodes in the cluster.
 ---
+import { Steps } from '@astrojs/starlight/components';
 
-### Key Considerations When Rebooting a Node
+## Rebooting a node
+
+### Key Considerations
 
 1. Check if the node has any `rook-ceph-osd-*` pods. Verify the health of the corresponding Ceph cluster and [bring down one node at a time](#special-instruction-to-reboot-ceph-nodes).
 2. Check for `haproxy-ingress-*` pods. If the node will be down for an extended period, disable its record in [Constellix DNS](https://dns.constellix.com/).
@@ -11,7 +14,7 @@ description: Guide for managing and rebooting nodes in the cluster.
 4. Check if the node has the `nautilus.io/bgp-speaker` label. There are two nodes used for MetalLB IPs—ensure one remains active.
 5. Check if the node has the `node-role.kubernetes.io/master` label. Rebooting this node will make the cluster inaccessible unless it's not an Admiralty virtual node.
 
-## Prerequisites
+### Prerequisites
 
 1. [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local computer.
 2. Clone the repository of Ansible playbooks:
@@ -27,7 +30,7 @@ cd nautilus-ansible;
 git pull
 ```
 
-## Reboot a Node Due to GPU Failure
+### Reboot a Node Due to GPU Failure
 
 Use the following command to reboot the node:
 
@@ -52,3 +55,17 @@ watch ceph health detail
 ```
 
 Wait until `[WRN] OSD_DOWN: 1 osds down` disappears from the `ceph health detail` output before rebooting the next node.
+
+## Recycling a node
+
+<Steps>
+1. If possible, do `kubeadm reset` on the node
+
+2. Delete the node from kubernetes cluster
+
+3. Delete the node from netbox
+
+4. Close all gitlab issues related to the node
+
+5. Check if there are any `volumeattachments` left for the node in kubernetes
+</Steps>
