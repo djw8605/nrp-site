@@ -43,7 +43,7 @@
             <FileUpload ref="fileupload" mode="basic" name="avatar" @select="onFileChange" customUpload accept="image/*" :maxFileSize="1000000" @upload="onFileChange" :auto="true"/>
         </template>
     </Card> -->
-    <Card class="my-8">
+    <Card class="my-8" id="users">
         <template #title>Users</template>
         <template #content>
             <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
@@ -76,7 +76,7 @@
                         <div v-for="(item, index) in slotProps.items" :key="index">
                             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
                                 <div class="md:w-20 relative">
-                                    <img class="block xl:block mx-auto rounded w-full" :src="`https://www.gravatar.com/avatar/${CryptoJS.SHA256( item.Email )}?d=robohash&s=80`" />
+                                    <img class="block xl:block mx-auto rounded w-full hovercard" :src="`https://www.gravatar.com/avatar/${CryptoJS.SHA256( item.Email )}?d=robohash&s=80`" />
                                 </div>
                                 <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                                     <div class="flex flex-row md:flex-col justify-between items-start gap-2">
@@ -134,6 +134,10 @@ import CryptoJS from 'crypto-js';
 
 import {ref, onMounted, defineEmits, watch} from 'vue';
 import { reactive } from 'vue';
+
+import {Hovercards} from '@gravatar-com/hovercards';
+import '@gravatar-com/hovercards/dist/style.css';
+const hovercards = new Hovercards( { /* Options */ } );
 
 const props = defineProps(['selectedNamespace']);
 
@@ -330,6 +334,7 @@ onMounted(async () => {
     });
 
     readNSUsers(nsName);
+
 });
 
 const readNSUsers = (nsName) => {
@@ -362,7 +367,8 @@ const readNSUsers = (nsName) => {
         });
     }).finally(() => {
         isUsersLoading.value = false;
-    });;
+        hovercards.attach( document.getElementById( 'users' ) );
+    });
 }
 
 const resolver = ({ states, values }) => {
