@@ -318,7 +318,7 @@ onMounted(async () => {
 
     isFormLoading.value = true;
     client.request({
-        method: "admin.GetNamespaceInfo",
+        method: "user.GetNamespaceInfo",
         params: {
             Namespace: nsName
         }
