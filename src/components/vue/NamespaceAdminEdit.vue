@@ -82,12 +82,13 @@
                                     <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                                         <div>
                                             <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.Email }}</span>
-                                            <div class="text-lg font-medium mt-2">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/></div>                                                                                       
+                                            <div class="text-lg font-medium mt-2">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/> <Badge severity="info" size="small" :value="item.IDP"/></div>
                                         </div>
                                     </div>
                                     <div class="flex flex-col md:items-end gap-8">
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <Button icon="pi pi-trash" :loading="delUserLoading[item.Email]" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
+                                            <Button v-if="!item.IsAdmin || item.CanDemote" severity="warn" icon="pi pi-user-edit" :loading="promoteUserLoading[item.Email]" @click="promoteToggleUser(item, index)" :label="`${item.IsAdmin? 'Make not admin':'Make admin'}`" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
+                                            <Button icon="pi pi-user-minus" severity="warn" :loading="delUserLoading[item.Email]" @click="delUser(item, index)" label="Remove" class="flex-auto md:flex-initial whitespace-nowrap"></Button>
                                         </div>
                                     </div>
                                 </div>
@@ -113,6 +114,7 @@
 </template>
 
 <script setup>
+import 'primeicons/primeicons.css'
 import {Form} from '@primevue/forms';
 import { useToast } from 'primevue/usetoast';
 import AutoComplete from "primevue/autocomplete";
@@ -163,6 +165,7 @@ const initialValues = reactive({
 
 const addUserLoading = ref(false);
 const delUserLoading = ref({});
+const promoteUserLoading = ref({});
 const addBulkUserLoading = ref(false);
 const saveLoading = ref(false);
 const isFormLoading = ref(true);
@@ -418,12 +421,8 @@ const addUser = async () => {
                 life: 3000
             });
         } else {
-            users.value.push({
-                ID: newUser.value.ID,
-                Name: newUser.value.Name,
-                Email: newUser.value.Email,
-                IsAdmin: newUser.value.IsAdmin,
-            });
+            readNSUsers(nsName);
+            
             toast.add({
                 severity: 'success',
                 summary: 'User added successfully',
@@ -440,6 +439,50 @@ const addUser = async () => {
     }).finally(() => {
         addUserLoading.value = false;
     });
+};
+
+const promoteToggleUser = async (user, index) => {
+    if (!user) {
+        return;
+    }
+
+    promoteUserLoading.value[user.Email] = true;
+
+    client.request({
+        method: "admin.PromoteUser",
+        params: {
+            UserID: user.ID,
+            IsPromoting: !user.IsAdmin,
+        }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error '+(user.IsAdmin?"demoting":"promoting")+' user',
+                detail: response.error.message,
+                life: 3000
+            });
+        } else {
+            const nsNameSplit = props["selectedNamespace"].Name.split("/");
+            const nsName = nsNameSplit[nsNameSplit.length - 1];
+            readNSUsers(nsName);
+            toast.add({
+                severity: 'success',
+                summary: 'User '+(user.IsAdmin?"demoted":"promoted")+' successfully',
+                life: 3000
+            });
+        }
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error '+(user.IsAdmin?"demoting":"promoting")+' user',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+        promoteUserLoading.value[user.Email] = false;
+    });
+
 };
 
 const delUser = async (user, index) => {
