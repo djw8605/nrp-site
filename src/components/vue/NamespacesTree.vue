@@ -40,7 +40,11 @@
     isTreeLoading.value = true;
     const client = new Client(new RequestManager([transport]));
     client.request({method: "groups.ListUserGroups"}).then((namespaces) => {
-      isNoNamespaces.value = namespaces.length == 0;
+      isNoNamespaces.value = namespaces.Namespaces == null || namespaces.Namespaces.length == 0;
+      if (isNoNamespaces.value) {
+        isTreeLoading.value = false;
+        return;
+      }
 
       const calculatedHeight = namespaces.Namespaces.length * 15;
 
