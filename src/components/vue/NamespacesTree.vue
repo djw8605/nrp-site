@@ -71,6 +71,7 @@
           Plot.tree(namespaces.Namespaces, {
             path: "Name",
             delimiter: "/",
+            treeSort: "node:name",
             title: d => d.Name,
             symbol: node => {
               if (node.IsK8sNamespace && node.IsLiteLLMOrg) {
