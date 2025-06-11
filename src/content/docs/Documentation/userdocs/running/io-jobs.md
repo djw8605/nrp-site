@@ -68,17 +68,6 @@ spec:
   backoffLimit: 5
 ```
 
-#### Request NVMe nodes
-
-The majority of nodes provide NVMe scratch space, you can request that your jobs only be deployed to nodes with NVMe storage as described in the [kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/). You can add the `nodeSelector` example below to your yaml file (the example below just demo's where to add the `nodeSelector` and does not show the rest of the yaml file configuration).
-
-```
-spec:
-  containers:
-  nodeSelector:
-    nautilus.io/disktype: nvme
-```
-
 #### Ram Disk
 
 You can mount a RAM disk to your pod to reduce IO pressure. The RAM disk is dynamically sized, but does not count against your PODs memory request. The [kubernetes documentation describes setting it up](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir), the example below contains just the components you need to add to your YAML file to mount a ram disk.
