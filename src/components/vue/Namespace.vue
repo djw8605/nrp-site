@@ -4,7 +4,7 @@
         <a href="/documentation/userdocs/start/hierarchy">Read more</a>
     </div>
   </section>
-  <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">Please log in to see your namespaces.</div>
+  <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see your namespaces.</div>
   <NamespacesTree v-if="user" v-model="selectedNamespace" :key="treeRedraw"></NamespacesTree>
   <NamespaceAdminEdit @onNSChanged="onNSChanged" :selectedNamespace="selectedNamespace" v-if="selectedNamespace" :key="selectedNamespace.Name"/>
 </template>
