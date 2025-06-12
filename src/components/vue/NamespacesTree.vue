@@ -49,7 +49,7 @@
       const calculatedHeight = namespaces.Namespaces.length * 15;
 
       const plot = Plot.plot({
-        width: 1200,
+        width: 1600,
         height: calculatedHeight,
         margin: 10,
         marginLeft: 80,
@@ -138,3 +138,12 @@
 
 
 </script>
+
+<style>
+  #plot text {
+    stroke: white;
+  }
+  html.dark #plot text {
+    stroke: black;
+  }
+  </style>
