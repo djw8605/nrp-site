@@ -197,6 +197,16 @@ As an **`admin`**, you will have the ability to:
 
 </Steps>
 
+### Updating namespace membership
+
+By default the access token expires in half an hour and is automatically updated after that. If you need to update one sooner (for example, you were added to a new namespace), you can invalidate the token:
+
+```bash title="Invalidate access token"
+kubectl oidc-login clean
+```
+
+After that any `kubectl` command will trigget getting the new token. (F.e. `kubectl get nodes`)
+
 
 :::caution[Read it before using the cluster]
 - Containers are stateless. 

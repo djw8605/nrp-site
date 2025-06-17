@@ -4,6 +4,11 @@ title: A New Way to Manage Resources on the National Research Platform (NRP)
 
 The National Research Platform (NRP) is transitioning to a new system for managing computational resources. This upgrade gives research groups more direct control by delegating permissions to you. This new model will allow you to manage your own team's access and resources without needing to contact the NRP core team for every change, enabling everyone to get their work done faster and more efficiently.
 
+:::note[Info]
+- The portal caches information about groups every minute.
+- The k8s access token expires in half an hour. If you need to update the group membership sooner, use the [oidc-login clean command](/documentation/userdocs/start/getting-started#updating-namespace-membership).
+:::
+
 ### How It Works: The New Hierarchical System
 
 The core of this upgrade is a **hierarchical management system**. This structure organizes users and resources in a clear, nested hierarchy, much like a folder structure:
