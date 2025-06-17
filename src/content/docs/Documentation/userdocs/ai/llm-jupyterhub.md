@@ -3,7 +3,7 @@ title: LLM in JupyterHub
 description: LLM in JupyterHub
 ---
 
-You can easily experiment with LLMs in JupyterHub. We provide the [managed one](/documentation/userdocs/jupyter/jupyterhub-service/), or you can [run your own](https://docs.nrp.ai/userdocs/jupyter/jupyterhub/).
+You can easily experiment with LLMs in JupyterHub. We provide the [managed one](/documentation/userdocs/jupyter/jupyterhub-service/), or you can [run your own](/documentation/userdocs/jupyter/jupyterhub/).
 
 Make sure your `/home/jovyan` volume is large enough to hold the LLM model (which usually reaches hundreds of GB), and ask admins to extend it if nesessary.
 
