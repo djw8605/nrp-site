@@ -107,7 +107,7 @@
                     <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
                     <label for="newNamespace">New group (should not exist already)</label>
                 </FloatLabel>
-                <Button label="Create" @click="createNamespace" />
+                <Button label="Create" :loading="createNamespaceLoading" @click="createNamespace" />
             </InputGroup>
             <Card>
                 <template #subtitle>Features</template>
@@ -185,6 +185,7 @@ const initialValues = reactive({
 
 const addUserLoading = ref(false);
 const delUserLoading = ref({});
+const createNamespaceLoading = ref(false);
 const promoteUserLoading = ref({});
 const addBulkUserLoading = ref(false);
 const saveLoading = ref(false);
@@ -620,6 +621,8 @@ const createNamespace = () => {
         return;
     }
 
+    createNamespaceLoading.value = true;
+
     client.request({
         method: "admin.CreateNamespace",
         params: {
@@ -652,6 +655,8 @@ const createNamespace = () => {
             detail: err,
             life: 3000
         });
+    }).finally(() => {
+        createNamespaceLoading.value = false;
     });
 };
 </script>
