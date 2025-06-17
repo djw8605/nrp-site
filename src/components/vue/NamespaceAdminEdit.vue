@@ -100,15 +100,26 @@
         </template>
     </Card>
     <Card>
-        <template #title>Create namespace</template>
+        <template #title>Create group</template>
         <template #content>
             <InputGroup>
                 <FloatLabel variant="on">
                     <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
-                    <label for="newNamespace">New namespace (should not exist already)</label>
+                    <label for="newNamespace">New group (should not exist already)</label>
                 </FloatLabel>
                 <Button label="Create" @click="createNamespace" />
             </InputGroup>
+            <Card>
+                <template #subtitle>Features</template>
+                <template #content>
+                    <div class="flex gap-2">
+                        <span  v-for="feature of features" :key="feature.key">
+                            <Checkbox v-model="selectedFeatures" :inputId="feature.key" name="feature" :value="feature.key" :disabled="feature.disabled" />
+                            <label class="m-1" :for="feature.key"> {{ feature.name }} </label>
+                        </span>
+                    </div>
+                </template>
+            </Card>
         </template>
     </Card>
 </template>
@@ -120,12 +131,14 @@ import { useToast } from 'primevue/usetoast';
 import AutoComplete from "primevue/autocomplete";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
+import Checkbox from "primevue/checkbox";
 import Textarea from "primevue/textarea";
 import FloatLabel from "primevue/floatlabel";
 import FileUpload from 'primevue/fileupload';
 import Card from 'primevue/card';
 import DataView from 'primevue/dataview';
 import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
 import Badge from 'primevue/badge';
 import Inplace from 'primevue/inplace';
 import {VueSpinnerPie} from 'vue3-spinners';
@@ -159,6 +172,13 @@ const toast = useToast();
 const emit = defineEmits(['onNSChanged']);
 
 const newNamespace = ref("");
+
+const selectedFeatures = ref(["is_k8s_namespace"]);
+
+const features = ref([
+    {name: "K8s namespace", key: "is_k8s_namespace", disabled: false},
+    {name: "LiteLLM", key: "is_litellm_org", disabled: true},
+]);
 
 const initialValues = reactive({
     });
@@ -596,8 +616,6 @@ const createNamespace = () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
-    console.log("Creating namespace", nsName, newNamespace.value);
-
     if (!newNamespace.value) {
         return;
     }
@@ -607,12 +625,13 @@ const createNamespace = () => {
         params: {
             Namespace: nsName,
             NewNamespace: newNamespace.value,
+            GroupFeatures: selectedFeatures.value,
         }
     }).then((response) => {
         if (response.error) {
             toast.add({
                 severity: 'error',
-                summary: 'Error creating namespace',
+                summary: 'Error creating group',
                 detail: response.error.message,
                 life: 3000
             });
@@ -621,7 +640,7 @@ const createNamespace = () => {
         
         toast.add({
             severity: 'success',
-            summary: 'Successfully created namespace '+newNamespace.value,
+            summary: 'Successfully created group '+newNamespace.value,
             life: 3000
         });
         emit('onNSChanged');
@@ -629,7 +648,7 @@ const createNamespace = () => {
     }).catch((err) => {
         toast.add({
             severity: 'error',
-            summary: 'Error creating namespace',
+            summary: 'Error creating group',
             detail: err,
             life: 3000
         });
