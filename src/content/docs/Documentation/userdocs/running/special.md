@@ -36,7 +36,6 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 | nautilus.io/jump=true          | nautilus.io/system=jump:NoSchedule        |
 | nautilus.io/nrp-llm=true       | nautilus.io/system=nrp-llm:NoSchedule     |
 | nautilus.io/perfsonar=true     | nautilus.io/system=perfsonar:NoSchedule   |
-| nautilus.io/sense=true         | nautilus.io/system=sense:NoSchedule       |
 | nautilus.io/linstor-server=true| nautilus.io/system=storage:NoSchedule     |
 | nautilus.io/bluefield2=true    | nautilus.io/reservation=bluefield2:NoSchedule |
 | nautilus.io/csusb=true         | nautilus.io/reservation=csusb:NoSchedule  |
@@ -50,6 +49,7 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 | nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
 | nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
 | nautilus.io/sdsc-llm=true      | nautilus.io/reservation=sdsc-llm:NoSchedule |
+| nautilus.io/sense=true         | nautilus.io/reservation=sense:NoSchedule       |
 | nautilus.io/stashcache=true    | nautilus.io/reservation=osdf:NoSchedule   |
 | nautilus.io/suncave=true       | nautilus.io/reservation=suncave:NoSchedule |
 | nautilus.io/suncave-head=true  | nautilus.io/reservation=suncave-head:NoSchedule |
