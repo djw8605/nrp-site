@@ -24,4 +24,4 @@ users:
       - --oidc-issuer-url=https://authentik.nrp-nautilus.io/application/o/k8s/
       - --oidc-client-id=xrxBIaWxeRmGJUwSvaLjUzMEFZzQu2b4nk9I0B2W
       - --listen-address=0.0.0.0:8000
-      - --oidc-extra-scope=profile
+      - --oidc-extra-scope=profile,offline_access
