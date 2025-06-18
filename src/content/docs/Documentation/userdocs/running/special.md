@@ -49,7 +49,7 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 | nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
 | nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
 | nautilus.io/sdsc-llm=true      | nautilus.io/reservation=sdsc-llm:NoSchedule |
-| nautilus.io/sense=true         | nautilus.io/reservation=sense:NoSchedule       |
+| nautilus.io/sense=true         | nautilus.io/reservation=sense:NoSchedule      |
 | nautilus.io/stashcache=true    | nautilus.io/reservation=osdf:NoSchedule   |
 | nautilus.io/suncave=true       | nautilus.io/reservation=suncave:NoSchedule |
 | nautilus.io/suncave-head=true  | nautilus.io/reservation=suncave-head:NoSchedule |
