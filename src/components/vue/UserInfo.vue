@@ -2,11 +2,11 @@
     <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
     <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
     <InputGroup v-if="currentUserIsAdmin">
+        <Button label="Search" :loading="searchUserLoading" @click="searchUser" />
         <FloatLabel variant="on">
             <AutoComplete name="chooseUser" v-model="chooseUser" forceSelection optionLabel="Title" id="chooseUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid />
             <label for="chooseUser">Choose the user to see the info</label>
         </FloatLabel>
-        <Button label="Search" :loading="searchUserLoading" @click="searchUser" />
     </InputGroup>
     <div v-if="user" id="userInfo" class="flex flex-col">
         <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
