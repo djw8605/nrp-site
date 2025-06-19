@@ -80,6 +80,48 @@
             </DataTable>
         </template>
     </Card>
+    <Card v-if="user && currentUserIsAdmin" class="my-8">
+        <template #title>Utilization violations for other users</template>
+        <template #content>
+            <Card v-for="(item, key, index) in userInfo.OtherViolations" :index="index" :key="key" class="my-4">
+                <template #subtitle>
+                    {{ key }}
+                </template>
+                <template #content>
+                    <DataTable :value="item">
+                        <Column field="Namespace" header="Namespace"></Column>
+                        <Column field="Name" header="Name"></Column>
+                        <Column field="GpuUtilization" header="GPU util">
+                            <template #body="slotProps">
+                                <Badge v-if="slotProps.data.GpuUtilization" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                            </template>
+                        </Column>
+                        <Column field="CpuUtilization" header="CPU util">
+                            <template #body="slotProps">
+                                <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                            </template>
+                        </Column>
+                        <Column field="MemoryUtilization" header="Mem util">
+                            <template #body="slotProps">
+                                <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                            </template>
+                        </Column>
+                        <Column field="GpuRequest" header="GPU requested">
+                            <template #body="slotProps">
+                                {{ slotProps.data.GpuRequest ? slotProps.data.GpuRequest : '' }}
+                            </template>
+                        </Column>
+                        <Column field="CpuRequest" header="CPU requested"></Column>
+                        <Column field="MemoryRequest" header="Mem requested">
+                            <template #body="slotProps">
+                                {{ humanBytes(slotProps.data.MemoryRequest) }}
+                            </template>
+                        </Column>
+                    </DataTable>
+                </template>
+            </Card>
+        </template>
+    </Card>
 
 </template>
 

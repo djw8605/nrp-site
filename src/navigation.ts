@@ -38,10 +38,6 @@ export const headerData = {
           text: 'People',
           href: getPermalink('/people'),
         },
-        {
-          text: 'Science Enabled',
-          href: getPermalink('/science'),
-        },
       ],
     },
     {
