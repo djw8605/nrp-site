@@ -53,17 +53,17 @@
                 <Column field="Name" header="Name"></Column>
                 <Column field="GpuUtilization" header="GPU util">
                     <template #body="slotProps">
-                        <Badge v-if="slotProps.data.GpuUtilization" :value="slotProps.data.GpuUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                        <Badge v-if="slotProps.data.GpuUtilization" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
                     </template>
                 </Column>
                 <Column field="CpuUtilization" header="CPU util">
                     <template #body="slotProps">
-                        <Badge :value="slotProps.data.CpuUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                        <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
                     </template>
                 </Column>
                 <Column field="MemoryUtilization" header="Mem util">
                     <template #body="slotProps">
-                        <Badge :value="slotProps.data.MemoryUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                        <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
                     </template>
                 </Column>
                 <Column field="GpuRequest" header="GPU requested">
