@@ -1,0 +1,16 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import UserInfo from '~/components/vue/UserInfo.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'User Information',
+};
+
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="User Information">
+    <UserInfo client:only="vue" />
+  </WidgetWrapper>
+</Layout>

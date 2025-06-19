@@ -313,10 +313,7 @@ const getUsersFilter = (org) => {
             return;
         }
 
-        const nsNameSplit = props["selectedNamespace"].Name.split("/");
-        const nsName = nsNameSplit[nsNameSplit.length - 1];
-
-        const namespaceInfo = client.request({
+        client.request({
             method: "admin.ListUsersAC",
             params: {Term: org.query.trim()},
         }).then((response) => {

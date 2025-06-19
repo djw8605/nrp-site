@@ -90,6 +90,10 @@ export const headerData = {
       text: 'User',
       links: [
         {
+          text: 'User info',
+          href: getPermalink('/userinfo'),
+        },
+        {
           text: 'Reservations',
           href: getPermalink('/reservations'),
         },
