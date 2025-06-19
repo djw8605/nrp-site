@@ -53,7 +53,7 @@
                 <Column field="Name" header="Name"></Column>
                 <Column field="GpuUtilization" header="GPU util">
                     <template #body="slotProps">
-                        <Badge :value="slotProps.data.GpuUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                        <Badge v-if="slotProps.data.GpuUtilization" :value="slotProps.data.GpuUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
                     </template>
                 </Column>
                 <Column field="CpuUtilization" header="CPU util">
@@ -66,7 +66,11 @@
                         <Badge :value="slotProps.data.MemoryUtilization*100+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
                     </template>
                 </Column>
-                <Column field="GpuRequest" header="GPU requested"></Column>
+                <Column field="GpuRequest" header="GPU requested">
+                    <template #body="slotProps">
+                        {{ slotProps.data.GpuRequest ? slotProps.data.GpuRequest : '' }}
+                    </template>
+                </Column>
                 <Column field="CpuRequest" header="CPU requested"></Column>
                 <Column field="MemoryRequest" header="Mem requested">
                     <template #body="slotProps">
