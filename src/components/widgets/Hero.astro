@@ -25,26 +25,23 @@ const {
 //         widths={[400, 768, 1024, 2040]}
 ---
 
-<section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>
+<section class="relative not-prose md:-mt-[96px] overflow-hidden" {...id ? { id } : {}}>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
       {bgImage ? (
         <Image
         class="brightness-50 object-cover object-center w-full h-full"
-
-        
         loading="eager"
-        
         {...bgImage}
       />
       ) : null}
     </slot>
   </div>
-  <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
+  <div class="pointer-events-none md:pt-[96px] pt-0"></div>
     {
       alert && (
-        <div class="relative bg-blue-50 dark:bg-slate-800 mx-auto">
+        <div class="relative bg-blue-50 dark:bg-slate-800 mx-auto w-full">
           <p class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium"
             set:html={alert} 
           />
