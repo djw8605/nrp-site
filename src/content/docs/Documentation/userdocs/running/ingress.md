@@ -51,10 +51,9 @@ After that you can create the Ingress object:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: haproxy
   name: test-ingress
 spec:
+  ingressClassName: haproxy
   rules:
   - host: test-service.nrp-nautilus.io
     http:
@@ -95,10 +94,9 @@ and add a section to the Ingress:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: haproxy
   name: test-ingress
 spec:
+  ingressClassName: haproxy
   rules:
   - host: my-own-hostname.com
     http:

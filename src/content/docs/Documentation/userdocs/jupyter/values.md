@@ -167,8 +167,7 @@ prePuller:
 
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.class: haproxy
+  ingressClassName: haproxy
   hosts: ["your_name.nrp-nautilus.io"]
   pathSuffix: ''
   tls:

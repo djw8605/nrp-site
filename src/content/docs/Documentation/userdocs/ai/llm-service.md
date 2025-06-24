@@ -31,8 +31,7 @@ updateStrategy:
 
 ingress:
   enabled: true
-  annotations:
-    kubernetes.io/ingress.class: haproxy
+  ingressClassName: haproxy
   hosts:
   - host: <subdomain>.nrp-nautilus.io
     paths:
@@ -74,8 +73,7 @@ chat:
                         
   ingress:
     enabled: true
-    annotations:
-      kubernetes.io/ingress.class: haproxy
+    ingressClassName: haproxy
     hosts:
     - host: <subdomain>-chat.nrp-nautilus.io
       paths:

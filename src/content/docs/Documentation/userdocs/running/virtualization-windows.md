@@ -413,9 +413,9 @@ metadata:
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/config-backend: |
       http-request del-header Authorization    
-    kubernetes.io/ingress.class: haproxy
   name: virtvnc
 spec:
+  ingressClassName: haproxy
   rules:
   - host: <some_name>.nrp-nautilus.io
     http:

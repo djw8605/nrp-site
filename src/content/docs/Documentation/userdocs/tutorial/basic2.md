@@ -272,10 +272,9 @@ What we need, is set up an Ingress instance for our service.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: haproxy
   name: test-ingress
 spec:
+  ingressClassName: haproxy
   rules:
   - host: test-service.nrp-nautilus.io
     http:
