@@ -9,13 +9,14 @@
             :rowClassRules="rowClassRules"
             :gridOptions="gridOptions"
             :data-ag-theme-mode="darkMode"
+            @grid-ready="onGridReady"
         >
         </ag-grid-vue>
     </div>
 </template>
 
 <script setup>
-    import { ref, onMounted, watch, onUnmounted } from 'vue';
+    import { ref, shallowRef, onMounted, watch, onUnmounted } from 'vue';
     import { Client, RequestManager, HTTPTransport } from '@open-rpc/client-js';
     const props = defineProps(['baseUrl']);
 
@@ -40,14 +41,24 @@
     import prettyBytes from 'pretty-bytes';
 
     const nodes = ref([]);
-    const gridOptions = ref({});
+    const gridOptions = ref({
+        getRowId: params => params.data.Name,
+    });
+    const gridApi = shallowRef(null);
     let timer = '';
     const rowClassRules = {
         'rag-red': 'data.IsUnschedulable',
     };
     const defaultColDef = {sortable: true, filter: true, enableCellChangeFlash:true, floatingFilter: true, resizable: true, autoHeaderHeight: true, wrapHeaderText: true};
     const columnDefs = [
-        { headerName: "Name", field: "Name", flex: 4, minWidth: 200, filter: 'agTextColumnFilter'},
+        { headerName: "Name", field: "Name", flex: 4, minWidth: 200, cellRenderer: params =>
+            {
+                if(params.data.NetboxID != "") {
+                    return `<a href="https://netbox-4.nrp-nautilus.io/dcim/devices/${params.data.NetboxID}" target="_blank">${params.data.Name}</a>`;
+                }
+                return params.data.Name;
+            },
+            floatingFilter: true },
         { headerName: "Taints", minWidth: 130, flex: 2, valueGetter: params => 
             {
                 if(params.data.Taints != null) {
@@ -89,6 +100,7 @@
         { headerName: "IPV6", field: "IsIPV6", minWidth: 80, cellDataType: 'boolean', maxWidth: 130},
         { headerName: "GPU driver", field: "GPUDriver", minWidth: 80, maxWidth: 130},
         { headerName: "CUDA", field: "CUDA", minWidth: 80, maxWidth: 130},
+        { headerName: "Owner", field: "Owner", minWidth: 50, maxWidth: 130},
     ];
 
     onMounted(() => {
@@ -99,16 +111,14 @@
         darkObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     });
 
+    const onGridReady = (params) => {
+      gridApi.value = params.api;
+    };
+
     onUnmounted(() => {
         darkObserver.disconnect();
         clearInterval(timer);
     });
-        // computed: {
-        //     beforeDestroy () {
-        //         clearInterval(this.timer);
-        //         return null
-        //     }
-        // },
     const getNodes = async () => {
         try {
             const response = await client.request({
@@ -130,7 +140,6 @@
                         if (nodes.value[i][Object.keys(incomingObj)[k]] != incomingObj[Object.keys(incomingObj)[k]]) {
                             nodes.value[i][Object.keys(incomingObj)[k]] = incomingObj[Object.keys(incomingObj)[k]];
                         }
-
                     }
                     delete nodesMap[nodes.value[i].Name];
                 } else {
@@ -142,12 +151,11 @@
                 nodes.value.push(Object.values(nodesMap)[iii]);
             }
 
-
-            if(gridOptions.api) {
-                gridOptions.api.refreshCells();
+            if(gridApi.value) {
+                gridApi.value.refreshCells();
             }
         } catch (error) {
-            console.error('Error fetching storage data:', error);
+            console.error('Error fetching nodes data:', error);
         }
 
     };
