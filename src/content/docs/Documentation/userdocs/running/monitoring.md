@@ -38,14 +38,15 @@ Description:
 - `args: - >-` This is a directive to the yaml parser to concatenate multiple lines. This makes the command easy to read and write. The command can include pipes, and you can string together multiple commands with `;` or `&&` in the same way you do on the bash command line without any need for escape characters (thanks to passing the `args` string to `bash -c`).
 
 #### Tensorboard
-If you are training models such as neural networks, statistical models, and the like on platforms such as Python, Tensorflow, PyTorch, etc, it is common to plot real time statistics to tools such as Tensorboard. Tensorboard in particular is an excellent real time visualization tool, but requires that you launch the Tensorboard process and keep track of the log files, all of which are extra steps to deal with under cluster environments such as the PRP. 
-You should first activate the tensorboard in the pods
+If you are training models such as neural networks, statistical models, and the like on platforms such as Python, Tensorflow, PyTorch, etc, it is common to plot real time statistics to tools such as Tensorboard. Tensorboard in particular is an excellent real time visualization tool, but requires that you launch the Tensorboard process and keep track of the log files, all of which are extra steps to deal with under cluster environments such as the NRP. 
+
+You should first activate tensorboard in the pods:
 
 ```
 tensorboard --logdir=${LOG-FILE}
 ```
 
-The kubectl can link you local port to the specified port of the pods
+The kubectl can link you local port to the specified port of the pods:
 
 ```
 kubectl port-forward ${POD_NAME} ${REMOTE-PORTNUM}:${LOCAL-PORTNUM}
@@ -55,4 +56,4 @@ Then the website for tensorboard can be seen in **http://localhost:${LOCAL-PORTN
 
 #### Comet.ml
 
-An alternative solution is to use [http://comet.ml](https://www.comet.ml), which is free for academic users, and provides a similar set of functions as Tensorboard (plus a Baysian Hyperparameter Tuning tool). Comet.ml stores everything on their website, so there are no logs to maintain or servers to run, and this makes it an easy solution to deploy on a distributed cluster like the PRP.
+An alternative solution is to use [http://comet.ml](https://www.comet.ml), which is free for academic users, and provides a similar set of functions as Tensorboard (plus a Baysian Hyperparameter Tuning tool). Comet.ml stores everything on their website, so there are no logs to maintain or servers to run, and this makes it an easy solution to deploy on a distributed cluster like the NRP.

@@ -310,7 +310,7 @@ Now, you can share this URL to allow anyone to download the file.
 
 [Cyberduck](https://cyberduck.io) is a free S3 client for Mac and Windows. It can be used to upload and download files to/from S3 buckets. To use Cyberduck with Ceph S3 endpoints you need to leverage "deprecated" path style requests. The simplest way to do this is to install the appropriate profile into Cyberduck referenced in the [Cyberduck profiles documentation](https://docs.cyberduck.io/protocols/profiles/), [S3 (Deprecated path style requests).cyberduckprofile](https://github.com/iterate-ch/profiles/blob/master/S3%20(Deprecated%20path%20style%20requests).cyberduckprofile).
 
-Once you add the profile, you can connect to the S3 endpoint by entering the endpoint hostname in the "Server" field. If you enter it as a URL instead of a hostname, it will likely trigger the selection of a different and undesired connection profile. For example, to connect to the S3 endpoint the for the PRP project's western region, you would enter `s3-west.nrp-nautilus.io` in the "Server" field. You can then enter your access key and secret key in the "Access Key ID" and "Secret Access Key" fields, respectively.
+Once you add the profile, you can connect to the S3 endpoint by entering the endpoint hostname in the "Server" field. If you enter it as a URL instead of a hostname, it will likely trigger the selection of a different and undesired connection profile. For example, to connect to the S3 endpoint the for the NRP project's western region, you would enter `s3-west.nrp-nautilus.io` in the "Server" field. You can then enter your access key and secret key in the "Access Key ID" and "Secret Access Key" fields, respectively.
 
 # S3 Cookbook
 

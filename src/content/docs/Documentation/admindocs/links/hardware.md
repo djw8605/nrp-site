@@ -9,7 +9,7 @@ description: Hardware
 
 1.  [FIONA][esnet-fiona]: low-cost, high-performance server-grade hardware
    - Flash I/O Network Appliance
-   - Participant-built, based on PRP-tested hardware configurations
+   - Participant-built, based on NRP-tested hardware configurations
    -  10/40/100Gbps, <1 PB storage, Intel x86 CPU & optionally GPU or FPGA compute capability 
    -  see [ESNet] https://fasterdata.es.net/science-dmz/DTN/fiona-flash-i-o-network-appliance
 1. NRP Pilot Components: FIONA System Types

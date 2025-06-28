@@ -266,7 +266,7 @@ When you will do the [storage tutorial](/documentation/userdocs/tutorial/storage
 
 ## Optional Section: reserved nodes and taints. Using tolerations
 
-There are [several parts of the PRP Kubernetes pool that are off-limits to regular users](/documentation/userdocs/running/special). One of them is Science-DMZ nodes that don't have access to the regular internet.
+There are [several parts of the NRP Kubernetes pool that are off-limits to regular users](/documentation/userdocs/running/special). One of them is Science-DMZ nodes that don't have access to the regular internet.
 
 Here is a Pod yaml that will try to run on one:
 
