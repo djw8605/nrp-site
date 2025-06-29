@@ -29,7 +29,7 @@
         </div>
     </div>
     <Card v-if="user" class="my-8">
-        <template #title>Namespaces</template>
+        <template #title>Namespaces & Groups</template>
         <template #content>
             <div class="flex flex-wrap">
                 <span v-for="ns in userInfo.Namespaces" :key="ns" class="text-sm font-medium p-2 text-surface-500 dark:text-surface-400">{{ ns }} </span>
