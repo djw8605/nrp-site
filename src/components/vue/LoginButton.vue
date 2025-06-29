@@ -1,8 +1,9 @@
 <template>
     <Toast />
     <div v-if="user" class="flex items-center justify-center h-full w-full">
-        <Avatar id="user-avatar" :image="user.pic" class="mr-2 flex items-center justify-center cursor-pointer" size="normal" @click="toggle"/>
-
+        <div class="flex items-center justify-center w-full h-full">
+            <Avatar id="user-avatar" :image="user.pic" class="flex items-center justify-center cursor-pointer" size="normal" @click="toggle"/>
+        </div>
         <Popover ref="op">
             <div class="flex flex-col gap-4 w-[15rem]">
                 <div>
