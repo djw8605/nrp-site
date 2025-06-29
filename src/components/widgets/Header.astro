@@ -138,7 +138,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
       ]}
     >
       <div class="items-center flex justify-between w-full md:w-auto">
-        <div class="flex">
+        <div class="flex items-center justify-center w-full h-full">
           {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
           {
             showRssFeed && (
