@@ -1,6 +1,6 @@
 <template>
     <Toast />
-    <div v-if="user">
+    <div v-if="user" class="flex items-center justify-center h-full w-full">
         <Avatar id="user-avatar" :image="user.pic"  class="mr-2 flex items-center justify-center cursor-pointer" size="normal" @click="toggle"/>
 
         <Popover ref="op">
@@ -13,7 +13,7 @@
             </div>
         </Popover>
     </div>
-    <div v-else class="flex items-center">
+    <div v-else class="flex items-center justify-center h-full w-full">
         <button class="btn-primary py-2 px-4 md:px-2 text-xs" @click="handleLogin">Log In</button>
     </div>
 </template>
