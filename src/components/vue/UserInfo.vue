@@ -93,7 +93,7 @@
                         <Column field="Name" header="Name"></Column>
                         <Column field="GpuUtilization" header="GPU util">
                             <template #body="slotProps">
-                                <Badge v-if="slotProps.data.GpuUtilization" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                                <Badge v-if="slotProps.data.GpuRequest > 0" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
                             </template>
                         </Column>
                         <Column field="CpuUtilization" header="CPU util">
