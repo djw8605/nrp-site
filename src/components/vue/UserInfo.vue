@@ -49,21 +49,28 @@
         </template>
         <template #content>
             <DataTable :value="userInfo.Violations">
-                <Column field="Namespace" header="Namespace"></Column>
+                <Column field="Namespace" header="Namespace">
+                </Column>
                 <Column field="Name" header="Name"></Column>
                 <Column field="GpuUtilization" header="GPU util">
                     <template #body="slotProps">
-                        <Badge v-if="slotProps.data.GpuRequest > 0" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                        <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/dRG9q0Ymz/k8s-compute-resources-namespace-gpus?var-namespace='+slotProps.data.Namespace">
+                            <Badge v-if="slotProps.data.GpuRequest > 0" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                        </a>
                     </template>
                 </Column>
                 <Column field="CpuUtilization" header="CPU util">
                     <template #body="slotProps">
-                        <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                        <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/85a562078cdf77779eaa1add43ccec1e/kubernetes-compute-resources-namespace-pods?var-namespace='+slotProps.data.Namespace">
+                            <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                        </a>
                     </template>
                 </Column>
                 <Column field="MemoryUtilization" header="Mem util">
                     <template #body="slotProps">
-                        <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                        <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/85a562078cdf77779eaa1add43ccec1e/kubernetes-compute-resources-namespace-pods?var-namespace='+slotProps.data.Namespace">
+                            <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                        </a>
                     </template>
                 </Column>
                 <Column field="GpuRequest" header="GPU requested">
@@ -93,17 +100,23 @@
                         <Column field="Name" header="Name"></Column>
                         <Column field="GpuUtilization" header="GPU util">
                             <template #body="slotProps">
-                                <Badge v-if="slotProps.data.GpuRequest > 0" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                                <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/dRG9q0Ymz/k8s-compute-resources-namespace-gpus?var-namespace='+slotProps.data.Namespace">
+                                    <Badge v-if="slotProps.data.GpuRequest > 0" :value="(slotProps.data.GpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.GpuUtilization, 'gpu')" />
+                                </a>
                             </template>
                         </Column>
                         <Column field="CpuUtilization" header="CPU util">
                             <template #body="slotProps">
-                                <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                                <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/85a562078cdf77779eaa1add43ccec1e/kubernetes-compute-resources-namespace-pods?var-namespace='+slotProps.data.Namespace">
+                                    <Badge :value="(slotProps.data.CpuUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.CpuUtilization, 'cpu')" />
+                                </a>
                             </template>
                         </Column>
                         <Column field="MemoryUtilization" header="Mem util">
                             <template #body="slotProps">
-                                <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                                <a class="underline" :href="'https://grafana.nrp-nautilus.io/d/85a562078cdf77779eaa1add43ccec1e/kubernetes-compute-resources-namespace-pods?var-namespace='+slotProps.data.Namespace">
+                                    <Badge :value="(slotProps.data.MemoryUtilization*100).toFixed(0)+'%'" :severity="getUtilizationSeverity(slotProps.data.MemoryUtilization, 'mem')" />
+                                </a>
                             </template>
                         </Column>
                         <Column field="GpuRequest" header="GPU requested">
