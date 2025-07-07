@@ -24,7 +24,7 @@ Follow these steps to configure an OAuth Client via Authentik.
 - Make the client **confidential**.
 - Retrieve the `Client ID` and `Client Secret` (needed for integration).
 
-:::warning
+:::note
   `nrp-authorization-with-aup-consent` is the flow that prompts users for AUP consent if not provided before.
 :::
 
@@ -59,7 +59,7 @@ Below is a sample JupyterHub configuration using Authentik as the OAuth provider
 
 More details on Expression Policies: [Authentik Docs](https://docs.goauthentik.io/docs/customize/policies/expression)
 
-:::warning
+:::note
   There's no need to add banned users to expression policies. They are banned by default.
 :::
 
