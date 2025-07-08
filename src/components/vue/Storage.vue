@@ -98,7 +98,7 @@ const size = (bytes) => {
 </script>
 
 <template>
-    <div class="container-fluid" style="margin-top: 10px">
+    <div id="storage" class="container-fluid" style="margin-top: 10px">
         <span style="padding: 10px;">
             <label for="pool">Pool: </label>
             <select id="pool" name="pool" v-model="pool">
@@ -187,7 +187,7 @@ const size = (bytes) => {
     }
 
     .table-row.header {
-        background-color: #FFEEDB;
+        /* background-color: #FFEEDB; */
         font-weight: bold;
         padding-top: 8px;
         padding-bottom: 8px;
@@ -195,6 +195,11 @@ const size = (bytes) => {
 
     .namespace {
         cursor: pointer;
-        background-color: #EEEEEE;
+        /* background-color: #EEEEEE; */
     }
+
+    html.dark .namespace {
+        background-color: #040329 !important;
+    }
+
 </style>

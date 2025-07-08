@@ -6,7 +6,7 @@
     </div>
   </div>
   <VueSpinnerPie v-if="isTreeLoading" size="40" style="z-index: 10; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
-  <div v-if="user" id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
+  <div v-if="user" id="graph-plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
 </template>
   
 <script setup>
@@ -129,7 +129,7 @@
         }
       });
 
-      const div = document.querySelector("#plot");
+      const div = document.querySelector("#graph-plot");
       div.append(plot);
       isTreeLoading.value = false;
     });
@@ -140,10 +140,10 @@
 </script>
 
 <style>
-  #plot text {
+  #graph-plot text {
     stroke: white;
   }
-  html.dark #plot text {
+  html.dark #graph-plot text {
     stroke: black;
   }
   </style>
