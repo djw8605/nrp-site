@@ -177,7 +177,7 @@ const selectedFeatures = ref(["is_k8s_namespace"]);
 
 const features = ref([
     {name: "K8s namespace", key: "is_k8s_namespace", disabled: false},
-    {name: "LiteLLM", key: "is_litellm_org", disabled: true},
+    {name: "LiteLLM", key: "is_litellm_org", disabled: false},
 ]);
 
 const initialValues = reactive({
