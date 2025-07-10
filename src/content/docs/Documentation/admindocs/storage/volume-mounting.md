@@ -48,6 +48,47 @@ First, examine if it is really attached to a running pod. If there is no running
 
 There is a chance that the pod still could not mount the volume with the same multi-attach error, but `kubectl get volumeattachment | grep <PVC-name>` could not find the attachment anymore. In this case reboot the node with the attachment previously.
 
+If and only if, there's a stale or orphaned Ceph RBD lock that was not properly released:
+
+⚠️ **Make sure you follow the steps carefully to not damage data or filesystem.**
+
+#### 1. Check for RBD Lock
+
+Open a shell into the Ceph tools pod:
+
+```sh
+kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- bash
+rbd lock list <pool-name>/csi-vol-<uuid>
+```
+
+Example output:
+
+```
+There is 1 exclusive lock on this image.
+Locker            ID                     Address
+client.<id>       auto <lock-id>         <ip>:0/<session-id>
+```
+
+#### 2. Identify the Node by IP
+
+Use NetBox or node inventory system to find which node matches the IP address from the lock entry. Then:
+
+- Confirm that **no nodes** are using the volume.
+
+#### 3. Remove the Lock (Only If Safe)
+
+⚠️ **Only run this command if you are absolutely certain that no pods are using the volume anymore.**
+
+```sh
+rbd lock remove <pool-name>/csi-vol-<uuid> "auto <lock-id>" client.<id>
+```
+
+### 4. Retry Pod or PVC
+
+Once the lock is removed, retry launching the pod or let Kubernetes rebind the PVC.
+
+---
+
 ## "Permission denied" error
 
 The error message is similar to:
