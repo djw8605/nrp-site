@@ -100,7 +100,7 @@
         { headerName: "IPV6", field: "IsIPV6", minWidth: 80, cellDataType: 'boolean', maxWidth: 130},
         { headerName: "GPU driver", field: "GPUDriver", minWidth: 80, maxWidth: 130},
         { headerName: "CUDA", field: "CUDA", minWidth: 80, maxWidth: 130},
-        { headerName: "Owner", field: "Owner", minWidth: 50},
+        { headerName: "Owner", field: "OwnerName", minWidth: 50},
     ];
 
     onMounted(() => {

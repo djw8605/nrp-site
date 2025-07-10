@@ -99,8 +99,8 @@
             </DataView>
         </template>
     </Card>
-    <Card>
-        <template #title>Create group</template>
+    <Card class="my-8" >
+        <template #title>Create subgroup</template>
         <template #content>
             <InputGroup>
                 <FloatLabel variant="on">
@@ -122,6 +122,22 @@
             </Card>
         </template>
     </Card>
+    <Card>
+        <template #title>Group tenants (hardware owners)</template>
+        <template #content>
+            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
+                <Chip v-for="tenant in tenants" :key="tenant.Slug" :label="tenant.Name" removable @remove="removeTenant(tenant.Slug)" />
+            </div>
+            <InputGroup>
+                <FloatLabel variant="on">
+                    <Select name="addTenant" v-model="assignTenantObj" optionLabel="Name" id="addTenant" type="text" :options="alltenants" fluid />
+                    <label for="addTenant">Assign a tenant</label>
+                </FloatLabel>
+                <Button label="Assign" :loading="assignTenantLoading" @click="assignTenant" />
+            </InputGroup>
+
+        </template>
+    </Card>
 </template>
 
 <script setup>
@@ -129,18 +145,21 @@ import 'primeicons/primeicons.css'
 import {Form} from '@primevue/forms';
 import { useToast } from 'primevue/usetoast';
 import AutoComplete from "primevue/autocomplete";
-import InputText from "primevue/inputtext";
+import Badge from 'primevue/badge';
 import Button from "primevue/button";
-import Checkbox from "primevue/checkbox";
-import Textarea from "primevue/textarea";
-import FloatLabel from "primevue/floatlabel";
-import FileUpload from 'primevue/fileupload';
 import Card from 'primevue/card';
+import Checkbox from "primevue/checkbox";
+import Chip from 'primevue/chip';
 import DataView from 'primevue/dataview';
+import FileUpload from 'primevue/fileupload';
+import FloatLabel from "primevue/floatlabel";
+import Inplace from 'primevue/inplace';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
-import Badge from 'primevue/badge';
-import Inplace from 'primevue/inplace';
+import InputText from "primevue/inputtext";
+import Message from 'primevue/message';
+import Select from "primevue/select";
+import Textarea from "primevue/textarea";
 import {VueSpinnerPie} from 'vue3-spinners';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
@@ -164,6 +183,8 @@ const newUser = ref(null);
 
 const filteredOrganizations = ref([]);
 const filteredUsers = ref([]);
+const alltenants = ref([]);
+const tenants = ref([]);
 
 const bulkUsers = ref("");
 
@@ -188,9 +209,12 @@ const delUserLoading = ref({});
 const createNamespaceLoading = ref(false);
 const promoteUserLoading = ref({});
 const addBulkUserLoading = ref(false);
+const assignTenantLoading = ref(false);
 const saveLoading = ref(false);
 const isFormLoading = ref(true);
 const isUsersLoading = ref(true);
+
+const assignTenantObj = ref({});
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 const transport = new HTTPTransport(baseUrl+"/rpc",
@@ -355,8 +379,39 @@ onMounted(async () => {
     });
 
     readNSUsers(nsName);
-
+    readAllTenants();
+    readTenants(nsName);
 });
+
+const readAllTenants = () => {
+    client.request({
+        method: "guest.ListTenants",
+        params: {},
+    }).then((response) => {
+        if (response.error) {
+            console.error('Error fetching all tenants:', response.error);
+            return;
+        } else {
+            alltenants.value = response.Tenants;
+            return;
+        }
+    });
+};
+
+const readTenants = (nsName) => {
+    client.request({
+        method: "user.GetNamespaceTenants",
+        params: {Namespace: nsName},
+    }).then((response) => {
+        if (response.error) {
+            console.error('Error fetching tenants:', response.error);
+            return;
+        } else {
+            tenants.value = response.Tenants;
+            return;
+        }
+    });
+};
 
 const readNSUsers = (nsName) => {
     isUsersLoading.value = true;
@@ -458,6 +513,87 @@ const addUser = async () => {
         addUserLoading.value = false;
     });
 };
+
+const assignTenant = async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    if (!assignTenantObj.value) {
+        return;
+    }
+
+    assignTenantLoading.value = true;
+    client.request({
+        method: "admin.ModifyNamespaceTenant",
+        params: {
+            Namespace: nsName,
+            TenantSlug: assignTenantObj.value.Slug,
+            IsAdding: true,
+        }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error assigning tenant',
+                detail: response.error.message,
+                life: 3000
+            });
+        } else {
+            toast.add({
+                severity: 'success',
+                summary: 'Tenant assigned successfully',
+                life: 3000
+            });
+        }
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error assigning tenant',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+        assignTenantLoading.value = false;
+        readTenants(nsName);
+    });
+};
+
+const removeTenant = async (tenantSlug) => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    client.request({
+        method: "admin.ModifyNamespaceTenant",
+        params: {
+            Namespace: nsName,
+            TenantSlug: tenantSlug,
+            IsAdding: false,
+        }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error unassigning tenant',
+                detail: response.error.message,
+                life: 3000
+            });
+        } else {
+            toast.add({
+                severity: 'success',
+                summary: 'Tenant unassigned successfully',
+                life: 3000
+            });
+        }
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error unassigning tenant',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+    });
+}
 
 const promoteToggleUser = async (user, index) => {
     if (!user) {
