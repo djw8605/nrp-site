@@ -47,7 +47,7 @@ This page covers integrating GitLab with the Nautilus cluster to automatically d
       
       `echo <the CA value> | base64 -d` - CA
 
-      API URL - get from your cluster config file (`https://67.58.53.147:6443`)
+      API URL - get from your cluster config file (`https://67.58.53.148:443`)
 
 1. Uncheck `GitLab-managed cluster`, enter the namespace into `Project namespace prefix (optional, unique)`
 

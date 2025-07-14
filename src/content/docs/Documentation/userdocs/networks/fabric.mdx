@@ -197,7 +197,7 @@ else:
     # Fallback to token if no config file is found
     print("No kubeconfig found. Using token for authentication.")
     configuration = client.Configuration()
-    configuration.host = 'https://67.58.53.147:443'  # Your server URL
+    configuration.host = 'https://67.58.53.148:443'  # Your server URL
     configuration.api_key = {'authorization': f'Bearer {token}'}  # Use the token for authorization
     configuration.verify_ssl = False
     api_client = client.ApiClient(configuration)
@@ -379,7 +379,7 @@ slice.get_nodes()[0].get_ssh_command()
 
 ```python
 # Generate kubectl exec command with token authentication
-server_url= 'https://67.58.53.147:443'
+server_url= 'https://67.58.53.148:443'
 print("\nTo access the pod, run:")
 print(f"""
 kubectl exec -it {pod_name} -n {namespace} \\
