@@ -163,11 +163,17 @@ As an **`admin`**, you will have the ability to:
       `--token-cache-storage=disk`  
       to store the token on disk instead of using the Linux keyring.
 
-    You can pass these flags when running:
-
+    You can add these arguments to your config file as follows:
     ```bash
-    kubectl oidc-login
+    args:
+      - oidc-login
+      - get-token
+      - --browser-command="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+      - --listen-port=18000
+      - --token-cache-storage=disk
+      - ...
     ```
+
     For more context and discussion, see [this related GitHub issue](https://github.com/int128/kubelogin/issues/535).
     :::
 
