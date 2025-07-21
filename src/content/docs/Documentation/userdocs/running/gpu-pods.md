@@ -202,3 +202,22 @@ spec:
             values:
             - "535"
 ```
+
+
+:::note[Adding Shared Memory (shm)]
+  You can add Shared Memory (shm) to your GPU pods in YAML:
+  
+  ```YAML
+          volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+        volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi
+  ```
+  `sizeLimit` is an optional term. Otherwise it defaults to half of the memory request. Not adding /dev/shm defaults to 64MB.
+:::
+
+
