@@ -203,6 +203,7 @@ spec:
             - "535"
 ```
 
+## Adding Shared Memory (shm)
 
 :::note[Adding Shared Memory (shm)]
   You can add Shared Memory (shm) to your GPU pods in YAML:
