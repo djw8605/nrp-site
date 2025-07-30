@@ -8,7 +8,7 @@ tags:
   - conference
 ---
 
-![PEARC25](~/assets/images/posts/pearc25_4.jpg)
+<img src="/assets/images/posts/pearc25_4.jpg" alt="PEARC25" width="1000" height="562" />
 
 The **National Research Platform (NRP)** had a strong presence at **PEARC25**, held July 20–24 in Columbus, Ohio. With contributions across paper sessions, workshops, and Birds-of-a-Feather (BoF) discussions, NRP demonstrated its growing role in enabling scalable, distributed scientific computing and educational cyberinfrastructure.
 
@@ -35,7 +35,7 @@ The NRP paper underscored the importance of community-driven infrastructure for 
 
 > 📚 [Learn how to cite this paper](https://nrp.ai/documentation/userdocs/start/faq/)
 
-![NRP Paper](~/assets/images/posts/pearc25_2.jpg)
+<img src="/assets/images/posts/pearc25_2.jpg" alt="NRP Paper" width="1000" height="562" />
 
 ---
 
@@ -43,10 +43,10 @@ The NRP paper underscored the importance of community-driven infrastructure for 
 
 **BOF-16:** *National Research Platform (NRP) for Educators: Using a community-owned platform in the classroom*  
 **Led by:**  
-**Mahidhar Tatineni:** Co-PI and User Support Group Lead at SDSC/UCSD.
-**Frank Wuerthwein:** Principal Investigator of NPR, Executive Director of the Open Science Grid** and Director of the San Diego Supercomputer Center (SDSC).
-**Derek Weitzel:** – Co-PI and Research Assistant Professor School of Computing at UNL
-**Eric Van Dusen:** – Outreach and Tech Lead for Data Science Undergraduate Studies at UC Berkeley.
+**Mahidhar Tatineni:** Co-PI and User Support Group Lead at SDSC/UCSD.  
+**Frank Wuerthwein:** Principal Investigator of NPR, Executive Director of the Open Science Grid and Director of the San Diego Supercomputer Center (SDSC).  
+**Derek Weitzel:** – Co-PI and Research Assistant Professor School of Computing at UNL  
+**Eric Van Dusen:** – Outreach and Tech Lead for Data Science Undergraduate Studies at UC Berkeley.  
 **Kyle Krick:** – Research Computing Facilitator at SDSU.
 
 This lively BoF session gathered educators and technologists to discuss NRP’s value in **academic classrooms**. The team showcased tools like:
@@ -58,10 +58,10 @@ This lively BoF session gathered educators and technologists to discuss NRP’s 
 
 With participation from over 75 institutions, the session explored successful deployments, practical usage by faculty, and challenges in scaling cyberinfrastructure-enabled pedagogy.
 
-![BoF Session](~/assets/images/posts/pearc25_3.jpg)
-![BoF Session](~/assets/images/posts/pearc25_4.jpg)
-![BoF Session](~/assets/images/posts/pearc25_5.jpg)
-![BoF Session](~/assets/images/posts/pearc25_6.jpg)
+<img src="/assets/images/posts/pearc25_3.jpg" alt="BoF Session" width="1000" height="562" />
+<img src="/assets/images/posts/pearc25_4.jpg" alt="BoF Session" width="1000" height="562" />
+<img src="/assets/images/posts/pearc25_5.jpg" alt="BoF Session" width="1000" height="562" />
+<img src="/assets/images/posts/pearc25_6.jpg" alt="BoF Session" width="1000" height="562" />
 
 ---
 
