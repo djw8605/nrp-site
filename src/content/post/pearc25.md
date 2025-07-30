@@ -20,7 +20,7 @@ Led by **Principal Investigator Dr. Frank Würthwein**, who serves as the Execut
 
 **Session:** Systems & Software (S&SS-2-4)  
 **Title:** *The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster*  
-**Authors:** Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Wuerthwein, Mahidhar Tatineni, Dmitry Mishin, Elham Khoda, Mohammad Firas Sada, Larry Smarr, Thomas DeFanti, John Graham
+**Authors:** Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Würthwein, Mahidhar Tatineni, Dmitry Mishin, Elham Khoda, Mohammad Firas Sada, Larry Smarr, Thomas DeFanti, John Graham
 
 This paper presented the NRP’s architecture as a distributed, multi-tenant **Kubernetes-based scientific cyberinfrastructure**. The platform spans U.S. and international sites and supports a wide range of scientific workflows, including AI/ML workloads, by federating diverse computational nodes—from single machines to large clusters.
 
@@ -44,7 +44,7 @@ The NRP paper underscored the importance of community-driven infrastructure for 
 **BOF-16:** *National Research Platform (NRP) for Educators: Using a community-owned platform in the classroom*  
 **Led by:**  
 **Mahidhar Tatineni:** Co-PI and User Support Group Lead at SDSC/UCSD.  
-**Frank Wuerthwein:** Principal Investigator of NPR, Executive Director of the Open Science Grid and Director of the San Diego Supercomputer Center (SDSC).  
+**Frank Würthwein:** Principal Investigator of NPR, Executive Director of the Open Science Grid and Director of the San Diego Supercomputer Center (SDSC).  
 **Derek Weitzel:** – Co-PI and Research Assistant Professor School of Computing at UNL  
 **Eric Van Dusen:** – Outreach and Tech Lead for Data Science Undergraduate Studies at UC Berkeley.  
 **Kyle Krick:** – Research Computing Facilitator at SDSU.
@@ -84,7 +84,7 @@ The session was tailored to experienced developers and system operators looking 
 
 **Session:** Applications & Software (A&SW-7-1)  
 **Title:** *Real-Time In-Network Machine Learning on P4-Programmable FPGA SmartNICs with Fixed-Point Arithmetic and Taylor Approximations*  
-**Authors:** Mohammad Firas Sada, John Graham, Mahidhar Tatineni, Dmitry Mishin, Thomas DeFanti, Frank Wuerthwein
+**Authors:** Mohammad Firas Sada, John Graham, Mahidhar Tatineni, Dmitry Mishin, Thomas DeFanti, Frank Würthwein
 
 This cutting-edge research introduced a novel system for **machine learning inference directly inside the network**, using **P4-programmable FPGA SmartNICs**. The team demonstrated how fixed-point arithmetic and Taylor approximations allow for efficient inference with reduced power and latency—paving the way for responsive, **edge-based AI in networked science systems**.
 
