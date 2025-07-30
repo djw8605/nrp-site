@@ -8,7 +8,7 @@ tags:
   - conference
 ---
 
-![PEARC25](~/assets/images/posts/pearc25_4.jpg)
+
 
 The **National Research Platform (NRP)** had a strong presence at **PEARC25**, held July 20–24 in Columbus, Ohio. With contributions across paper sessions, workshops, and Birds-of-a-Feather (BoF) discussions, NRP demonstrated its growing role in enabling scalable, distributed scientific computing and educational cyberinfrastructure.
 
@@ -35,8 +35,9 @@ The paper detailed core design principles such as:
 The NRP paper underscored the importance of community-driven infrastructure for sustainable, scalable science.
 
 > 📚 [Learn how to cite this paper](https://nrp.ai/documentation/userdocs/start/faq/)
+> 🔗 **DOI:** [10.1145/3708035.3736060](https://doi.org/10.1145/3708035.3736060)  
+> 📄 **arXiv:** [arXiv:2505.22864](https://doi.org/10.48550/arXiv.2505.22864)
 
-![NRP Paper](~/assets/images/posts/pearc25_2.jpg)
 
 ---
 
@@ -59,10 +60,7 @@ This lively BoF session gathered educators and technologists to discuss NRP’s 
 
 With participation from over 75 institutions, the session explored successful deployments, practical usage by faculty, and challenges in scaling cyberinfrastructure-enabled pedagogy.
 
-![BoF Session](~/assets/images/posts/pearc25_3.jpg)
-![BoF Session](~/assets/images/posts/pearc25_4.jpg)
-![BoF Session](~/assets/images/posts/pearc25_5.jpg)
-![BoF Session](~/assets/images/posts/pearc25_6.jpg)
+
 
 ---
 
@@ -92,6 +90,8 @@ This research introduced a novel system for **machine learning inference directl
 
 This project aligns closely with NRP’s goal of pushing computation **closer to data sources and network edges**, particularly in AI-driven scientific workflows.
 
+> 🔗 **DOI:** [10.1145/3708035.3736086](https://dl.acm.org/doi/10.1145/3708035.3736086)  
+> 📄 **arXiv:** [arXiv:2507.00428](https://arxiv.org/abs/2507.00428)
 ---
 
 ## Looking Forward
@@ -103,3 +103,11 @@ Stay tuned for further updates and upcoming deployments, and as always, we invit
 ---
 
 *This blog post was edited using NRP's publicly hosted LLMs. [Learn more](https://nrp.ai/documentation/userdocs/ai/llm-managed/).*
+
+![PEARC25](~/assets/images/posts/pearc25_4.jpg)
+![NRP Paper](~/assets/images/posts/pearc25_2.jpg)
+
+![BoF Session](~/assets/images/posts/pearc25_3.jpg)
+![BoF Session](~/assets/images/posts/pearc25_4.jpg)
+![BoF Session](~/assets/images/posts/pearc25_5.jpg)
+![BoF Session](~/assets/images/posts/pearc25_6.jpg)
