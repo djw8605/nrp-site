@@ -2,7 +2,7 @@
 publishDate: 2025-07-29T00:00:00Z
 title: NRP at PEARC25
 excerpt: Advancing Distributed Cyberinfrastructure and In-Network Intelligence
-image: /assets/images/posts/pearc25_1.jpg
+image: ~/assets/images/posts/pearc25_1.jpg
 category: Events
 tags:
   - conference
