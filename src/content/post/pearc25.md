@@ -19,7 +19,8 @@ Led by **Principal Investigator Dr. Frank Würthwein**, who serves as the Execut
 ## 📄 NRP Paper Spotlight
 
 **Session:** Systems & Software (S&SS-2-4)  
-**Title:** *The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster*  
+**Title:** *The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster*
+**Presenter:** Derek Weitzel
 **Authors:** Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Würthwein, Mahidhar Tatineni, Dmitry Mishin, Elham Khoda, Mohammad Firas Sada, Larry Smarr, Thomas DeFanti, John Graham
 
 This paper presented the NRP’s architecture as a distributed, multi-tenant **Kubernetes-based scientific cyberinfrastructure**. The platform spans U.S. and international sites and supports a wide range of scientific workflows, including AI/ML workloads, by federating diverse computational nodes—from single machines to large clusters.
@@ -84,6 +85,7 @@ The session was tailored to experienced developers and system operators looking 
 
 **Session:** Applications & Software (A&SW-7-1)  
 **Title:** *Real-Time In-Network Machine Learning on P4-Programmable FPGA SmartNICs with Fixed-Point Arithmetic and Taylor Approximations*  
+**Presenter:** Mohammad Firas Sada
 **Authors:** Mohammad Firas Sada, John Graham, Mahidhar Tatineni, Dmitry Mishin, Thomas DeFanti, Frank Würthwein
 
 This cutting-edge research introduced a novel system for **machine learning inference directly inside the network**, using **P4-programmable FPGA SmartNICs**. The team demonstrated how fixed-point arithmetic and Taylor approximations allow for efficient inference with reduced power and latency—paving the way for responsive, **edge-based AI in networked science systems**.
