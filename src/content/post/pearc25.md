@@ -45,9 +45,9 @@ The NRP paper underscored the importance of community-driven infrastructure for 
 **Led by:**  
 **Mahidhar Tatineni:** Co-PI and User Support Group Lead at SDSC/UCSD.  
 **Frank Würthwein:** Principal Investigator of NPR, Executive Director of the Open Science Grid and Director of the San Diego Supercomputer Center (SDSC).  
-**Derek Weitzel:** – Co-PI and Research Assistant Professor School of Computing at UNL  
-**Eric Van Dusen:** – Outreach and Tech Lead for Data Science Undergraduate Studies at UC Berkeley.  
-**Kyle Krick:** – Research Computing Facilitator at SDSU.
+**Derek Weitzel:** Co-PI and Research Assistant Professor School of Computing at UNL  
+**Eric Van Dusen:** Outreach and Tech Lead for Data Science Undergraduate Studies at UC Berkeley.  
+**Kyle Krick:** Research Computing Facilitator at SDSU.
 
 This lively BoF session gathered educators and technologists to discuss NRP’s value in **academic classrooms**. The team showcased tools like:
 
