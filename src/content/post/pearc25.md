@@ -23,7 +23,7 @@ Led by **Principal Investigator Dr. Frank Würthwein**, who serves as the Execut
 **Presenter:** Derek Weitzel
 **Authors:** Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Würthwein, Mahidhar Tatineni, Dmitry Mishin, Elham Khoda, Mohammad Firas Sada, Larry Smarr, Thomas DeFanti, John Graham
 
-This paper presented the NRP’s architecture as a distributed, multi-tenant **Kubernetes-based scientific cyberinfrastructure**. The platform spans U.S. and international sites and supports a wide range of scientific workflows, including AI/ML workloads, by federating diverse computational nodes—from single machines to large clusters.
+This paper presented the NRP’s architecture as a distributed, multi-tenant **Kubernetes-based scientific cyberinfrastructure**. The platform spans U.S. and international sites and supports a wide range of scientific workflows, including AI/ML workloads, by federating diverse computational nodes, from single machines to large clusters.
 
 The paper detailed core design principles such as:
 
@@ -88,7 +88,7 @@ The session was tailored to experienced developers and system operators looking 
 **Presenter:** Mohammad Firas Sada
 **Authors:** Mohammad Firas Sada, John Graham, Mahidhar Tatineni, Dmitry Mishin, Thomas DeFanti, Frank Würthwein
 
-This cutting-edge research introduced a novel system for **machine learning inference directly inside the network**, using **P4-programmable FPGA SmartNICs**. The team demonstrated how fixed-point arithmetic and Taylor approximations allow for efficient inference with reduced power and latency—paving the way for responsive, **edge-based AI in networked science systems**.
+This research introduced a novel system for **machine learning inference directly inside the network**, using **P4-programmable FPGA SmartNICs**. The team demonstrated how fixed-point arithmetic and Taylor approximations allow for efficient inference with reduced power and latency, paving the way for responsive, **edge-based AI in networked science systems**.
 
 This project aligns closely with NRP’s goal of pushing computation **closer to data sources and network edges**, particularly in AI-driven scientific workflows.
 
@@ -98,7 +98,7 @@ This project aligns closely with NRP’s goal of pushing computation **closer to
 
 We’re grateful to the **PEARC25 organizers** and the broader **ACM PEARC community** for providing a platform to share and discuss these advances. As the NRP continues to grow, we look forward to deepening collaborations with educators, researchers, and developers across the globe.
 
-Stay tuned for further updates and upcoming deployments—and as always, we invite the community to engage, contribute, and build with us.
+Stay tuned for further updates and upcoming deployments, and as always, we invite the community to engage, contribute, and build with us.
 
 ---
 
