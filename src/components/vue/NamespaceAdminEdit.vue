@@ -23,7 +23,11 @@
                             @focus="console.log('Institution field focused')"
                             @blur="console.log('Institution field blurred')"
                             @item-select="(e) => console.log('Institution selected:', e.value)"
-                            fluid />
+                            fluid>
+                            <template #item="slotProps">
+                                <div>{{ slotProps.item }}</div>
+                            </template>
+                        </AutoComplete>
                         <label for="institution">Institution</label>
                     </FloatLabel>
                     <Message v-if="$form.institution?.invalid" severity="error" size="small" variant="simple">{{ $form.institution.error?.message }}</Message>
@@ -318,6 +322,7 @@ const getOrganizationsFilter = (org) => {
     return new Promise((resolve, reject) => {
         if(!org.query.trim().length) {
             console.log("Organization query is empty - skipping fetch");
+            resolve();  // resolve to avoid hanging Promise
             return;
         }
 
@@ -343,7 +348,12 @@ const getOrganizationsFilter = (org) => {
                     console.log("First organization in response:", data.items[0]);
                 }
 
-                filteredOrganizations.value = data.items.map(item => item.name);
+                filteredOrganizations.value = data.items.map(item => {
+                    const nameObj = item.names.find(n =>
+                        n.types.includes('ror_display') || n.types.includes('label')
+                    );
+                    return nameObj ? nameObj.value : '(No name)';
+                });
                 console.log("Filtered organizations set:", filteredOrganizations.value);
                 
                 resolve();
@@ -355,6 +365,7 @@ const getOrganizationsFilter = (org) => {
             });
     });
 };
+
 
 const getUsersFilter = (org) => {
     return new Promise((resolve, reject) => {
