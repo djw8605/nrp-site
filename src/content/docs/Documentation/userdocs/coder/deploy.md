@@ -17,7 +17,7 @@ Your project will be accessible at `https://your_name.nrp-nautilus.io`.
 
 ### 2. Create the Namespace
 
-Log into the [Nautilus portal](https://portal.nrp.ai/profileN) to create a namespace for your project and ensure it's annotated with any required information.
+Log into the [Nautilus portal](https://nrp.ai/namespaces) to create a namespace for your project and ensure it's annotated with any required information.
 
 ---
 

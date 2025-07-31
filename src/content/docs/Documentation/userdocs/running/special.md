@@ -7,7 +7,7 @@ Our cluster combines various hardware resources from multiple universities and o
 
 :::caution
 
-  By default you can only use the nodes **having NO Taints** (see the [resources page](https://portal.nrp.ai/resources) of the portal).
+  By default you can only use the nodes **having NO Taints** (see the [resources page](https://nrp.ai/resources/viz/resources) of the portal).
 
 :::
 

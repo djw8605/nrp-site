@@ -73,7 +73,7 @@ How about a negative selector? And let's see what do we get:
 ```
 kubectl get node -l 'nvidia.com/gpu.product!=NVIDIA-GeForce-GTX-1080, nvidia.com/gpu.product!=NVIDIA-GeForce-RTX-3090' -L nvidia.com/gpu.product
 ```
-:exclamation:By the way, many of these queries are exposed as part of the Nautilus portal. You can visit the [Resources](https://portal.nrp.ai/resources) page to see a table with all the current nodes and their features.
+:exclamation:By the way, many of these queries are exposed as part of the Nautilus portal. You can visit the [Resources](https://nrp.ai/resources/viz/resources) page to see a table with all the current nodes and their features.
 
 ## Requirements in pods
 
