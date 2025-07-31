@@ -349,10 +349,27 @@ const getOrganizationsFilter = (org) => {
                 }
 
                 filteredOrganizations.value = data.items.map(item => {
-                    const nameObj = item.names.find(n =>
-                        n.types.includes('ror_display') || n.types.includes('label')
+                    // Find English name with 'ror_display' or 'label'
+                    let nameObj = item.names.find(n => 
+                        n.lang === 'en' && (n.types.includes('ror_display') || n.types.includes('label'))
                     );
-                    return nameObj ? nameObj.value : '(No name)';
+
+                    // If not found, fallback to any English name
+                    if (!nameObj) {
+                        nameObj = item.names.find(n => n.lang === 'en');
+                    }
+
+                    // If still not found, fallback to any name with 'ror_display' or 'label'
+                    if (!nameObj) {
+                        nameObj = item.names.find(n => n.types.includes('ror_display') || n.types.includes('label'));
+                    }
+
+                    // If no suitable name, fallback to first available name or '(No name)'
+                    if (!nameObj) {
+                        nameObj = item.names[0] || { value: '(No name)' };
+                    }
+
+                    return nameObj.value;
                 });
                 console.log("Filtered organizations set:", filteredOrganizations.value);
                 
