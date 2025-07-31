@@ -19,7 +19,11 @@
                     </FloatLabel>
                     <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{ $form.description.error?.message }}</Message>
                     <FloatLabel variant="on">
-                        <AutoComplete name="institution" forceSelection id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizationsFilter" fluid />
+                        <AutoComplete name="institution" forceSelection id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizationsFilter"
+                            @focus="console.log('Institution field focused')"
+                            @blur="console.log('Institution field blurred')"
+                            @item-select="(e) => console.log('Institution selected:', e.value)"
+                            fluid />
                         <label for="institution">Institution</label>
                     </FloatLabel>
                     <Message v-if="$form.institution?.invalid" severity="error" size="small" variant="simple">{{ $form.institution.error?.message }}</Message>
@@ -225,17 +229,23 @@ const transport = new HTTPTransport(baseUrl+"/rpc",
 const client = new Client(new RequestManager([transport]));
 
 const onFormSubmit = async ({ valid, states, values }) => {
+    console.log("Form submitted with values:", values);
+    console.log("Form validation status:", valid);
+    
     if (valid) {
         saveLoading.value = true;
         const nsNameSplit = props["selectedNamespace"].Name.split("/");
         const nsName = nsNameSplit[nsNameSplit.length - 1];
+        console.log("Processing namespace:", nsName);
 
         values.Namespace = nsName;
+        console.log("Submitting namespace info:", values);
 
         client.request({
             method: "admin.SetNamespaceInfo",
             params: values,
         }).then((response) => {
+            console.log("Namespace info set response:", response);
             if (response.error) {
                 toast.add({
                     severity: 'error',
@@ -304,22 +314,38 @@ const onFileChange = (e) => {
 };
 
 const getOrganizationsFilter = (org) => {
+    console.log("Starting organization filter with query:", org.query);
     return new Promise((resolve, reject) => {
         if(!org.query.trim().length) {
+            console.log("Organization query is empty - skipping fetch");
             return;
         }
 
-        fetch(`https://api.ror.org/organizations?query=${encodeURIComponent(org.query.trim())}`)
+        const query = org.query.trim();
+        const url = `https://api.ror.org/organizations?query=${encodeURIComponent(query)}`;
+        console.log("Fetching organizations from:", url);
+
+        fetch(url)
             .then(response => {
+                console.log("Received response from ROR API. Status:", response.status);
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    const error = new Error('Network response was not ok');
+                    console.error('Error fetching organizations:', error);
+                    throw error;
                 }
                 return response.json();
             })
             .then(data => {
-                filteredOrganizations.value = data.items.map(item => item.name);
+                console.log("ROR API response data:", data);
+                console.log("Number of items in response:", data.items?.length || 0);
                 
-                // resolve(organizations);
+                if (data.items && data.items.length > 0) {
+                    console.log("First organization in response:", data.items[0]);
+                }
+
+                filteredOrganizations.value = data.items.map(item => item.name);
+                console.log("Filtered organizations set:", filteredOrganizations.value);
+                
                 resolve();
                 return;
             })
