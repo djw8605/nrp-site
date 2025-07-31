@@ -19,7 +19,7 @@
                     </FloatLabel>
                     <Message v-if="$form.description?.invalid" severity="error" size="small" variant="simple">{{ $form.description.error?.message }}</Message>
                     <FloatLabel variant="on">
-                        <AutoComplete name="institution" forceSelection optionLabel="name" id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizationsFilter" fluid />
+                        <AutoComplete name="institution" forceSelection id="institution" type="text" :suggestions="filteredOrganizations" @complete="getOrganizationsFilter" fluid />
                         <label for="institution">Institution</label>
                     </FloatLabel>
                     <Message v-if="$form.institution?.invalid" severity="error" size="small" variant="simple">{{ $form.institution.error?.message }}</Message>
@@ -317,7 +317,7 @@ const getOrganizationsFilter = (org) => {
                 return response.json();
             })
             .then(data => {
-                filteredOrganizations.value = data.items.map(item => ({ name: item.name }));
+                filteredOrganizations.value = data.items.map(item => item.name);
                 
                 // resolve(organizations);
                 resolve();
@@ -456,7 +456,7 @@ const resolver = ({ states, values }) => {
         errors.description = [{ message: 'Please provide a longer meaningful description.' }];
     }
 
-    if (!values.institution) {
+    if (!values.institution || typeof values.institution !== 'string') {
         errors.institution = [{ message: 'Institution is required.' }];
     }
 
