@@ -104,7 +104,7 @@ Stay tuned for further updates and upcoming deployments, and as always, we invit
 
 *This blog post was edited using NRP's publicly hosted LLMs. [Learn more](https://nrp.ai/documentation/userdocs/ai/llm-managed/).*
 
-![PEARC25](~/assets/images/posts/pearc25_4.jpg)
+![PEARC25](~/assets/images/posts/pearc25_1.jpg)
 ![NRP Paper](~/assets/images/posts/pearc25_2.jpg)
 
 ![BoF Session](~/assets/images/posts/pearc25_3.jpg)
