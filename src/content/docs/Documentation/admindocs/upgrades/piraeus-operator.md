@@ -3,7 +3,15 @@ title: Linstor
 description: Linstor
 ---
 
-`kubectl apply -k "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.5.0"`
+Official way:
+
+`kubectl apply -k "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.9.0"`
+
+NRP way:
+
+* Get all manifests in the local file
+
+`kustomize build "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.9.0" > piraeus-2.9.0.yaml`
 
 Fix operator mem and CPU limits:
 
@@ -38,5 +46,7 @@ Fix operator mem and CPU limits:
 +            cpu: 10m
 +            memory: 64Mi
 ```
+
+Apply the modified file after reviewing the changes.
 
 If failing with a secret can't be created, follow https://github.com/piraeusdatastore/piraeus-operator/issues/541
