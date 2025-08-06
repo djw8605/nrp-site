@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../k8s_portal"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

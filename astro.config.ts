@@ -328,6 +328,7 @@ export default defineConfig({
                     { "label": "nextcloud", "link": "documentation/admindocs/upgrades/nextcloud" },
                     { "label": "nodes", "link": "documentation/admindocs/upgrades/nodes" },
                     { "label": "prometheus", "link": "documentation/admindocs/upgrades/prometheus" },
+                    { "label": "postgres", "link": "documentation/admindocs/upgrades/postgres-operator" },
                     {
                       "label": "Storage",
                       collapsed: true,
