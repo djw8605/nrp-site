@@ -1,6 +1,6 @@
 <template>
     <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
-    <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
+    <VueSpinnerPie v-if="isUserLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
     <InputGroup v-if="currentUserIsAdmin">
         <Button label="Search" :loading="searchUserLoading" @click="searchUser" />
         <FloatLabel variant="on">

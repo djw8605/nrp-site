@@ -90,6 +90,10 @@ export const headerData = {
           href: getPermalink('/userinfo'),
         },
         {
+          text: 'LLM Tokens',
+          href: getPermalink('/llmtoken'),
+        },
+        {
           text: 'Reservations',
           href: getPermalink('/reservations'),
         },
