@@ -6,7 +6,7 @@ import { Badge } from '@astrojs/starlight/components';
 
 import Image from '~/components/common/Image.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
-import { Steps, LinkCard, CardGrid, LinkButton } from '@astrojs/starlight/components';
+import { Steps, LinkCard, CardGrid, LinkButton, Card } from '@astrojs/starlight/components';
 
 The NRP provides several hosted open-weights LLM for either API access, or use with our hosted chat interfaces.
 
@@ -17,7 +17,7 @@ The NRP provides several hosted open-weights LLM for either API access, or use w
     description="Use the LibreChat interface to chat with NRP hosted LLMs" />
     <LinkCard 
     title="Get an API token for NRP LLMs" 
-    href="#api-access-to-llms"
+    href="#api-access-to-llms-via-litellm"
     description="Get an API token to programically interact with the LLMs or use the LLMs in other apps" />
 </CardGrid>
 
@@ -35,7 +35,25 @@ If you are looking to chat with an LLM model similar to the interface provided b
 
 On MacOS and Safari you can make it always available in Dock for quick access: having librechat open in Safari, click **File->Add to Dock**.
 
-## API Access to LLMs
+## API Access to LLMs via Envoy
+
+<h4>(Envoy AI Gateway, work in progress)</h4>
+
+To access our LLMs through the [Envoy AI Gateway](https://aigateway.envoyproxy.io), you need to be a [member of a group with LLM flag](/documentation/userdocs/start/hierarchy). Your membership info can be found on the [namespaces page](/namespaces).
+
+Start from [creating a token](/llmtoken). You can use this token to query the LLM endpoint
+
+<Card title="Envoy AI API endpoint">https://ellm.nrp-nautilus.io</Card>
+
+with CURL or any OpenAI API compatible tool.
+
+```
+curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/models
+```
+
+## API Access to LLMs via LiteLLM
+
+<h4>(LiteLLM, to be deprecated soon)</h4>
 
 API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) proxy.  In order to access our LLMs, you need to:
 
@@ -57,7 +75,9 @@ API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) 
     Visit the NRP LiteLLM interface
 </LinkButton>
 
-## Example Python Code
+## Examples
+
+### Python Code
 
 To access the NRP LLMs, you can use the [OpenAI Python client](https://github.com/openai/openai-python).  Below is an example of how to use the OpenAI Python client to access the NRP LLMs.
 
@@ -85,7 +105,22 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
+### Bash+Curl
 
+```
+curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/models
+```
+
+```
+curl -H "Authorization: Bearer <TOKEN>" -X POST "https://ellm.nrp-nautilus.io/v1/chat/completions" \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "meta-llama/Llama-3.2-90B-Vision-Instruct",
+    "messages": [
+      {"role": "user", "content": "Hey!"}
+    ]
+  }'
+```
 
 ## Available Models
 

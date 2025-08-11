@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col items-center justify-center">
         <h1 class="text-2xl font-bold mb-4">Create LLM tokens</h1>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">This page is a work in progress. All tokens can be removed without notifications.</p>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">This page is a work in progress. All tokens can be removed without notifications. <a class="text-muted underline dark:text-slate-400 font-medium" href="/documentation/userdocs/ai/llm-managed#api-access-to-llms-via-envoy">Read more</a></p>
     </div>
 
 
