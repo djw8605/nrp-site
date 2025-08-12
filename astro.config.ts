@@ -169,7 +169,6 @@ export default defineConfig({
               collapsed: true,
               items: [
                 { label: "NRP Managed LLM", link: "documentation/userdocs/ai/llm-managed" },
-                { label: "LLM as a Service", link: "documentation/userdocs/ai/llm-service" },
                 { label: "LLM in JupyterHub", link: "documentation/userdocs/ai/llm-jupyterhub" },
                 { label: "Cloud AI 100 Cards", link: "documentation/userdocs/ai/qaic" },
               ],
