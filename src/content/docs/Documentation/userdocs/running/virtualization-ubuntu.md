@@ -5,7 +5,7 @@ description: Virtualization - Ubuntu
 
 Guide: <https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html>
 
-###### Running the ubuntu live vm
+## Running the ubuntu live vm
 
 Here's the working example of an ubuntu VM with cloud-init, added SSH key and emptyDir scratch disk:
 
@@ -101,7 +101,7 @@ virtctl vnc myvm
 virtctl ssh ubuntu@myvm
 ```
 
-###### Example of an ubuntu vm with large local disk on linstor
+## Example of an ubuntu vm with large local disk on linstor
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -142,10 +142,6 @@ spec:
                 operator: In
                 values:
                 - us-west
-              - key: nautilus.io/linstor
-                operator: In
-                values:
-                - "true"
       architecture: amd64
       domain:
         cpu:
@@ -177,4 +173,33 @@ spec:
           userData: |-
             #cloud-config
         name: cloudinit
+```
+
+## Fixing the network issue
+
+If you hit [this problem](https://github.com/kubevirt/kubevirt/issues/9993), add static MAC address to your VM:
+
+```
+      networks:
+      - name: default
+        pod: {}
+      domain:
+        devices:
+          interfaces:
+          - name: default
+            masquerade: {}
+            macAddress: "02:00:00:00:00:02"
+```
+
+## Using linux GUI
+
+For better mouse tracking in VNC, add the tablet device:
+
+```
+      domain:
+        devices:
+          inputs:
+          - bus: usb
+            name: tablet1
+            type: tablet
 ```
