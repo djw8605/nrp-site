@@ -34,7 +34,6 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 | nautilus.io/ceph=true          | nautilus.io/system=storage:NoSchedule     |
 | nautilus.io/ceph-external=true | nautilus.io/system=storage:NoSchedule |
 | nautilus.io/jump=true          | nautilus.io/system=jump:NoSchedule        |
-| nautilus.io/nrp-llm=true       | nautilus.io/system=nrp-llm:NoSchedule     |
 | nautilus.io/perfsonar=true     | nautilus.io/system=perfsonar:NoSchedule   |
 | nautilus.io/linstor-server=true| nautilus.io/system=storage:NoSchedule     |
 | nautilus.io/bluefield2=true    | nautilus.io/reservation=bluefield2:NoSchedule |
@@ -48,6 +47,7 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 | nautilus.io/qaic=undefined     | nautilus.io/reservation=qaic:NoSchedule   |
 | nautilus.io/reservation=cogrob | nautilus.io/reservation=cogrob:NoSchedule |
 | nautilus.io/reservation=wifire | nautilus.io/reservation=wifire:NoSchedule |
+| nautilus.io/nrp-llm=true       | nautilus.io/reservation=nrp-llm:NoSchedule     |
 | nautilus.io/sdsc-llm=true      | nautilus.io/reservation=sdsc-llm:NoSchedule |
 | nautilus.io/sense=true         | nautilus.io/reservation=sense:NoSchedule      |
 | nautilus.io/stashcache=true    | nautilus.io/reservation=osdf:NoSchedule   |
