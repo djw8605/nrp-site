@@ -25,7 +25,7 @@ Change the following sections in [`nginx.conf`](https://github.com/nextcloud/doc
 resolver 127.0.0.11 valid=2s;
 upstream php-handler {
     zone backends 64k;
-    server app:9000 resolve;
+    server 127.0.0.1:9000 resolve;
 }
 
 ## Change and add the below values
