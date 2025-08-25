@@ -30,7 +30,7 @@ const getStorage = async () => {
         for (var key in respFolders) {
             var folder = respFolders[key];
             for (var userNum in folder.Users) {
-                var spl = folder.Users[userNum].split('/');
+                var spl = folder.Users[userNum].split('|');
                 folder.Name = spl[1];
                 if(!namespaces[spl[0]]) {
                     namespaces[spl[0]] = [];
