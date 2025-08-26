@@ -125,7 +125,14 @@ const size = (bytes) => {
             <div class="text table-cell" v-if="isAdmin == 'true'"><button @click.stop="email(folder.Name)">Email</button></div>
             <div class="table-row" v-if="!folder.Collapsed">
                 <div class="table-row" v-for="vol in folder.Volumes" v-bind:key="vol.Name">
-                    <div class="text table-cell"><div class="title">Name</div>{{ vol.Users.join(', ') }}</div>
+                    <div class="text table-cell"><div class="title">Name</div>{{ 
+                        vol.Users.
+                        map(function(v){
+                            let spl = v.split("|");
+                            return (spl.length > 1)?spl[1]:v;
+                        }).
+                        join(', ')
+                    }}</div>
                     <div class="text table-cell"><div class="title">Used</div>{{ size(vol.SizeUsed) }}</div>
                     <div class="text table-cell"><div class="title">Provisioned</div>{{ size( vol.SizeProvisioned )}}</div>
                     <div class="text table-cell"><div class="title">LastChecked</div>{{dayjs(vol.LastChecked).fromNow()}}</div>
