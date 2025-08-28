@@ -48,6 +48,10 @@ export const headerData = {
           href: "/viz",
         },
         {
+          text: 'Cluster Usage',
+          href: getPermalink('/viz/clusterusage'),
+        },
+        {
           text: 'Observable notebooks (external)',
           href: "https://observablehq.com/@nrp-nautilus?type=collections",
         },

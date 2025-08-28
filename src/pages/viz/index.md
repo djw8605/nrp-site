@@ -6,6 +6,7 @@ layout: '~/layouts/MarkdownLayout.astro'
 ## Usage information
 
 - [Log-Log plot of GPU/CPU per namespace for the last year](/viz/usagelog)
+- [Cluster Usage](/viz/clusterusage)
 
 ## Storage
 
@@ -16,4 +17,3 @@ layout: '~/layouts/MarkdownLayout.astro'
 ## Administration
 - [Resources](/viz/resources)
 - [Namespaces Tree](/viz/namespaces)
-
