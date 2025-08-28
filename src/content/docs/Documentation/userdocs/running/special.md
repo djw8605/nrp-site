@@ -68,9 +68,8 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 
 #### Reservations
 
-Our cluster contains several sets of nodes dedicated to certain groups.
-
-Users can target **ONLY THE GROUP NODES** by using `tolerations`, for example:
+**Groups may request exclusive access to entire nodes** if their workloads justify it.
+Such nodes can be reserved by setting the following `taint` and corresponding `toleration`:
 
 ```yaml
 spec:
@@ -81,15 +80,28 @@ spec:
     effect: "NoSchedule"
 ```
 
+Please fill out the [node reservation form](https://nrp.ai/reservations/) if your group has a use case that would benefit from whole-node reservations.
+
+
+In addition, our cluster contains several sets of nodes dedicated to certain groups.
+
+Users can target **ONLY THE GROUP NODES** by using `affinity`, for example:
+
+```yaml
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: nautilus.io/reservation
+            operator: In
+            values:
+            - group1
+```
+
 For large jobs, this helps avoid consuming all shared cluster resources. Optionally, a higher priority can be used (contact the admins before using one).
 
-In addition, **groups may request exclusive access to entire nodes** if their workloads justify it.
-Such nodes can be reserved by setting the following `taint` and corresponding `toleration`:
-
-- **Taint on reserved nodes:**  
-  `nautilus.io/reservation=group:NoSchedule`
-
-Please fill out the [node reservation form](https://nrp.ai/reservations/) if your group has a use case that would benefit from whole-node reservations.
 
 #### Other taints
 
