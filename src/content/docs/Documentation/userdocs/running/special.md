@@ -70,19 +70,15 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 
 Our cluster contains several sets of nodes dedicated to certain groups.
 
-Users can target **ONLY THE GROUP NODES** by using `nodeAffinity`, for example:
+Users can target **ONLY THE GROUP NODES** by using `tolerations`, for example:
 
 ```yaml
 spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: nautilus.io/reservation
-            operator: In
-            values:
-            - group1
+  tolerations:
+  - key: "nautilus.io/reservation"
+    operator: "Equal"
+    value: "group1"
+    effect: "NoSchedule"
 ```
 
 For large jobs, this helps avoid consuming all shared cluster resources. Optionally, a higher priority can be used (contact the admins before using one).
