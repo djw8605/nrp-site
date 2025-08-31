@@ -1,6 +1,7 @@
 ---
 title: KubeRay Operator Installation and Management
 description: Instructions for installing and managing the KubeRay operator in the Kubernetes cluster.
+pagefind: false
 ---
 
 ## Deploying the KubeRay Operator

@@ -1,6 +1,7 @@
 ---
-title: Partitioning GPU into MIG (Multi-Instance GPU)
-description: Guide to partition GPUs into Multi-Instance GPUs (MIG) for better resource management.
+title: MIG GPUs
+description: Managing MIG GPUs in the cluster.
+pagefind: false
 ---
 
 1. Drain the node.

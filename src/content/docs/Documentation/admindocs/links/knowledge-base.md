@@ -6,7 +6,7 @@ description: Knowledge Base
 #### Get involved in NRP
 
 1. Check out [fasterdata.es.net][esnet] to understand terms, tools, and capabilities common to R&E networking performance measurement and monitoring.
-1. Review materials and videos from 2017 and 2018 National Research Platform Workshops at [https://nationalresearchplatform.org/][prp]
+1. Review materials and videos from 2017 and 2018 National Research Platform Workshops at [https://nrp.ai/][prp]
 1. Familiarize yourself with tools that the National Engagement Performance and
    Outreach Center at IU [EPOC][epoc] has to offer.
 1. [Discover][discover] a regional Research & Education network in your area to collaborate with and plan for cyberinfrastructure capabilities in your region.

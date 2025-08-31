@@ -21,6 +21,53 @@ Both these containers use [Selkies-GStreamer](https://github.com/selkies-project
 
 Please give the repositories a star!
 
+## GPU-Accelerated Selkies
+
+For GPU-accelerated desktop performance, you can modify the configurations to request NVIDIA GPUs and use hardware encoding:
+
+### GPU Resource Request
+
+Add GPU resources to your deployment by modifying the `resources` section:
+
+```yaml
+resources:
+  limits:
+    memory: 64Gi
+    cpu: "16"
+    nvidia.com/gpu: 1  # Request 1 GPU
+  requests:
+    memory: 100Mi
+    cpu: 100m
+    nvidia.com/gpu: 1  # Request 1 GPU
+```
+
+### Hardware Encoding
+
+For NVIDIA GPUs, you can use hardware-accelerated encoding by setting the encoder environment variable:
+
+```yaml
+env:
+- name: SELKIES_ENCODER
+  value: "nvh264enc"  # Use NVIDIA hardware encoding
+```
+
+**Note:** Hardware encoding requires:
+- NVIDIA GPU with NVENC support
+- Proper NVIDIA drivers installed on the node
+- The `nvidia.com/gpu` resource request
+
+### GPU vs CPU Encoding
+
+- **`nvh264enc`**: Hardware-accelerated encoding using NVIDIA GPU (best performance, requires GPU)
+- **`x264enc`**: CPU-based encoding (default, works on all nodes, moderate performance)
+- **`vp8enc`/`vp9enc`**: Alternative CPU encoders with different compression ratios
+
+### Performance Considerations
+
+- **GPU encoding**: Lower CPU usage, better performance for high-resolution displays
+- **CPU encoding**: Higher CPU usage, works on all nodes, suitable for lower-resolution displays
+- **Network bandwidth**: Hardware encoding typically provides better compression and lower bandwidth usage
+
 #### DNS Setup
 
 Since the right TURN server closest to you leads to the lowest latency, use the command `ping turn.nrp-nautilus.io` on your client (install `iputils-ping` when using Linux if the `ping` command does not work) to check that your DNS is correctly configured.
@@ -93,9 +140,9 @@ spec:
         ###
         # Selkies-GStreamer parameters, for additional configurations see `selkies-gstreamer --help`
         ###
-        # Change `SELKIES_ENCODER` to `x264enc`, `vp8enc`, or `vp9enc` if your GPU does not support `H.264 (AVCHD)` under the `NVENC - Encoding` section in https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new
+        # Change `SELKIES_ENCODER` to `nvh264enc` for GPU-accelerated encoding, or use `vp8enc`/`vp9enc` as alternatives
         - name: SELKIES_ENCODER
-          value: "nvh264enc"
+          value: "x264enc"
         # Do NOT set to `true` if physical monitor is connected to video port
         - name: SELKIES_ENABLE_RESIZE
           value: "false"
@@ -139,7 +186,6 @@ spec:
           limits:
             memory: 64Gi
             cpu: "16"
-            nvidia.com/gpu: 1
           requests:
             memory: 100Mi
             cpu: 100m
@@ -237,9 +283,9 @@ spec:
         ###
         # Selkies-GStreamer parameters, for additional configurations see `selkies-gstreamer --help`
         ###
-        # Change `SELKIES_ENCODER` to `x264enc`, `vp8enc`, or `vp9enc` if your GPU does not support `H.264 (AVCHD)` under the `NVENC - Encoding` section in https://developer.nvidia.com/video-encode-and-decode-gpu-support-matrix-new
+        # Change `SELKIES_ENCODER` to `nvh264enc` for GPU-accelerated encoding, or use `vp8enc`/`vp9enc` as alternatives
         - name: SELKIES_ENCODER
-          value: "nvh264enc"
+          value: "x264enc"
         # Do NOT set to `true` if physical monitor is connected to video port
         - name: SELKIES_ENABLE_RESIZE
           value: "false"
@@ -283,7 +329,6 @@ spec:
           limits:
             memory: 64Gi
             cpu: "16"
-            nvidia.com/gpu: 1
           requests:
             memory: 100Mi
             cpu: 100m

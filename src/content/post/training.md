@@ -27,7 +27,7 @@ You do not need to attend every session—choose based on your role and interest
 - First Session: 10:00 AM PDT / 1:00 PM EDT  
 - Second Session: 11:00 AM PDT / 2:00 PM EDT
 
-**Zoom Link:** [https://ucsd.zoom.us/j/96377381436](https://ucsd.zoom.us/j/96377381436)
+**Note:** Each session has its own Zoom link. See the schedule below for specific links.
 
 ---
 
@@ -49,14 +49,14 @@ You do not need to attend every session—choose based on your role and interest
 
 ## Schedule
 
-| Date | Time (PDT / EDT) | Session Title |
-|------|------------------|----------------|
-| **Tuesday, September 2** | 10:00 AM / 1:00 PM | Introduction to the National Research Platform |
-| | 11:00 AM / 2:00 PM | The Portal: GUI Access to Resources |
-| **Tuesday, September 9** | 10:00 AM / 1:00 PM | Using JupyterHub and Coder as a User |
-| | 11:00 AM / 2:00 PM | Basic Docker and Kubernetes |
-| **Tuesday, September 16** | 10:00 AM / 1:00 PM | Intermediate Kubernetes |
-| | 11:00 AM / 2:00 PM | Agentic Tools and Coding with AI/LLMs |
-| **Tuesday, September 23** | 10:00 AM / 1:00 PM | Deploying JupyterHub and Coder |
-| **Tuesday, September 30** | 10:00 AM / 1:00 PM | Advanced I: GitLab CI/CD and Custom Images |
-| | 11:00 AM / 2:00 PM | Advanced II: VMs, Windows, and Edge Use Cases |
+| Date | Time (PDT / EDT) | Session Title | Zoom Link |
+|------|------------------|----------------|-----------|
+| **Tuesday, September 2** | 10:00 AM / 1:00 PM | Introduction to the National Research Platform | [Join Session](https://ucsd.zoom.us/j/95251971801) |
+| | 11:00 AM / 2:00 PM | The Portal: GUI Access to Resources | [Join Session](https://ucsd.zoom.us/j/91558273595) |
+| **Tuesday, September 9** | 10:00 AM / 1:00 PM | Using JupyterHub and Coder as a User | [Join Session](https://ucsd.zoom.us/j/92728984788) |
+| | 11:00 AM / 2:00 PM | Basic Docker and Kubernetes | [Join Session](https://ucsd.zoom.us/j/94308786130) |
+| **Tuesday, September 16** | 10:00 AM / 1:00 PM | Intermediate Kubernetes | [Join Session](https://ucsd.zoom.us/j/96377381436) |
+| | 11:00 AM / 2:00 PM | Agentic Tools and Coding with AI/LLMs | [Join Session](https://ucsd.zoom.us/j/96377381436) |
+| **Tuesday, September 23** | 10:00 AM / 1:00 PM | Deploying JupyterHub and Coder | [Join Session](https://ucsd.zoom.us/j/95336469365) |
+| **Tuesday, September 30** | 10:00 AM / 1:00 PM | Advanced I: GitLab CI/CD and Custom Images | [Join Session](https://ucsd.zoom.us/j/94806123775) |
+| | 11:00 AM / 2:00 PM | Advanced II: VMs, Windows, and Edge Use Cases | [Join Session](https://ucsd.zoom.us/j/92476867994) |

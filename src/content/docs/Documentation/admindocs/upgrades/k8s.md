@@ -1,6 +1,7 @@
 ---
-title: Kubernetes
-description: Kubernetes
+title: Kubernetes Upgrades
+description: Kubernetes upgrade procedures
+pagefind: false
 ---
 
 #### Kubernetes upgrades
