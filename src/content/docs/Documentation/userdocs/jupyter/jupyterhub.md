@@ -16,6 +16,16 @@ JupyterHub provides a multi-user Jupyter notebook environment that allows you to
 
 This guide is based on the [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with configurations specific to the Nautilus cluster. You must be the admin of the namespace you're deploying to.
 
+:::danger[JupyterHub Culling Policy]
+
+**Deploying JupyterHub without culling is against cluster policies.**
+
+All JupyterHub deployments **MUST** include culling configuration with a maximum idle time of **6 hours or less**. This is required to ensure fair resource allocation and prevent resource waste on the NRP cluster.
+
+See the [culling configuration section](#culling-configuration) below for implementation details.
+
+:::
+
 :::note
 There's work going on making JupyterHub scalable and HA in this issue: https://github.com/jupyterhub/jupyterhub/issues/1932
 :::
@@ -291,49 +301,28 @@ With the example config, admin users can access another user's notebooks. If you
 
 ### Basic Culling Setup
 
-Add the following configuration to your `values.yaml` file under the `hub` section:
+Add the following configuration to your `values.yaml` file at the root level:
 
 ```yaml
-hub:
-  config:
-    JupyterHub:
-      # ... existing config ...
-      services:
-        cull-idle:
-          admin: true
-          command:
-            - /opt/conda/bin/python
-            - /opt/conda/bin/jupyterhub-idle-culler
-            - --timeout=86400  # 24 hours in seconds
-            - --cull-every=300 # Check every 5 minutes
-            - --max-age=0      # No maximum age limit
-            - --concurrency=1  # Number of culling threads
+cull:
+  enabled: true
+  users: false
+  removeNamedServers: false
+  timeout: 3600      # 1 hour in seconds - Must be ≤ 21600 (6 hours)
+  every: 600         # Check every 10 minutes
+  concurrency: 10    # Number of parallel culling operations
+  maxAge: 0          # No maximum age limit
 ```
 
 ### Culling Parameters
 
-- **`timeout`**: Maximum idle time before culling (in seconds). **Must be ≤ 86400 (24 hours)**
-- **`cull-every`**: How often to check for idle servers (in seconds)
-- **`max-age`**: Maximum age of servers regardless of activity (0 = no limit)
+- **`enabled`**: Set to `true` to enable culling
+- **`users`**: Set to `false` to only cull servers, not user accounts
+- **`removeNamedServers`**: Set to `false` to preserve named servers
+- **`timeout`**: Maximum idle time before culling (in seconds). **Must be ≤ 21600 (6 hours)**
+- **`every`**: How often to check for idle servers (in seconds)
 - **`concurrency`**: Number of parallel culling operations
-
-### Alternative: Using Helm Chart Values
-
-You can also configure culling through the Helm chart values by adding to your `values.yaml`:
-
-```yaml
-hub:
-  extraConfig:
-    cull: |
-      c.JupyterHub.services = [
-          {
-              'name': 'cull-idle',
-              'admin': True,
-              'command': ['/opt/conda/bin/python', '/opt/conda/bin/jupyterhub-idle-culler'],
-              'args': ['--timeout=86400', '--cull-every=300', '--max-age=0', '--concurrency=1']
-          }
-      ]
-```
+- **`maxAge`**: Maximum age of servers regardless of activity (0 = no limit)
 
 ### Verification
 
@@ -365,15 +354,4 @@ When working with the Nautilus cluster, you can use the [hosted Gitlab instance]
 
 ### Documentation
 
-As you start and continue to use your JupyterHub instance, it is strongly encouraged to keep a running docment of how the instance is setup and any workflows or assignments that run on it. This will help others use and maintain the instance, along with helping with future development and debugging. 
-
-
-
-
-
-
-
-
-
-
-
+As you start and continue to use your JupyterHub instance, it is strongly encouraged to keep a running docment of how the instance is setup and any workflows or assignments that run on it. This will help others use and maintain the instance, along with helping with future development and debugging.
