@@ -12,7 +12,14 @@ build:
         - LICENSE.md
         - README.md
       when: never
-    - when: on_success
+    - changes:
+        - src/**/*
+        - static/**/*
+        - astro.config.ts
+        - package.json
+        - package-lock.json
+      when: on_success
+    - when: manual
   before_script:
     - npm ci
     - npm i wrangler --location=global
