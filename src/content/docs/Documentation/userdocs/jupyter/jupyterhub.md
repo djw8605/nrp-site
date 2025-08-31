@@ -3,7 +3,18 @@ title: Deploy JupyterHub
 description: Deploy JupyterHub
 ---
 
-This guide is based on [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. You must be the admin of the namespace you’re deploying to.
+## Why Deploy Your Own JupyterHub?
+
+JupyterHub provides a multi-user Jupyter notebook environment that allows you to:
+
+- **Share computational resources** with your team, class, or research group
+- **Standardize environments** across multiple users with consistent packages and configurations
+- **Control access** to specific users or institutions through authentication
+- **Customize the environment** with your own software stack, packages, and tools
+- **Scale resources** based on your specific needs (CPU, memory, GPU)
+- **Integrate with NRP infrastructure** for seamless access to cluster resources
+
+This guide is based on the [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with configurations specific to the Nautilus cluster. You must be the admin of the namespace you're deploying to.
 
 :::note
 There's work going on making JupyterHub scalable and HA in this issue: https://github.com/jupyterhub/jupyterhub/issues/1932
@@ -31,7 +42,7 @@ Save the client ID and Secret.
 
 Create a namespace for your project on [Nautilus portal](https://nrp.ai/namespaces) and annotate it with all information.
 
-## Configuring
+## Configuration
 
 ### Install helm and download the helm chart
 
@@ -49,15 +60,111 @@ Once the pods start, you should be able to see the installation under your selec
 
 You can put your JupyterHub configuration in GitLab and automatically redeploy the application on repository changes. Please refer to [this guide](/documentation/userdocs/development/k8s-integration/) for details.
 
-## Customization of your JupyterHub instance
+## Customization
 
-The basic installation of JupyterHub does not always provide the packages or settings needed for your particular use case and will more than likely need to be customized.
+### Understanding the Values Template
 
-The [template](../values) mentioned earlier in the guide provides a good base for working from. 
+The [template values file](../values) provides a comprehensive starting point with:
 
-:::note
-This section is a simplified summary of the [Zero to Jupyter's "Customizing User Environment"](https://z2jh.jupyter.org/en/stable/jupyterhub/customizing/user-environment.html) guide
-:::
+- **Pre-configured profiles** for different scientific domains (Python, R, Julia, TensorFlow, PyTorch, etc.)
+- **Resource limits** and guarantees for CPU and memory
+- **Storage configuration** with Ceph block storage
+- **Authentication settings** for CILogon integration
+- **Ingress configuration** for external access
+
+### Adding Your Own Container Image
+
+To add your own custom container image to JupyterHub, you need to modify the `profileList` section in your `values.yaml`:
+
+```yaml
+profileList:
+  - display_name: "My Custom Environment"
+    kubespawner_override:
+      image_spec: "your-registry.com/your-org/your-image:tag"
+    default: false  # Set to true if you want this as the default
+```
+
+**Key fields to modify:**
+- **`display_name`**: What users see in the profile selector
+- **`image_spec`**: Full path to your container image
+- **`default`**: Whether this profile is selected by default
+
+### Creating Custom Container Images
+
+#### Option 1: Extend Existing Images
+
+Start with a base Jupyter image and add your packages:
+
+```dockerfile
+FROM jupyter/minimal-notebook:latest
+
+# Install system dependencies
+USER root
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Switch back to jovyan user
+USER jovyan
+
+# Install Python packages
+RUN pip install --no-cache-dir \
+    pandas \
+    matplotlib \
+    scipy \
+    scikit-learn \
+    your-custom-package
+```
+
+#### Option 2: Build from Scratch
+
+Create a completely custom image:
+
+```dockerfile
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install JupyterHub requirements
+RUN pip install --no-cache-dir \
+    jupyterhub \
+    notebook \
+    jupyterlab
+
+# Install your scientific packages
+RUN pip install --no-cache-dir \
+    numpy \
+    pandas \
+    matplotlib \
+    your-research-packages
+
+# Create jovyan user (JupyterHub standard)
+RUN useradd -m -s /bin/bash jovyan
+USER jovyan
+WORKDIR /home/jovyan
+
+# Start Jupyter
+CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888"]
+```
+
+#### Building and Pushing Your Image
+
+```bash
+# Build the image
+docker build -t your-registry.com/your-org/your-image:tag .
+
+# Push to registry
+docker push your-registry.com/your-org/your-image:tag
+```
+
+**Available registries on NRP:**
+- **GitLab Container Registry**: `gitlab-registry.nrp-nautilus.io/your-project/your-image:tag`
+- **Docker Hub**: `your-username/your-image:tag`
+- **Quay.io**: `quay.io/your-org/your-image:tag`
 
 ### Extending Existing Images
 
@@ -81,7 +188,7 @@ FROM jupyter/minimal-notebook:latest
 pip install --no-cache-dir pandas matplotlib scipy
 ```
 
-Once you create your Dockerfile, you can build youre image locally and push it to a container registry such as `gitlab-registry.nrp-nautilus.io` or have the [Gitlab build and push the image for you automatically.](/documentation/userdocs/development/gitlab/)
+Once you create your Dockerfile, you can build your image locally and push it to a container registry such as `gitlab-registry.nrp-nautilus.io` or have the [GitLab build and push the image for you automatically.](/documentation/userdocs/development/gitlab/)
 
 ### Allowing custom Anaconda environments
 
