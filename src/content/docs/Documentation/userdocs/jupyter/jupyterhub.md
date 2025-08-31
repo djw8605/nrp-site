@@ -3,6 +3,16 @@ title: Deploy JupyterHub
 description: Deploy JupyterHub
 ---
 
+:::danger[JupyterHub Culling Policy]
+
+**Deploying JupyterHub without culling is against cluster policies.**
+
+All JupyterHub deployments **MUST** include culling configuration with a maximum idle time of **24 hours or less**. This is required to ensure fair resource allocation and prevent resource waste on the NRP cluster.
+
+See the [culling configuration section](#culling-configuration) below for implementation details.
+
+:::
+
 This guide is based on [Zero to Jupyter](https://zero-to-jupyterhub.readthedocs.io/en/stable/) guide with stuff specific to Nautilus cluster. You must be the admin of the namespace you’re deploying to.
 
 :::note
