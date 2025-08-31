@@ -1,6 +1,7 @@
 ---
 title: Rook/Ceph Upgrades
-description: Rook/Ceph upgrades
+description: Rook/Ceph upgrade procedures
+pagefind: false
 ---
 
 Follow the [most recent docs corresponding the the version being upgraded to](https://rook.io/docs/rook/v1.12/Upgrade/rook-upgrade/).
@@ -52,3 +53,5 @@ fix toolbox pods
 ## Upgrading Ceph
 
 **Before upgrading the major version, [make sure the OS and kernel support it](https://docs.ceph.com/en/latest/start/os-recommendations/)**
+
+```

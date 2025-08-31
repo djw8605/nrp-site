@@ -306,6 +306,7 @@ export default defineConfig({
                 { "label": "Authentik", "link": "documentation/admindocs/cluster/authentik" },
                 { "label": "JupyterLab", "link": "documentation/admindocs/cluster/jupyterlab-admin" },
                 { "label": "KubeVirt", "link": "documentation/admindocs/cluster/kubevirt-gpu" },
+                { "label": "FPGA Flashing", "link": "documentation/admindocs/cluster/fpga" },
                 { "label": "Services topology", "link": "documentation/admindocs/cluster/cdn-svc" },
                 { "label": "KubeRay operator", "link": "documentation/admindocs/cluster/ray-operator" },
                 { "label": "SENSE/Multus", "link": "documentation/admindocs/cluster/sense-multus" },
@@ -382,7 +383,7 @@ export default defineConfig({
     }), vue({ appEntrypoint: '/src/pages/_app' })],
 
   image: {
-    domains: ['cdn.pixabay.com', 'media.nrp.ai', 'portal.nrp.ai'],
+    domains: ['cdn.pixabay.com', 'media.nrp.ai', 'nrp.ai'],
   },
 
   markdown: {

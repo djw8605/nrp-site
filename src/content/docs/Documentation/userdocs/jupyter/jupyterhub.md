@@ -178,6 +178,66 @@ JupyterHub:
 ```
 With the example config, admin users can access another user's notebooks. If you want to disable this, set `admin_access` to `false`
 
+## Culling Configuration
+
+**Required:** All JupyterHub deployments must include culling configuration to automatically shut down idle user servers. This is mandatory for compliance with NRP cluster policies.
+
+### Basic Culling Setup
+
+Add the following configuration to your `values.yaml` file under the `hub` section:
+
+```yaml
+hub:
+  config:
+    JupyterHub:
+      # ... existing config ...
+      services:
+        cull-idle:
+          admin: true
+          command:
+            - /opt/conda/bin/python
+            - /opt/conda/bin/jupyterhub-idle-culler
+            - --timeout=86400  # 24 hours in seconds
+            - --cull-every=300 # Check every 5 minutes
+            - --max-age=0      # No maximum age limit
+            - --concurrency=1  # Number of culling threads
+```
+
+### Culling Parameters
+
+- **`timeout`**: Maximum idle time before culling (in seconds). **Must be ≤ 86400 (24 hours)**
+- **`cull-every`**: How often to check for idle servers (in seconds)
+- **`max-age`**: Maximum age of servers regardless of activity (0 = no limit)
+- **`concurrency`**: Number of parallel culling operations
+
+### Alternative: Using Helm Chart Values
+
+You can also configure culling through the Helm chart values by adding to your `values.yaml`:
+
+```yaml
+hub:
+  extraConfig:
+    cull: |
+      c.JupyterHub.services = [
+          {
+              'name': 'cull-idle',
+              'admin': True,
+              'command': ['/opt/conda/bin/python', '/opt/conda/bin/jupyterhub-idle-culler'],
+              'args': ['--timeout=86400', '--cull-every=300', '--max-age=0', '--concurrency=1']
+          }
+      ]
+```
+
+### Verification
+
+After deployment, verify culling is working by checking the culling service logs:
+
+```bash
+kubectl logs -n <namespace> deployment/jupyterhub -c hub | grep cull
+```
+
+You should see periodic messages about culling operations.
+
 ## Good Practices
 
 When setting up a custom JupyterHub there are a couple of good practices you can implement to help keep the environment sustainable and secure. 

@@ -1,6 +1,6 @@
 site:
   name: NRP
-  site: 'https://portal.nrp.ai'
+  site: 'https://nrp.ai'
   base: '/'
   trailingSlash: false
 

@@ -36,7 +36,8 @@ The NRP paper underscored the importance of community-driven infrastructure for 
 
 > 📚 [Learn how to cite this paper](https://nrp.ai/documentation/userdocs/start/faq/)
 > 🔗 **DOI:** [10.1145/3708035.3736060](https://doi.org/10.1145/3708035.3736060)  
-> 📄 **arXiv:** [arXiv:2505.22864](https://doi.org/10.48550/arXiv.2505.22864)
+> 📄 **arXiv:** [arXiv:2505.22864](https://doi.org/10.48550/arXiv:2505.22864)
+> 📊 **Slides:** [Zenodo](https://zenodo.org/records/16422100)
 
 
 ---
@@ -92,6 +93,7 @@ This project aligns closely with NRP’s goal of pushing computation **closer to
 
 > 🔗 **DOI:** [10.1145/3708035.3736086](https://dl.acm.org/doi/10.1145/3708035.3736086)  
 > 📄 **arXiv:** [arXiv:2507.00428](https://arxiv.org/abs/2507.00428)
+> 📊 **Slides:** [Zenodo](https://zenodo.org/records/16791369)
 ---
 
 ## Looking Forward

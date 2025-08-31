@@ -1,6 +1,7 @@
 ---
-title: Configuring VFIO Passthrough for KubeVirt GPUs
-description: A guide for setting up VFIO passthrough to enable GPU resources for KubeVirt.
+title: KubeVirt GPU
+description: KubeVirt GPU configuration and management.
+pagefind: false
 ---
 
 Follow these steps to configure a Kubernetes node for VFIO passthrough, enabling GPU resources for KubeVirt VMs.

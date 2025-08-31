@@ -1,6 +1,7 @@
 ---
-title: JupyterLab Access Management
-description: Guide for managing user access to the JupyterLab service.
+title: JupyterLab Admin
+description: JupyterLab administration guide.
+pagefind: false
 ---
 
 
