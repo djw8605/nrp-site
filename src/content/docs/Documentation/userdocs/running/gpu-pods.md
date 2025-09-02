@@ -135,7 +135,7 @@ Quadro-RTX-8000 | 48G
 NVIDIA-A100-SXM4-80GB | 80G
 
 :::note
-[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://nrp.ai/resources/viz/resources). 
+[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://nrp.ai/viz/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 :::
 
@@ -163,7 +163,7 @@ spec:
 
 ## Selecting CUDA version
 
-In general the higher CUDA versions support the lower and same driver version. The nodes are labelled with the major and minor CUDA and driver versions. You can check those at the [resources page](https://nrp.ai/resources/viz/resources) or list with this command (it will also choose only GPU nodes):
+In general the higher CUDA versions support the lower and same driver version. The nodes are labelled with the major and minor CUDA and driver versions. You can check those at the [resources page](https://nrp.ai/viz/resources) or list with this command (it will also choose only GPU nodes):
 
 ```bash
 kubectl get nodes -L nvidia.com/cuda.driver.major,nvidia.com/cuda.driver.minor,nvidia.com/cuda.runtime.major,nvidia.com/cuda.runtime.minor -l nvidia.com/gpu.product
