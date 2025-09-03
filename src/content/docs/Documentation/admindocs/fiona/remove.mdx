@@ -1,0 +1,25 @@
+---
+title: Removing a node
+description: Removing a node from the cluster
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+:::note
+These instructions are for nodes being temporary or permanently removed from the cluster.
+:::
+
+<Steps>
+
+    1. Drain the node. **Check all pods except the system ones are gone**.
+
+    2. Check that all storage volumes are successfully unmounted from the node (both `lsblk` devices and k8s volumeattachments)
+
+    3. Do `kubeadm reset` on the node
+
+    4. Delete the node from the k8s cluster
+
+    5. Delete the node from ansible inventory
+
+    6. Add a note to netbox
+</Steps>

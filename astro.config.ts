@@ -257,7 +257,8 @@ export default defineConfig({
               collapsed: true,
               "items": [
                 { "label": "Builds", "link": "documentation/admindocs/fiona/builds" },
-                { "label": "Install", "link": "documentation/admindocs/fiona/install" }
+                { "label": "Install", "link": "documentation/admindocs/fiona/install" },
+                { "label": "Remove", "link": "documentation/admindocs/fiona/remove" }
               ]
             },
             {
