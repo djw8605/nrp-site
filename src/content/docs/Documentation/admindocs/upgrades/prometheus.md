@@ -11,7 +11,6 @@ Manual changes to be done before applying the generated manifests:
 
 - `rm manifests/grafana-dashboardDatasources.yaml`
 - `rm manifests/prometheus-clusterRole.yaml`
-- 
 
 Also the 2 rules definitions have the prometheus version hard-coded.
 
