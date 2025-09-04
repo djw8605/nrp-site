@@ -9,6 +9,10 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import NextOfficeHours from '~/components/widgets/NextOfficeHours.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import Content from '~/components/widgets/Content.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import HeroWide from '~/components/widgets/HeroWide.astro';
 
 const metadata = {
   title: 'National Research Platform (NRP)',
@@ -106,6 +110,43 @@ const metadata = {
       },
     ]}
   />
+  <!--     items={[
+      {
+        title: 'Distributed Sites',
+        description: 'The NRP is composed of over 70 sites across the USA and world, connected with high speed networks to provide a seamless experience to users.',
+        icon: 'tabler:wand'
+      },
+      {
+        title: 'Fault Tolerant',
+        description: 'With sites distributed across the world, the NRP is resilient to failures in any one location, ensuring continuous availability and reliability for users.',
+        icon: 'tabler:shield-check'
+      },
+
+    ]} -->
+  
+  <!-- Map of NRP Sites -->
+  <HeroWide
+    title="Distributed Infrastructure"
+    subtitle="A global network of research resources — shared compute, data, and services."
+    tagline='Global Reach'
+    actions={[{ text: 'Learn more', href: '/distributed-infrastructure', variant: 'primary' }]}
+    >
+    <Fragment slot="image">
+      <iframe 
+        src="https://dash.nrp-nautilus.io/map"
+        title="NRP Sites Map"
+        width="100%"
+        height="500"
+        style="border:0;"
+        loading="lazy"
+        allowfullscreen
+      ></iframe>
+    </Fragment>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+
+  </HeroWide>
 
   <!-- HighlightedPosts Widget ******* -->
 
