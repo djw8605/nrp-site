@@ -5,17 +5,16 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 
 const metadata = {
-  title: 'Distributed Infrastructure - NRP',
+  title: 'NRP - Distributed Services Platform',
 };
 ---
 
 <Layout metadata={metadata} id="distributed-infrastructure">
   <Hero actions={[{ text: 'Learn how it works', href: '#features', variant: 'primary' }]}>
-    <Fragment slot="title"> Distributed Infrastructure — resources around the world </Fragment>
+    <Fragment slot="title"> Distributed Services Platform </Fragment>
 
     <Fragment slot="subtitle">
-      The National Research Platform connects distributed compute, storage, and networking resources across institutions
-      globally to provide resilient, high-performance access for research and education.
+      NRP provides a global platform for institutions to deploy distributed services, including compute, storage, and networking, with resilience and low-latency access for research and education.
     </Fragment>
 
     <Fragment slot="image">
@@ -31,14 +30,26 @@ const metadata = {
   </Hero>
 
   <Features
-    id="di-features"
+    id="features"
     tagline="How it helps"
     title="Distributed infrastructure benefits"
     items={[
       {
+        title: 'Standardized environments',
+        description:
+          'Control software and configurations across sites using containerized images for consistency and reproducibility.',
+        icon: 'tabler:brand-docker',
+      },
+      {
+        title: 'Industry-standard orchestration API',
+        description:
+          'A standardized Kubernetes API and resource model make it easy to develop, deploy, and integrate services using familiar primitives (Deployments, Services, ConfigMaps).',
+        icon: 'tabler:api',
+      },
+      {
         title: 'Fault tolerance',
         description:
-          'Distributed sites reduce single points of failure so experiments and services remain available even when individual nodes go offline.',
+          'Distributed sites reduce single points of failure so experiments and services remain available even when individual nodes or even <strong>entire sites</strong> go offline.',
         icon: 'tabler:cloud-check',
       },
       {
@@ -54,11 +65,12 @@ const metadata = {
         icon: 'tabler:arrows-maximize',
       },
       {
-        title: 'Secure networking',
+        title: 'Observability & monitoring',
         description:
-          'High-performance research networks and secure connections help protect data in transit and support reproducible experiments.',
-        icon: 'tabler:network',
+          'Integrated metrics, logs, and tracing help you monitor performance, troubleshoot issues, and understand resource usage across sites.',
+        icon: 'tabler:chart-line',
       },
+      
     ]}
   />
 
