@@ -1,9 +1,7 @@
 <template>
     <div class="flex flex-col items-center justify-center">
         <h1 class="text-2xl font-bold mb-4">Create LLM tokens</h1>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">This page is a work in progress. All tokens can be removed without notifications. <a class="text-muted underline dark:text-slate-400 font-medium" href="/documentation/userdocs/ai/llm-managed#api-access-to-llms-via-envoy">Read more</a></p>
     </div>
-
 
     <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
     <VueSpinnerPie v-if="isTokensLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
@@ -90,7 +88,7 @@ const toast = useToast();
 
 const dialogVisible = ref(false);
 
-const isTokensLoading = ref(true);
+const isTokensLoading = ref(false);
 const isCreatingTokenLoading = ref(false);
 const isDeletingTokenLoading = ref(false);
 
