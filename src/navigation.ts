@@ -94,6 +94,10 @@ export const headerData = {
           href: getPermalink('/llmtoken'),
         },
         {
+          text: 'S3 Tokens',
+          href: getPermalink('/s3token'),
+        },
+        {
           text: 'Reservations',
           href: getPermalink('/reservations'),
         },

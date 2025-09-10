@@ -1,0 +1,16 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import S3Token from '~/components/vue/S3Token.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'LLM Tokens',
+};
+
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="S3 tokens">
+    <S3Token client:only="vue" />
+  </WidgetWrapper>
+</Layout>
