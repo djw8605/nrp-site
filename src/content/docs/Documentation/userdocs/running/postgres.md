@@ -116,15 +116,6 @@ my-postgres-cluster my-team 14       Running   3           5m
 Linstor storageClass is preferred as it provides the best performance for postgres. Refer to [linstor storage docs](/documentation/userdocs/storage/linstor/). Example of adding the linstor storage:
 
 ```yaml
-spec:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: nautilus.io/linstor
-          operator: In
-          values:
-          - "true"
 volume:
     size: 10Gi
     storageClass: linstor-igrok

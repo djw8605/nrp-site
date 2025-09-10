@@ -72,15 +72,6 @@ spec:
         kubevirt.io/size: small
         kubevirt.io/domain: winvm
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: nautilus.io/linstor
-                operator: In
-                values:
-                - "true"
       domain:
         cpu:
           cores: 8
@@ -193,10 +184,6 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: nautilus.io/linstor
-                operator: In
-                values:
-                - "true"
               - key: kubernetes.io/hostname
                 operator: In
                 values:
