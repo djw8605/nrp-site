@@ -81,8 +81,8 @@ export default defineConfig({
                 { label: "Images", link: "documentation/userdocs/tutorial/images" },
                 { label: "Storage", link: "documentation/userdocs/tutorial/storage" },
                 { label: "Debugging", link: "documentation/userdocs/tutorial/debugging" },
-                {
-                  label: "MNIST Training (Presentation)",
+                { label: "Distributing Images Using CVMFS", link: "documentation/userdocs/tutorial/nrp-software" },
+                { label: "MNIST Training (Presentation)",
                   link: "https://docs.google.com/presentation/d/1GMvaZr9Nm6LhYUU_E0E0LdoebPpk0dgb2Z6oS9v2Ww8/edit?usp=sharing",
                 },
               ],
