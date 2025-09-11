@@ -43,7 +43,7 @@ spec:
   type: ClusterIP
 ```
 
-Where `spec.selector.<label>` should match the label of the target pod (`k8s-app: test-http`), and `targetPort` should match the port you want to expose.  You can test the pod/service by creating a tunnel (`kubectl port-forward service/test-svc 8080:80`) and querying service (`curl http://localhost:8080/`).
+Where `spec.selector.<label>` should match the label of the target pod (`k8s-app: test-http`), and `targetPort` should match the port you want to expose.  You can test the pod/service by creating a tunnel (`kubectl port-forward service/test-svc 8080:8080`) and querying service (`curl http://localhost:8080/`).
 
 After that you can create the Ingress object:
 
