@@ -1,0 +1,127 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+
+const metadata = {
+  title: 'NRP - Distributed Services Platform',
+};
+---
+
+<Layout metadata={metadata} id="distributed-infrastructure">
+  <Hero actions={[{ text: 'Learn how it works', href: '#features', variant: 'primary' }]}>
+    <Fragment slot="title"> Distributed Services Platform </Fragment>
+
+    <Fragment slot="subtitle">
+      NRP provides a global platform for institutions to deploy distributed services, including compute, storage, and networking, with resilience and low-latency access for research and education.
+    </Fragment>
+
+    <Fragment slot="image">
+      <iframe
+        src="https://dash.nrp-nautilus.io/map"
+        title="NRP Sites Map"
+        width="100%"
+        height="520"
+        style="border:0;"
+        loading="lazy"
+        allowfullscreen></iframe>
+    </Fragment>
+  </Hero>
+
+  <Features
+    id="features"
+    tagline="How it helps"
+    title="Distributed infrastructure benefits"
+    items={[
+      {
+        title: 'Standardized environments',
+        description:
+          'Control software and configurations across sites using containerized images for consistency and reproducibility.',
+        icon: 'tabler:brand-docker',
+      },
+      {
+        title: 'Industry-standard orchestration API',
+        description:
+          'A standardized Kubernetes API and resource model make it easy to develop, deploy, and integrate services using familiar primitives (Deployments, Services, ConfigMaps).',
+        icon: 'tabler:api',
+      },
+      {
+        title: 'Fault tolerance',
+        description:
+          'Distributed sites reduce single points of failure so experiments and services remain available even when individual nodes or even <strong>entire sites</strong> go offline.',
+        icon: 'tabler:cloud-check',
+      },
+      {
+        title: 'Data locality',
+        description:
+          'Keep data close to compute to reduce latency and improve throughput for large datasets and real-time experiments.',
+        icon: 'tabler:map-pin',
+      },
+      {
+        title: 'Scalability',
+        description:
+          'Grow your workloads across multiple sites to access more CPU, GPU, and storage resources on demand.',
+        icon: 'tabler:arrows-maximize',
+      },
+      {
+        title: 'Secure networking & isolation',
+        description:
+          'Encrypted site-to-site links, network segmentation, and tenant isolation protect traffic and reduce the risk of lateral movement.',
+        icon: 'tabler:shield-lock',
+      },
+      
+    ]}
+  />
+
+  <Content
+    id="features"
+    title="How the Open Science Data Federation uses NRP's distributed infrastructure"
+    subtitle="OSDF leverages NRP's global resources to host services without the worry of system administration."
+    items={[
+      {
+        title: 'Distributed Caches',
+        description:
+          'The OSDF caches are distributed across multiple NRP sites to provide low-latency access to data for researchers nationwide.',
+        icon: 'tabler:wand',
+      },
+      {
+        title: 'Local Origins',
+        description:
+          'Origins are hosted on hardware near the data source, owned by the data provider, while leveraging the NRP for service hosting.',
+        icon: 'tabler:map-pin',
+      },
+    ]}
+    callToAction={{
+      text: 'Learn more about OSDF',
+      href: 'https://osg-htc.org/services/osdf',
+      variant: 'primary',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Building on the NRP
+      </h3>
+      The <a href="https://osg-htc.org/services/osdf">Open Science Data Federation (OSDF)</a>
+      connects disparate dataset repositories into a single, nation-wide data
+      distribution network. The OSDF leverages the NRP's distributed infrastructure to
+      host its services without the worry of system administration. By utilizing the NRP's
+      global network of compute and storage resources, the OSDF can ensure high availability,
+      fault tolerance, and low-latency access to data for researchers across the country.
+    </Fragment>
+    <Fragment slot="image">
+      <iframe
+        src="https://map.osg-htc.org/map/iframe?view=OpenScienceDataFederation#20.737115,-10.140436|1"
+        title="OSDF Map"
+        width="100%"
+        height="500"
+        style="margin-top:1em; border:0;"
+        loading="lazy"
+        allowfullscreen></iframe>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+</Layout>
