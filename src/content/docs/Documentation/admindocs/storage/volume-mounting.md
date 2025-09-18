@@ -3,7 +3,7 @@ title: Volume Mounting Troubleshooting
 description: Volume Mounting Troubleshooting
 ---
 
-:::warning[Admin Documentation]
+:::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 

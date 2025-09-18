@@ -3,7 +3,7 @@ title: KubeRay Operator Installation and Management
 description: Instructions for installing and managing the KubeRay operator in the Kubernetes cluster.
 ---
 
-:::warning[Admin Documentation]
+:::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 

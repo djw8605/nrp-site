@@ -3,7 +3,7 @@ title: MIG GPUs
 description: Managing MIG GPUs in the cluster.
 ---
 
-:::warning[Admin Documentation]
+:::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 

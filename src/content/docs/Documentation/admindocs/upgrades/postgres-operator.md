@@ -3,7 +3,7 @@ title: Postgres operator
 description: Zalando Postgres operator
 ---
 
-:::warning[Admin Documentation]
+:::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 
