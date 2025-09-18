@@ -11,7 +11,7 @@ kubernetes. Proceed to [JupyterHub Service](/documentation/userdocs/jupyter/jupy
 
 If the [JupyterHub](https://jupyterhub-west.nrp-nautilus.io) service does not meet your needs, and you need to create your own JupyterLab instance, you can run it as a Jupyter container in Nautilus by following step by step instructions below.
 
-This topic assumes that you have basic knowledge of Kubernetes, or you have completed the [Quick Start](/documentation/userdocs/start/quickstart) and [Basic kubernetes](/documentation/userdocs/tutorial/basic) sections.
+This topic assumes that you have basic knowledge of Kubernetes, or you have completed the [Quick Start](/documentation/userdocs/start/getting-started/) and [Basic kubernetes](/documentation/userdocs/tutorial/basic) sections.
 
 ## Step by Step Tensorflow with Jupyter
 

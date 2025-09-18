@@ -3,6 +3,13 @@ title: Ceph Performance
 description: Ceph Performance
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 ## Ceph performance
 
 Currently we're referring to [this article](http://yourcmc.ru/wiki/Ceph_performance) regarding tuning Ceph.

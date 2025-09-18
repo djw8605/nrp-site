@@ -19,7 +19,7 @@ Horizontal scaling in Nautilus allows you increase the overall workload of your 
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/getting-started/) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to deploy a basic Apache service across multiple replicas.
@@ -30,7 +30,7 @@ This section builds on skills from both the [Quickstart](/documentation/userdocs
 
 In this exercise, we will launch multiple Web servers.
 
-To make distinguishing the two servers easier, we will force the nodename into their homepages. Using stock images, we achieve this by using an [init container](/documentation/userdocs/NautilusGlossary/initContainer).
+To make distinguishing the two servers easier, we will force the nodename into their homepages. Using stock images, we achieve this by using an [init container](/documentation/userdocs/start/glossary).
 
 You can copy-and-paste the lines below into a new file called ``http2.yaml`` (using the ``cat`` command to redirect the standard input).
 

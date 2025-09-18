@@ -1,8 +1,14 @@
 ---
 title: FPGA Flashing
 description: A Cluster Admin Guide to flashing FPGAs
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 ## Overview
 

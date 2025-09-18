@@ -3,6 +3,13 @@ title: MaDDash Links
 description: MaDDash Links
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 [NRP][maddash2] MaDDash WebUI.
 
 ## Workshop Materials

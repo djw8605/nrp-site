@@ -109,6 +109,22 @@
                     </div>
                 </template>
             </DataView>
+            <div v-if="users.length > 0" class="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+                <Button 
+                    icon="pi pi-users" 
+                    severity="info" 
+                    label="Email All Users" 
+                    @click="emailAllUsers"
+                    class="px-6 py-2"
+                />
+                <Button 
+                    icon="pi pi-shield" 
+                    severity="warning" 
+                    label="Email Admins Only" 
+                    @click="emailNamespaceAdmins"
+                    class="px-6 py-2"
+                />
+            </div>
         </template>
     </Card>
     <Card class="my-8" >
@@ -209,8 +225,8 @@ const newNamespace = ref("");
 const selectedFeatures = ref(["is_k8s_namespace"]);
 
 const features = ref([
-    {name: "K8s namespace", key: "is_k8s_namespace", disabled: false},
-    {name: "LiteLLM", key: "is_litellm_org", disabled: false},
+    {name: "K8s Namespace", key: "is_k8s_namespace", disabled: false},
+    {name: "LLM Group", key: "is_litellm_org", disabled: false},
 ]);
 
 const initialValues = reactive({
@@ -822,6 +838,67 @@ const createNamespace = () => {
         });
     }).finally(() => {
         createNamespaceLoading.value = false;
+    });
+};
+
+const emailNamespaceAdmins = () => {
+    const adminUsers = users.value.filter(user => user.IsAdmin);
+    
+    if (adminUsers.length === 0) {
+        toast.add({
+            severity: 'warn',
+            summary: 'No admins found',
+            detail: 'There are no admin users in this namespace to email.',
+            life: 3000
+        });
+        return;
+    }
+    
+    const adminEmails = adminUsers.map(user => user.Email).join(',');
+    const subject = `[NAUTILUS] ${selectedNamespace.value?.Name || 'Unknown'}`;
+    const body = `Hello,\n\nThis email is regarding the namespace: ${selectedNamespace.value?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+    
+    const mailtoLink = `mailto:${adminEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    window.open(mailtoLink, '_blank');
+    
+    toast.add({
+        severity: 'info',
+        summary: 'Email client opened',
+        detail: `Opened email to ${adminUsers.length} admin(s) in this namespace.`,
+        life: 3000
+    });
+};
+
+const emailAllUsers = () => {
+    const allUsers = users.value;
+    
+    if (allUsers.length === 0) {
+        toast.add({
+            severity: 'warn',
+            summary: 'No users found',
+            detail: 'There are no users in this namespace to email.',
+            life: 3000
+        });
+        return;
+    }
+    
+    const allEmails = allUsers.map(user => user.Email).join(',');
+    const subject = `[NAUTILUS] ${selectedNamespace.value?.Name || 'Unknown'}`;
+    const body = `Hello,\n\nThis email is regarding the namespace: ${selectedNamespace.value?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+    
+    const mailtoLink = `mailto:${allEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    window.open(mailtoLink, '_blank');
+    
+    const adminCount = allUsers.filter(user => user.IsAdmin).length;
+    const regularUserCount = allUsers.length - adminCount;
+    
+    toast.add({
+        severity: 'info',
+        summary: 'Email client opened',
+        detail: `Opened email to ${allUsers.length} user(s) (${adminCount} admin(s), ${regularUserCount} regular user(s)) in this namespace.`,
+        life: 3000
     });
 };
 </script>

@@ -3,6 +3,13 @@ title: JupyterHub
 description: JupyterHub
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 ## Updating external images definitions
 
 Check the versions for [Julia](https://gitlab.b-data.ch/julia), [R](https://gitlab.b-data.ch/r), [Python](https://gitlab.b-data.ch/python).

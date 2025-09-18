@@ -3,6 +3,13 @@ title: Linstor
 description: Linstor
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 Official way:
 
 `kubectl apply -k "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.9.0"`

@@ -3,6 +3,13 @@ title: Hardware
 description: Hardware
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 <div class="border">
 <strong>FIONA</strong>
 </div>

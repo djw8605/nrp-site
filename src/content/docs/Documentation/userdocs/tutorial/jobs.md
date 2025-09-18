@@ -23,7 +23,7 @@ A Job is a higher-level abstraction that manages a Pod. A Job will ensure that t
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/getting-started/) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to create a simple job that will execute a command, then run to completion.

@@ -10,7 +10,7 @@ Throughout these tutorials, you may see a "Question?". This is an opportunity fo
 :::
 
 ## Prerequisites
-This section assumes you've completed the [quickstart](/documentation/userdocs/start/quickstart/) section.
+This section assumes you've completed the [quickstart](/documentation/userdocs/start/getting-started/) section.
 
 ## Learning Objectives
 1. You will understand the basic format of k8s commands.
@@ -44,9 +44,9 @@ kubectl get nodes
 
 ### List processes running in your namespace
 There are three categories of processes we will examine:
-- [pods](/documentation/userdocs/NautilusGlossary/pod)
-- [deployments](/documentation/userdocs/NautilusGlossary/deployment)
-- [services](/documentation/userdocs/NautilusGlossary/service)
+- [pods](/documentation/userdocs/start/glossary)
+- [deployments](/documentation/userdocs/start/glossary)
+- [services](/documentation/userdocs/start/glossary)
 
 Listing the categories running in k8s follows a similar format.
 

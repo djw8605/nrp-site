@@ -3,6 +3,13 @@ title: Volume Mounting Troubleshooting
 description: Volume Mounting Troubleshooting
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 This article describes how to resolve pods that are in status of `ContainerCreating`, and command `kubectl describe pod <pod-name>` indicates volume mounting failures in the events.
 
 ## Mount failed for "PVC already exists"

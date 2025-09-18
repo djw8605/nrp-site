@@ -3,6 +3,13 @@ title: Builds
 description: Builds
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 
 <div class="border">
   <strong>Hardware specs</strong> 

@@ -1,8 +1,14 @@
 ---
 title: CDN Services
 description: CDN services configuration and management.
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 The nodes in the cluster are grouped by the `topology.kubernetes.io/{region,zone}` labels. For applications requiring faster or larger network connectivity, you can distribute pods across multiple zones or larger regions. Kubernetes services can also be made aware of these topologies to optimize performance.
 

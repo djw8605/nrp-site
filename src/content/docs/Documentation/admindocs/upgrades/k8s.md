@@ -1,8 +1,14 @@
 ---
 title: Kubernetes Upgrades
 description: Kubernetes upgrade procedures
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 #### Kubernetes upgrades
 

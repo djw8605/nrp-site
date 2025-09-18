@@ -11,7 +11,7 @@ In Kubernetes, scheduling refers to the process of assigning pods to nodes in a 
 
 ## Prerequisites
 
-This section builds on skills from both the [Quickstart](/documentation/userdocs/start/quickstart) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
+This section builds on skills from both the [Quickstart](/documentation/userdocs/start/getting-started/) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
 1. You will learn how to query the cluster to see its current status and the status of its nodes in real-time.
@@ -171,7 +171,7 @@ Once the pod is up and running, let's log in and check if you indeed got the des
 
 `kubectl exec test-gpupod -it -- /bin/bash`
 
-You should now be inside of the software container running in the pod. The image we used (rocker/cuda) comes ready for [CUDA](/documentation/userdocs/NautilusGlossary/cuda), so you should be able to use the command `nvidia-smi` to see a readout of the GPU type and its details.
+You should now be inside of the software container running in the pod. The image we used (rocker/cuda) comes ready for [CUDA](/documentation/userdocs/start/glossary), so you should be able to use the command `nvidia-smi` to see a readout of the GPU type and its details.
 
 [There is more information about choosing GPU types on Nautilus.](/documentation/userdocs/running/gpu-pods/#choosing-gpu-type)
 

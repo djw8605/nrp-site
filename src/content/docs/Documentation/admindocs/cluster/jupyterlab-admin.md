@@ -1,8 +1,14 @@
 ---
 title: JupyterLab Admin
 description: JupyterLab administration guide.
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 
 ## Adding a User to JupyterLab

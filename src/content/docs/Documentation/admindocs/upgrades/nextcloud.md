@@ -3,6 +3,13 @@ title: Nextcloud
 description: Description
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 #### Upgrading Nextcloud
 
 ##### Before Upgrading

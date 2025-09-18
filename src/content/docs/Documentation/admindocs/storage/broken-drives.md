@@ -3,6 +3,13 @@ title: Broken Drives
 description: Broken Drives
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 ## List of broken drives in the cluster by Prometheus monitoring:
 
 <div id="observablehq-b-080dd118"></div>

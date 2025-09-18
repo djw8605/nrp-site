@@ -3,6 +3,13 @@ title: NRP Visualization Tools
 description: NRP Visualization Tools
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 <div class="border">
 <strong>NRP visualization tools</strong>
 </div>

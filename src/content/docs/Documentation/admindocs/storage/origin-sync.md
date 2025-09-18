@@ -3,6 +3,13 @@ title: Origin SyncThing
 description: Origin SyncThing
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 ## Syncing user data to an origin
 
 Create the syncthing instance looking at the user's data:

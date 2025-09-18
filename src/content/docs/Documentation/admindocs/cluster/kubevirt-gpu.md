@@ -1,8 +1,14 @@
 ---
 title: KubeVirt GPU
 description: KubeVirt GPU configuration and management.
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 Follow these steps to configure a Kubernetes node for VFIO passthrough, enabling GPU resources for KubeVirt VMs.
 

@@ -1,8 +1,14 @@
 ---
 title: Rook/Ceph Upgrades
 description: Rook/Ceph upgrade procedures
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 Follow the [most recent docs corresponding the the version being upgraded to](https://rook.io/docs/rook/v1.12/Upgrade/rook-upgrade/).
 

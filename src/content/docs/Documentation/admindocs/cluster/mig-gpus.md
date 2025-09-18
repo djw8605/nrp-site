@@ -1,8 +1,14 @@
 ---
 title: MIG GPUs
 description: Managing MIG GPUs in the cluster.
-pagefind: false
 ---
+
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
 
 1. Drain the node.
 

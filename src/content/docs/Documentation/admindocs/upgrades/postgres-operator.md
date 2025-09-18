@@ -3,6 +3,13 @@ title: Postgres operator
 description: Zalando Postgres operator
 ---
 
+:::warning[Admin Documentation]
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+
+
 #### Upgrading Zalando Postgres operator
 
 Instructions: https://postgres-operator.readthedocs.io/en/latest/administrator/#upgrading-the-operator

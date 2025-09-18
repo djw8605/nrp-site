@@ -14,7 +14,7 @@ description: Container images on CVMFS
 
 ## Prerequisites
 
-In order to complete this tutorial, you should have gone through the [Quickstart](/documentation/userdocs/start/quickstart), and finished these tutorials:
+In order to complete this tutorial, you should have gone through the [Quickstart](/documentation/userdocs/start/getting-started/), and finished these tutorials:
 1. [Basic Kubernetes](/documentation/userdocs/tutorial/basic)
 2. [Storage](/documentation/userdocs/tutorial/storage)
 3. [Docker Images](/documentation/userdocs/tutorial/images)

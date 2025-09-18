@@ -38,7 +38,7 @@ kubernetes will auto schedule your pod to the appropriate node. There's no need 
 :::danger[You should always delete your pod when your computation is done to let other users use the GPUs.]
 
 Consider using [Jobs](/documentation/userdocs/running/jobs/) **with actual script instead of `sleep`** whenever possible to ensure your pod is not wasting GPU time.
-If you have never used Kubernetes before, see the [tutorial](/documentation/userdocs/tutorial/intro).
+If you have never used Kubernetes before, see the [tutorial](/documentation/userdocs/tutorial/introduction/).
 
 :::
 
@@ -135,7 +135,7 @@ Quadro-RTX-8000 | 48G
 NVIDIA-A100-SXM4-80GB | 80G
 
 :::note
-[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](/documentation/userdocs/start/contact) and on [resources page](https://nrp.ai/viz/resources). 
+[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 :::
 
