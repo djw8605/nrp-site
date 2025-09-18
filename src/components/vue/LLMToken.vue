@@ -43,7 +43,7 @@
         </template>
     </Card>
 
-    <Dialog v-model:visible="dialogVisible" modal header="Save your token:" :style="{ width: '40rem' }">
+    <Dialog v-model:visible="dialogVisible" modal header="Please save and secure your API key. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
         <Message severity="success">{{ newToken }}</Message>
     </Dialog>
 </template>

@@ -855,8 +855,8 @@ const emailNamespaceAdmins = () => {
     }
     
     const adminEmails = adminUsers.map(user => user.Email).join(',');
-    const subject = `[NAUTILUS] ${selectedNamespace.value?.Name || 'Unknown'}`;
-    const body = `Hello,\n\nThis email is regarding the namespace: ${selectedNamespace.value?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+    const subject = `[NAUTILUS] ${props.selectedNamespace?.Name || 'Unknown'}`;
+    const body = `Hello,\n\nThis email is regarding the namespace: ${props.selectedNamespace?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
     
     const mailtoLink = `mailto:${adminEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
@@ -884,8 +884,8 @@ const emailAllUsers = () => {
     }
     
     const allEmails = allUsers.map(user => user.Email).join(',');
-    const subject = `[NAUTILUS] ${selectedNamespace.value?.Name || 'Unknown'}`;
-    const body = `Hello,\n\nThis email is regarding the namespace: ${selectedNamespace.value?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+    const subject = `[NAUTILUS] ${props.selectedNamespace?.Name || 'Unknown'}`;
+    const body = `Hello,\n\nThis email is regarding the namespace: ${props.selectedNamespace?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
     
     const mailtoLink = `mailto:${allEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
