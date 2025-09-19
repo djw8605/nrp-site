@@ -1,0 +1,66 @@
+---
+const { containerId, title, tableKey, selectAllId, tbodyId, checkboxClass, columns = [], showSelectAll = true, wrapperClass = 'overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto', defaultSortKey = undefined, defaultSortDir = undefined } = Astro.props as {
+  containerId: string;
+  title: string;
+  tableKey: string;
+  selectAllId: string;
+  tbodyId: string;
+  checkboxClass: string;
+  columns: Array<{ key?: string; label?: string; type?: 'string'|'number'; filterId?: string; checkbox?: boolean }>;
+  showSelectAll?: boolean;
+  wrapperClass?: string;
+  defaultSortKey?: string | undefined;
+  defaultSortDir?: 'asc' | 'desc' | undefined;
+};
+---
+
+<div id={containerId} class="mb-8">
+  <h3 class="text-lg font-semibold mb-4">{title}</h3>
+  <div class={wrapperClass}>
+    <table class="min-w-full divide-y divide-gray-200" data-table-key={tableKey} data-default-sort-key={defaultSortKey} data-default-sort-dir={defaultSortDir}>
+      <thead class="bg-gray-50 sticky top-0">
+        <tr>
+          {columns.map((col) => (
+            <th class="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table={col.checkbox ? undefined : tableKey} data-key={col.key} data-type={col.type}>
+              {col.checkbox ? '' : <>
+                {col.label}
+                <span class="sort-indicator"></span>
+              </>}
+            </th>
+          ))}
+        </tr>
+        <tr class="filters">
+          {columns.map((col) => (
+            <th class="px-6 py-1">
+              {col.checkbox && showSelectAll ? (
+                <input type="checkbox" id={selectAllId} class="h-4 w-4 align-middle" title="Toggle all" />
+              ) : col.filterId ? (
+                <input 
+                  type="text" 
+                  id={col.filterId}
+                  class="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs"
+                  data-label={col.label}
+                />
+              ) : null}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody id={tbodyId} class="bg-white divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Programmatically set filter placeholders from header labels
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      const root = document.getElementById('{containerId}');
+      if (!root) return;
+      root.querySelectorAll('thead tr.filters input[data-label]').forEach((inp) => {
+        const label = inp.getAttribute('data-label') || '';
+        inp.setAttribute('placeholder', `Filter ${label}`);
+      });
+    } catch (_) {}
+  });
+</script>
