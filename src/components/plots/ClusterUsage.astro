@@ -11,38 +11,58 @@
         </div>
     </div>
 
-    <!-- Search Options Section -->
-    <div class="mb-8 bg-gray-50 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4">Search Options</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <!-- Search Options + TOC -->
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Search Options Section -->
+        <div id="search-options" class="bg-gray-50 p-6 rounded-lg md:col-span-2">
+            <h3 class="text-lg font-semibold mb-4">Search Options</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="end-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
             </div>
-            <div>
-                <label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-                <input type="date" id="end-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-        </div>
-        <div class="mt-4">
-            <div class="flex items-center gap-3">
-                <span id="mode-label-allocated" class="text-sm font-medium text-gray-900">Allocated</span>
+            <div class="mt-4">
+                <div class="flex items-center gap-3">
+                    <span id="mode-label-allocated" class="text-sm font-medium text-gray-900">Allocated</span>
                 <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="mode-switch" class="sr-only peer" aria-label="Toggle between Allocated and Used">
-                    <div class="relative w-12 h-6 bg-gray-200 rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition-transform peer-checked:after:translate-x-6"></div>
-                </label>
-                <span id="mode-label-used" class="text-sm text-gray-500">Used</span>
+                    <input type="checkbox" id="mode-switch" class="sr-only peer" aria-label="Toggle between Allocated and Utilized">
+                        <div class="relative w-12 h-6 bg-gray-200 rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition-transform peer-checked:after:translate-x-6"></div>
+                    </label>
+                <span id="mode-label-used" class="text-sm text-gray-500">Utilized</span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button id="search-data" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium">Search</button>
             </div>
         </div>
-        <div class="mt-4">
-            <button id="search-data" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium">Search</button>
-        </div>
+
+        <!-- Table of Contents -->
+        <aside class="md:col-span-1">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 md:sticky md:top-4">
+                <h3 class="text-lg font-semibold mb-3">Contents</h3>
+                <nav aria-label="Table of contents">
+                    <ul class="space-y-2 text-sm">
+                        <li><a class="text-blue-700 hover:underline" href="#search-options">Search Options</a></li>
+                        <li><a class="text-blue-700 hover:underline" href="#namespace-filters">Namespace Filters</a></li>
+                        <li><a class="text-blue-700 hover:underline" href="#node-filters">Node Filters</a></li>
+                        <li><a class="text-blue-700 hover:underline" href="#namespace-stats">Usage by Namespace</a></li>
+                        <li><a class="text-blue-700 hover:underline" href="#node-stats">Usage by Node</a></li>
+                        <li><a class="text-blue-700 hover:underline" href="#gpu-stats">Usage by GPU</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
     </div>
 
     
 
     <!-- Namespace Filters Section -->
-    <div class="mb-4 bg-gray-50 p-6 rounded-lg">
+    <div id="namespace-filters" class="mb-4 bg-gray-50 p-6 rounded-lg">
         <h3 class="text-lg font-semibold mb-4">Namespace Filters</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -83,7 +103,7 @@
     </div>
 
     <!-- Node Filters Section -->
-    <div class="mb-4 bg-gray-50 p-6 rounded-lg">
+    <div id="node-filters" class="mb-4 bg-gray-50 p-6 rounded-lg">
         <h3 class="text-lg font-semibold mb-4">Node Filters</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -140,8 +160,8 @@
     <!-- Charts Section -->
     <div class="space-y-12">
         <!-- Namespace Charts -->
-        <div>
-            <h2 class="text-2xl font-bold mb-6">Namespace Stats</h2>
+        <div id="namespace-stats">
+            <h2 class="text-2xl font-bold mb-6">Usage by Namespace</h2>
             
             <div class="mb-8">
                 <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
@@ -197,8 +217,8 @@
         </div>
 
         <!-- Node Charts -->
-        <div>
-            <h2 class="text-2xl font-bold mb-6">Node Stats</h2>
+        <div id="node-stats">
+            <h2 class="text-2xl font-bold mb-6">Usage by Node</h2>
             
             <div class="mb-8">
                 <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
@@ -251,9 +271,9 @@
             </div>
         </div>
 
-        <!-- GPU Stats -->
-        <div>
-            <h2 class="text-2xl font-bold mb-6">GPU Stats</h2>
+        <!-- Usage by GPU -->
+        <div id="gpu-stats">
+            <h2 class="text-2xl font-bold mb-6">Usage by GPU</h2>
             <div id="gpu-pie-chart" class="mb-6"></div>
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-3">
@@ -1002,7 +1022,13 @@
                 marginLeft: 120,
                 marginBottom: 100,
                 marks: [
-                    Plot.barY(filteredData, { x: "name", y: "value", fill: color }),
+                    Plot.barY(filteredData, { 
+                        x: "name", 
+                        y: "value", 
+                        fill: color,
+                        tip: true,
+                        title: d => `${d.name}: ${(+d.value).toFixed(2)} h`
+                    }),
                     Plot.ruleY([0])
                 ],
                 x: {
@@ -1084,13 +1110,17 @@
               const arcLabel = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
               const sumV = d3.sum(I, i => V[i]);
 
+              // wrapper for custom tooltip positioning
+              const container = document.createElement('div');
+              container.style.position = 'relative';
+
               const svg = d3.create("svg")
                   .attr("width", width)
                   .attr("height", height)
                   .attr("viewBox", [-width / 2, -height / 2, width, height])
                   .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-              svg.append("g")
+              const paths = svg.append("g")
                   .attr("stroke", stroke)
                   .attr("stroke-width", strokeWidth)
                   .attr("stroke-linejoin", strokeLinejoin)
@@ -1098,9 +1128,32 @@
                 .data(arcs)
                 .join("path")
                   .attr("fill", d => color(N[d.data]))
-                  .attr("d", arc)
-                .append("title")
-                  .text(d => title(d.data));
+                  .attr("d", arc);
+
+              // custom tooltip
+              const tip = document.createElement('div');
+              tip.style.position = 'absolute';
+              tip.style.pointerEvents = 'none';
+              tip.style.background = 'rgba(255,255,255,0.98)';
+              tip.style.border = '1px solid rgba(0,0,0,0.1)';
+              tip.style.borderRadius = '0.375rem';
+              tip.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+              tip.style.padding = '6px 8px';
+              tip.style.fontSize = '12px';
+              tip.style.color = '#111827';
+              tip.style.display = 'none';
+
+              paths
+                .on('mousemove', (event, d) => {
+                  const rect = container.getBoundingClientRect();
+                  tip.style.display = 'block';
+                  tip.innerHTML = String(title(d.data)).replace(/\n/g, '<br>');
+                  tip.style.left = (event.clientX - rect.left + 12) + 'px';
+                  tip.style.top = (event.clientY - rect.top + 12) + 'px';
+                })
+                .on('mouseleave', () => {
+                  tip.style.display = 'none';
+                });
 
               svg.append("g")
                   .attr("font-family", "sans-serif")
@@ -1121,7 +1174,9 @@
                   .attr("font-weight", (_, i) => i ? null : "bold")
                   .text(d => d);
 
-              return svg.node();
+              container.appendChild(svg.node());
+              container.appendChild(tip);
+              return container;
             }
 
             return PieChart(gpuData, {
@@ -1296,7 +1351,7 @@
         try {
             setControlsDisabled(true);
             const t0 = performance.now();
-            setStatus('Loading data…', 'loading', true);
+            setStatus('Loading data… this could take a minute', 'loading', true);
             const data = await fetchResourceData();
             console.log('Fetched resource data:', data);
             if (data && data.rawResourceData) {
@@ -1312,7 +1367,7 @@
                     console.log('Applied regex filters and updated charts');
                     const now = new Date();
                     const seconds = ((performance.now() - t0) / 1000).toFixed(2);
-                    const modeLabel = currentMode === 'used' ? 'Used' : 'Allocated';
+                    const modeLabel = currentMode === 'used' ? 'Utilized' : 'Allocated';
                     setStatus(`Loaded ${modeLabel} data: ${allNamespaces.length} namespaces, ${allNodes.length} nodes in ${seconds}s · ${now.toLocaleString()}`, 'success', false);
                 } catch (e) {
                     console.error('applyRegexFilters/updateCharts error:', e);
@@ -1405,8 +1460,8 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
-                a.download = `namespace-stats-${modeLabel}.csv`;
+                const modeLabel = currentMode === 'used' ? 'utilized' : 'allocated';
+                a.download = `usage-by-namespace-${modeLabel}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1436,8 +1491,8 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
-                a.download = `gpu-stats-${modeLabel}.csv`;
+                const modeLabel = currentMode === 'used' ? 'utilized' : 'allocated';
+                a.download = `usage-by-gpu-${modeLabel}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1477,8 +1532,8 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
-                a.download = `node-stats-${modeLabel}.csv`;
+                const modeLabel = currentMode === 'used' ? 'utilized' : 'allocated';
+                a.download = `usage-by-node-${modeLabel}.csv`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
