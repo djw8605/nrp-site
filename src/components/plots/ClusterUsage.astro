@@ -1,0 +1,1520 @@
+<section class="py-8 sm:py-16 lg:py-20 mx-auto max-w-7xl px-4 sm:px-6">
+    
+    <!-- Data Status -->
+    <div id="data-status" class="mb-6 hidden">
+        <div class="flex items-center gap-3 p-3 rounded-md border text-sm" aria-live="polite">
+            <svg id="data-status-spinner" class="h-5 w-5 text-blue-600 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <span id="data-status-text" class="font-medium"></span>
+        </div>
+    </div>
+
+    <!-- Search Options Section -->
+    <div class="mb-8 bg-gray-50 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Search Options</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input type="date" id="start-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label for="end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input type="date" id="end-date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        <div class="mt-4">
+            <div class="flex items-center gap-3">
+                <span id="mode-label-allocated" class="text-sm font-medium text-gray-900">Allocated</span>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="mode-switch" class="sr-only peer" aria-label="Toggle between Allocated and Used">
+                    <div class="relative w-12 h-6 bg-gray-200 rounded-full transition-colors peer-focus:ring-2 peer-focus:ring-blue-500 dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition-transform peer-checked:after:translate-x-6"></div>
+                </label>
+                <span id="mode-label-used" class="text-sm text-gray-500">Used</span>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button id="search-data" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium">Search</button>
+        </div>
+    </div>
+
+    
+
+    <!-- Namespace Filters Section -->
+    <div class="mb-4 bg-gray-50 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Namespace Filters</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label for="namespace-name-filter" class="block text-sm font-medium text-gray-700 mb-1">Namespace Name Filter (regex)</label>
+                <input type="text" id="namespace-name-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="namespace-pi-filter" class="block text-sm font-medium text-gray-700 mb-1">PI Filter (regex)</label>
+                <input type="text" id="namespace-pi-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="namespace-institution-filter" class="block text-sm font-medium text-gray-700 mb-1">Institution Filter (regex)</label>
+                <input type="text" id="namespace-institution-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+        </div>
+    </div>
+
+    <!-- Selected Namespaces Table -->
+    <div class="mb-8">
+        <h3 class="text-lg font-semibold mb-4">Selected Namespaces</h3>
+        <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <input type="checkbox" id="namespace-select-all" class="h-4 w-4 align-middle" title="Toggle all" />
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="namespace" data-type="string">Namespace <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="PI" data-type="string">PI <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="institution" data-type="string">Institution <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="description" data-type="string">Description <span class="sort-indicator"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="namespaces-table-body" class="bg-white divide-y divide-gray-200">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Node Filters Section -->
+    <div class="mb-4 bg-gray-50 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Node Filters</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label for="node-name-filter" class="block text-sm font-medium text-gray-700 mb-1">Node Name Filter (regex)</label>
+                <input type="text" id="node-name-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="node-region-filter" class="block text-sm font-medium text-gray-700 mb-1">Region Filter (regex)</label>
+                <input type="text" id="node-region-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="node-zone-filter" class="block text-sm font-medium text-gray-700 mb-1">Zone Filter (regex)</label>
+                <input type="text" id="node-zone-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="node-gpu-filter" class="block text-sm font-medium text-gray-700 mb-1">GPU Type Filter (regex)</label>
+                <input type="text" id="node-gpu-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="node-fpga-filter" class="block text-sm font-medium text-gray-700 mb-1">FPGA Type Filter (regex)</label>
+                <input type="text" id="node-fpga-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+            <div>
+                <label for="node-taints-filter" class="block text-sm font-medium text-gray-700 mb-1">Node Taints Filter (regex)</label>
+                <input type="text" id="node-taints-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
+            </div>
+        </div>
+    </div>
+
+    <!-- Selected Nodes Table (moved under Node Filters) -->
+    <div class="mb-8">
+        <h3 class="text-lg font-semibold mb-4">Selected Nodes</h3>
+        <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <input type="checkbox" id="node-select-all" class="h-4 w-4 align-middle" title="Toggle all" />
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="node" data-type="string">Node <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="region" data-type="string">Region <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="zone" data-type="string">Zone <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="fpgaType" data-type="string">FPGA Type <span class="sort-indicator"></span></th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="taints" data-type="string">Node Taints <span class="sort-indicator"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="nodes-table-body" class="bg-white divide-y divide-gray-200">
+                </tbody>
+            </table>
+        </div>
+    </div> 
+
+    <!-- Charts Section -->
+    <div class="space-y-12">
+        <!-- Namespace Charts -->
+        <div>
+            <h2 class="text-2xl font-bold mb-6">Namespace Stats</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
+                <div id="namespace-cpu-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">GPU Hours</h3>
+                <div id="namespace-gpu-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">FPGA Hours</h3>
+                <div id="namespace-fpga-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Memory Hours</h3>
+                <div id="namespace-memory-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Ephemeral Storage Hours</h3>
+                <div id="namespace-storage-plot"></div>
+            </div>
+
+            <!-- Namespace Stats Table -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-semibold">Namespace Resource Table</h3>
+                    <button id="download-namespace-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
+                </div>
+                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="namespace" data-type="string">Namespace <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="cpuHours" data-type="number">CPU Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="gpuHours" data-type="number">GPU Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="memoryHours" data-type="number">Memory Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="storageHours" data-type="number">Ephemeral Storage Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="fpgaHours" data-type="number">FPGA Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="PI" data-type="string">PI <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="institution" data-type="string">Institution <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="description" data-type="string">Description <span class="sort-indicator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="namespace-stats-table-body" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Node Charts -->
+        <div>
+            <h2 class="text-2xl font-bold mb-6">Node Stats</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
+                <div id="node-cpu-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">GPU Hours</h3>
+                <div id="node-gpu-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">FPGA Hours</h3>
+                <div id="node-fpga-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Memory Hours</h3>
+                <div id="node-memory-plot"></div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">Ephemeral Storage Hours</h3>
+                <div id="node-storage-plot"></div>
+            </div>
+
+            <!-- Node Stats Table -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-semibold">Node Resource Table</h3>
+                    <button id="download-node-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
+                </div>
+                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="node" data-type="string">Node <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="cpuHours" data-type="number">CPU Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="gpuHours" data-type="number">GPU Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="memoryHours" data-type="number">Memory Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="storageHours" data-type="number">Ephemeral Storage Hours <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="fpgaHours" data-type="number">FPGA Hours <span class="sort-indicator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="node-stats-table-body" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- GPU Stats -->
+        <div>
+            <h2 class="text-2xl font-bold mb-6">GPU Stats</h2>
+            <div id="gpu-pie-chart" class="mb-6"></div>
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xl font-semibold">GPU Type Table</h3>
+                    <button id="download-gpu-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
+                </div>
+                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="gpu-stats" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="gpu-stats" data-key="hours" data-type="number">Hours <span class="sort-indicator"></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="gpu-stats-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import * as Plot from '@observablehq/plot';
+    import * as d3 from 'd3';
+    
+    let allNamespaces = [];
+    let allNodes = [];
+    // Base rows for re-aggregation by (namespace, node, resource)
+    let baseRows = [];
+    // Metadata maps to enrich aggregates
+    let namespaceMeta = new Map(); // ns -> { PI, institution, description }
+    let nodeMeta = new Map(); // node -> { region, zone, gpuType, fpgaType, taints }
+    let rawResourceData = [];
+    let currentMode = 'allocated'; // 'allocated' | 'used'
+
+    // Initialize dates with constraints
+    const initializeDates = () => {
+        const today = new Date();
+        const minDate = new Date('2023-09-15'); // earliest aggregation date
+
+        // Default range: last 7 days, clamped within [minDate, today]
+        let defaultEnd = today;
+        let defaultStart = new Date();
+        defaultStart.setDate(defaultStart.getDate() - 7);
+        if (defaultStart < minDate) defaultStart = new Date(minDate);
+
+        const startEl = document.getElementById('start-date');
+        const endEl = document.getElementById('end-date');
+        const toYMD = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+        // Apply input constraints and defaults
+        startEl.min = toYMD(minDate);
+        startEl.max = toYMD(today);
+        endEl.min = toYMD(minDate);
+        endEl.max = toYMD(today);
+
+        startEl.value = toYMD(defaultStart);
+        endEl.value = toYMD(defaultEnd);
+    };
+
+    const parseUTCDateYMD = (inputEl) => {
+        if (!inputEl) return null;
+        const v = inputEl.value;
+        if (!v) return null;
+        const [y, m, d] = v.split('-').map(Number);
+        const ms = Date.UTC(y, (m || 1) - 1, d || 1, 0, 0, 0, 0);
+        return new Date(ms);
+    };
+
+    const getDateRange = () => {
+        const startEl = document.getElementById('start-date');
+        const endEl = document.getElementById('end-date');
+        let startDate = parseUTCDateYMD(startEl);
+        let endDate = parseUTCDateYMD(endEl);
+        if (!startDate || !endDate) {
+            const now = new Date();
+            // Default to UTC midnight today and 7 days prior
+            const endMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0);
+            endDate = new Date(endMs);
+            startDate = new Date(endMs - 7 * 24 * 60 * 60 * 1000);
+        }
+        return { startDate, endDate };
+    };
+
+    const validateDateRange = () => {
+        const startEl = document.getElementById('start-date');
+        const endEl = document.getElementById('end-date');
+        const { startDate, endDate } = getDateRange();
+        const today = new Date();
+        const maxDate = new Date('2023-09-15');
+
+        if (!startEl.value || !endEl.value) {
+            setStatus('Please select both start and end dates.', 'error', false);
+            return { ok: false };
+        }
+
+        if (isNaN(startDate) || isNaN(endDate)) {
+            setStatus('Invalid Date(s)', 'error', false);
+            return { ok: false };
+        }
+
+        // Enforce: start <= today, end <= today, start < end, start >= maxDate
+        if (startDate > today || endDate > today || startDate >= endDate || startDate < maxDate) {
+            setStatus('Invalid Date(s)', 'error', false);
+            return { ok: false };
+        }
+
+        return { ok: true };
+    };
+
+    // Fetch namespace info via RPC using @open-rpc/client-js
+    const fetchNamespaceInfo = async () => {
+        try {
+            const { HTTPTransport, Client, RequestManager } = await import('@open-rpc/client-js');
+            const baseUrl = import.meta.env.PUBLIC_SVC_URL || "https://portal.nrp.ai";
+            const transport = new HTTPTransport(`${baseUrl}/rpc`);
+            const client = new Client(new RequestManager([transport]));
+            const result = await client.request({method: 'guest.ListNsInfo', params: {}});
+            console.log('Namespace RPC result:', result);
+            return result?.Namespaces || [];
+        } catch (error) {
+            console.error('Error fetching namespace info:', error);
+            return [];
+        }
+    };
+
+    // Fetch node info via RPC using @open-rpc/client-js
+    const fetchNodeInfo = async () => {
+        try {
+            const { HTTPTransport, Client, RequestManager } = await import('@open-rpc/client-js');
+            const baseUrl = import.meta.env.PUBLIC_SVC_URL || "https://portal.nrp.ai";
+            const transport = new HTTPTransport(`${baseUrl}/rpc`);
+            const client = new Client(new RequestManager([transport]));
+            const result = await client.request({method: 'guest.ListNodeInfo', params: {}});
+            console.log('Node RPC result:', result);
+            return result?.Nodes || [];
+        } catch (error) {
+            console.error('Error fetching node info:', error);
+            return [];
+        }
+    };
+
+    const fetchResourceData = async () => {
+        try {
+            const { startDate, endDate } = getDateRange();
+            const metric = currentMode === 'used' ? 'namespace_used_resources' : 'namespace_allocated_resources';
+
+            // Build non-overlapping weekly chunks like the Observable notebook
+            const msPerDay = 24 * 60 * 60 * 1000;
+            // Compute whole-day difference based on local-midnight dates to avoid DST drift
+            const totalDays = Math.floor((endDate.getTime() - startDate.getTime()) / msPerDay);
+            const maxWeeks = Math.floor(totalDays / 7);
+            // If exactly 7 days, start at 0; else start at floor(days/7)
+            const startWeeks = totalDays === 7 ? 0 : maxWeeks;
+            const dateRanges = [];
+            for (let weeks = startWeeks; weeks >= 0; weeks--) {
+                const spanDays = (totalDays - 7 * weeks >= 7 || totalDays - 7 * weeks === 0) ? 7 : (totalDays - 7 * weeks);
+                let searchEndDate = new Date(endDate.getTime() - 7 * weeks * msPerDay);
+                let searchEnd = Math.floor(searchEndDate.getTime() / 1000);
+                // Add +1s to all but the earliest chunk to avoid overlapping timestamps.
+                // For an exact 7-day window (weeks=0, maxWeeks=1), this adds +1s to the only chunk.
+                if (weeks !== maxWeeks) {
+                    searchEnd += 1;
+                }
+                dateRanges.push([spanDays, searchEnd]);
+            }
+
+            // Execute chunked queries in parallel
+            const queries = dateRanges.map(([spanDays, searchEnd]) => {
+                const q = `sum_over_time(${metric}[${spanDays}d:1h]@${searchEnd})`;
+                // Prefer strict, deduplicated results to avoid partial data
+                // without forcing raw resolution (keep downsampling allowed).
+                const url = `https://thanos.nrp-nautilus.io/api/v1/query?query=${encodeURIComponent(q)}&dedup=true&partial_response=false`;
+                console.log(`[${currentMode}] Prometheus query:`, q);
+                return fetch(url).then(r => r.ok ? r.json() : Promise.reject(new Error(`${r.status} ${r.statusText}`)));
+            });
+
+            const [results, namespaceInfo, nodeInfo] = await Promise.all([
+                Promise.allSettled(queries),
+                fetchNamespaceInfo().catch(() => {
+                    console.warn('Namespace info unavailable, continuing with empty data');
+                    return [];
+                }),
+                fetchNodeInfo().catch(() => {
+                    console.warn('Node info unavailable, continuing with empty data');  
+                    return [];
+                })
+            ]);
+
+            // Merge successful chunk results
+            let merged = [];
+            let hadFailure = false;
+            for (const res of results) {
+                if (res.status === 'fulfilled') {
+                    const arr = res.value?.data?.result || [];
+                    if (arr.length === 0) hadFailure = true; // parity with notebook's partial failure flag
+                    merged = merged.concat(arr);
+                } else {
+                    console.warn('Chunk query failed:', res.reason);
+                    hadFailure = true;
+                }
+            }
+            rawResourceData = merged;
+            console.log('Raw resource data count (merged):', rawResourceData.length, 'chunks:', results.length, 'partialFailure:', hadFailure);
+
+            if (rawResourceData.length > 0) {
+                console.log('Sample resource data:', rawResourceData[0]);
+                const resourceTypes = [...new Set(rawResourceData.map(r => r.metric?.resource).filter(Boolean))];
+                console.log('Available resource types:', resourceTypes);
+            }
+
+            return { rawResourceData, namespaceInfo, nodeInfo };
+        } catch (error) {
+            console.error('Error fetching resource data:', error);
+            return { rawResourceData: [], namespaceInfo: [], nodeInfo: [] };
+        }
+    };
+
+    // Resource conversion functions from Observable notebook
+    const convertResource = (resource) => {
+        if (resource?.includes("amd_com_xilinx")) return "fpga";
+        if (resource == "cpu") return "cpu";
+        if (resource?.includes("nvidia_com")) return "gpu";
+        if (resource == "memory") return "memory";
+        if (resource == "ephemeral_storage") return "storage";
+        return "other";
+    };
+
+    const convertValue = (resource, value) => {
+        if (resource == "memory" || resource == "ephemeral_storage") {
+            return value / 1000000000; // Convert to GB
+        }
+        return value;
+    };
+
+    const aggregateData = ({ rawResourceData, namespaceInfo, nodeInfo }) => {
+        // Build exact notebook-style rows merged by (namespace,node,converted resource)
+        const rows = [];
+        const getKey = (ns, node, r) => `${ns}||${node}||${r}`;
+        const rowMap = new Map();
+        rawResourceData.forEach(result => {
+            const labels = result.metric || {};
+            const namespace = labels.namespace;
+            const node = labels.node;
+            const rawRes = labels.resource;
+            const v = parseFloat(result.value?.[1] ?? '0');
+            if (!namespace || !node || !rawRes) return;
+            const res = convertResource(rawRes);
+            const inc = convertValue(rawRes, v);
+            const k = getKey(namespace, node, res);
+            if (rowMap.has(k)) {
+                rowMap.get(k).value += inc;
+            } else {
+                const obj = { namespace, node, resource: res, value: inc };
+                rowMap.set(k, obj);
+                rows.push(obj);
+            }
+        });
+        // Save base rows for selection-based re-aggregation
+        baseRows = rows.slice();
+
+        // Lookup info
+        const nsInfoMap = new Map(namespaceInfo.map(ns => [ns.Name, ns]));
+        const nodeInfoMap = new Map(nodeInfo.map(n => [n.Name, n]));
+
+        // Aggregate to namespaces
+        const namespaceMap = new Map();
+        rows.forEach(r => {
+            if (!namespaceMap.has(r.namespace)) {
+                const nsInfo = nsInfoMap.get(r.namespace) || {};
+                namespaceMap.set(r.namespace, {
+                    namespace: r.namespace,
+                    institution: nsInfo.Institution || 'unknown',
+                    description: nsInfo.Description || 'unknown',
+                    PI: nsInfo.PI || 'unknown',
+                    cpuHours: 0,
+                    memoryHours: 0,
+                    gpuHours: 0,
+                    fpgaHours: 0,
+                    storageHours: 0
+                });
+            }
+            const ns = namespaceMap.get(r.namespace);
+            if (r.resource === 'cpu') ns.cpuHours += r.value;
+            else if (r.resource === 'memory') ns.memoryHours += r.value;
+            else if (r.resource === 'gpu') ns.gpuHours += r.value;
+            else if (r.resource === 'fpga') ns.fpgaHours += r.value;
+            else if (r.resource === 'storage') ns.storageHours += r.value;
+        });
+
+        // Aggregate to nodes
+        const nodeMap = new Map();
+        rows.forEach(r => {
+            if (!nodeMap.has(r.node)) {
+                const nInfo = nodeInfoMap.get(r.node) || {};
+                nodeMap.set(r.node, {
+                    node: r.node,
+                    region: nInfo.Region || 'unknown',
+                    zone: nInfo.Zone || 'unknown',
+                    gpuType: nInfo.GPUType || 'unknown',
+                    fpgaType: nInfo.FPGAType || 'unknown',
+                    taints: Array.isArray(nInfo.Taints)
+                        ? nInfo.Taints.map(t => (t.key ?? t.Key) + (t.value ? '=' + t.value : '')).join(',')
+                        : 'unknown',
+                    cpuHours: 0,
+                    memoryHours: 0,
+                    gpuHours: 0,
+                    fpgaHours: 0,
+                    storageHours: 0
+                });
+            }
+            const nd = nodeMap.get(r.node);
+            if (r.resource === 'cpu') nd.cpuHours += r.value;
+            else if (r.resource === 'memory') nd.memoryHours += r.value;
+            else if (r.resource === 'gpu') nd.gpuHours += r.value;
+            else if (r.resource === 'fpga') nd.fpgaHours += r.value;
+            else if (r.resource === 'storage') nd.storageHours += r.value;
+        });
+
+        allNamespaces = Array.from(namespaceMap.values());
+        allNodes = Array.from(nodeMap.values());
+        // Build metadata maps from aggregated lists
+        namespaceMeta = new Map();
+        allNamespaces.forEach(ns => {
+            namespaceMeta.set(ns.namespace, {
+                PI: ns.PI || 'unknown',
+                institution: ns.institution || 'unknown',
+                description: ns.description || ''
+            });
+        });
+        nodeMeta = new Map();
+        allNodes.forEach(n => {
+            nodeMeta.set(n.node, {
+                region: n.region || 'unknown',
+                zone: n.zone || 'unknown',
+                gpuType: n.gpuType || 'unknown',
+                fpgaType: n.fpgaType || 'unknown',
+                taints: n.taints || ''
+            });
+        });
+    };
+
+    const applyRegexFilters = () => {
+        try {
+            const namespaceNameRegex = new RegExp(document.getElementById('namespace-name-filter').value || '.*');
+            const namespaceInstitutionRegex = new RegExp(document.getElementById('namespace-institution-filter').value || '.*');
+            const namespacePiRegex = new RegExp(document.getElementById('namespace-pi-filter').value || '.*');
+            const nodeNameRegex = new RegExp(document.getElementById('node-name-filter').value || '.*');
+            const nodeRegionRegex = new RegExp(document.getElementById('node-region-filter').value || '.*');
+            const nodeZoneRegex = new RegExp(document.getElementById('node-zone-filter').value || '.*');
+            const nodeGpuRegex = new RegExp(document.getElementById('node-gpu-filter').value || '.*');
+            const nodeFpgaRegex = new RegExp(document.getElementById('node-fpga-filter').value || '.*');
+            const nodeTaintsRegex = new RegExp(document.getElementById('node-taints-filter').value || '.*');
+
+            const filteredNamespaces = allNamespaces.filter(ns => 
+                namespaceNameRegex.test(ns.namespace || '') && 
+                namespacePiRegex.test(ns.PI || '') &&
+                namespaceInstitutionRegex.test(ns.institution || '')
+            );
+
+            const filteredNodes = allNodes.filter(node => 
+                nodeNameRegex.test(node.node) &&
+                nodeRegionRegex.test(node.region) &&
+                nodeZoneRegex.test(node.zone) &&
+                nodeGpuRegex.test(node.gpuType) &&
+                nodeFpgaRegex.test(node.fpgaType) &&
+                nodeTaintsRegex.test(node.taints)
+            );
+
+            // Regex filters control what appears in the checkbox tables for their respective domains
+            updateNamespaceTable(filteredNamespaces);
+            updateNodeTable(filteredNodes);
+            // After rebuilding checkbox tables, refresh charts/tables from checked rows.
+            updateCharts();
+        } catch (error) {
+            console.error('Invalid regex:', error);
+        }
+    };
+
+    const updateNamespaceTable = (namespaces) => {
+        const tbody = document.getElementById('namespaces-table-body');
+        tbody.innerHTML = '';
+
+        // Apply sorting for Selected Namespaces
+        let nsRows = Array.isArray(namespaces) ? namespaces.slice() : [];
+        const nsSelState = sortStates['ns-selected'];
+        if (nsSelState && nsSelState.key) {
+            const dir = nsSelState.dir === 'asc' ? 1 : -1;
+            const acc = nsSelectedAccessors[nsSelState.key] || ((r) => r[nsSelState.key]);
+            nsRows.sort((a,b) => compareValues(acc(a), acc(b)) * dir);
+        } else {
+            nsRows.sort((a, b) => (b.cpuHours + b.gpuHours + b.memoryHours) - (a.cpuHours + a.gpuHours + a.memoryHours));
+        }
+        currentSelectedNamespaces = nsRows.slice();
+        nsRows.forEach(ns => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <input type="checkbox" class="namespace-checkbox" value="${ns.namespace}" checked>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${ns.namespace}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.PI || ''}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.institution}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.description || ''}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Update header indicators
+        updateSortIndicators('ns-selected');
+
+        // Add event listeners for checkboxes
+        document.querySelectorAll('.namespace-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                syncNamespaceHeaderCheckbox();
+                updateCharts();
+            });
+        });
+
+        // Sync header checkbox state
+        syncNamespaceHeaderCheckbox();
+    };
+
+    let currentFilteredNamespaces = [];
+    let currentFilteredNodes = [];
+    // Keep current lists for sortable selected tables
+    let currentSelectedNamespaces = [];
+    let currentSelectedNodes = [];
+
+    // Sorting state and helpers
+    const sortStates = {
+        'ns-selected': { key: null, dir: 'asc' },
+        'nodes-selected': { key: null, dir: 'asc' },
+        'ns-stats': { key: null, dir: 'desc' },
+        'node-stats': { key: null, dir: 'desc' },
+        'gpu-stats': { key: null, dir: 'desc' },
+    };
+
+    const compareValues = (a, b) => {
+        const an = typeof a === 'number' && !isNaN(a);
+        const bn = typeof b === 'number' && !isNaN(b);
+        let va = a, vb = b;
+        if (!(an && bn)) {
+            va = (va ?? '').toString().toLowerCase();
+            vb = (vb ?? '').toString().toLowerCase();
+        }
+        if (va < vb) return -1;
+        if (va > vb) return 1;
+        return 0;
+    };
+
+    // Accessors per table
+    const nsStatsAccessors = {
+        namespace: r => r.namespace || '',
+        cpuHours: r => r.cpuHours || 0,
+        gpuHours: r => r.gpuHours || 0,
+        memoryHours: r => r.memoryHours || 0,
+        storageHours: r => r.storageHours || 0,
+        fpgaHours: r => r.fpgaHours || 0,
+        PI: r => r.PI || '',
+        institution: r => r.institution || '',
+        description: r => r.description || ''
+    };
+    const nodeStatsAccessors = {
+        node: r => r.node || '',
+        gpuType: r => r.gpuType || '',
+        cpuHours: r => r.cpuHours || 0,
+        gpuHours: r => r.gpuHours || 0,
+        memoryHours: r => r.memoryHours || 0,
+        storageHours: r => r.storageHours || 0,
+        fpgaHours: r => r.fpgaHours || 0
+    };
+    const gpuAccessors = {
+        gpuType: r => r.gpuType || '',
+        hours: r => r.hours || 0
+    };
+    const nsSelectedAccessors = {
+        namespace: r => r.namespace || '',
+        PI: r => r.PI || '',
+        institution: r => r.institution || '',
+        description: r => r.description || ''
+    };
+    const nodeSelectedAccessors = {
+        node: r => r.node || '',
+        region: r => r.region || '',
+        zone: r => r.zone || '',
+        gpuType: r => r.gpuType || '',
+        fpgaType: r => r.fpgaType || '',
+        taints: r => r.taints || ''
+    };
+
+    const updateNamespaceStatsTable = (namespaces) => {
+        currentFilteredNamespaces = Array.isArray(namespaces) ? namespaces.slice() : [];
+        const tbody = document.getElementById('namespace-stats-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        let rows = currentFilteredNamespaces.slice();
+        const nsStatsState = sortStates['ns-stats'];
+        if (nsStatsState && nsStatsState.key) {
+            const dir = nsStatsState.dir === 'asc' ? 1 : -1;
+            const acc = nsStatsAccessors[nsStatsState.key] || ((r) => r[nsStatsState.key]);
+            rows.sort((a,b) => compareValues(acc(a), acc(b)) * dir);
+        } else {
+            rows.sort((a, b) => (b.cpuHours + b.gpuHours + b.memoryHours + b.storageHours + b.fpgaHours) - (a.cpuHours + a.gpuHours + a.memoryHours + a.storageHours + a.fpgaHours));
+        }
+
+        rows.forEach(ns => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${ns.namespace}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(ns.cpuHours || 0).toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(ns.gpuHours || 0).toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(ns.memoryHours || 0).toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(ns.storageHours || 0).toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${(ns.fpgaHours || 0).toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.PI || ''}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.institution || ''}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ns.description || ''}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        updateSortIndicators('ns-stats');
+    };
+
+    const updateNodeStatsTable = (nodes) => {
+        currentFilteredNodes = Array.isArray(nodes) ? nodes.slice() : [];
+        const tbody = document.getElementById('node-stats-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        let rows = currentFilteredNodes.slice();
+        const nodeStatsState = sortStates['node-stats'];
+        if (nodeStatsState && nodeStatsState.key) {
+            const dir = nodeStatsState.dir === 'asc' ? 1 : -1;
+            const acc = nodeStatsAccessors[nodeStatsState.key] || ((r) => r[nodeStatsState.key]);
+            rows.sort((a,b) => compareValues(acc(a), acc(b)) * dir);
+        } else {
+            rows.sort((a, b) => (b.cpuHours + b.gpuHours + b.memoryHours + b.storageHours + b.fpgaHours) - (a.cpuHours + a.gpuHours + a.memoryHours + a.storageHours + a.fpgaHours));
+        }
+
+        rows.forEach(node => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-900\">${node.node}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${node.gpuType || ''}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${(node.cpuHours || 0).toFixed(2)}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${(node.gpuHours || 0).toFixed(2)}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${(node.memoryHours || 0).toFixed(2)}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${(node.storageHours || 0).toFixed(2)}</td>
+                <td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\">${(node.fpgaHours || 0).toFixed(2)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        updateSortIndicators('node-stats');
+    };
+
+    let currentGpuStats = [];
+    const updateGpuStatsTable = (nodes) => {
+        const tbody = document.getElementById('gpu-stats-table-body');
+        if (!tbody) return;
+        const byType = new Map();
+        (nodes || []).forEach(n => {
+            const type = (n.gpuType || '').trim();
+            const hours = typeof n.gpuHours === 'number' ? n.gpuHours : 0;
+            if (!type || type.toLowerCase() === 'unknown' || hours <= 0) return;
+            byType.set(type, (byType.get(type) || 0) + hours);
+        });
+        currentGpuStats = Array.from(byType, ([gpuType, hours]) => ({ gpuType, hours }));
+        let gpuRows = currentGpuStats.slice();
+        const gpuState = sortStates['gpu-stats'];
+        if (gpuState && gpuState.key) {
+            const dir = gpuState.dir === 'asc' ? 1 : -1;
+            const acc = gpuAccessors[gpuState.key] || ((r) => r[gpuState.key]);
+            gpuRows.sort((a,b) => compareValues(acc(a), acc(b)) * dir);
+        } else {
+            gpuRows.sort((a, b) => b.hours - a.hours);
+        }
+        tbody.innerHTML = '';
+        gpuRows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.gpuType}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${row.hours.toFixed(2)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        updateSortIndicators('gpu-stats');
+    };
+
+    const updateNodeTable = (nodes) => {
+        const tbody = document.getElementById('nodes-table-body');
+        tbody.innerHTML = '';
+
+        let nodeRows = Array.isArray(nodes) ? nodes.slice() : [];
+        const nodesSelState = sortStates['nodes-selected'];
+        if (nodesSelState && nodesSelState.key) {
+            const dir = nodesSelState.dir === 'asc' ? 1 : -1;
+            const acc = nodeSelectedAccessors[nodesSelState.key] || ((r) => r[nodesSelState.key]);
+            nodeRows.sort((a,b) => compareValues(acc(a), acc(b)) * dir);
+        } else {
+            nodeRows.sort((a, b) => (b.cpuHours + b.gpuHours + b.memoryHours) - (a.cpuHours + a.gpuHours + a.memoryHours));
+        }
+        currentSelectedNodes = nodeRows.slice();
+        nodeRows.forEach(node => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <input type="checkbox" class="node-checkbox" value="${node.node}" checked>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${node.node}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.region}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.zone}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.gpuType}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.fpgaType}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.taints}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        updateSortIndicators('nodes-selected');
+
+        // Add event listeners for checkboxes
+        document.querySelectorAll('.node-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                syncNodeHeaderCheckbox();
+                updateCharts();
+            });
+        });
+
+        // Sync header checkbox state
+        syncNodeHeaderCheckbox();
+    };
+
+    // Header checkbox sync functions
+    const syncNamespaceHeaderCheckbox = () => {
+        const header = document.getElementById('namespace-select-all');
+        const boxes = document.querySelectorAll('.namespace-checkbox');
+        if (!header) return;
+        if (boxes.length === 0) { header.checked = false; header.disabled = true; return; }
+        header.disabled = false;
+        header.checked = Array.from(boxes).every(cb => cb.checked);
+    };
+
+    const syncNodeHeaderCheckbox = () => {
+        const header = document.getElementById('node-select-all');
+        const boxes = document.querySelectorAll('.node-checkbox');
+        if (!header) return;
+        if (boxes.length === 0) { header.checked = false; header.disabled = true; return; }
+        header.disabled = false;
+        header.checked = Array.from(boxes).every(cb => cb.checked);
+    };
+
+    const getSelectedNamespaces = () => {
+        const selected = [];
+        document.querySelectorAll('.namespace-checkbox:checked').forEach(checkbox => {
+            const namespace = allNamespaces.find(ns => ns.namespace === checkbox.value);
+            if (namespace) selected.push(namespace);
+        });
+        return selected;
+    };
+
+    const getSelectedNodes = () => {
+        const selected = [];
+        document.querySelectorAll('.node-checkbox:checked').forEach(checkbox => {
+            const node = allNodes.find(n => n.node === checkbox.value);
+            if (node) selected.push(node);
+        });
+        return selected;
+    };
+
+    const updateSortIndicators = (tableKey) => {
+        const state = sortStates[tableKey];
+        const ths = document.querySelectorAll(`th[data-table="${tableKey}"][data-key]`);
+        ths.forEach(th => {
+            const ind = th.querySelector('.sort-indicator');
+            th.removeAttribute('aria-sort');
+            if (ind) ind.textContent = '';
+            if (state && state.key && th.getAttribute('data-key') === state.key) {
+                const arrow = state.dir === 'asc' ? '▲' : '▼';
+                if (ind) ind.textContent = arrow;
+                th.setAttribute('aria-sort', state.dir === 'asc' ? 'ascending' : 'descending');
+            }
+        });
+    };
+
+    const refreshTableForSort = (tableKey) => {
+        switch (tableKey) {
+            case 'ns-selected':
+                updateNamespaceTable(currentSelectedNamespaces);
+                break;
+            case 'nodes-selected':
+                updateNodeTable(currentSelectedNodes);
+                break;
+            case 'ns-stats':
+                updateNamespaceStatsTable(currentFilteredNamespaces);
+                break;
+            case 'node-stats':
+                updateNodeStatsTable(currentFilteredNodes);
+                break;
+            case 'gpu-stats':
+                updateGpuStatsTable(currentFilteredNodes);
+                break;
+        }
+        updateSortIndicators(tableKey);
+    };
+
+    const initSorting = () => {
+        document.querySelectorAll('th[data-table][data-key]').forEach(th => {
+            th.addEventListener('click', () => {
+                const tableKey = th.getAttribute('data-table');
+                const key = th.getAttribute('data-key');
+                const type = th.getAttribute('data-type') || 'string';
+                const state = sortStates[tableKey] || { key: null, dir: 'asc' };
+                if (state.key === key) {
+                    state.dir = state.dir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    state.key = key;
+                    state.dir = type === 'number' ? 'desc' : 'asc';
+                }
+                sortStates[tableKey] = state;
+                refreshTableForSort(tableKey);
+            });
+        });
+    };
+
+    const createBarChart = (data, valueKey, title, color = "#1f77b4", isNode = false) => {
+        try {
+            if (!data || data.length === 0) return null;
+
+            const filteredData = data
+                .filter(d => d && typeof d[valueKey] === 'number' && d[valueKey] > 0)
+                .sort((a, b) => b[valueKey] - a[valueKey])
+                .slice(0, 25)
+                .map(d => ({ name: isNode ? d.node : d.namespace, value: d[valueKey] }));
+
+            if (filteredData.length === 0) return null;
+
+            return Plot.plot({
+                height: 400,
+                width: 1000,
+                marginLeft: 120,
+                marginBottom: 100,
+                marks: [
+                    Plot.barY(filteredData, { x: "name", y: "value", fill: color }),
+                    Plot.ruleY([0])
+                ],
+                x: {
+                    label: isNode ? "Node" : "Namespace",
+                    tickRotate: 45,
+                    domain: filteredData.map(d => d.name)
+                },
+                y: {
+                    label: "Hours"
+                }
+            });
+        } catch (err) {
+            console.error('Error creating bar chart:', err);
+            return null;
+        }
+    };
+
+    const createPieChart = (nodesData) => {
+        // Aggregate GPU hours by GPU type from node data
+        const byType = new Map();
+        (nodesData || []).forEach(n => {
+            const type = (n.gpuType || '').trim();
+            const hours = typeof n.gpuHours === 'number' ? n.gpuHours : 0;
+            if (!type || type.toLowerCase() === 'unknown' || hours <= 0) return;
+            byType.set(type, (byType.get(type) || 0) + hours);
+        });
+
+        let gpuData = Array.from(byType, ([gpuType, hours]) => ({ gpuType, hours }))
+            .sort((a, b) => b.hours - a.hours)
+            .slice(0, 10);
+
+        if (gpuData.length === 0) return null;
+
+        try {
+            // Labeled pie chart adapted from Observable’s PieChart
+            function PieChart(data, {
+                name = d => d.gpuType,
+                value = d => d.hours,
+                title,
+                width = 600,
+                height = 400,
+                innerRadius = 0,
+                outerRadius = Math.min(width, height) / 2,
+                labelRadius = (innerRadius * 0.2 + outerRadius * 0.8),
+                format = ",",
+                names,
+                colors,
+                stroke = innerRadius > 0 ? "none" : "white",
+                strokeWidth = 1,
+                strokeLinejoin = "round",
+                padAngle = stroke === "none" ? 1 / outerRadius : 0,
+            } = {}) {
+              // sort largest first for readability
+              data = data.slice().sort((a, b) => (value(b) || 0) - (value(a) || 0));
+
+              const N = d3.map(data, name);
+              const V = d3.map(data, value);
+              const I = d3.range(N.length).filter(i => !isNaN(V[i]));
+
+              if (names === undefined) names = N;
+              names = new d3.InternSet(names);
+
+              if (colors === undefined) colors = d3.schemeSpectral[names.size];
+              if (colors === undefined) colors = d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1), names.size);
+
+              const color = d3.scaleOrdinal(names, colors);
+
+              if (title === undefined) {
+                const formatValue = d3.format(format);
+                title = i => `${N[i]}\n${formatValue(V[i])} h`;
+              } else {
+                const O = d3.map(data, d => d);
+                const T = title;
+                title = i => T(O[i], i, data);
+              }
+
+              const arcs = d3.pie().padAngle(padAngle).sort(null).value(i => V[i])(I);
+              const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
+              const arcLabel = d3.arc().innerRadius(labelRadius).outerRadius(labelRadius);
+              const sumV = d3.sum(I, i => V[i]);
+
+              const svg = d3.create("svg")
+                  .attr("width", width)
+                  .attr("height", height)
+                  .attr("viewBox", [-width / 2, -height / 2, width, height])
+                  .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+
+              svg.append("g")
+                  .attr("stroke", stroke)
+                  .attr("stroke-width", strokeWidth)
+                  .attr("stroke-linejoin", strokeLinejoin)
+                .selectAll("path")
+                .data(arcs)
+                .join("path")
+                  .attr("fill", d => color(N[d.data]))
+                  .attr("d", arc)
+                .append("title")
+                  .text(d => title(d.data));
+
+              svg.append("g")
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 12)
+                  .attr("text-anchor", "middle")
+                .selectAll("text")
+                .data(arcs.filter(d => (d.endAngle - d.startAngle) >= 0.18 || (V[d.data] / (sumV || 1)) >= 0.05))
+                .join("text")
+                  .attr("transform", d => `translate(${arcLabel.centroid(d)})`)
+                .selectAll("tspan")
+                .data((d, i) => {
+                  const lines = `${title(d.data)}`.split(/\n/);
+                  return (d.endAngle - d.startAngle) > 0.25 ? lines : lines.slice(0, 1);
+                })
+                .join("tspan")
+                  .attr("x", 0)
+                  .attr("y", (_, i) => `${i * 1.1}em`)
+                  .attr("font-weight", (_, i) => i ? null : "bold")
+                  .text(d => d);
+
+              return svg.node();
+            }
+
+            return PieChart(gpuData, {
+                name: d => d.gpuType,
+                value: d => d.hours,
+                title: d => `${d.gpuType}\n${d.hours.toFixed(2)} h`,
+                width: 600,
+                height: 400
+            });
+        } catch (err) {
+            console.error('Error creating pie chart:', err);
+            return null;
+        }
+    };
+
+    const updateCharts = () => {
+        const selectedNamespaces = getSelectedNamespaces();
+        const selectedNodes = getSelectedNodes();
+
+        const nsSet = new Set(selectedNamespaces.map(ns => ns.namespace));
+        const nodeSet = new Set(selectedNodes.map(n => n.node));
+
+        // Re-aggregate by intersection of selected namespaces AND nodes
+        const nsAggMap = new Map();
+        const nodeAggMap = new Map();
+
+        baseRows.forEach(r => {
+            if (!nsSet.has(r.namespace) || !nodeSet.has(r.node)) return;
+            // namespace agg
+            if (!nsAggMap.has(r.namespace)) {
+                const meta = namespaceMeta.get(r.namespace) || {};
+                nsAggMap.set(r.namespace, {
+                    namespace: r.namespace,
+                    PI: meta.PI || 'unknown',
+                    institution: meta.institution || 'unknown',
+                    description: meta.description || '',
+                    cpuHours: 0,
+                    memoryHours: 0,
+                    gpuHours: 0,
+                    fpgaHours: 0,
+                    storageHours: 0
+                });
+            }
+            const ns = nsAggMap.get(r.namespace);
+            if (r.resource === 'cpu') ns.cpuHours += r.value;
+            else if (r.resource === 'memory') ns.memoryHours += r.value;
+            else if (r.resource === 'gpu') ns.gpuHours += r.value;
+            else if (r.resource === 'fpga') ns.fpgaHours += r.value;
+            else if (r.resource === 'storage') ns.storageHours += r.value;
+
+            // node agg
+            if (!nodeAggMap.has(r.node)) {
+                const meta = nodeMeta.get(r.node) || {};
+                nodeAggMap.set(r.node, {
+                    node: r.node,
+                    region: meta.region || 'unknown',
+                    zone: meta.zone || 'unknown',
+                    gpuType: meta.gpuType || 'unknown',
+                    fpgaType: meta.fpgaType || 'unknown',
+                    taints: meta.taints || '',
+                    cpuHours: 0,
+                    memoryHours: 0,
+                    gpuHours: 0,
+                    fpgaHours: 0,
+                    storageHours: 0
+                });
+            }
+            const nd = nodeAggMap.get(r.node);
+            if (r.resource === 'cpu') nd.cpuHours += r.value;
+            else if (r.resource === 'memory') nd.memoryHours += r.value;
+            else if (r.resource === 'gpu') nd.gpuHours += r.value;
+            else if (r.resource === 'fpga') nd.fpgaHours += r.value;
+            else if (r.resource === 'storage') nd.storageHours += r.value;
+        });
+
+        const nsAgg = Array.from(nsAggMap.values());
+        const nodeAgg = Array.from(nodeAggMap.values());
+
+        // Keep stats tables in sync with current intersection
+        updateNamespaceStatsTable(nsAgg);
+        updateNodeStatsTable(nodeAgg);
+
+        // Clear existing plots
+        const plotIds = [
+            'namespace-cpu-plot', 'namespace-gpu-plot', 'namespace-fpga-plot',
+            'namespace-memory-plot', 'namespace-storage-plot',
+            'node-cpu-plot', 'node-gpu-plot', 'node-fpga-plot',
+            'node-memory-plot', 'node-storage-plot', 'gpu-pie-chart'
+        ];
+        
+        plotIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.innerHTML = '';
+        });
+
+        // Create namespace charts from intersection aggregates
+        const namespaceCharts = [
+            { id: 'namespace-cpu-plot', chart: createBarChart(nsAgg, 'cpuHours', 'CPU Hours', '#1f77b4', false) },
+            { id: 'namespace-gpu-plot', chart: createBarChart(nsAgg, 'gpuHours', 'GPU Hours', '#ff7f0e', false) },
+            { id: 'namespace-fpga-plot', chart: createBarChart(nsAgg, 'fpgaHours', 'FPGA Hours', '#2ca02c', false) },
+            { id: 'namespace-memory-plot', chart: createBarChart(nsAgg, 'memoryHours', 'Memory Hours', '#d62728', false) },
+            { id: 'namespace-storage-plot', chart: createBarChart(nsAgg, 'storageHours', 'Storage Hours', '#9467bd', false) }
+        ];
+
+        // Create node charts from intersection aggregates
+        const nodeCharts = [
+            { id: 'node-cpu-plot', chart: createBarChart(nodeAgg, 'cpuHours', 'CPU Hours', '#1f77b4', true) },
+            { id: 'node-gpu-plot', chart: createBarChart(nodeAgg, 'gpuHours', 'GPU Hours', '#ff7f0e', true) },
+            { id: 'node-fpga-plot', chart: createBarChart(nodeAgg, 'fpgaHours', 'FPGA Hours', '#2ca02c', true) },
+            { id: 'node-memory-plot', chart: createBarChart(nodeAgg, 'memoryHours', 'Memory Hours', '#d62728', true) },
+            { id: 'node-storage-plot', chart: createBarChart(nodeAgg, 'storageHours', 'Storage Hours', '#9467bd', true) }
+        ];
+
+        // Create pie chart and update GPU stats from node aggregates
+        const pieChart = { id: 'gpu-pie-chart', chart: createPieChart(nodeAgg) };
+        updateGpuStatsTable(nodeAgg);
+
+        [...namespaceCharts, ...nodeCharts, pieChart].forEach(({ id, chart }) => {
+            try {
+                const element = document.getElementById(id);
+                if (element && chart) {
+                    element.appendChild(chart);
+                } else if (element) {
+                    element.innerHTML = '<p class="text-gray-500 text-center py-8">No data available</p>';
+                }
+            } catch (err) {
+                console.error(`Error updating chart ${id}:`, err);
+                const element = document.getElementById(id);
+                if (element) element.innerHTML = '<p class="text-red-500 text-center py-8">Error rendering chart</p>';
+            }
+        });
+    };
+
+    
+
+    // Status helpers
+    const setStatus = (message, type = 'info', spinning = false) => {
+        const wrapper = document.getElementById('data-status');
+        const textEl = document.getElementById('data-status-text');
+        const spinner = document.getElementById('data-status-spinner');
+        if (!wrapper || !textEl || !spinner) return;
+        textEl.textContent = message;
+        spinner.classList.toggle('hidden', !spinning);
+        wrapper.classList.remove('hidden');
+        const box = wrapper.firstElementChild;
+        box.className = 'flex items-center gap-3 p-3 rounded-md border text-sm';
+        if (type === 'error') {
+            box.classList.add('bg-red-50','text-red-800','border-red-200');
+        } else if (type === 'success') {
+            box.classList.add('bg-green-50','text-green-800','border-green-200');
+        } else if (type === 'loading') {
+            box.classList.add('bg-blue-50','text-blue-800','border-blue-200');
+        } else {
+            box.classList.add('bg-gray-50','text-gray-800','border-gray-200');
+        }
+    };
+
+    const clearStatus = () => {
+        const wrapper = document.getElementById('data-status');
+        if (wrapper) wrapper.classList.add('hidden');
+    };
+
+    const setControlsDisabled = (disabled) => {
+        ['search-data']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = disabled;
+            });
+    };
+
+    const refreshData = async () => {
+        try {
+            setControlsDisabled(true);
+            const t0 = performance.now();
+            setStatus('Loading data…', 'loading', true);
+            const data = await fetchResourceData();
+            console.log('Fetched resource data:', data);
+            if (data && data.rawResourceData) {
+                try {
+                    aggregateData(data);
+                    console.log('Aggregated data:', { namespaces: allNamespaces.length, nodes: allNodes.length });
+                } catch (e) {
+                    console.error('aggregateData error:', e);
+                    throw e;
+                }
+                try {
+                    applyRegexFilters(); // also triggers updateCharts
+                    console.log('Applied regex filters and updated charts');
+                    const now = new Date();
+                    const seconds = ((performance.now() - t0) / 1000).toFixed(2);
+                    const modeLabel = currentMode === 'used' ? 'Used' : 'Allocated';
+                    setStatus(`Loaded ${modeLabel} data: ${allNamespaces.length} namespaces, ${allNodes.length} nodes in ${seconds}s · ${now.toLocaleString()}`, 'success', false);
+                } catch (e) {
+                    console.error('applyRegexFilters/updateCharts error:', e);
+                }
+            } else {
+                console.warn('No resource data received');
+                setStatus('No resource data received', 'error', false);
+            }
+        } catch (error) {
+            console.error('Error refreshing data:', error);
+            setStatus('Error loading data', 'error', false);
+            // Clear plots on error
+            const plotIds = [
+                'namespace-cpu-plot', 'namespace-gpu-plot', 'namespace-fpga-plot',
+                'namespace-memory-plot', 'namespace-storage-plot',
+                'node-cpu-plot', 'node-gpu-plot', 'node-fpga-plot',
+                'node-memory-plot', 'node-storage-plot', 'gpu-pie-chart'
+            ];
+            plotIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.innerHTML = '<p class="text-red-500 text-center py-8">Error loading data</p>';
+            });
+        }
+        finally {
+            setControlsDisabled(false);
+        }
+    };
+
+    // Event listeners
+    const onSearch = () => {
+        clearStatus();
+        const valid = validateDateRange();
+        if (valid.ok) {
+            refreshData();
+        }
+    };
+    document.getElementById('search-data').addEventListener('click', onSearch);
+    
+    // Filter input listeners
+    ['namespace-name-filter', 'namespace-pi-filter', 'namespace-institution-filter',
+     'node-name-filter', 'node-region-filter', 'node-zone-filter', 'node-gpu-filter', 
+     'node-fpga-filter', 'node-taints-filter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', applyRegexFilters);
+    });
+
+    // Header checkbox listeners
+    const nsHeader = document.getElementById('namespace-select-all');
+    if (nsHeader) {
+        nsHeader.addEventListener('change', (e) => {
+            document.querySelectorAll('.namespace-checkbox').forEach(cb => cb.checked = e.target.checked);
+            updateCharts();
+        });
+    }
+    const nodeHeader = document.getElementById('node-select-all');
+    if (nodeHeader) {
+        nodeHeader.addEventListener('change', (e) => {
+            document.querySelectorAll('.node-checkbox').forEach(cb => cb.checked = e.target.checked);
+            updateCharts();
+        });
+    }
+
+    // Download CSV for Namespace Stats
+    const downloadBtn = document.getElementById('download-namespace-stats');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            try {
+                const rows = currentFilteredNamespaces || [];
+                const headers = [
+                    'Namespace','CPU Hours','GPU Hours','Memory Hours','Ephemeral Storage Hours','FPGA Hours','PI','Institution','Description'
+                ];
+                const escapeCSV = (v) => {
+                    const s = (v ?? '').toString();
+                    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+                };
+                const lines = [headers.join(',')];
+                rows.forEach(ns => {
+                    lines.push([
+                        ns.namespace,
+                        (ns.cpuHours || 0).toFixed(2),
+                        (ns.gpuHours || 0).toFixed(2),
+                        (ns.memoryHours || 0).toFixed(2),
+                        (ns.storageHours || 0).toFixed(2),
+                        (ns.fpgaHours || 0).toFixed(2),
+                        ns.PI || '',
+                        ns.institution || '',
+                        ns.description || ''
+                    ].map(escapeCSV).join(','));
+                });
+                const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
+                a.download = `namespace-stats-${modeLabel}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('CSV download failed:', err);
+            }
+        });
+    }
+
+    // Download CSV for GPU Stats
+    const downloadGpuBtn = document.getElementById('download-gpu-stats');
+    if (downloadGpuBtn) {
+        downloadGpuBtn.addEventListener('click', () => {
+            try {
+                const rows = currentGpuStats || [];
+                const headers = ['GPU Type','Hours'];
+                const escapeCSV = (v) => {
+                    const s = (v ?? '').toString();
+                    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+                };
+                const lines = [headers.join(',')];
+                rows.forEach(r => {
+                    lines.push([r.gpuType, r.hours.toFixed(2)].map(escapeCSV).join(','));
+                });
+                const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
+                a.download = `gpu-stats-${modeLabel}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('CSV download failed:', err);
+            }
+        });
+    }
+
+    // Download CSV for Node Stats
+    const downloadNodeBtn = document.getElementById('download-node-stats');
+    if (downloadNodeBtn) {
+        downloadNodeBtn.addEventListener('click', () => {
+            try {
+                const rows = currentFilteredNodes || [];
+                const headers = [
+                    'Node','GPU Type','CPU Hours','GPU Hours','Memory Hours','Ephemeral Storage Hours','FPGA Hours'
+                ];
+                const escapeCSV = (v) => {
+                    const s = (v ?? '').toString();
+                    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
+                };
+                const lines = [headers.join(',')];
+                rows.forEach(n => {
+                    lines.push([
+                        n.node,
+                        n.gpuType || '',
+                        (n.cpuHours || 0).toFixed(2),
+                        (n.gpuHours || 0).toFixed(2),
+                        (n.memoryHours || 0).toFixed(2),
+                        (n.storageHours || 0).toFixed(2),
+                        (n.fpgaHours || 0).toFixed(2)
+                    ].map(escapeCSV).join(','));
+                });
+                const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const modeLabel = currentMode === 'used' ? 'used' : 'allocated';
+                a.download = `node-stats-${modeLabel}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('CSV download failed:', err);
+            }
+        });
+    }
+
+    // Initialize
+    initializeDates();
+    initSorting();
+    setStatus('Choose a date range and click Search.', 'info', false);
+    // Initialize mode UI
+    const modeSwitch = document.getElementById('mode-switch');
+    const allocLabel = document.getElementById('mode-label-allocated');
+    const usedLabel = document.getElementById('mode-label-used');
+    const updateModeUI = () => {
+        const used = !!modeSwitch.checked;
+        currentMode = used ? 'used' : 'allocated';
+        if (used) {
+            usedLabel.classList.remove('text-gray-500');
+            usedLabel.classList.add('text-gray-900','font-medium');
+            allocLabel.classList.remove('text-gray-900','font-medium');
+            allocLabel.classList.add('text-gray-500');
+        } else {
+            allocLabel.classList.remove('text-gray-500');
+            allocLabel.classList.add('text-gray-900','font-medium');
+            usedLabel.classList.remove('text-gray-900','font-medium');
+            usedLabel.classList.add('text-gray-500');
+        }
+    };
+    if (modeSwitch) {
+        modeSwitch.checked = currentMode === 'used';
+        updateModeUI();
+        modeSwitch.addEventListener('change', updateModeUI);
+    }
+</script>
