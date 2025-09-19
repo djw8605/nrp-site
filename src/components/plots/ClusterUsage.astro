@@ -1,3 +1,7 @@
+---
+import CheckboxTable from '~/components/common/CheckboxTable.astro';
+---
+
 <section class="py-8 sm:py-16 lg:py-20 mx-auto max-w-7xl px-4 sm:px-6">
     
     <!-- Data Status -->
@@ -61,131 +65,64 @@
 
     
 
-    <!-- Namespace Filters Section -->
-    <div id="namespace-filters" class="mb-4 bg-gray-50 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4">Namespace Filters</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="namespace-name-filter" class="block text-sm font-medium text-gray-700 mb-1">Namespace Name Filter (regex)</label>
-                <input type="text" id="namespace-name-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="namespace-pi-filter" class="block text-sm font-medium text-gray-700 mb-1">PI Filter (regex)</label>
-                <input type="text" id="namespace-pi-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="namespace-institution-filter" class="block text-sm font-medium text-gray-700 mb-1">Institution Filter (regex)</label>
-                <input type="text" id="namespace-institution-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-        </div>
-    </div>
+    <!-- Namespace Filters moved under table header -->
 
     <!-- Selected Namespaces Table -->
-    <div class="mb-8">
-        <h3 class="text-lg font-semibold mb-4">Selected Namespaces</h3>
-        <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50 sticky top-0">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <input type="checkbox" id="namespace-select-all" class="h-4 w-4 align-middle" title="Toggle all" />
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="namespace" data-type="string">Namespace <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="PI" data-type="string">PI <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="institution" data-type="string">Institution <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-selected" data-key="description" data-type="string">Description <span class="sort-indicator"></span></th>
-                    </tr>
-                </thead>
-                <tbody id="namespaces-table-body" class="bg-white divide-y divide-gray-200">
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <CheckboxTable
+      containerId="namespace-filters"
+      title="Selected Namespaces"
+      tableKey="ns-selected"
+      selectAllId="namespace-select-all"
+      tbodyId="namespaces-table-body"
+      checkboxClass="namespace-checkbox"
+      columns={[
+        { checkbox: true },
+        { key: 'namespace', label: 'Namespace', type: 'string', filterId: 'namespace-name-filter' },
+        { key: 'PI', label: 'PI', type: 'string', filterId: 'namespace-pi-filter' },
+        { key: 'institution', label: 'Institution', type: 'string', filterId: 'namespace-institution-filter' },
+        { key: 'description', label: 'Description', type: 'string', filterId: 'namespace-description-filter' },
+      ]}
+    />
 
-    <!-- Node Filters Section -->
-    <div id="node-filters" class="mb-4 bg-gray-50 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4">Node Filters</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-                <label for="node-name-filter" class="block text-sm font-medium text-gray-700 mb-1">Node Name Filter (regex)</label>
-                <input type="text" id="node-name-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="node-region-filter" class="block text-sm font-medium text-gray-700 mb-1">Region Filter (regex)</label>
-                <input type="text" id="node-region-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="node-zone-filter" class="block text-sm font-medium text-gray-700 mb-1">Zone Filter (regex)</label>
-                <input type="text" id="node-zone-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="node-gpu-filter" class="block text-sm font-medium text-gray-700 mb-1">GPU Type Filter (regex)</label>
-                <input type="text" id="node-gpu-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="node-fpga-filter" class="block text-sm font-medium text-gray-700 mb-1">FPGA Type Filter (regex)</label>
-                <input type="text" id="node-fpga-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-            <div>
-                <label for="node-taints-filter" class="block text-sm font-medium text-gray-700 mb-1">Node Taints Filter (regex)</label>
-                <input type="text" id="node-taints-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value=".*">
-            </div>
-        </div>
-    </div>
+    <!-- Node Filters moved under table header -->
 
-    <!-- Selected Nodes Table (moved under Node Filters) -->
-    <div class="mb-8">
-        <h3 class="text-lg font-semibold mb-4">Selected Nodes</h3>
-        <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-96 overflow-y-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50 sticky top-0">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <input type="checkbox" id="node-select-all" class="h-4 w-4 align-middle" title="Toggle all" />
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="node" data-type="string">Node <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="region" data-type="string">Region <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="zone" data-type="string">Zone <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="fpgaType" data-type="string">FPGA Type <span class="sort-indicator"></span></th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="nodes-selected" data-key="taints" data-type="string">Node Taints <span class="sort-indicator"></span></th>
-                    </tr>
-                </thead>
-                <tbody id="nodes-table-body" class="bg-white divide-y divide-gray-200">
-                </tbody>
-            </table>
-        </div>
-    </div> 
+    <!-- Selected Nodes Table -->
+    <CheckboxTable
+      containerId="node-filters"
+      title="Selected Nodes"
+      tableKey="nodes-selected"
+      selectAllId="node-select-all"
+      tbodyId="nodes-table-body"
+      checkboxClass="node-checkbox"
+      columns={[
+        { checkbox: true },
+        { key: 'node', label: 'Node', type: 'string', filterId: 'node-name-filter' },
+        { key: 'region', label: 'Region', type: 'string', filterId: 'node-region-filter' },
+        { key: 'zone', label: 'Zone', type: 'string', filterId: 'node-zone-filter' },
+        { key: 'gpuType', label: 'GPU Type', type: 'string', filterId: 'node-gpu-filter' },
+        { key: 'fpgaType', label: 'FPGA Type', type: 'string', filterId: 'node-fpga-filter' },
+        { key: 'taints', label: 'Node Taints', type: 'string', filterId: 'node-taints-filter' },
+      ]}
+    />
 
     <!-- Charts Section -->
     <div class="space-y-12">
         <!-- Namespace Charts -->
         <div id="namespace-stats">
             <h2 class="text-2xl font-bold mb-6">Usage by Namespace</h2>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
-                <div id="namespace-cpu-plot"></div>
+
+            <div class="mb-4 border-b border-gray-200">
+                <div id="namespace-chart-tabs" class="flex gap-2">
+                    <button data-metric="cpuHours" data-color="#1f77b4" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">CPU</button>
+                    <button data-metric="gpuHours" data-color="#ff7f0e" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">GPU</button>
+                    <button data-metric="fpgaHours" data-color="#2ca02c" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">FPGA</button>
+                    <button data-metric="memoryHours" data-color="#d62728" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">Memory</button>
+                    <button data-metric="storageHours" data-color="#9467bd" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">Ephemeral Storage</button>
+                </div>
             </div>
-            
+
             <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">GPU Hours</h3>
-                <div id="namespace-gpu-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">FPGA Hours</h3>
-                <div id="namespace-fpga-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">Memory Hours</h3>
-                <div id="namespace-memory-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">Ephemeral Storage Hours</h3>
-                <div id="namespace-storage-plot"></div>
+                <div id="namespace-chart"></div>
             </div>
 
             <!-- Namespace Stats Table -->
@@ -194,55 +131,48 @@
                     <h3 class="text-xl font-semibold">Namespace Resource Table</h3>
                     <button id="download-namespace-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
                 </div>
-                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="namespace" data-type="string">Namespace <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="cpuHours" data-type="number">CPU Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="gpuHours" data-type="number">GPU Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="memoryHours" data-type="number">Memory Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="storageHours" data-type="number">Ephemeral Storage Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="fpgaHours" data-type="number">FPGA Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="PI" data-type="string">PI <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="institution" data-type="string">Institution <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="ns-stats" data-key="description" data-type="string">Description <span class="sort-indicator"></span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="namespace-stats-table-body" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
+                    <CheckboxTable
+                      containerId="ns-stats-container"
+                      title=""
+                      tableKey="ns-stats"
+                      selectAllId="ns-stats-select-all"
+                      tbodyId="namespace-stats-table-body"
+                      checkboxClass="no-checkbox"
+                      showSelectAll={false}
+                      defaultSortKey="namespace"
+                      defaultSortDir="asc"
+                      wrapperClass="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto"
+                  columns={[
+                    { key: 'namespace', label: 'Namespace', type: 'string', filterId: 'ns-stats-namespace-filter' },
+                    { key: 'cpuHours', label: 'CPU Hours', type: 'number', filterId: 'ns-stats-cpu-filter' },
+                    { key: 'gpuHours', label: 'GPU Hours', type: 'number', filterId: 'ns-stats-gpu-filter' },
+                    { key: 'memoryHours', label: 'Memory Hours', type: 'number', filterId: 'ns-stats-memory-filter' },
+                    { key: 'storageHours', label: 'Ephemeral Storage Hours', type: 'number', filterId: 'ns-stats-storage-filter' },
+                    { key: 'fpgaHours', label: 'FPGA Hours', type: 'number', filterId: 'ns-stats-fpga-filter' },
+                    { key: 'PI', label: 'PI', type: 'string', filterId: 'ns-stats-pi-filter' },
+                    { key: 'institution', label: 'Institution', type: 'string', filterId: 'ns-stats-institution-filter' },
+                    { key: 'description', label: 'Description', type: 'string', filterId: 'ns-stats-description-filter' },
+                  ]}
+                />
             </div>
         </div>
 
         <!-- Node Charts -->
         <div id="node-stats">
             <h2 class="text-2xl font-bold mb-6">Usage by Node</h2>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">CPU Hours</h3>
-                <div id="node-cpu-plot"></div>
+
+            <div class="mb-4 border-b border-gray-200">
+                <div id="node-chart-tabs" class="flex gap-2">
+                    <button data-metric="cpuHours" data-color="#1f77b4" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">CPU</button>
+                    <button data-metric="gpuHours" data-color="#ff7f0e" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">GPU</button>
+                    <button data-metric="fpgaHours" data-color="#2ca02c" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">FPGA</button>
+                    <button data-metric="memoryHours" data-color="#d62728" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">Memory</button>
+                    <button data-metric="storageHours" data-color="#9467bd" class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border-b-2 border-transparent">Ephemeral Storage</button>
+                </div>
             </div>
-            
+
             <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">GPU Hours</h3>
-                <div id="node-gpu-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">FPGA Hours</h3>
-                <div id="node-fpga-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">Memory Hours</h3>
-                <div id="node-memory-plot"></div>
-            </div>
-            
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-4">Ephemeral Storage Hours</h3>
-                <div id="node-storage-plot"></div>
+                <div id="node-chart"></div>
             </div>
 
             <!-- Node Stats Table -->
@@ -251,23 +181,27 @@
                     <h3 class="text-xl font-semibold">Node Resource Table</h3>
                     <button id="download-node-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
                 </div>
-                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="node" data-type="string">Node <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="cpuHours" data-type="number">CPU Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="gpuHours" data-type="number">GPU Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="memoryHours" data-type="number">Memory Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="storageHours" data-type="number">Ephemeral Storage Hours <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="node-stats" data-key="fpgaHours" data-type="number">FPGA Hours <span class="sort-indicator"></span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="node-stats-table-body" class="bg-white divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
+                    <CheckboxTable
+                      containerId="node-stats-container"
+                      title=""
+                      tableKey="node-stats"
+                      selectAllId="node-stats-select-all"
+                      tbodyId="node-stats-table-body"
+                      checkboxClass="no-checkbox"
+                      showSelectAll={false}
+                      defaultSortKey="node"
+                      defaultSortDir="asc"
+                      wrapperClass="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto"
+                  columns={[
+                    { key: 'node', label: 'Node', type: 'string', filterId: 'node-stats-node-filter' },
+                    { key: 'gpuType', label: 'GPU Type', type: 'string', filterId: 'node-stats-gpuType-filter' },
+                    { key: 'cpuHours', label: 'CPU Hours', type: 'number', filterId: 'node-stats-cpu-filter' },
+                    { key: 'gpuHours', label: 'GPU Hours', type: 'number', filterId: 'node-stats-gpu-filter' },
+                    { key: 'memoryHours', label: 'Memory Hours', type: 'number', filterId: 'node-stats-memory-filter' },
+                    { key: 'storageHours', label: 'Ephemeral Storage Hours', type: 'number', filterId: 'node-stats-storage-filter' },
+                    { key: 'fpgaHours', label: 'FPGA Hours', type: 'number', filterId: 'node-stats-fpga-filter' },
+                  ]}
+                />
             </div>
         </div>
 
@@ -280,17 +214,22 @@
                     <h3 class="text-xl font-semibold">GPU Type Table</h3>
                     <button id="download-gpu-stats" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-1.5 rounded border">Download CSV</button>
                 </div>
-                <div class="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="gpu-stats" data-key="gpuType" data-type="string">GPU Type <span class="sort-indicator"></span></th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" data-table="gpu-stats" data-key="hours" data-type="number">Hours <span class="sort-indicator"></span></th>
-                            </tr>
-                        </thead>
-                        <tbody id="gpu-stats-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
-                </div>
+                <CheckboxTable
+                  containerId="gpu-stats-container"
+                  title=""
+                  tableKey="gpu-stats"
+                  selectAllId="gpu-stats-select-all"
+                  tbodyId="gpu-stats-table-body"
+                  checkboxClass="no-checkbox"
+                  showSelectAll={false}
+                  defaultSortKey="gpuType"
+                  defaultSortDir="asc"
+                  wrapperClass="overflow-x-auto bg-white border border-gray-200 rounded-lg max-h-[28rem] overflow-y-auto"
+                  columns={[
+                    { key: 'gpuType', label: 'GPU Type', type: 'string', filterId: 'gpu-stats-type-filter' },
+                    { key: 'hours', label: 'Hours', type: 'number', filterId: 'gpu-stats-hours-filter' },
+                  ]}
+                />
             </div>
         </div>
     </div>
@@ -619,20 +558,22 @@
 
     const applyRegexFilters = () => {
         try {
-            const namespaceNameRegex = new RegExp(document.getElementById('namespace-name-filter').value || '.*');
-            const namespaceInstitutionRegex = new RegExp(document.getElementById('namespace-institution-filter').value || '.*');
-            const namespacePiRegex = new RegExp(document.getElementById('namespace-pi-filter').value || '.*');
-            const nodeNameRegex = new RegExp(document.getElementById('node-name-filter').value || '.*');
-            const nodeRegionRegex = new RegExp(document.getElementById('node-region-filter').value || '.*');
-            const nodeZoneRegex = new RegExp(document.getElementById('node-zone-filter').value || '.*');
-            const nodeGpuRegex = new RegExp(document.getElementById('node-gpu-filter').value || '.*');
-            const nodeFpgaRegex = new RegExp(document.getElementById('node-fpga-filter').value || '.*');
-            const nodeTaintsRegex = new RegExp(document.getElementById('node-taints-filter').value || '.*');
+            const namespaceNameRegex = new RegExp(document.getElementById('namespace-name-filter').value || '.*', 'i');
+            const namespaceInstitutionRegex = new RegExp(document.getElementById('namespace-institution-filter').value || '.*', 'i');
+            const namespacePiRegex = new RegExp(document.getElementById('namespace-pi-filter').value || '.*', 'i');
+            const namespaceDescriptionRegex = new RegExp(document.getElementById('namespace-description-filter')?.value || '.*', 'i');
+            const nodeNameRegex = new RegExp(document.getElementById('node-name-filter').value || '.*', 'i');
+            const nodeRegionRegex = new RegExp(document.getElementById('node-region-filter').value || '.*', 'i');
+            const nodeZoneRegex = new RegExp(document.getElementById('node-zone-filter').value || '.*', 'i');
+            const nodeGpuRegex = new RegExp(document.getElementById('node-gpu-filter').value || '.*', 'i');
+            const nodeFpgaRegex = new RegExp(document.getElementById('node-fpga-filter').value || '.*', 'i');
+            const nodeTaintsRegex = new RegExp(document.getElementById('node-taints-filter').value || '.*', 'i');
 
             const filteredNamespaces = allNamespaces.filter(ns => 
                 namespaceNameRegex.test(ns.namespace || '') && 
                 namespacePiRegex.test(ns.PI || '') &&
-                namespaceInstitutionRegex.test(ns.institution || '')
+                namespaceInstitutionRegex.test(ns.institution || '') &&
+                namespaceDescriptionRegex.test(ns.description || '')
             );
 
             const filteredNodes = allNodes.filter(node => 
@@ -708,9 +649,9 @@
     const sortStates = {
         'ns-selected': { key: null, dir: 'asc' },
         'nodes-selected': { key: null, dir: 'asc' },
-        'ns-stats': { key: null, dir: 'desc' },
-        'node-stats': { key: null, dir: 'desc' },
-        'gpu-stats': { key: null, dir: 'desc' },
+        'ns-stats': { key: 'namespace', dir: 'asc' },
+        'node-stats': { key: 'node', dir: 'asc' },
+        'gpu-stats': { key: 'gpuType', dir: 'asc' },
     };
 
     const compareValues = (a, b) => {
@@ -771,8 +712,30 @@
         const tbody = document.getElementById('namespace-stats-table-body');
         if (!tbody) return;
         tbody.innerHTML = '';
+        // Apply in-table filters (regex, case-insensitive)
+        const nameR = new RegExp((document.getElementById('ns-stats-namespace-filter')?.value || '.*'), 'i');
+        const cpuR = new RegExp((document.getElementById('ns-stats-cpu-filter')?.value || '.*'), 'i');
+        const gpuR = new RegExp((document.getElementById('ns-stats-gpu-filter')?.value || '.*'), 'i');
+        const memR = new RegExp((document.getElementById('ns-stats-memory-filter')?.value || '.*'), 'i');
+        const storR = new RegExp((document.getElementById('ns-stats-storage-filter')?.value || '.*'), 'i');
+        const fpgaR = new RegExp((document.getElementById('ns-stats-fpga-filter')?.value || '.*'), 'i');
+        const piR = new RegExp((document.getElementById('ns-stats-pi-filter')?.value || '.*'), 'i');
+        const instR = new RegExp((document.getElementById('ns-stats-institution-filter')?.value || '.*'), 'i');
+        const descR = new RegExp((document.getElementById('ns-stats-description-filter')?.value || '.*'), 'i');
 
-        let rows = currentFilteredNamespaces.slice();
+        let rows = currentFilteredNamespaces.slice().filter(ns =>
+            nameR.test(ns.namespace || '') &&
+            cpuR.test(((ns.cpuHours || 0).toFixed ? ns.cpuHours.toFixed(2) : ns.cpuHours).toString()) &&
+            gpuR.test(((ns.gpuHours || 0).toFixed ? ns.gpuHours.toFixed(2) : ns.gpuHours).toString()) &&
+            memR.test(((ns.memoryHours || 0).toFixed ? ns.memoryHours.toFixed(2) : ns.memoryHours).toString()) &&
+            storR.test(((ns.storageHours || 0).toFixed ? ns.storageHours.toFixed(2) : ns.storageHours).toString()) &&
+            fpgaR.test(((ns.fpgaHours || 0).toFixed ? ns.fpgaHours.toFixed(2) : ns.fpgaHours).toString()) &&
+            piR.test(ns.PI || '') &&
+            instR.test(ns.institution || '') &&
+            descR.test(ns.description || '')
+        );
+        // Persist filtered rows for CSV/export
+        currentFilteredNamespaces = rows.slice();
         const nsStatsState = sortStates['ns-stats'];
         if (nsStatsState && nsStatsState.key) {
             const dir = nsStatsState.dir === 'asc' ? 1 : -1;
@@ -807,7 +770,26 @@
         if (!tbody) return;
         tbody.innerHTML = '';
 
-        let rows = currentFilteredNodes.slice();
+        // Apply in-table filters (regex, case-insensitive)
+        const nodeR = new RegExp((document.getElementById('node-stats-node-filter')?.value || '.*'), 'i');
+        const typeR = new RegExp((document.getElementById('node-stats-gpuType-filter')?.value || '.*'), 'i');
+        const cpuR2 = new RegExp((document.getElementById('node-stats-cpu-filter')?.value || '.*'), 'i');
+        const gpuR2 = new RegExp((document.getElementById('node-stats-gpu-filter')?.value || '.*'), 'i');
+        const memR2 = new RegExp((document.getElementById('node-stats-memory-filter')?.value || '.*'), 'i');
+        const storR2 = new RegExp((document.getElementById('node-stats-storage-filter')?.value || '.*'), 'i');
+        const fpgaR2 = new RegExp((document.getElementById('node-stats-fpga-filter')?.value || '.*'), 'i');
+
+        let rows = currentFilteredNodes.slice().filter(n =>
+            nodeR.test(n.node || '') &&
+            typeR.test(n.gpuType || '') &&
+            cpuR2.test(((n.cpuHours || 0).toFixed ? n.cpuHours.toFixed(2) : n.cpuHours).toString()) &&
+            gpuR2.test(((n.gpuHours || 0).toFixed ? n.gpuHours.toFixed(2) : n.gpuHours).toString()) &&
+            memR2.test(((n.memoryHours || 0).toFixed ? n.memoryHours.toFixed(2) : n.memoryHours).toString()) &&
+            storR2.test(((n.storageHours || 0).toFixed ? n.storageHours.toFixed(2) : n.storageHours).toString()) &&
+            fpgaR2.test(((n.fpgaHours || 0).toFixed ? n.fpgaHours.toFixed(2) : n.fpgaHours).toString())
+        );
+        // Persist filtered rows for CSV/export
+        currentFilteredNodes = rows.slice();
         const nodeStatsState = sortStates['node-stats'];
         if (nodeStatsState && nodeStatsState.key) {
             const dir = nodeStatsState.dir === 'asc' ? 1 : -1;
@@ -846,7 +828,15 @@
             byType.set(type, (byType.get(type) || 0) + hours);
         });
         currentGpuStats = Array.from(byType, ([gpuType, hours]) => ({ gpuType, hours }));
-        let gpuRows = currentGpuStats.slice();
+        // Apply in-table filters (regex, case-insensitive)
+        const typeR3 = new RegExp((document.getElementById('gpu-stats-type-filter')?.value || '.*'), 'i');
+        const hoursR3 = new RegExp((document.getElementById('gpu-stats-hours-filter')?.value || '.*'), 'i');
+        let gpuRows = currentGpuStats.slice().filter(r =>
+            typeR3.test(r.gpuType || '') &&
+            hoursR3.test(((r.hours || 0).toFixed ? r.hours.toFixed(2) : r.hours).toString())
+        );
+        // Persist filtered GPU rows for CSV/export
+        currentGpuStats = gpuRows.slice();
         const gpuState = sortStates['gpu-stats'];
         if (gpuState && gpuState.key) {
             const dir = gpuState.dir === 'asc' ? 1 : -1;
@@ -952,13 +942,14 @@
     const updateSortIndicators = (tableKey) => {
         const state = sortStates[tableKey];
         const ths = document.querySelectorAll(`th[data-table="${tableKey}"][data-key]`);
+        const upIcon = '▲';
+        const downIcon = '▼';
         ths.forEach(th => {
             const ind = th.querySelector('.sort-indicator');
             th.removeAttribute('aria-sort');
             if (ind) ind.textContent = '';
             if (state && state.key && th.getAttribute('data-key') === state.key) {
-                const arrow = state.dir === 'asc' ? '▲' : '▼';
-                if (ind) ind.textContent = arrow;
+                if (ind) ind.textContent = state.dir === 'asc' ? upIcon : downIcon;
                 th.setAttribute('aria-sort', state.dir === 'asc' ? 'ascending' : 'descending');
             }
         });
@@ -1001,6 +992,17 @@
                 sortStates[tableKey] = state;
                 refreshTableForSort(tableKey);
             });
+        });
+
+        // Apply default sorts from table datasets if provided
+        document.querySelectorAll('table[data-table-key]').forEach(tbl => {
+            const tableKey = tbl.getAttribute('data-table-key');
+            const defKey = tbl.getAttribute('data-default-sort-key');
+            const defDir = tbl.getAttribute('data-default-sort-dir');
+            if (tableKey && defKey && (!sortStates[tableKey] || !sortStates[tableKey].key)) {
+                sortStates[tableKey] = { key: defKey, dir: (defDir === 'asc' ? 'asc' : 'desc') };
+                refreshTableForSort(tableKey);
+            }
         });
     };
 
@@ -1192,6 +1194,10 @@
         }
     };
 
+    // Active chart tabs (metric + color)
+    let nsChartMetric = { key: 'cpuHours', color: '#1f77b4' };
+    let nodeChartMetric = { key: 'cpuHours', color: '#1f77b4' };
+
     const updateCharts = () => {
         const selectedNamespaces = getSelectedNamespaces();
         const selectedNodes = getSelectedNodes();
@@ -1259,55 +1265,33 @@
         updateNamespaceStatsTable(nsAgg);
         updateNodeStatsTable(nodeAgg);
 
-        // Clear existing plots
-        const plotIds = [
-            'namespace-cpu-plot', 'namespace-gpu-plot', 'namespace-fpga-plot',
-            'namespace-memory-plot', 'namespace-storage-plot',
-            'node-cpu-plot', 'node-gpu-plot', 'node-fpga-plot',
-            'node-memory-plot', 'node-storage-plot', 'gpu-pie-chart'
-        ];
-        
-        plotIds.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.innerHTML = '';
-        });
+        // Clear and render namespace chart for selected tab
+        const nsContainer = document.getElementById('namespace-chart');
+        if (nsContainer) {
+            nsContainer.innerHTML = '';
+            const chart = createBarChart(nsAgg, nsChartMetric.key, '', nsChartMetric.color, false);
+            if (chart) nsContainer.appendChild(chart);
+            else nsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">No data available</p>';
+        }
 
-        // Create namespace charts from intersection aggregates
-        const namespaceCharts = [
-            { id: 'namespace-cpu-plot', chart: createBarChart(nsAgg, 'cpuHours', 'CPU Hours', '#1f77b4', false) },
-            { id: 'namespace-gpu-plot', chart: createBarChart(nsAgg, 'gpuHours', 'GPU Hours', '#ff7f0e', false) },
-            { id: 'namespace-fpga-plot', chart: createBarChart(nsAgg, 'fpgaHours', 'FPGA Hours', '#2ca02c', false) },
-            { id: 'namespace-memory-plot', chart: createBarChart(nsAgg, 'memoryHours', 'Memory Hours', '#d62728', false) },
-            { id: 'namespace-storage-plot', chart: createBarChart(nsAgg, 'storageHours', 'Storage Hours', '#9467bd', false) }
-        ];
+        // Clear and render node chart for selected tab
+        const nodeContainer = document.getElementById('node-chart');
+        if (nodeContainer) {
+            nodeContainer.innerHTML = '';
+            const chart = createBarChart(nodeAgg, nodeChartMetric.key, '', nodeChartMetric.color, true);
+            if (chart) nodeContainer.appendChild(chart);
+            else nodeContainer.innerHTML = '<p class="text-gray-500 text-center py-8">No data available</p>';
+        }
 
-        // Create node charts from intersection aggregates
-        const nodeCharts = [
-            { id: 'node-cpu-plot', chart: createBarChart(nodeAgg, 'cpuHours', 'CPU Hours', '#1f77b4', true) },
-            { id: 'node-gpu-plot', chart: createBarChart(nodeAgg, 'gpuHours', 'GPU Hours', '#ff7f0e', true) },
-            { id: 'node-fpga-plot', chart: createBarChart(nodeAgg, 'fpgaHours', 'FPGA Hours', '#2ca02c', true) },
-            { id: 'node-memory-plot', chart: createBarChart(nodeAgg, 'memoryHours', 'Memory Hours', '#d62728', true) },
-            { id: 'node-storage-plot', chart: createBarChart(nodeAgg, 'storageHours', 'Storage Hours', '#9467bd', true) }
-        ];
-
-        // Create pie chart and update GPU stats from node aggregates
-        const pieChart = { id: 'gpu-pie-chart', chart: createPieChart(nodeAgg) };
+        // GPU pie + GPU table
+        const pie = createPieChart(nodeAgg);
+        const pieEl = document.getElementById('gpu-pie-chart');
+        if (pieEl) {
+            pieEl.innerHTML = '';
+            if (pie) pieEl.appendChild(pie);
+            else pieEl.innerHTML = '<p class="text-gray-500 text-center py-8">No data available</p>';
+        }
         updateGpuStatsTable(nodeAgg);
-
-        [...namespaceCharts, ...nodeCharts, pieChart].forEach(({ id, chart }) => {
-            try {
-                const element = document.getElementById(id);
-                if (element && chart) {
-                    element.appendChild(chart);
-                } else if (element) {
-                    element.innerHTML = '<p class="text-gray-500 text-center py-8">No data available</p>';
-                }
-            } catch (err) {
-                console.error(`Error updating chart ${id}:`, err);
-                const element = document.getElementById(id);
-                if (element) element.innerHTML = '<p class="text-red-500 text-center py-8">Error rendering chart</p>';
-            }
-        });
     };
 
     
@@ -1407,9 +1391,14 @@
     document.getElementById('search-data').addEventListener('click', onSearch);
     
     // Filter input listeners
-    ['namespace-name-filter', 'namespace-pi-filter', 'namespace-institution-filter',
+    ['namespace-name-filter', 'namespace-pi-filter', 'namespace-institution-filter', 'namespace-description-filter',
      'node-name-filter', 'node-region-filter', 'node-zone-filter', 'node-gpu-filter', 
-     'node-fpga-filter', 'node-taints-filter'].forEach(id => {
+     'node-fpga-filter', 'node-taints-filter',
+     // stats table filters
+     'ns-stats-namespace-filter','ns-stats-cpu-filter','ns-stats-gpu-filter','ns-stats-memory-filter','ns-stats-storage-filter','ns-stats-fpga-filter','ns-stats-pi-filter','ns-stats-institution-filter','ns-stats-description-filter',
+     'node-stats-node-filter','node-stats-gpuType-filter','node-stats-cpu-filter','node-stats-gpu-filter','node-stats-memory-filter','node-stats-storage-filter','node-stats-fpga-filter',
+     'gpu-stats-type-filter','gpu-stats-hours-filter'
+    ].forEach(id => {
         document.getElementById(id).addEventListener('input', applyRegexFilters);
     });
 
@@ -1571,5 +1560,42 @@
         modeSwitch.checked = currentMode === 'used';
         updateModeUI();
         modeSwitch.addEventListener('change', updateModeUI);
+    }
+
+    // Initialize chart tabs
+    const setActiveTab = (containerId, activeBtn) => {
+        const tabs = document.querySelectorAll(`#${containerId} button[data-metric]`);
+        tabs.forEach(btn => {
+            btn.classList.remove('text-gray-900','border-blue-600');
+            btn.classList.add('text-gray-600','border-transparent');
+        });
+        activeBtn.classList.remove('text-gray-600','border-transparent');
+        activeBtn.classList.add('text-gray-900','border-blue-600');
+    };
+
+    const nsTabs = document.getElementById('namespace-chart-tabs');
+    if (nsTabs) {
+        const first = nsTabs.querySelector('button[data-metric]');
+        if (first) setActiveTab('namespace-chart-tabs', first);
+        nsTabs.querySelectorAll('button[data-metric]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                nsChartMetric = { key: btn.getAttribute('data-metric'), color: btn.getAttribute('data-color') };
+                setActiveTab('namespace-chart-tabs', btn);
+                updateCharts();
+            });
+        });
+    }
+
+    const nodeTabs = document.getElementById('node-chart-tabs');
+    if (nodeTabs) {
+        const first = nodeTabs.querySelector('button[data-metric]');
+        if (first) setActiveTab('node-chart-tabs', first);
+        nodeTabs.querySelectorAll('button[data-metric]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                nodeChartMetric = { key: btn.getAttribute('data-metric'), color: btn.getAttribute('data-color') };
+                setActiveTab('node-chart-tabs', btn);
+                updateCharts();
+            });
+        });
     }
 </script>
