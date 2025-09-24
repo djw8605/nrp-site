@@ -182,6 +182,43 @@ You can specify the endpoint on the command line (example: `aws --endpoint https
       aws s3 cp s3://BUCKETNAME/path/hello.txt hello.txt 
       ```
 
+### Known Issue: UploadPart Failures with Large Files 
+
+When using the **AWS CLI** with our Ceph-backed S3, uploads larger than ~80 MB may fail with errors during the `UploadPart` stage of multipart uploads.   
+This is a **compatibility issue** between the AWS CLI and Ceph’s S3 implementation. 
+
+#### Workarounds 
+
+- Use a different client such as: 
+  - [s3cmd](https://s3tools.org/s3cmd)   
+  - [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html)   
+  - [rclone](https://rclone.org/s3/)   
+
+These tools do not exhibit the same problem. 
+
+- Or, adjust your AWS CLI multipart configuration to reduce failure points. Add this profile to `~/.aws/config`: 
+
+```ini 
+[profile ceph-s3-large-files] 
+output = json 
+s3 = 
+    signature_version = s3v4 
+    addressing_style = path 
+    multipart_threshold = 1GB 
+    multipart_chunksize = 256MB 
+    max_bandwidth = 200MB/s 
+    use_accelerate_endpoint = false 
+    use_dualstack_endpoint = false 
+``` 
+
+Then use the profile in your commands: 
+
+```bash 
+aws s3 cp largefile.bin s3://BUCKETNAME/path --profile ceph-s3-large-files 
+``` 
+
+This configuration has been tested to work reliably with files larger than 1 GB. 
+
 ### Give multiple users full access to the bucket
 
 When multiple users need to access a bucket you can set those permissions with the bucket policy. You set the bucket policy using the aws s3api command:
