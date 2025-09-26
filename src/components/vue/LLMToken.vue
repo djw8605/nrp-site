@@ -29,22 +29,29 @@
             <div v-if="!llmgroups || llmgroups.length === 0" class="mx-auto flex max-w-lg items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">
                 You have no LLM groups to create a token in. Please join a group first.
             </div>
-            <InputGroup v-if="user && llmgroups.length > 0">
+            <div v-if="user && llmgroups.length > 0" class="flex flex-col p-6 gap-4">
                 <FloatLabel variant="on">
-                    <InputText name="createTokenAlias" v-model="newTokenAlias" id="createTokenAlias" fluid/>
+                    <InputText name="createTokenAlias" fluid v-model="newTokenAlias" id="createTokenAlias"/>
                     <label for="createTokenAlias">Alias</label>
                 </FloatLabel>
                 <FloatLabel variant="on">
-                    <Select name="createTokenGroup" v-model="newTokenGroup" optionLabel="Name" id="createTokenGroup" type="text" :options="llmgroups" fluid></Select>
+                    <Select name="createTokenGroup" v-model="newTokenGroup" optionLabel="Name" class="w-full" id="createTokenGroup" type="text" :options="llmgroups"></Select>
                     <label for="createTokenGroup">Group</label>
                 </FloatLabel>
-                <Button label="Create" :loading="isCreatingTokenLoading" @click="createToken"/>
-            </InputGroup>
+                <Button label="Create new token for general LLM API access" :loading="isCreatingTokenLoading" @click="createToken"/>
+                <Button label="Create new token and generate the Chatbox configuration" :loading="isCreatingChatboxTokenLoading" @click="createChatboxToken"/>
+
+                <a href="/documentation/userdocs/ai/llm-managed#chatbox">Read more about Chatbox</a>
+            </div>
         </template>
     </Card>
 
     <Dialog v-model:visible="dialogVisible" modal header="Please save and secure your API key. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
         <Message severity="success">{{ newToken }}</Message>
+    </Dialog>
+
+    <Dialog v-model:visible="chatboxDialogVisible" modal header="Please copy the config. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
+        <Message severity="success">{{ newChatboxConfig }}</Message>
     </Dialog>
 </template>
 
@@ -83,14 +90,56 @@ const newTokenGroup = ref(null);
 const newTokenAlias = ref(null);
 
 const newToken = ref(null);
+const newChatboxConfig = ref(null);
 
 const toast = useToast();
 
 const dialogVisible = ref(false);
+const chatboxDialogVisible = ref(false);
 
 const isTokensLoading = ref(false);
 const isCreatingTokenLoading = ref(false);
+const isCreatingChatboxTokenLoading = ref(false);
 const isDeletingTokenLoading = ref(false);
+
+// https://github.com/chatboxai/chatbox/blob/main/src/renderer/utils/provider-config.ts#L59
+
+var chatboxConfigTemplate = {
+	id: "custom-provider-963ccbe7-7e74-4dbe-beda-8054a6590245",
+	name: "NRP",
+	type: "openai",
+	settings: {
+		apiHost: "https://vllm.nrp-nautilus.io",
+		apiKey: "",
+		models: [
+			{
+				modelId: "qwen3",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 262144,
+				maxOutput: 262144
+			},
+			{
+				modelId: "deepseek-r1",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 163840,
+				maxOutput: 163840
+			},
+			{
+				modelId: "glm-v",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 65536,
+				maxOutput: 65536
+			},
+			{
+				modelId: "gemma3",
+				capabilities: ["reasoning", "vision", "tool_use"],
+				contextWindow: 131072,
+				maxOutput: 131072
+			}
+
+		]
+	}
+};
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 const transport = new HTTPTransport(baseUrl+"/rpc",
@@ -196,6 +245,50 @@ const createToken = () => {
         });
     }).finally(() => {
         isCreatingTokenLoading.value = false;
+    });    
+};
+
+const createChatboxToken = () => {
+    if (!newTokenGroup.value || !newTokenAlias.value) {
+        toast.add({
+            severity: 'error',
+            summary: 'Validation Error',
+            detail: 'Group and Alias are required.',
+            life: 3000
+        });
+        return;
+    };
+    isCreatingChatboxTokenLoading.value = true;
+
+    const nsNameSplit = newTokenGroup.value.Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    client.request({
+        method: "user.CreateUserLLMToken",
+        params: {
+            GroupName: nsName,
+            TokenAlias: newTokenAlias.value,
+        }
+    }).then((response) => {
+        if (response.error) {
+            console.error('Error creating token:', response.error);
+            reject(response.error);
+            return;
+        }
+        var token = response.Token;
+        chatboxConfigTemplate.value = {...chatboxConfigTemplate.value};
+        chatboxConfigTemplate.value.settings.apiKey = token;
+        chatboxDialogVisible.value = true;
+        getUserLLMTokens();
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error creating token',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+        isCreatingChatboxTokenLoading.value = false;
     });    
 };
 

@@ -23,6 +23,8 @@ The NRP provides several hosted open-weights LLM for either API access, or use w
 
 ## Chat Interfaces
 
+### Librechat
+
 If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com/), we provide [LibreChat](https://librechat.nrp-nautilus.io), based on the [LibreChat](https://www.librechat.ai/) project.  This is a simple chat interface for all of the NRP hosted models.  You can use it to chat with the models, or to test out the models.
 
 <LinkButton
@@ -34,6 +36,22 @@ If you are looking to chat with an LLM model similar to the interface provided b
 </LinkButton>
 
 On MacOS and Safari you can make it always available in Dock for quick access: having librechat open in Safari, click **File->Add to Dock**.
+
+### Chatbox
+
+You can install the standalone chatbox app or use the web interface version.
+
+<LinkButton
+  href="https://chatboxai.app"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the Chatbox app web site
+</LinkButton>
+
+Generate the config for it in the [LLM token generation page](/llmtoken). Copy the generated config to clipboard - it will already have your personal token.
+
+In chatbox app go to _Settings_->_Model Provider_, scroll down to the end of providers list and click _Import from clipboard_.
 
 ## API Access to LLMs via Envoy
 
