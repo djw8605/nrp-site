@@ -109,7 +109,7 @@ var chatboxConfigTemplate = {
 	name: "NRP",
 	type: "openai",
 	settings: {
-		apiHost: "https://vllm.nrp-nautilus.io",
+		apiHost: "https://ellm.nrp-nautilus.io",
 		apiKey: "",
 		models: [
 			{
