@@ -276,8 +276,8 @@ const createChatboxToken = () => {
             return;
         }
         var token = response.Token;
-        chatboxConfigTemplate.value = {...chatboxConfigTemplate.value};
-        chatboxConfigTemplate.value.settings.apiKey = token;
+        newChatboxConfig.value = {...chatboxConfigTemplate};
+        newChatboxConfig.value.settings.apiKey = token;
         chatboxDialogVisible.value = true;
         getUserLLMTokens();
     }).catch((err) => {
@@ -289,7 +289,7 @@ const createChatboxToken = () => {
         });
     }).finally(() => {
         isCreatingChatboxTokenLoading.value = false;
-    });    
+    });   
 };
 
 const deleteToken = (tokenAlias) => {
