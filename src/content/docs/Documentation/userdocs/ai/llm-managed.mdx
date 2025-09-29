@@ -69,30 +69,6 @@ with CURL or any OpenAI API compatible tool.
 curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/models
 ```
 
-## API Access to LLMs via LiteLLM
-
-<h4>(LiteLLM, to be deprecated soon)</h4>
-
-API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) proxy.  In order to access our LLMs, you need to:
-
-<Steps>
-
-1. Login to [NRP's LiteLLM](https://llm.nrp-nautilus.io/ui) instance.
-
-2. Create an API key. During key creation, you will select the models that the key is allowed to access (or all models).
-
-3. With the API key, you are able to access the API through the endpoint `https://llm.nrp-nautilus.io/`.  An example of how to use the API is below [Python code](#example-python-code).
-
-</Steps>
-
-<LinkButton
-  href="https://llm.nrp-nautilus.io/ui"
-  icon="external"
-  iconPlacement="start"
->
-    Visit the NRP LiteLLM interface
-</LinkButton>
-
 ## Examples
 
 ### Python Code
