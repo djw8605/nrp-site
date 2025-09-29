@@ -2,34 +2,26 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'National Research Platform Fall Training',
+  title: 'NRP Fall Training Sessions - September 2025',
 };
 ---
 
 <Layout metadata={metadata}>
   <section class="py-16 bg-blue-50 dark:bg-slate-800">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 dark:text-blue-200 mb-6">National Research Platform Fall Training</h1>
-      <p class="text-xl text-blue-700 dark:text-blue-100 mb-4 font-bold">September 2nd to September 30th, 2025</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 dark:text-blue-200 mb-6">NRP Fall Training Sessions</h1>
+      <p class="text-xl text-blue-700 dark:text-blue-100 mb-4 font-bold">September 2025 - All Sessions Completed</p>
       
-      <!-- Next Sessions Notice -->
-      <div class="bg-yellow-100 dark:bg-yellow-900 border-2 border-yellow-400 dark:border-yellow-600 rounded-lg p-6 mb-8">
-        <h2 class="text-2xl font-bold text-yellow-800 dark:text-yellow-200 mb-4">NEXT SESSION - Tuesday, September 23</h2>
-        <div class="text-lg text-yellow-700 dark:text-yellow-100 mb-4">
-          <div class="mb-3">
-            <p><strong>10:00 AM Pacific / 1:00 PM Eastern</strong> - Deploying JupyterHub and Coder</p>
-            <p class="text-sm text-yellow-600 dark:text-yellow-300 ml-4">Session runs from 10:00 AM to 11:00 AM Pacific (1:00 PM to 2:00 PM Eastern)</p>
-            <p class="mt-1"><a href="https://ucsd.zoom.us/j/95336469365" class="text-blue-600 hover:text-blue-800 underline font-bold" target="_blank" rel="noopener">Join Session</a></p>
-          </div>
-        </div>
-        <div class="bg-red-100 dark:bg-red-900 border-2 border-red-400 dark:border-red-600 rounded-lg p-4">
-          <p class="text-xl font-bold text-red-800 dark:text-red-200 mb-2">IMPORTANT: NAMESPACE REQUIREMENT</p>
-          <p class="text-lg text-red-700 dark:text-red-100 font-bold">USERS MUST BE PART OF A NAMESPACE/GROUP BEFORE THE SESSIONS TO FOLLOW ALONG. USERS WHO AREN'T WON'T BE ABLE TO PARTICIPATE EFFECTIVELY.</p>
+      <!-- Completion Notice -->
+      <div class="bg-green-100 dark:bg-green-900 border-2 border-green-400 dark:border-green-600 rounded-lg p-6 mb-8">
+        <h2 class="text-2xl font-bold text-green-800 dark:text-green-200 mb-4">🎉 Training Series Complete!</h2>
+        <div class="text-lg text-green-700 dark:text-green-100 mb-4">
+          <p>All training sessions have been completed. Access recordings and materials below.</p>
         </div>
       </div>
       
-      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">Join us for a month-long series of workshops, tutorials, and hands-on sessions designed to help you get started with the NRP, accelerate your research, and connect with the community. Whether you're a new user or an experienced researcher, there's something for everyone!</p>
-      <a href="#schedule" class="inline-block bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow transition">View Training Schedule</a>
+      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">A comprehensive series of workshops, tutorials, and hands-on sessions designed to help you get started with the NRP, accelerate your research, and connect with the community. All sessions are now available as recordings!</p>
+      <a href="#recordings" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow transition">📺 Watch Recordings</a>
     </div>
   </section>
 
@@ -122,16 +114,16 @@ const metadata = {
               <td class="p-2 border text-center">✓</td>
               <td class="p-2 border text-center">✓</td>
             </tr>
-            <tr class="bg-yellow-50 dark:bg-yellow-900">
-              <td class="p-2 border font-bold">Advanced I: GitLab CI/CD and Custom Images <span class="text-yellow-600 dark:text-yellow-400 text-sm">📅 UPCOMING</span></td>
+            <tr class="bg-green-50 dark:bg-green-900">
+              <td class="p-2 border font-bold">Advanced I: GitLab CI/CD and Custom Images <span class="text-green-600 dark:text-green-400 text-sm">✅ COMPLETED</span></td>
               <td class="p-2 border">Use GitLab pipelines to automate image building and deploy custom JupyterHub setups.</td>
               <td class="p-2 border text-center">✘</td>
               <td class="p-2 border text-center">✓</td>
               <td class="p-2 border text-center">✓</td>
               <td class="p-2 border text-center">✘</td>
             </tr>
-            <tr class="bg-yellow-50 dark:bg-yellow-900">
-              <td class="p-2 border font-bold">Advanced II: VMs, Windows Access, and Edge Use Cases <span class="text-yellow-600 dark:text-yellow-400 text-sm">📅 UPCOMING</span></td>
+            <tr class="bg-green-50 dark:bg-green-900">
+              <td class="p-2 border font-bold">Advanced II: VMs, Windows Access, and Edge Use Cases <span class="text-green-600 dark:text-green-400 text-sm">✅ COMPLETED</span></td>
               <td class="p-2 border">Launch and connect to VMs (Linux/Windows), configure networking, and explore advanced edge scenarios.</td>
               <td class="p-2 border text-center">✘</td>
               <td class="p-2 border text-center">✓</td>
@@ -144,9 +136,9 @@ const metadata = {
     </div>
   </section>
 
-  <section id="schedule" class="py-12">
+  <section id="recordings" class="py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Schedule</h2>
+      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Session Recordings & Materials</h2>
       <div class="overflow-x-auto">
         <table class="min-w-full border border-slate-300 dark:border-slate-700 text-sm md:text-base rounded-lg overflow-hidden">
           <thead class="bg-blue-200 dark:bg-slate-700 text-blue-900 dark:text-blue-100">
@@ -154,7 +146,7 @@ const metadata = {
               <th class="p-3 border font-bold">Date</th>
               <th class="p-3 border font-bold">Time (Pacific / Eastern)</th>
               <th class="p-3 border font-bold">Session Title</th>
-              <th class="p-3 border font-bold">Zoom Link</th>
+              <th class="p-3 border font-bold">Recording</th>
             </tr>
           </thead>
           <tbody class="bg-white dark:bg-slate-800">
@@ -162,82 +154,86 @@ const metadata = {
               <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 2</td>
               <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
               <td class="p-3 border">Introduction to the National Research Platform</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/95251971801" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
               <td class="p-3 border">The Portal: GUI Access to Resources</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/91558273595" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 9</td>
               <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
               <td class="p-3 border">Using JupyterHub and Coder as a User</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/92728984788" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
               <td class="p-3 border">Basic Docker and Kubernetes</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/94308786130" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 16</td>
               <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
               <td class="p-3 border">Intermediate Kubernetes</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/96377381436" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
               <td class="p-3 border">Agentic Tools and Coding with AI/LLMs</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/96377381436" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border font-bold align-top">Tuesday, September 23</td>
               <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
               <td class="p-3 border">Deploying JupyterHub and Coder</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/95336469365" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 30</td>
               <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
               <td class="p-3 border">Advanced I: GitLab CI/CD and Custom Images</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/94806123775" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
             <tr>
               <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
               <td class="p-3 border">Advanced II: VMs, Windows, and Edge Use Cases</td>
-              <td class="p-3 border"><a href="https://ucsd.zoom.us/j/92476867994" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener">Join Session</a></td>
+              <td class="p-3 border"><a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" class="text-red-600 hover:text-red-800 underline font-bold" target="_blank" rel="noopener">📺 Watch Recording</a></td>
             </tr>
           </tbody>
         </table>
       </div>
       
       <!-- Resources Section -->
-      <div class="mt-8 p-6 bg-blue-50 dark:bg-slate-800 rounded-lg">
-        <h3 class="text-xl font-bold text-blue-800 dark:text-blue-200 mb-4">Training Materials & Recordings</h3>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div>
-            <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-2">Video Recordings</h4>
-            <p class="text-sm text-slate-700 dark:text-slate-200 mb-3">All session recordings are available on our YouTube playlist:</p>
-            <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" 
-               class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm transition" 
-               target="_blank" rel="noopener">
-              Watch on YouTube
-            </a>
+      <div class="mt-8 p-6 bg-gradient-to-r from-red-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 rounded-lg border-2 border-red-200 dark:border-red-800">
+        <h3 class="text-2xl font-bold text-red-800 dark:text-red-200 mb-6 text-center">📺 All Training Materials Available</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="text-center">
+            <div class="bg-red-600 text-white p-4 rounded-lg mb-4">
+              <h4 class="text-xl font-bold mb-2">🎥 Video Recordings</h4>
+              <p class="text-sm mb-4">Complete session recordings with timestamps and chapters</p>
+              <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" 
+                 class="inline-block bg-white text-red-600 font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" 
+                 target="_blank" rel="noopener">
+                📺 Watch All Sessions
+              </a>
+            </div>
           </div>
-          <div>
-            <h4 class="font-bold text-blue-700 dark:text-blue-300 mb-2">Code & Slides</h4>
-            <p class="text-sm text-slate-700 dark:text-slate-200 mb-3">All code examples, slides, and materials are posted to our GitHub repository:</p>
-            <a href="https://github.com/nrp-nautilus/fall25training" 
-               class="inline-block bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded text-sm transition" 
-               target="_blank" rel="noopener">
-              View on GitHub
-            </a>
+          <div class="text-center">
+            <div class="bg-gray-800 text-white p-4 rounded-lg mb-4">
+              <h4 class="text-xl font-bold mb-2">💻 Code & Slides</h4>
+              <p class="text-sm mb-4">All code examples, slides, and materials</p>
+              <a href="https://github.com/nrp-nautilus/fall25training" 
+                 class="inline-block bg-white text-gray-800 font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105" 
+                 target="_blank" rel="noopener">
+                📁 View on GitHub
+              </a>
+            </div>
           </div>
         </div>
-        <div class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-          <p class="text-sm text-yellow-800 dark:text-yellow-200">
-            <strong>Note:</strong> Zoom links above are for live sessions only. For recordings and materials, use the YouTube playlist and GitHub repository links above.
+        <div class="mt-6 text-center">
+          <p class="text-lg text-slate-700 dark:text-slate-200 font-semibold">
+            All sessions are now available as recordings! No need to wait for live sessions.
           </p>
         </div>
       </div>
@@ -245,26 +241,44 @@ const metadata = {
   </section>
 
   <!-- Training Survey Section -->
-  <section class="py-12 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800 dark:to-slate-700">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-3xl font-bold text-purple-800 dark:text-purple-200 mb-6">Training Feedback</h2>
-      <p class="text-lg text-purple-700 dark:text-purple-100 mb-8">
-        Help us improve our training sessions! Your feedback is valuable for making future sessions even better.
-      </p>
-      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Share Your Experience</h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Whether you attended one session or all of them, we'd love to hear about your experience, 
-          what you learned, and suggestions for improvement.
+  <section class="py-16 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 border-t-4 border-purple-400 dark:border-purple-600">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+      <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-10 border-4 border-purple-200 dark:border-purple-700">
+        <h2 class="text-4xl font-bold text-purple-800 dark:text-purple-200 mb-6">📝 Share Your Training Experience</h2>
+        <p class="text-xl text-purple-700 dark:text-purple-100 mb-8 max-w-3xl mx-auto">
+          Your feedback helps us improve future training sessions! Whether you attended one session or all of them, 
+          we'd love to hear about your experience, what you learned, and suggestions for improvement.
         </p>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMockFormLinkForTrainingSurvey/viewform" 
-           class="inline-block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg transition-all duration-300 transform hover:scale-105" 
-           target="_blank" rel="noopener">
-          📝 Take Training Survey
-        </a>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          Survey takes approximately 5-10 minutes to complete
-        </p>
+        
+        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl p-8 mb-8">
+          <h3 class="text-2xl font-bold mb-4">🎯 Quick Survey</h3>
+          <p class="text-lg mb-6 opacity-90">
+            Help us understand what worked well and what we can improve for future training series.
+          </p>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMockFormLinkForTrainingSurvey/viewform" 
+             class="inline-block bg-white text-purple-600 font-bold py-4 px-10 rounded-xl text-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-110 border-2 border-white" 
+             target="_blank" rel="noopener">
+            📝 Take 5-Minute Survey
+          </a>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6 text-center">
+          <div class="bg-purple-50 dark:bg-purple-900 p-6 rounded-lg">
+            <div class="text-3xl mb-3">⏱️</div>
+            <h4 class="font-bold text-purple-800 dark:text-purple-200">Quick</h4>
+            <p class="text-sm text-purple-600 dark:text-purple-300">5-10 minutes</p>
+          </div>
+          <div class="bg-pink-50 dark:bg-pink-900 p-6 rounded-lg">
+            <div class="text-3xl mb-3">🔒</div>
+            <h4 class="font-bold text-pink-800 dark:text-pink-200">Anonymous</h4>
+            <p class="text-sm text-pink-600 dark:text-pink-300">Your privacy protected</p>
+          </div>
+          <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+            <div class="text-3xl mb-3">💡</div>
+            <h4 class="font-bold text-blue-800 dark:text-blue-200">Impactful</h4>
+            <p class="text-sm text-blue-600 dark:text-blue-300">Shapes future training</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
