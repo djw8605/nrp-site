@@ -53,9 +53,7 @@ Generate the config for it in the [LLM token generation page](/llmtoken). Copy t
 
 In chatbox app go to _Settings_->_Model Provider_, scroll down to the end of providers list and click _Import from clipboard_.
 
-## API Access to LLMs via Envoy
-
-<h4>(Envoy AI Gateway, work in progress)</h4>
+## API Access to LLMs via Envoy gateway
 
 To access our LLMs through the [Envoy AI Gateway](https://aigateway.envoyproxy.io), you need to be a [member of a group with LLM flag](/documentation/userdocs/start/hierarchy). Your membership info can be found on the [namespaces page](/namespaces).
 
@@ -68,30 +66,6 @@ with CURL or any OpenAI API compatible tool.
 ```
 curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/models
 ```
-
-## API Access to LLMs via LiteLLM
-
-<h4>(LiteLLM, to be deprecated soon)</h4>
-
-API access to the LLM is provided through an [LiteLLM](https://www.litellm.ai/) proxy.  In order to access our LLMs, you need to:
-
-<Steps>
-
-1. Login to [NRP's LiteLLM](https://llm.nrp-nautilus.io/ui) instance.
-
-2. Create an API key. During key creation, you will select the models that the key is allowed to access (or all models).
-
-3. With the API key, you are able to access the API through the endpoint `https://llm.nrp-nautilus.io/`.  An example of how to use the API is below [Python code](#example-python-code).
-
-</Steps>
-
-<LinkButton
-  href="https://llm.nrp-nautilus.io/ui"
-  icon="external"
-  iconPlacement="start"
->
-    Visit the NRP LiteLLM interface
-</LinkButton>
 
 ## Examples
 

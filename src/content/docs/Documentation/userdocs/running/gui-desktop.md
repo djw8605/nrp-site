@@ -6,7 +6,7 @@ description: GUI Desktop
 **Note that Coder (<https://coder.nrp-nautilus.io>) and JupyterHub West (<https://jupyterhub-west.nrp-nautilus.io/>) are currently the preferred methods to deploy the GUI Desktop containers. Use the below instructions if you want to deploy in your own namespace.**
 
 The default authentication credentials for Selkies in the browser are:
-Username: Ubuntu
+Username: ubuntu
 Password: mypasswd
 
 With [docker-nvidia-glx-desktop](https://github.com/selkies-project/docker-nvidia-glx-desktop) or [docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop), users may start a GUI Desktop interface accelerated with NVIDIA GPUs. Both containers support OpenGL and Vulkan.
