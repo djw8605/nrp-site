@@ -2,6 +2,19 @@
     <Card class="my-8">
         <template #title>Editing {{ selectedNamespace.Name }}</template>
         <template #content>
+
+            <Card>
+                <template #subtitle>Current features (not editable)</template>
+                <template #content>
+                    <div class="flex gap-2">
+                        <span  v-for="feature of features" :key="feature.key">
+                            <Checkbox v-model="initialValues.features" :inputId="feature.key" name="feature" :value="feature.key" :disabled="true" />
+                            <label class="m-1" :for="feature.key"> {{ feature.name }} </label>
+                        </span>
+                    </div>
+                </template>
+            </Card>
+
             <Form v-slot="$form" ref="form" :resolver :initialValues @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
                 <VueSpinnerPie v-if="isFormLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
                 <div class="flex flex-col gap-1">
@@ -227,10 +240,10 @@ const selectedFeatures = ref(["is_k8s_namespace"]);
 const features = ref([
     {name: "K8s Namespace", key: "is_k8s_namespace", disabled: false},
     {name: "LLM Group", key: "is_litellm_org", disabled: false},
+    {name: "Milvus database", key: "is_milvus_db", disabled: false},
 ]);
 
-const initialValues = reactive({
-    });
+const initialValues = reactive({});
 
 const addUserLoading = ref(false);
 const delUserLoading = ref({});

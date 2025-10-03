@@ -102,6 +102,10 @@ export const headerData = {
           href: getPermalink('/s3token'),
         },
         {
+          text: 'Milvus password',
+          href: getPermalink('/milvus'),
+        },
+        {
           text: 'Reservations',
           href: getPermalink('/reservations'),
         },

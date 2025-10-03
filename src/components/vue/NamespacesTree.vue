@@ -57,21 +57,6 @@
         style: "font-size: 1em",
         axis: null,
         marks: [
-          // Plot.link(namespaces.Namespaces, Plot.treeLink({
-          //   path: "Name", 
-          //   delimiter: "/"
-          // })),
-          // Plot.dot(namespaces.Namespaces, Plot.treeNode({
-          //   path: "Name", 
-          //   delimiter: "/"
-          // })),
-          // Plot.text(namespaces.Namespaces, Plot.treeNode({
-          //   path: "Name", 
-          //   delimiter: "/", 
-          //   text: "node:name", 
-          //   dx: 6, dy: -4})),
-        
-
           Plot.tree(namespaces.Namespaces, {
             path: "Name",
             delimiter: "/",
@@ -116,6 +101,8 @@
           return "blue";
         } else if (d.IsLiteLLMOrg) {
           return "orange";
+        } else if (d.IsMilvusDB) {
+          return "violet";
         } else {
           return "red";
         }
