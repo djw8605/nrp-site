@@ -41,7 +41,7 @@
                 <Button label="Create new token for general LLM API access" :loading="isCreatingTokenLoading" @click="createToken"/>
                 <Button label="Create new token and generate the Chatbox configuration" :loading="isCreatingChatboxTokenLoading" @click="createChatboxToken"/>
 
-                <a href="/documentation/userdocs/ai/llm-managed#chatbox">Read more about Chatbox</a>
+                <a class="underline cursor-pointer text-primary" href="/documentation/userdocs/ai/llm-managed#chatbox">Read more about Chatbox</a>
             </div>
         </template>
     </Card>

@@ -1,0 +1,31 @@
+---
+title: NRP-Managed vector database
+description: NRP-Managed vector database
+---
+import { Badge } from '@astrojs/starlight/components';
+
+import Image from '~/components/common/Image.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import { Steps, LinkCard, CardGrid, LinkButton, Card } from '@astrojs/starlight/components';
+
+The NRP provides managed vector database [Milvus](https://milvus.io/docs/overview.md) as a service to be used in LLMs.
+
+**You don't need to install the operator, create the milvus instance, or create the database. All that is done already for you.**
+
+:::tip
+  Milvus GRPC endpoint:
+  
+  **milvus.grpc.nrp-nautilus.io:50051**
+:::
+
+To get access to Milvus:
+
+* Start from getting your username and password. Navigate to the [Milvus password page](/milvus) and click the "Get milvus password" button. The link to secure page with your password will come to your email.
+
+* [Make sure](/namespaces) you're a member of a group with Milvus feature enabled. If you're a namespace admin, you can create one. Otherwise ask your namespace admin to add you to one.
+
+:::note
+  Groups can only contain alphanumeric symbols and dashes. Milvus databases can only contain alphanumeric symbols and underscores. All dashes in your group name will be converted to underscores in milvus database name.
+:::
+
+* You can access the Milvus databases according to the NRP group membership. Start [defining collections](https://milvus.io/docs/manage-collections.md) or [searching data](https://milvus.io/docs/single-vector-search.md).

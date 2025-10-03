@@ -8,6 +8,9 @@
             <p v-if="retrieving == 1">Retrieving password...</p>
             <p v-if="retrieving == 2">The link to get the password was sent to your email address.</p>
             <p>Requesting the password again will reset the password to the new one.</p>
+
+            <p><a class="underline cursor-pointer text-primary" href="/documentation/userdocs/ai/vector-database">Read more about Milvus service</a></p>
+
         </template>
     </Card>
 </template>
