@@ -270,6 +270,13 @@ export default defineConfig({
               ]
             },
             {
+              "label": "AI",
+              collapsed: true,
+              "items": [
+                { "label": "Managing AI gateway", "link": "documentation/admindocs/ai/managing_models" }
+              ]
+            },
+            {
               "label": "Storage",
               collapsed: true,
               "items": [

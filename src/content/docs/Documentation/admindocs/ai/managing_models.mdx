@@ -1,0 +1,59 @@
+---
+title: Envoy AI gateway management
+description: How to add and remove models to Envoy AI Gateway
+---
+
+:::caution
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
+:::
+
+
+## Overview
+
+This document describes the steps to configure the [Envoy AI Gateway](https://aigateway.envoyproxy.io).
+
+## Gitlab Project
+
+The (hopefully) current configuration is in https://gitlab.nrp-nautilus.io/prp/llm-proxy project. You most likely will only need to edit the stuff in models-config folder. Everything else is either other experiments or core config that doesn't have to change.
+
+:::caution
+The CRDs are pretty complex. Instead of directly editing the cluster objects, please edit the local files and do `kubectl apply -f <file>` after examining the changes to be made (`kubectl diff -f <file>`). This will ensure your local content is the same as remote.
+:::
+
+Push back your changes to git when you're done.
+
+Since we need to handle objects deletions too, we can't add those to GitLab CI/CD yet.
+
+## CRDs structure
+
+### AIGatewayRoute
+
+The top object is [AIGatewayRoute](https://github.com/envoyproxy/ai-gateway/pull/1322)](https://aigateway.envoyproxy.io/docs/api/#aigatewayroute), referencing the `Gateway` that you don't need to change.
+
+Current AIGatewayRoutes are in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/gatewayroute, and are split into several objects because there's a limit of 16 routes (rules) per object. Start from adding your new model as a new rule. Note that we're overriding the long names of the models with shorter ones using the [modelNameOverride feature](https://aigateway.envoyproxy.io/blog/v0.3-release-announcement#model-name-virtualization-abstraction-for-flexibility).
+
+On this level you can also set up load-balancing between multiple models. Having several [backendRefs](https://aigateway.envoyproxy.io/docs/api/#aigatewayrouterulebackendref) will make Envoy round-robbin between those. There's also a way to set priority and fallbacks (which currently [have a regression](https://github.com/envoyproxy/ai-gateway/pull/1322)).
+
+Start defining your [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) next.
+
+### AIServiceBackend
+
+Add your [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) to one of the files in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend.
+
+Continue to defining the [Backend](https://gateway.envoyproxy.io/docs/api/extension_types/#backend).
+
+### Backend
+
+:::note
+This object belongs to the Envoy Gateway API and not Envoy AI Gateway API.
+:::
+
+Add your [Backend](https://gateway.envoyproxy.io/docs/api/extension_types/#backend) to one of the files in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/backend.
+
+You can point it to a URL (either a service inside the cluster or a FQDN), or an IP.
+
+### Security
+
+If your model has an API access key, you can add a [BackendSecurityPolicy](https://aigateway.envoyproxy.io/docs/api/#backendsecuritypolicy) to https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml. It will point to an existing secret in the cluster containing your ApiKey. It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BAckendSecurityPolicies.
+
+
