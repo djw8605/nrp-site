@@ -15,6 +15,8 @@ import starlight from '@astrojs/starlight';
 
 import astrowind from './vendor/integration';
 
+import mermaid from 'astro-mermaid';
+
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
 import vue from "@astrojs/vue";
@@ -32,6 +34,10 @@ export default defineConfig({
   publicDir: 'static',
 
   integrations: [
+    mermaid({
+      theme: 'forest',
+      autoTheme: true
+    }),
     starlight({
       favicon: '/favicon.ico',
       title: 'NRP Nautilus',

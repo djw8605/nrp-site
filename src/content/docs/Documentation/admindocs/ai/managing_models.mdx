@@ -7,10 +7,37 @@ description: How to add and remove models to Envoy AI Gateway
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 
-
 ## Overview
 
 This document describes the steps to configure the [Envoy AI Gateway](https://aigateway.envoyproxy.io).
+
+```mermaid
+graph TD
+    A[EnvoyProxy] --> B[GatewayClass]
+    B --> C[Gateway]
+    C --> D[AIGatewayRoute]
+    I[HTTPRoute] --> D
+    C -.-> I
+    J[SecurityPolicy] --> I
+    D --> E[AIServiceBackend]
+    E --> F[Backend]
+    G[BackendSecurityPolicy] --> E    
+    H[ClientTrafficPolicy] --> C[Gateway]
+
+    click A "https://gateway.envoyproxy.io/docs/api/extension_types/#envoyproxy"
+    click B "https://gateway-api.sigs.k8s.io/reference/spec/#gatewayclass"
+    click C "https://gateway-api.sigs.k8s.io/reference/spec/#gateway"
+    click D "https://aigateway.envoyproxy.io/docs/api/#aigatewayroute"
+    click E "https://aigateway.envoyproxy.io/docs/api/#aiservicebackend"
+    click F "https://gateway.envoyproxy.io/docs/api/extension_types/#backend"
+    click G "https://aigateway.envoyproxy.io/docs/api/#backendsecuritypolicy"
+    click H "https://gateway.envoyproxy.io/docs/api/extension_types/#clienttrafficpolicy"
+    click I "https://gateway-api.sigs.k8s.io/api-types/httproute/"
+    click J "https://gateway.envoyproxy.io/docs/api/extension_types/#securitypolicy"
+```
+
+
+
 
 ## Gitlab Project
 
@@ -54,6 +81,6 @@ You can point it to a URL (either a service inside the cluster or a FQDN), or an
 
 ### Security
 
-If your model has an API access key, you can add a [BackendSecurityPolicy](https://aigateway.envoyproxy.io/docs/api/#backendsecuritypolicy) to https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml. It will point to an existing secret in the cluster containing your ApiKey. It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BAckendSecurityPolicies.
+If your model has an API access key, you can add a [BackendSecurityPolicy](https://aigateway.envoyproxy.io/docs/api/#backendsecuritypolicy) to https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml. It will point to an existing secret in the cluster containing your ApiKey. It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BackendSecurityPolicies.
 
-
+It should target an existing AIServiceBackend.
