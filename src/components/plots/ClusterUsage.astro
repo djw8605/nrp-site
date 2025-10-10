@@ -97,6 +97,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
       columns={[
         { checkbox: true },
         { key: 'node', label: 'Node', type: 'string', filterId: 'node-name-filter' },
+        { key: 'owner', label: 'Owner', type: 'string', filterId: 'node-owner-filter' },
         { key: 'region', label: 'Region', type: 'string', filterId: 'node-region-filter' },
         { key: 'zone', label: 'Zone', type: 'string', filterId: 'node-zone-filter' },
         { key: 'gpuType', label: 'GPU Type', type: 'string', filterId: 'node-gpu-filter' },
@@ -511,6 +512,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
                 const nInfo = nodeInfoMap.get(r.node) || {};
                 nodeMap.set(r.node, {
                     node: r.node,
+                    owner: nInfo.OwnerName || 'unknown',
                     region: nInfo.Region || 'unknown',
                     zone: nInfo.Zone || 'unknown',
                     gpuType: nInfo.GPUType || 'unknown',
@@ -563,6 +565,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
             const namespacePiRegex = new RegExp(document.getElementById('namespace-pi-filter').value || '.*', 'i');
             const namespaceDescriptionRegex = new RegExp(document.getElementById('namespace-description-filter')?.value || '.*', 'i');
             const nodeNameRegex = new RegExp(document.getElementById('node-name-filter').value || '.*', 'i');
+            const nodeOwnerRegex = new RegExp(document.getElementById('node-owner-filter').value || '.*', 'i');
             const nodeRegionRegex = new RegExp(document.getElementById('node-region-filter').value || '.*', 'i');
             const nodeZoneRegex = new RegExp(document.getElementById('node-zone-filter').value || '.*', 'i');
             const nodeGpuRegex = new RegExp(document.getElementById('node-gpu-filter').value || '.*', 'i');
@@ -578,6 +581,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
 
             const filteredNodes = allNodes.filter(node => 
                 nodeNameRegex.test(node.node) &&
+                nodeOwnerRegex.test(node.owner || '') &&
                 nodeRegionRegex.test(node.region) &&
                 nodeZoneRegex.test(node.zone) &&
                 nodeGpuRegex.test(node.gpuType) &&
@@ -700,6 +704,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
     };
     const nodeSelectedAccessors = {
         node: r => r.node || '',
+        owner: r => r.owner || '',
         region: r => r.region || '',
         zone: r => r.zone || '',
         gpuType: r => r.gpuType || '',
@@ -879,6 +884,7 @@ import CheckboxTable from '~/components/common/CheckboxTable.astro';
                     <input type="checkbox" class="node-checkbox" value="${node.node}" checked>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${node.node}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.owner || ''}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.region}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.zone}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${node.gpuType}</td>
