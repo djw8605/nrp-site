@@ -55,9 +55,9 @@ Since we need to handle objects deletions too, we can't add those to GitLab CI/C
 
 ### AIGatewayRoute
 
-The top object is [AIGatewayRoute](https://github.com/envoyproxy/ai-gateway/pull/1322)](https://aigateway.envoyproxy.io/docs/api/#aigatewayroute), referencing the `Gateway` that you don't need to change.
+The top object is [AIGatewayRoute](https://aigateway.envoyproxy.io/docs/api/#aigatewayroute), referencing the `Gateway` that you don't need to change.
 
-Current AIGatewayRoutes are in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/gatewayroute, and are split into several objects because there's a limit of 16 routes (rules) per object. Start from adding your new model as a new rule. Note that we're overriding the long names of the models with shorter ones using the [modelNameOverride feature](https://aigateway.envoyproxy.io/blog/v0.3-release-announcement#model-name-virtualization-abstraction-for-flexibility).
+Current AIGatewayRoutes are in <https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/gatewayroute>, and are split into several objects because there's a limit of 16 routes (rules) per object. Start from adding your new model as a new rule. Note that we're overriding the long names of the models with shorter ones using the [modelNameOverride feature](https://aigateway.envoyproxy.io/blog/v0.3-release-announcement#model-name-virtualization-abstraction-for-flexibility).
 
 On this level you can also set up load-balancing between multiple models. Having several [backendRefs](https://aigateway.envoyproxy.io/docs/api/#aigatewayrouterulebackendref) will make Envoy round-robbin between those. There's also a way to set priority and fallbacks (which currently [have a regression](https://github.com/envoyproxy/ai-gateway/pull/1322)).
 
