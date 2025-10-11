@@ -3,11 +3,11 @@ title: Envoy AI gateway management
 description: How to add and remove models to Envoy AI Gateway
 ---
 
-## Overview
-
 :::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
+
+## Overview
 
 This document describes the steps to configure the [Envoy AI Gateway](https://aigateway.envoyproxy.io).
 
@@ -58,7 +58,7 @@ Current AIGatewayRoutes are in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tr
 
 On this level, you can also set up load-balancing between multiple models. Having several [backendRefs](https://aigateway.envoyproxy.io/docs/api/#aigatewayrouterulebackendref) will make Envoy round-robin between those. There's also a way to set priority and fallbacks (which currently [have a regression](https://github.com/envoyproxy/ai-gateway/pull/1322)).
 
-**Make sure to delete the `rules:` and update the `AIGatewayRoute` with `kubectl apply -f <file>` if a model is removed. If all models under `rules:` were deleted, make sure to delete the `AIGatewayRoute` manually.**
+**Make sure to delete the `rules:` and update the `AIGatewayRoute` with `kubectl apply -f <file>` if a model is removed. If all models under `rules:` were deleted, make sure to delete the `AIGatewayRoute` resource manually.**
 
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/gatewayroute):
 
@@ -125,7 +125,7 @@ Start defining the [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#
 
 Add your [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) to one of the files in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend.
 
-**Make sure to delete the `AIServiceBackend` manually if a model is removed.**
+**Make sure to delete the `AIServiceBackend` resource manually if a model is removed.**
 
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend):
 
@@ -156,7 +156,7 @@ Add your [Backend](https://gateway.envoyproxy.io/docs/api/extension_types/#backe
 
 You can point it to a URL (either a service inside the cluster or a FQDN), or an IP.
 
-**Make sure to delete the `Backend` manually if a model is removed.**
+**Make sure to delete the `Backend` resource manually if a model is removed.**
 
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/backend):
 
@@ -179,7 +179,7 @@ If your model has a newly added API access key, you can add a [BackendSecurityPo
 
 It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BackendSecurityPolicies. The `BackendSecurityPolicy` should target an existing AIServiceBackend.
 
-**Make sure to delete the `targetRefs:` section and update the `BackendSecurityPolicy` with `kubectl apply -f <file>`. Make sure to delete the `BackendSecurityPolicy` manually if all models under `targetRefs:` are removed.**
+**Make sure to delete the `targetRefs:` section and update the `BackendSecurityPolicy` with `kubectl apply -f <file>`. Make sure to delete the `BackendSecurityPolicy` resource manually if all models under `targetRefs:` are removed.**
 
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml):
 
