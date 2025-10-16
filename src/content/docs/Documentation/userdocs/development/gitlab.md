@@ -80,7 +80,11 @@ spec:
 
 #### Multiarch builds
 
-Nautilus has several ARM64 nodes, which require a specifically build images to run on. Docker can build images for multiple architectures and automatically create a manifest which will allow using the same image path on different architectures, provided by the buildx tool.
+Nautilus has several ARM64 nodes, which require a specifically build images to run on.
+
+Refer to [Creating Multi-arch Container Manifests Using Kaniko and Manifest-tool](https://github.com/osscontainertools/kaniko/blob/main/README.md#creating-multi-arch-container-manifests-using-kaniko-and-manifest-tool) to create multiarch builds in Kaniko.
+
+Docker can build images for multiple architectures and automatically create a manifest which will allow using the same image path on different architectures, provided by the buildx tool.
 
 Here's the example of such CI definition:
 
