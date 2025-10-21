@@ -58,7 +58,8 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       //timeZone: "America/Los_Angeles", // Display in Pacific Time
       timeZone: "Etc/GMT+8",
       timeZoneName: "short",
-    });
+    })
+    .replace("GMT+8", "PST");
 
     // Update the specific element's text content
     targetElement.textContent = formatted;
