@@ -1,222 +1,92 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import NextOfficeHours from '~/components/widgets/NextOfficeHours.astro';
 
 const metadata = {
-  title: 'NRP Fall Training Sessions - September 2025',
+  title: 'NRP Office Hours',
 };
 ---
 
 <Layout metadata={metadata}>
   <section class="py-16 bg-blue-50 dark:bg-slate-800">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 dark:text-blue-200 mb-6">NRP Fall Training Sessions</h1>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 dark:text-blue-200 mb-6">NRP Office Hours</h1>
       
-      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">A comprehensive series of workshops, tutorials, and hands-on sessions designed to help you get started with the NRP, accelerate your research, and connect with the community. All sessions are now available as recordings!</p>
-      <a href="#recordings" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow transition">Watch Recordings</a>
-    </div>
-  </section>
-
-
-  <section class="py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Session Table</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border border-slate-300 dark:border-slate-700 text-sm md:text-base rounded-lg overflow-hidden">
-          <thead class="bg-blue-200 dark:bg-slate-700 text-blue-900 dark:text-blue-100">
-            <tr>
-              <th class="p-3 border font-bold">Session Title</th>
-              <th class="p-3 border font-bold">Description</th>
-              <th class="p-3 border font-bold">Beginner User</th>
-              <th class="p-3 border font-bold">Accustomed User</th>
-              <th class="p-3 border font-bold">NS Admin / PI</th>
-              <th class="p-3 border font-bold">Instructor</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-slate-800">
-            <tr>
-              <td class="p-2 border font-bold">Introduction to the National Research Platform</td>
-              <td class="p-2 border">Overview of NRP's mission, capabilities, how to gain access, and policy guidelines.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">The Portal: GUI Access to Resources</td>
-              <td class="p-2 border">Navigate the NRP portal, manage namespaces/groups, and explore the integrated LiteLLM interface.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Using JupyterHub and Coder as a User</td>
-              <td class="p-2 border">Launch and use interactive development environments. Ideal for researchers, students, and educators.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Basic Docker and Kubernetes</td>
-              <td class="p-2 border">Foundations of containers and orchestration: Pods, Deployments, PVCs, and S3 storage.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Intermediate Kubernetes</td>
-              <td class="p-2 border">Scripting with kubectl, exposing services, using taints/tolerations, node affinity, and Python APIs.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✘</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Agentic Tools and Coding with AI/LLMs</td>
-              <td class="p-2 border">Explore how to integrate NRP-managed LMs and AI agents into JupyterHub, Coder and your own namespace.</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Deploying JupyterHub and Coder</td>
-              <td class="p-2 border">Learn how to deploy and manage JupyterHub and Coder environments for groups or courses.</td>
-              <td class="p-2 border text-center">✘</td>
-              <td class="p-2 border text-center">✘</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Advanced I: GitLab CI/CD and Custom Images</td>
-              <td class="p-2 border">Use GitLab pipelines to automate image building and deploy custom JupyterHub setups.</td>
-              <td class="p-2 border text-center">✘</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✘</td>
-            </tr>
-            <tr>
-              <td class="p-2 border font-bold">Advanced II: VMs, Windows Access, and Edge Use Cases</td>
-              <td class="p-2 border">Launch and connect to VMs (Linux/Windows), configure networking, and explore advanced edge scenarios.</td>
-              <td class="p-2 border text-center">✘</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✓</td>
-              <td class="p-2 border text-center">✘</td>
-            </tr>
-          </tbody>
-        </table>
+      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">Join our regular office hours to get help with the NRP, ask questions, and connect with the community. Our team is here to support your research and education needs.</p>
+      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Next Office Hours</h2>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+          Ready to learn more about the NRP and how to get started? Join our office hours on <NextOfficeHours/>.
+        </p>
+        <a href="https://ucsd.zoom.us/j/96377381436" 
+           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg transition" 
+           target="_blank" rel="noopener">
+          Join Office Hours
+        </a>
       </div>
     </div>
   </section>
 
-  <section id="recordings" class="py-12">
+
+  <!-- Office Hours Information Section -->
+  <section class="py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Session Recordings & Materials</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border border-slate-300 dark:border-slate-700 text-sm md:text-base rounded-lg overflow-hidden">
-          <thead class="bg-blue-200 dark:bg-slate-700 text-blue-900 dark:text-blue-100">
-            <tr>
-              <th class="p-3 border font-bold">Date</th>
-              <th class="p-3 border font-bold">Time (Pacific / Eastern)</th>
-              <th class="p-3 border font-bold">Session Title</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white dark:bg-slate-800">
-            <tr>
-              <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 2</td>
-              <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
-              <td class="p-3 border">Introduction to the National Research Platform</td>
-            </tr>
-            <tr>
-              <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
-              <td class="p-3 border">The Portal: GUI Access to Resources</td>
-            </tr>
-            <tr>
-              <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 9</td>
-              <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
-              <td class="p-3 border">Using JupyterHub and Coder as a User</td>
-            </tr>
-            <tr>
-              <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
-              <td class="p-3 border">Basic Docker and Kubernetes</td>
-            </tr>
-            <tr>
-              <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 16</td>
-              <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
-              <td class="p-3 border">Intermediate Kubernetes</td>
-            </tr>
-            <tr>
-              <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
-              <td class="p-3 border">Agentic Tools and Coding with AI/LLMs</td>
-            </tr>
-            <tr>
-              <td class="p-3 border font-bold align-top">Tuesday, September 23</td>
-              <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
-              <td class="p-3 border">Deploying JupyterHub and Coder</td>
-            </tr>
-            <tr>
-              <td class="p-3 border font-bold align-top" rowspan="2">Tuesday, September 30</td>
-              <td class="p-3 border"><strong>10:00 AM Pacific / 1:00 PM Eastern</strong></td>
-              <td class="p-3 border">Advanced I: GitLab CI/CD and Custom Images</td>
-            </tr>
-            <tr>
-              <td class="p-3 border"><strong>11:00 AM Pacific / 2:00 PM Eastern</strong></td>
-              <td class="p-3 border">Advanced II: VMs, Windows, and Edge Use Cases</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-8 text-center">What to Expect at Office Hours</h2>
       
-      <!-- Resources Section -->
-      <div class="mt-8 p-6 bg-blue-50 dark:bg-slate-800 rounded-lg">
-        <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-6 text-center">Training Materials Available</h3>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div class="text-center">
-            <h4 class="text-xl font-bold mb-2">Video Recordings</h4>
-            <p class="text-sm mb-4">Complete session recordings with timestamps and chapters</p>
-            <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" 
-               class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition" 
-               target="_blank" rel="noopener">
-              Watch All Sessions
-            </a>
-          </div>
-          <div class="text-center">
-            <h4 class="text-xl font-bold mb-2">Code & Slides</h4>
-            <p class="text-sm mb-4">All code examples, slides, and materials</p>
-            <a href="https://github.com/nrp-nautilus/fall25training" 
-               class="inline-block bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg text-lg transition" 
-               target="_blank" rel="noopener">
-              View on GitHub
-            </a>
-          </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold text-blue-800 dark:text-blue-200 mb-4">Get Help</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Get personalized assistance with NRP setup, troubleshooting, and best practices from our experienced team.
+          </p>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold text-blue-800 dark:text-blue-200 mb-4">Ask Questions</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Bring your questions about using JupyterHub, Coder, Kubernetes, or any other NRP services.
+          </p>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
+          <h3 class="text-xl font-bold text-blue-800 dark:text-blue-200 mb-4">Connect</h3>
+          <p class="text-gray-600 dark:text-gray-300">
+            Meet other researchers and educators using the NRP platform and share experiences.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Training Survey Section -->
+  <!-- Resources Section -->
   <section class="py-12 bg-blue-50 dark:bg-slate-800">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-6">Training Feedback</h2>
-      <p class="text-lg text-blue-700 dark:text-blue-100 mb-8">
-        Your feedback helps us improve future training sessions! Whether you attended one session or all of them, 
-        we'd love to hear about your experience, what you learned, and suggestions for improvement.
-      </p>
-      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Share Your Experience</h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Help us understand what worked well and what we can improve for future training series.
-        </p>
-        <a href="https://forms.gle/1RYdJ75A64MLwcyP6" 
-           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg transition" 
-           target="_blank" rel="noopener">
-          Take Training Survey
-        </a>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          Survey takes approximately 5-10 minutes to complete
-        </p>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-8 text-center">Additional Resources</h2>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Documentation</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-6">
+            Comprehensive guides and tutorials for getting started with the NRP platform.
+          </p>
+          <a href="/documentation" 
+             class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition" 
+             target="_blank" rel="noopener">
+            View Documentation
+          </a>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8">
+          <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Community</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-6">
+            Join our community discussions and get help from other users and the NRP team.
+          </p>
+          <a href="/contact" 
+             class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition" 
+             target="_blank" rel="noopener">
+            Contact Us
+          </a>
+        </div>
       </div>
     </div>
   </section>
