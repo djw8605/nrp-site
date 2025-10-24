@@ -2,7 +2,7 @@
 publishDate: 2025-10-23T00:00:00Z
 title: "National Research Platform and CENIC: At the Heart of Precision Agriculture"
 excerpt: NRP team members contribute to innovative data-driven agriculture project at Iron Horse Vineyards
-image: https://assets.cenic.org/blog-news/JGraham_JSterling_Handheld.png
+image: ~/assets/images/posts/cenic-precision-agriculture-2025.png
 category: Research
 tags:
   - agriculture
