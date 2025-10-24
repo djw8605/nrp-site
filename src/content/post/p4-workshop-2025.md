@@ -1,5 +1,5 @@
 ---
-publishDate: 2025-10-23T00:00:00Z
+publishDate: 2025-10-18T00:00:00Z
 title: NRP at the P4 Workshop 2025
 excerpt: Cross-Federated P4 Research Testbed for Wide-Area Programmable Networking Experiments
 image: ~/assets/images/posts/p4-workshop-2025.jpg

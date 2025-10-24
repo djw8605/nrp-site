@@ -1,5 +1,5 @@
 ---
-publishDate: 2025-10-23T00:00:00Z
+publishDate: 2025-10-19T00:00:00Z
 title: NRP at the KNIT11 Workshop
 excerpt: Joint FABRIC and National Research Platform Experiments
 image: ~/assets/images/posts/knit11-workshop-2025.jpg
