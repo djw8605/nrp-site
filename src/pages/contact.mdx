@@ -5,34 +5,21 @@ layout: '~/layouts/MarkdownLayout.astro'
 
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
-<CallToAction
-  actions={[
-    {
-      variant: 'primary',
-      text: 'Subscribe',
-      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
-      icon: 'tabler:mail',
-    },
-  ]}
->
-  <Fragment slot="title">
-    Mailing list
-  </Fragment>
-
-  <Fragment slot="subtitle">
-    We send weekly meeting recordings and other useful info.
-  </Fragment>
-</CallToAction>
 
 
-## [matrix]
 
-We're using the new innovative federated communication system [https://matrix.org](https://matrix.org). You can get an account using any compatible client.
+## Main Communication Channel — Matrix
+
+All **Nautilus and NRP users are expected to join Matrix** for user support and real-time updates. We're using the new innovative federated communication system [https://matrix.org](https://matrix.org). You can get an account using any compatible client.
+
 
 
 <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
   <span class="font-medium">❗</span> Don't try contacting admins in matrix by private messages, those will be rejected. Use public rooms for general support questions.
 </div>
+
+**If you’re not on Matrix yet, please register right away following the instructions below.**
+
 
 ### Registration
 #### Joining via web page
@@ -84,3 +71,23 @@ After that click `Share` for each Email address that you want to be discoverable
 ### Possible issues
 
 If you've created the account on matrix.org server (not the NRP one), and have the user ID like `@username:matrix.org`, you should use the standard https://app.element.io web page to log in.
+
+
+<CallToAction
+  actions={[
+    {
+      variant: 'primary',
+      text: 'Subscribe',
+      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
+      icon: 'tabler:mail',
+    },
+  ]}
+>
+  <Fragment slot="title">
+    Mailing list
+  </Fragment>
+
+  <Fragment slot="subtitle">
+    We send weekly meeting recordings and other useful info.
+  </Fragment>
+</CallToAction>
