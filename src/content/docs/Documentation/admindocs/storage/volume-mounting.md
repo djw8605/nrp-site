@@ -82,17 +82,13 @@ Use NetBox or node inventory system to find which node matches the IP address fr
 
 - Confirm that **no nodes** are using the volume.
 
-#### 3. Remove the Lock (Only If Safe)
+#### 3. Reboot The Node
 
-⚠️ **Only run this command if you are absolutely certain that no pods are using the volume anymore.**
-
-```sh
-rbd lock remove <pool-name>/csi-vol-<uuid> "auto <lock-id>" client.<id>
-```
+⚠️ **Only reboot the node after verifying it has been drained and no user pods are running on it..**
 
 ### 4. Retry Pod or PVC
 
-Once the lock is removed, retry launching the pod or let Kubernetes rebind the PVC.
+Once the node is back up and untainted, try the PVC with a test pod to verify it's ready for use.
 
 ---
 
