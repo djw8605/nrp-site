@@ -126,7 +126,7 @@ var chatboxConfigTemplate = {
 			},
 			{
 				modelId: "glm-v",
-				capabilities: ["reasoning", "tool_use"],
+				capabilities: ["reasoning", "vision", "tool_use"],
 				contextWindow: 65536,
 				maxOutput: 65536
 			},
