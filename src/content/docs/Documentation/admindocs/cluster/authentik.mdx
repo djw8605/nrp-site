@@ -23,6 +23,17 @@ Follow these steps to configure an OAuth Client via Authentik.
 - Each `Application` will create a corresponding `Provider`.
 - Choose `OAuth2` as the `Provider` type.
 
+### Authentication Flow
+
+- Select: `nautilus-user-authentication-flow` if the application is for NRP users, or `default-authentication-flow` if the application is for system/dev/admins.
+- Make the client **confidential**.
+- Retrieve the `Client ID` and `Client Secret` (needed for integration).
+
+:::note
+  `default-authentication-flow` allows for fallback password login, while `nautilus-user-authentication-flow` doesn't, which is more suitable for anything user-facing since users can login exclusively through CILogon.
+:::
+
+
 ### Authorization Flow
 
 - Select: `nrp-authorization-with-aup-consent`.
