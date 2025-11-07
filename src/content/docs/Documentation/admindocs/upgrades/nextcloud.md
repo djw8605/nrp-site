@@ -49,6 +49,8 @@ fastcgi_buffers 64 4K;
 
 ##### Deployment upgrade
 
+Before upgrading, update all **Apps** on Nextcloud beforehand, as this will lead to substantially reduced server downtime.
+
 > NOTE: In order to run `occ`: use the `bash` shell started by `su -s /bin/bash www-data` or run `su -s /bin/sh -c 'php occ [command]' www-data` inside the `nextcloud` container of the `nextcloud-fpm` pod.
 
 To upgrade, change all `nextcloud` images to the latest revision of the minor version (unless upgrading to the next major version, follow the major release upgrade procedures above), and wait for the pod to be restarted.
