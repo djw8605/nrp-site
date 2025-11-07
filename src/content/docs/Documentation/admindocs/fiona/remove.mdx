@@ -22,11 +22,13 @@ These instructions are for nodes being temporary or permanently removed from the
 
     2. Check that all storage volumes are successfully unmounted from the node (both `lsblk` devices and k8s volumeattachments)
 
-    3. Do `kubeadm reset` on the node
+    3. Check **in linstor controller pod** that no linstor volumes exist on the node (even diskless ones). (docs to be added for this)
 
-    4. Delete the node from the k8s cluster
+    4. Do `kubeadm reset` on the node
 
-    5. Delete the node from ansible inventory
+    5. Delete the node from the k8s cluster
 
-    6. Add a note to netbox
+    6. Delete the node from ansible inventory
+
+    7. Add a note to netbox
 </Steps>
