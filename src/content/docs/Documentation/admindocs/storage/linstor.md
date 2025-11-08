@@ -85,3 +85,5 @@ linstor r d <node-name> <resource-name>
 Check it still has enough copies.
 
 Repeat for all volumes on the node. Once all are gone, you can remove the node from the cluster.
+
+TieBreakers are fine to be deleted too, and should be re-created by linstor when needed.
