@@ -39,6 +39,8 @@ Always make sure there's a good copy of the volume before attempting to fix it.
 
 ### Fixing `Outdated`, `Inconsistent` resource having a good copy (for resources with redundancy)
 
+**Same procedure applies to volumes stuck in Sync**
+
 1. Delete the bad copy (having the bad status):
 
 ```
