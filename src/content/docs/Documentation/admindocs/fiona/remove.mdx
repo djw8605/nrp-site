@@ -22,7 +22,7 @@ These instructions are for nodes being temporary or permanently removed from the
 
     2. Check that all storage volumes are successfully unmounted from the node (both `lsblk` devices and k8s volumeattachments)
 
-    3. Check **in linstor controller pod** that no linstor volumes exist on the node (even diskless ones). (docs to be added for this)
+    3. Check **in linstor controller pod** that [no linstor volumes exist on the node (even diskless ones)](/documentation/admindocs/storage/linstor/#cleaning-up-a-node).
 
     4. Do `kubeadm reset` on the node
 
