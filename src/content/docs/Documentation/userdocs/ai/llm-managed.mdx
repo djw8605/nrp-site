@@ -49,7 +49,7 @@ You can install the standalone chatbox app or use the web interface version.
     Visit the Chatbox app web site
 </LinkButton>
 
-Generate the config for it in the [LLM token generation page](/llmtoken). Copy the generated config to clipboard - it will already have your personal token.
+Generate the config for it in the [LLM token generation page](/llmtoken). Copy the generated config to clipboard - it will already have your personal token. **Please always leave `Max Output Tokens` empty and only fill in `Context Window`.**
 
 In chatbox app go to _Settings_->_Model Provider_, scroll down to the end of providers list and click _Import from clipboard_.
 
@@ -66,6 +66,8 @@ with CURL or any OpenAI API compatible tool.
 ```
 curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/models
 ```
+
+**Please always leave `Max Output Tokens`/`max_tokens`/`max_output_tokens` empty.**
 
 ## Examples
 
