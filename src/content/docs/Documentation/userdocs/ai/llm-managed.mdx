@@ -143,3 +143,15 @@ You can follow all updates in our [Matrix](https://nrp.ai/contact/#matrix) [Mach
 {/* | llava-onevision<br/><Badge text="eval" variant="tip" /> | [llava-hf/llava-onevision-qwen2-7b-ov-hf](https://huggingface.co/llava-hf/llava-onevision-qwen2-7b-ov-hf) | vision | */}
 {/* | phi3<br/><Badge text="dep" variant="caution" /> | [microsoft/Phi-3.5-vision-instruct](https://huggingface.co/microsoft/Phi-3.5-vision-instruct) | vision | */}
 {/* | deepseek-r1<br/><Badge text="main" variant="success" /> | [QuantTrio/DeepSeek-R1-0528-GPTQ-Int4-Int8Mix-Medium](https://huggingface.co/QuantTrio/DeepSeek-R1-0528-GPTQ-Int4-Int8Mix-Medium) | 685B parameters, INT4/INT8 mixed quantization, 163,840 tokens, [tool calling](https://docs.vllm.ai/en/stable/features/tool_calling.html#deepseek-v3-models-deepseek_v3), Claude and o3 performance | */}
+
+## vLLM Miscellaneous
+
+### GPU Count: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
+
+Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
+
+This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**.
+
+Some issues may be solved by `--enable-expert-parallel`, but there is no need to specify this when the model works without the argument.
+
+Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`) `--enable-expert-parallel` may be added as adequate if the configuration without it does not work.
