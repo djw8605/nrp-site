@@ -203,13 +203,13 @@ spec:
 
 ## vLLM Miscellaneous
 
-### GPU Count: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
+### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
 Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
 
-This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**.
+This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**. This all depends on the model architecture.
 
-Some issues may be solved by `--enable-expert-parallel`, but there is no need to specify this when the model works without the argument.
+Some issues may be solved by `--enable-expert-parallel`, but there is no need to specify this when the model works without the argument (does not lead to improved performance compared to just using tensor parallelization in a single node, but may lead to improved performance in multiple nodes).
 
 Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`) `--enable-expert-parallel` may be added as adequate if the configuration without it does not work.
 
