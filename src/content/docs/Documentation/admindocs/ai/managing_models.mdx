@@ -200,3 +200,19 @@ spec:
       kind: AIServiceBackend
       group: aigateway.envoyproxy.io
 ```
+
+## vLLM Miscellaneous
+
+### GPU Count: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
+
+Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
+
+This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**.
+
+Some issues may be solved by `--enable-expert-parallel`, but there is no need to specify this when the model works without the argument.
+
+Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`) `--enable-expert-parallel` may be added as adequate if the configuration without it does not work.
+
+Refer to:
+
+https://github.com/vllm-project/vllm/issues/10142, https://github.com/vllm-project/vllm/issues/22821, https://github.com/vllm-project/vllm/issues/28278, https://github.com/vllm-project/vllm/issues/5951, https://github.com/vllm-project/vllm/issues/17569, https://github.com/vllm-project/vllm/issues/4232
