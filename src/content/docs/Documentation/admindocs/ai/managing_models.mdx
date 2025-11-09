@@ -209,9 +209,9 @@ Note: When there is an error about layer count divisibility or invalid configura
 
 This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**. This all depends on the model architecture.
 
-Some issues may be solved by `--enable-expert-parallel`, but there is no need to specify this when the model works without the argument (does not lead to improved performance compared to just using tensor parallelization in a single node, but may lead to improved performance in multiple nodes).
+Some issues may be solved by specifying `--enable-expert-parallel` in addition to `--tensor-parallel-size`, but there is no need to specify this when the model works without the argument (does not lead to improved performance compared to just using tensor parallelization in a single node, but may lead to improved performance in multiple nodes).
 
-Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`) `--enable-expert-parallel` may be added as adequate if the configuration without it does not work.
+Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`), but has Some VRAM overhead and may lead to suboptimal performance. `--enable-expert-parallel` may be added as adequate if the configuration without it does not work, but try without it first.
 
 Refer to:
 
