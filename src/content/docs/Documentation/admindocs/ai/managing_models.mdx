@@ -1,13 +1,13 @@
 ---
-title: Envoy AI gateway management
-description: How to add and remove models to Envoy AI Gateway
+title: AI Management
+description: How to add and remove models to Envoy AI Gateway and manage vLLM/SGLang
 ---
 
 :::caution
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 
-## Overview
+## Envoy AI Gateway Management
 
 This document describes the steps to configure the [Envoy AI Gateway](https://aigateway.envoyproxy.io).
 
@@ -201,20 +201,35 @@ spec:
       group: aigateway.envoyproxy.io
 ```
 
-## vLLM Miscellaneous
+## vLLM/SGLang Instructions
+
+### How to load models into GPUs
+
+1. Read individual instructions for each model carefully.
+2. Do not use `--enforce-eager` unless absolutely necessary. This is because CUDA graphs lead to a substantial performance benefit. Using this should only happen when all other efforts have failed to achieve the designed context length of the model.
+3. Tune `--gpu-memory-utilization` to ideally fit enough KV cache that is larger than `--max-model-len`, but with enough space for CUDA graphs to be built (this is typically calculated outside `--gpu-memory-utilization`, so if the CUDA graph build stage errors with not enough memory, `--gpu-memory-utilization` has to be lowered). Moreover, some multimodal models may also consume more memory outside `--gpu-memory-utilization` for certain reasons.
+4. Tune `--max-num-seqs` first, before modifying the maximum context length (`--max-model-len`). The initial priority is always to achieve the designed context length of the model, so tune other parameters before changing `--max-model-len`. `--mm-encoder-tp-mode` may also be relevant for some multimodal models.
+5. Test that the model works when a large part of the KV cache has been filled. Some models may have volatile VRAM consumption during runtime and may get out-of-memory errors even after successful initialization.
+6. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including context parallelism (`--decode-context-parallel`), or data parallelism attention of experts (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
 
 ### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
 Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
 
-This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)**. This all depends on the model architecture.
+This may be caused by the **count of GPUs being too large (like 8), being too small (like 2), or unconventional (like 6)** in tensor parallelism. This all depends on the model architecture, and may be resolved by the below instructions.
 
-Some issues may be solved by specifying `--enable-expert-parallel` in addition to `--tensor-parallel-size`, but there is no need to specify this when the model works without the argument (does not lead to improved performance compared to just using tensor parallelization in a single node, but may lead to improved performance in multiple nodes).
+### GPU Parallelism
 
-Alternatively, combining `--pipeline-parallel-size` with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`), but has Some VRAM overhead and may lead to suboptimal performance. `--enable-expert-parallel` may be added as adequate if the configuration without it does not work, but try without it first.
+The order of preference is (1) Data Parallelism Attention (with Expert Parallelism) if it works, (2) Tensor Parallelism (with Context Parallelism as adequate), (3) Pipeline Parallelism, (4) Ordinary Data Parallelism.
 
-Refer to:
+**Tensor Parallelism**: Tensor parallelism (`--tensor-parallel-size`) is the default method to use to load models into multiple GPUs within a single node with high-performance GPU interconnect or P2P (e.g. NVLink/XGMI). Some issues may be solved by specifying expert parallelism (`--enable-expert-parallel`) in addition to `--tensor-parallel-size`, but there is no need to specify this when the model works without the expert parallelism argument. Expert parallelism generally does not lead to improved performance (there is an exception, check data parallelism attention) compared to just using tensor parallelism in a single node in both NVIDIA and AMD nodes with a high-performance interconnect, but may lead to improved performance when used in multiple nodes. Note that the KV cache can be duplicated to each GPU device with tensor parallelism, when the number of KV heads (`num_key_value_heads` in `config.json`) is smaller than the count of GPU devices, and the maximum sequence length can still be bound by the remaining VRAM of each single GPU device instead of all the GPUs.
 
-https://rocm.docs.amd.com/en/docs-7.1.0/how-to/rocm-for-ai/inference-optimization/vllm-optimization.html
+**Context Parallelism:** This is about dividing (sharding) the KV cache when there is duplication across GPUs. This is not needed in tensor parallelism when `num_key_value_heads` in `config.json` is larger than or equal to `--tensor-parallel-size`, because each `num_key_value_heads` is distributed to each GPU. However, when `num_key_value_heads` becomes smaller than `--tensor-parallel-size`, you should use the decode context parallel (`--decode-context-parallel`) capability so that the multiplication of `num_key_value_heads` and `--decode-context-parallel` becomes `--tensor-parallel-size`.
 
-https://github.com/vllm-project/vllm/issues/10142, https://github.com/vllm-project/vllm/issues/22821, https://github.com/vllm-project/vllm/issues/28278, https://github.com/vllm-project/vllm/issues/5951, https://github.com/vllm-project/vllm/issues/17569, https://github.com/vllm-project/vllm/issues/4232
+**Pipeline Parallelism**: Alternatively, combining pipeline parallelism (`--pipeline-parallel-size`) with `--tensor-parallel-size` may also be an acceptable solution that works with unconventional GPU counts, or when the above-mentioned errors occur (such as 6 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 3` or 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4` or `--tensor-parallel-size 4 --pipeline-parallel-size 2`) due to tolerating uneven layer splits, but has some VRAM overhead and may lead to suboptimal performance. However, pipeline parallelism in GPUs on a node lack high-performance interconnect (e.g. no NVLink/XGMI) may be better than tensor parallelism. Similar to tensor parallelism, expert parallelism (`--enable-expert-parallel`) may be added as adequate if the configuration without it does not work, but first try without it enabled. Pipeline parallelism is the recommended way to scale models across multiple nodes when the weights and KV Cache do not fit in one node, but unless required, prefer tensor parallelism within single nodes with a high-performance interconnect.
+
+**Data Parallelism**: Data parallelism (`--data-parallel-size`) in its original design has the most VRAM overhead, due to copying the same weights redundantly across different GPUs, instead of dispersing weights across multiple GPUs. All of the activation layers still need to be loaded into each GPU in normal cases, thus having VRAM overhead. Data parallelism typically leads to an improvement in throughput when there are GPUs or nodes to spare, and is also able to combine with tensor parallelism or pipeline parallelism for large models that do not fit in one node.
+
+**Data Parallelism Attention (with Expert Parallelism)**: However, expert parallelism (`--enable-expert-parallel`) makes data parallelism relevant for distributing models across multiple GPUs, because this allows different GPUs to load different expert layers instead of all GPUs loading the same layers. Mixture of Experts (MoE) models with data parallelism attention **may conversely eliminate KV cache duplication** (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--enable-dp-attention` with `--expert-parallel-size` in SGLang), and may possibly conserve VRAM compared to the above options. External load balancing through an external router, such as Envoy, combined with data parallelism and expert parallelism, is a good way to balance performance improvements and VRAM consumption through inter-instance coordination using RPC communication.
+
+Refer to: https://rocm.docs.amd.com/en/docs-7.1.0/how-to/rocm-for-ai/inference-optimization/vllm-optimization.html, https://docs.vllm.ai/en/latest/configuration/engine_args/, https://docs.vllm.ai/en/latest/serving/parallelism_scaling/, https://docs.vllm.ai/en/latest/serving/expert_parallel_deployment/, https://docs.vllm.ai/en/latest/serving/context_parallel_deployment/, https://github.com/vllm-project/vllm/issues/10142, https://github.com/vllm-project/vllm/issues/22821, https://github.com/vllm-project/vllm/issues/28278, https://github.com/vllm-project/vllm/issues/5951, https://github.com/vllm-project/vllm/issues/17569, https://github.com/vllm-project/vllm/issues/4232
