@@ -1,5 +1,5 @@
 ---
-publishDate: 2025-12-23T00:00:00Z
+publishDate: 2025-11-11T00:00:00Z
 title: "How NRP Scales Global Scientific Research with Calico"
 excerpt: NRP provides high-performance, secure, and observable networking for global scientific research
 image: ~/assets/images/posts/nrp-calico-2025.png
