@@ -129,9 +129,10 @@ You can follow all updates and participate in the discussions within our [Matrix
 | API Title | Model | Features |
 | ----------- | ----------- | ---------- |
 | qwen3<br/><Badge text="main" variant="success" /> | [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8) | Multimodal (vision, video), 262,144 tokens, 235B parameters, FP8 quantization, [tool calling](https://docs.vllm.ai/en/stable/features/tool_calling.html#qwen-models), Claude/Gemini-level frontier multimodal performance |
-| gemma3<br/><Badge text="main" variant="success" /> | [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) | Multimodal (vision), 131,072 tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149) |
 | glm-4.6<br/><Badge text="eval" variant="tip" /> | [QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix](https://huggingface.co/QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix) | 202,752 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5.html), GPTQ quantization, frontier coding performance |
+| minimax-m2<br/><Badge text="eval" variant="tip" /> | [MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2) | 262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 quantization, frontier coding performance |
 | glm-v<br/><Badge text="main" variant="success" /> | [cpatonn/GLM-4.5V-AWQ-8bit](https://huggingface.co/cpatonn/GLM-4.5V-AWQ-8bit) | Multimodal (vision, video), 65,536 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5V.html), AWQ 8-bit quantization, GPT-4o level multimodal performance |
+| gemma3<br/><Badge text="main" variant="success" /> | [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) | Multimodal (vision), 131,072 tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149) |
 | embed-mistral<br/><Badge text="main" variant="success" /> | [intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct) | embeddings |
 | gorilla<br/><Badge text="eval" variant="tip" /> | [gorilla-llm/gorilla-openfunctions-v2](https://huggingface.co/gorilla-llm/gorilla-openfunctions-v2) | function calling |
 | test-gaudi3<br/><Badge text="eval" variant="tip" /> | [deepseek-ai/DeepSeek-R1-Distill-Llama-70B](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-70B) | 70B parameters, 128K tokens, running on Intel Gaudi3 |
@@ -170,6 +171,7 @@ Week of November 9th, 2025:
 Added/Changed:
 - `qwen3` ([Qwen/Qwen3-235B-A22B-Thinking-2507-FP8](https://huggingface.co/Qwen/Qwen3-235B-A22B-Thinking-2507-FP8)) has been changed to [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8). Very similar characteristics such as number of parameters, context size, and benchmarks, but adds state-of-the-art vision and video multimodal capabilities.
 - `glm-4.6` ([QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix](https://huggingface.co/QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix)) is a widely popular programming LLM model and exhibits a similar level of model performance to Claude Sonnet 4 or GPT-5 models.
+- `minimax-m2` ([MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2)) is a widely popular programming LLM model and exhibits a similar level of model performance to Claude Sonnet 4 or GPT-5 models, while being able to fit the official FP8 parameters in four A100 GPUs with ample context length.
 
 Removed:
 - `llama3` ([meta-llama/Llama-3.2-90B-Vision-Instruct](https://huggingface.co/meta-llama/Llama-3.2-90B-Vision-Instruct)) has been officially pulled down, due to consuming 4 A100 GPUs that can be used for much more frontier models, such as MiniMax-M2 or GLM-4.6, while being much worse in performance than models that fit in one GPU.
