@@ -114,15 +114,27 @@ var chatboxConfigTemplate = {
 		models: [
 			{
 				modelId: "qwen3",
-				capabilities: ["reasoning", "tool_use"],
+				capabilities: ["reasoning", "vision", "tool_use"],
 				contextWindow: 262144,
 				maxOutput: 262144
 			},
-			{
-				modelId: "deepseek-r1",
+            {
+				modelId: "gpt-oss",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 163840,
-				maxOutput: 163840
+				contextWindow: 131072,
+				maxOutput: 131072
+			},
+            {
+				modelId: "glm-4.6",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 204800,
+				maxOutput: 204800
+			},
+            {
+				modelId: "minimax-m2",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 262144,
+				maxOutput: 262144
 			},
 			{
 				modelId: "glm-v",
