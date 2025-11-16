@@ -139,7 +139,7 @@ var chatboxConfigTemplate = {
 			},
 			{
 				modelId: "gemma3",
-				capabilities: ["reasoning", "vision", "tool_use"],
+				capabilities: ["vision", "tool_use"],
 				contextWindow: 131072
 			}
 		]
