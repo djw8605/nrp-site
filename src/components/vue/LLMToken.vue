@@ -118,19 +118,19 @@ var chatboxConfigTemplate = {
 				contextWindow: 262144,
 				maxOutput: 262144
 			},
-            {
+			{
 				modelId: "gpt-oss",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 131072,
 				maxOutput: 131072
 			},
-            {
+			{
 				modelId: "glm-4.6",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 204800,
 				maxOutput: 204800
 			},
-            {
+			{
 				modelId: "minimax-m2",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 262144,
@@ -148,7 +148,6 @@ var chatboxConfigTemplate = {
 				contextWindow: 131072,
 				maxOutput: 131072
 			}
-
 		]
 	}
 };
