@@ -115,38 +115,32 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "qwen3",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 262144,
-				maxOutput: 262144
+				contextWindow: 262144
 			},
 			{
 				modelId: "gpt-oss",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 131072,
-				maxOutput: 131072
+				contextWindow: 131072
 			},
 			{
 				modelId: "glm-4.6",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 204800,
-				maxOutput: 204800
+				contextWindow: 202752
 			},
 			{
 				modelId: "minimax-m2",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 262144,
-				maxOutput: 262144
+				contextWindow: 262144
 			},
 			{
 				modelId: "glm-v",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 65536,
-				maxOutput: 65536
+				contextWindow: 65536
 			},
 			{
 				modelId: "gemma3",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 131072,
-				maxOutput: 131072
+				contextWindow: 131072
 			}
 		]
 	}
