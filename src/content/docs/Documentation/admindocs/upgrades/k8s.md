@@ -40,7 +40,7 @@ Finished defragmenting etcd member[https://127.0.0.1:2379]
    
    Api-server: `- --feature-gates=JobBackoffLimitPerIndex=true`
 
-   **For the next upgrade fix the systemd/cgroup config fir kubelet!!!**
+   **For the next upgrade fix the systemd/cgroup config for kubelet!!!**
 
 5. Do the last step in the upgrade manual to restart the control place again.
 
