@@ -5,7 +5,7 @@ description: High I/O Jobs
 
 If you hit the Ceph speed bottleneck, especially if you have many small files, don't try to push it more.
 
-Consider using a method to open multiple parallel streams (such as using `gcloud storage` / `gsutil`) and aggregating many small files to a few large files (such as using parallel archiver tools like `7-Zip` with LZMA2, `pbzip2`, `ripunzip`/`piz`, or `zpaq`) from/to the Ceph filesystem.
+Consider using a method to open multiple parallel streams (such as using `gcloud storage` / `gsutil`), or aggregating many small files to a few large files (such as using parallel archiver tools like `7-Zip` with LZMA2, `pbzip2`, `ripunzip`/`piz`, or `zpaq`) from/to the Ceph filesystem.
 
 Start with 1 GPU and a representative / subsampled data set and look at utilization as a function of CPU and thread core count; only go above 1 GPU once you’ve convinced yourself you are GPU bound. It is a balancing act between I/O, threads/CPU, and GPUs. The jumps in GPU performance coupled with I/O bound bottlenecks are the indication of being oversubscribed in terms of # of total GPUs requested.
 
