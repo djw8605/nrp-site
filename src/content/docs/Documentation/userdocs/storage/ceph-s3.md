@@ -398,6 +398,10 @@ aws --endpoint https://s3-west.nrp-nautilus.io s3api create-bucket --bucket my-b
 
 </details>
 
+### Migrating from different S3-compatible storage
+
+Consult the https://github.com/clyso/chorus project.
+
 [2]: https://docs.google.com/presentation/d/16kHNtQslt-yuJ3w8GIx-eEH6t_AvFeQOchqGRFpAD7U
 [3]: https://www.tensorflow.org/deploy/s3
 [4]: https://docs.aws.amazon.com/cli/latest/reference/s3/index.html
@@ -407,6 +411,3 @@ aws --endpoint https://s3-west.nrp-nautilus.io s3api create-bucket --bucket my-b
 [8]: https://pypi.org/project/awscli-plugin-endpoint/
 [9]:https://github.com/s3fs-fuse/s3fs-fuse
 [10]:https://github.com/wbingli/awscli-plugin-endpoint
-
-
-## 
