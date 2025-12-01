@@ -70,6 +70,9 @@
     gpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
       const org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown";
+      if (!org || org === "") {
+        org = "Unknown: "+namespace;
+      }
       gpu_org_map.set(org, (gpu_org_map.get(org) || 0) + parseInt(element.value[1]));
     });
 
@@ -77,6 +80,9 @@
     cpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
       const org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown";
+      if (!org || org === "") {
+        org = "Unknown: "+namespace;
+      }
       cpu_org_map.set(org, (cpu_org_map.get(org) || 0) + parseInt(element.value[1]));
     });
 
