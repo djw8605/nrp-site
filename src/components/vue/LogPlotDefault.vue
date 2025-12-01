@@ -1,21 +1,31 @@
-<section class="py-8 sm:py-16 lg:py-20 mx-auto">
-  <h1 class="font-bold font-heading text-3xl md:text-4xl leading-tighter tracking-tighter px-4 text-center mb-2">Usage per namespace for the last year</h1>
-  <div id="plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
-</section>
+<template>
+  <VueSpinnerPie v-if="isLoading" size="40" style="z-index: 10; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
+  <div id="log-plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
+</template>
+  
+<script setup>
+  import {ref, onMounted} from 'vue';
 
-<script>
-    import * as Plot from '@observablehq/plot';
-    // import humanize from 'humanize';
-    
+  import {VueSpinnerPie} from 'vue3-spinners';
+
+  import * as Plot from '@observablehq/plot';
+  import * as d3 from 'd3';
+
+  const isLoading = ref(false);
+
+  const props = defineProps(['period'])
+
+  onMounted(async () => {
+    isLoading.value = true;
+
     const gpu_req = fetch(
-      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_gpu_usage[1y:1h])>1000"
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_gpu_usage["+props.period+":1h])>1000"
     );
     
     const cpu_req = fetch(
-      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_cpu_usage[1y:1h])>1000"
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_cpu_usage["+props.period+":1h])>1000"
     );
     
-
     const [gpu_resp, cpu_resp] = await Promise.all([
       gpu_req,
       cpu_req
@@ -85,7 +95,10 @@
           x: "cpu",
           y: "gpu",
           title: (d) => d.namespace,
-        })),
+          // stroke: "black",
+          // fill: "black",
+        }),
+      ),
       ],
       x: {
         type: "log",
@@ -97,7 +110,19 @@
       },
     });
 
-    const div = document.querySelector("#plot");
+    const div = document.querySelector("#log-plot");
     div.append(plot);
-    
+    isLoading.value = false;
+  });
+
+
 </script>
+
+<style>
+  /* #log-plot-2 text {
+    stroke: white;
+  } */
+  /* html.dark #log-plot tip {
+    stroke: black;
+  } */
+  </style>

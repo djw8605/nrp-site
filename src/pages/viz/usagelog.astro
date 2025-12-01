@@ -1,12 +1,13 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import UsageLog from '~/components/plots/UsageLog.astro';
+import LogPlot from '~/components/vue/LogPlot.vue';
 
 const metadata = {
   title: 'Usage Log Plot',
 };
+
 ---
 
 <Layout metadata={metadata}>
-  <UsageLog/>
+  <LogPlot client:only="vue"/>
 </Layout>
