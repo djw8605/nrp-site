@@ -69,26 +69,24 @@
     const gpu_org_map = new Map();
     gpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
-      var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown";
-      if (!org || org === "") {
-        org = "Unknown: "+namespace;
+      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default") {
+        var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown: "+namespace;
+        gpu_org_map.set(org, (gpu_org_map.get(org) || 0) + parseInt(element.value[1]));
       }
-      gpu_org_map.set(org, (gpu_org_map.get(org) || 0) + parseInt(element.value[1]));
     });
 
     const cpu_org_map = new Map();
     cpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
-      var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown";
-      if (!org || org === "") {
-        org = "Unknown: "+namespace;
+      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default") {
+        var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown: "+namespace;
+        cpu_org_map.set(org, (cpu_org_map.get(org) || 0) + parseInt(element.value[1]));
       }
-      cpu_org_map.set(org, (cpu_org_map.get(org) || 0) + parseInt(element.value[1]));
     });
 
     const vals = [];
     gpu_org_map.forEach((val, key) => {
-      if(cpu_org_map.has(key) && key != "gpu-mon" && key != "kube-system" && key != "default") {
+      if(cpu_org_map.has(key)) {
         if(gpu_org_map.get(key) > 1000 && cpu_org_map.get(key) > 1000) {
           vals.push({
             org: key,
