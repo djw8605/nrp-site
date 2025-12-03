@@ -110,7 +110,14 @@ const checkNrpAdmin = async () => {
             method: 'user.GetUserInfo',
             params: { UserID: '' },
         });
-        console.log('[Storage.vue] GetUserInfo response:', { IsNrpAdmin: response.IsNrpAdmin, IsAdmin: response.IsAdmin, response }); //debugging-logging
+        console.log('[Storage.vue] GetUserInfo full response:', JSON.stringify(response, null, 2)); //debugging-logging
+        console.log('[Storage.vue] GetUserInfo response values:', { 
+            IsNrpAdmin: response.IsNrpAdmin, 
+            IsAdmin: response.IsAdmin,
+            Email: response.Email,
+            Username: response.Username,
+            Name: response.Name
+        }); //debugging-logging
         isNrpAdmin.value = response.IsNrpAdmin || false;
         console.log('[Storage.vue] isNrpAdmin set to:', isNrpAdmin.value); //debugging-logging
     } catch (error) {
