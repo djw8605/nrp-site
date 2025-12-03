@@ -12,7 +12,10 @@ dayjs.extend(relativeTime)
 
 const props = defineProps(['baseUrl']);
 
-let client = new Client(new RequestManager([new HTTPTransport(props.baseUrl+"/rpc")]));
+const transport = new HTTPTransport(props.baseUrl+"/rpc", {
+    credentials: 'include',
+});
+let client = new Client(new RequestManager([transport]));
 
 const folders = ref([]);
 const pool = ref("west");
@@ -102,11 +105,12 @@ const checkNrpAdmin = async () => {
     console.log('[Storage.vue] User logged in, checking admin status...', { email: user.value.email }); //debugging-logging
     
     try {
+        console.log('[Storage.vue] Making GetUserInfo request...'); //debugging-logging
         const response = await client.request({
             method: 'user.GetUserInfo',
             params: { UserID: '' },
         });
-        console.log('[Storage.vue] GetUserInfo response:', { IsNrpAdmin: response.IsNrpAdmin, IsAdmin: response.IsAdmin }); //debugging-logging
+        console.log('[Storage.vue] GetUserInfo response:', { IsNrpAdmin: response.IsNrpAdmin, IsAdmin: response.IsAdmin, response }); //debugging-logging
         isNrpAdmin.value = response.IsNrpAdmin || false;
         console.log('[Storage.vue] isNrpAdmin set to:', isNrpAdmin.value); //debugging-logging
     } catch (error) {
