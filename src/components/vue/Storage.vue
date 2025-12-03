@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useStore } from '@nanostores/vue';
+import { userStore } from '../../auth.ts';
 
 import { Client, RequestManager, HTTPTransport } from '@open-rpc/client-js';
 
@@ -17,6 +19,7 @@ const pool = ref("west");
 const isAdmin = ref("false");
 const isNrpAdmin = ref(false);
 const loadingUsers = ref({});
+const user = useStore(userStore);
 
 const getStorage = async () => {
     try {
@@ -68,7 +71,8 @@ const getStorage = async () => {
         })
 
         folders.value = curFolders;
-        console.log(curFolders);
+        console.log('[Storage.vue] Folders loaded:', curFolders); //debugging-logging
+        console.log('[Storage.vue] Folder namespaces:', curFolders.map(f => ({ Name: f.Name, Namespace: f.Namespace }))); //debugging-logging
     } catch (error) {
         console.error('Error fetching storage data:', error);
     }
@@ -86,31 +90,55 @@ const email = async (folderName) => {
 };
 
 const checkNrpAdmin = async () => {
+    console.log('[Storage.vue] checkNrpAdmin called', { userLoggedIn: !!user.value }); //debugging-logging
+    
+    // Only check if user is logged in
+    if (!user.value) {
+        console.log('[Storage.vue] User not logged in, setting isNrpAdmin to false'); //debugging-logging
+        isNrpAdmin.value = false;
+        return;
+    }
+    
+    console.log('[Storage.vue] User logged in, checking admin status...', { email: user.value.email }); //debugging-logging
+    
     try {
         const response = await client.request({
             method: 'user.GetUserInfo',
             params: { UserID: '' },
         });
+        console.log('[Storage.vue] GetUserInfo response:', { IsNrpAdmin: response.IsNrpAdmin, IsAdmin: response.IsAdmin }); //debugging-logging
         isNrpAdmin.value = response.IsNrpAdmin || false;
+        console.log('[Storage.vue] isNrpAdmin set to:', isNrpAdmin.value); //debugging-logging
     } catch (error) {
-        console.error('Error checking NRP admin status:', error);
+        // Silently fail if unauthorized (user not logged in) or other errors
+        // Only log if it's not an authorization error
+        if (error.message && !error.message.includes('unauthorized') && !error.message.includes('Unauthorized')) {
+            console.error('Error checking NRP admin status:', error);
+        }
+        console.log('[Storage.vue] Error checking admin status, setting to false:', error.message); //debugging-logging
         isNrpAdmin.value = false;
     }
 };
 
 const emailNamespaceUsers = async (namespace) => {
+    console.log('[Storage.vue] emailNamespaceUsers called', { namespace, isNrpAdmin: isNrpAdmin.value }); //debugging-logging
+    
     if (loadingUsers.value[namespace]) return;
     
     loadingUsers.value[namespace] = true;
     try {
+        console.log('[Storage.vue] Fetching users for namespace:', namespace); //debugging-logging
         const response = await client.request({
             method: 'admin.GetNSUsers',
             params: { Namespace: namespace },
         });
         
+        console.log('[Storage.vue] GetNSUsers response:', { Users: response.Users?.length || 0, Admins: response.Admins?.length || 0 }); //debugging-logging
+        
         const allUsers = [...(response.Users || []), ...(response.Admins || [])];
         
         if (allUsers.length === 0) {
+            console.log('[Storage.vue] No users found in namespace:', namespace); //debugging-logging
             alert('No users found in this namespace.');
             return;
         }
@@ -119,6 +147,7 @@ const emailNamespaceUsers = async (namespace) => {
         const subject = `[NAUTILUS] Storage - ${namespace}`;
         const body = `Hello,\n\nThis email is regarding storage usage in the namespace: ${namespace}\n\nPlease let me know if you have any questions.\n\nBest regards`;
         
+        console.log('[Storage.vue] Opening mailto link', { emailCount: allUsers.length, subject }); //debugging-logging
         const mailtoLink = `mailto:${allEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.open(mailtoLink, '_blank');
     } catch (error) {
@@ -130,18 +159,24 @@ const emailNamespaceUsers = async (namespace) => {
 };
 
 const emailNamespaceAdmins = async (namespace) => {
+    console.log('[Storage.vue] emailNamespaceAdmins called', { namespace, isNrpAdmin: isNrpAdmin.value }); //debugging-logging
+    
     if (loadingUsers.value[namespace + '_admins']) return;
     
     loadingUsers.value[namespace + '_admins'] = true;
     try {
+        console.log('[Storage.vue] Fetching admins for namespace:', namespace); //debugging-logging
         const response = await client.request({
             method: 'admin.GetNSUsers',
             params: { Namespace: namespace },
         });
         
+        console.log('[Storage.vue] GetNSUsers response:', { Users: response.Users?.length || 0, Admins: response.Admins?.length || 0 }); //debugging-logging
+        
         const adminUsers = response.Admins || [];
         
         if (adminUsers.length === 0) {
+            console.log('[Storage.vue] No admins found in namespace:', namespace); //debugging-logging
             alert('No admin users found in this namespace.');
             return;
         }
@@ -150,6 +185,7 @@ const emailNamespaceAdmins = async (namespace) => {
         const subject = `[NAUTILUS] Storage - ${namespace}`;
         const body = `Hello,\n\nThis email is regarding storage usage in the namespace: ${namespace}\n\nPlease let me know if you have any questions.\n\nBest regards`;
         
+        console.log('[Storage.vue] Opening mailto link', { emailCount: adminUsers.length, subject }); //debugging-logging
         const mailtoLink = `mailto:${adminEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.open(mailtoLink, '_blank');
     } catch (error) {
@@ -168,6 +204,21 @@ onMounted(() => {
 watch(pool, (newPool) => {
     getStorage();
 });
+
+// Re-check admin status when user logs in/out
+watch(user, (newUser) => {
+    console.log('[Storage.vue] User state changed', { loggedIn: !!newUser, email: newUser?.email }); //debugging-logging
+    checkNrpAdmin();
+});
+
+// debugging-logging: Log button visibility state
+watch([isNrpAdmin, folders], ([newIsNrpAdmin, newFolders]) => {
+    console.log('[Storage.vue] Button visibility state:', { 
+        isNrpAdmin: newIsNrpAdmin, 
+        foldersCount: newFolders?.length || 0,
+        foldersWithNamespace: newFolders?.filter(f => f.Namespace).length || 0
+    }); //debugging-logging
+}, { immediate: true });
 
 const size = (bytes) => {
     var i = bytes == 0 ? 0 : Math.floor( Math.log(bytes) / Math.log(1024) );
@@ -202,6 +253,7 @@ const size = (bytes) => {
             <div class="text table-cell"><div class="title">Used</div>{{ size( folder.SizeUsed ) }}</div>
             <div class="text table-cell"><div class="title">Provisioned</div>{{ size( folder.SizeProvisioned ) }}</div>
             <div class="text table-cell" v-if="isAdmin == 'true'"><button @click.stop="email(folder.Name)">Email</button></div>
+            <!-- debugging-logging: Button visibility check -->
             <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace" @click.stop>
                 <button 
                     @click="emailNamespaceUsers(folder.Namespace)" 
