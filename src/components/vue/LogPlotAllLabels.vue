@@ -100,7 +100,7 @@
           text: (d) => d.namespace,
           dy: -14,         // Offset the text slightly above the point
           fill: "currentColor",
-          fontSize: 10          
+          fontSize: 12
         }),
       ],
       x: {
