@@ -48,10 +48,13 @@ const getStorage = async () => {
         }
 
         for (var curns in namespaces) {
+            var isS3 = pool.value.endsWith("_s3");
             var namespace = {
                 "Volumes": namespaces[curns],
-                "Name": curns+(pool.value.endsWith("_s3")?" user":" namespace"),
-                "Namespace": curns, // Store the actual namespace name
+                "Name": curns+(isS3?" user":" namespace"),
+                "Namespace": curns, // Store the actual namespace name (or user ID for S3)
+                "IsS3": isS3, // Flag to indicate if this is S3 storage (not a Kubernetes namespace)
+                "Pool": pool.value, // Store the pool name for S3 user lookup
                 "SizeUsed": 0,
                 "SizeProvisioned": 0,
                 "Collapsed": true
@@ -207,6 +210,45 @@ const emailNamespaceAdmins = async (namespace) => {
     }
 };
 
+const emailS3User = async (s3UserId, pool) => {
+    console.log('[Storage.vue] emailS3User called', { s3UserId, pool, isNrpAdmin: isNrpAdmin.value }); //debugging-logging
+    
+    const loadingKey = `s3_${pool}_${s3UserId}`;
+    if (loadingUsers.value[loadingKey]) return;
+    
+    loadingUsers.value[loadingKey] = true;
+    try {
+        console.log('[Storage.vue] Fetching S3 user email for user ID:', s3UserId, 'pool:', pool); //debugging-logging
+        const response = await client.request({
+            method: 'admin.GetS3UserEmail',
+            params: { 
+                Pool: pool,
+                UserID: s3UserId 
+            },
+        });
+        
+        console.log('[Storage.vue] GetS3UserEmail response:', response); //debugging-logging
+        
+        if (!response.Email) {
+            console.log('[Storage.vue] No email found for S3 user:', s3UserId); //debugging-logging
+            alert('No email address found for this S3 user.');
+            return;
+        }
+        
+        const subject = `[NAUTILUS] S3 Storage - ${pool}`;
+        const body = `Hello ${response.Name || 'there'},\n\nThis email is regarding S3 storage usage in the ${pool} pool.\n\nPlease let me know if you have any questions.\n\nBest regards`;
+        
+        console.log('[Storage.vue] Opening mailto link for S3 user', { email: response.Email, subject }); //debugging-logging
+        const mailtoLink = `mailto:${response.Email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink, '_blank');
+    } catch (error) {
+        console.error('Error fetching S3 user email:', error);
+        alert('Error fetching S3 user email: ' + (error.message || 'Unknown error'));
+    } finally {
+        loadingUsers.value[loadingKey] = false;
+    }
+};
+
 onMounted(() => {
     checkNrpAdmin();
     getStorage();
@@ -265,7 +307,8 @@ const size = (bytes) => {
             <div class="text table-cell"><div class="title">Provisioned</div>{{ size( folder.SizeProvisioned ) }}</div>
             <div class="text table-cell" v-if="isAdmin == 'true'"><button @click.stop="email(folder.Name)">Email</button></div>
             <!-- debugging-logging: Button visibility check -->
-            <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace" @click.stop>
+            <!-- Email buttons for Kubernetes namespaces -->
+            <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace && !folder.IsS3" @click.stop>
                 <button 
                     @click="emailNamespaceUsers(folder.Namespace)" 
                     :disabled="loadingUsers[folder.Namespace]"
@@ -279,6 +322,16 @@ const size = (bytes) => {
                     style="padding: 5px 10px; cursor: pointer;"
                 >
                     {{ loadingUsers[folder.Namespace + '_admins'] ? 'Loading...' : 'Email Admins' }}
+                </button>
+            </div>
+            <!-- Email button for S3 buckets (single user) -->
+            <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace && folder.IsS3" @click.stop>
+                <button 
+                    @click="emailS3User(folder.Namespace, folder.Pool)" 
+                    :disabled="loadingUsers['s3_' + folder.Pool + '_' + folder.Namespace]"
+                    style="padding: 5px 10px; cursor: pointer;"
+                >
+                    {{ loadingUsers['s3_' + folder.Pool + '_' + folder.Namespace] ? 'Loading...' : 'Email User' }}
                 </button>
             </div>
             <div class="table-row" v-if="!folder.Collapsed">
