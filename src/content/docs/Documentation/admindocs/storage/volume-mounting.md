@@ -24,10 +24,10 @@ This type of failure is caused by networking issues. Here are some work arounds 
 
 1.  Restart the `kube-proxy` pod, and the `csi-cephfsplugin` pod or `csi-rbdplugin` pod on the node.
 
-Examine the log of the `kube-proxy` pod, if there are repeating errors connecting to the API server at https://67.58.53.147:6443:
+Examine the log of the `kube-proxy` pod, if there are repeating errors connecting to the API server at https://67.58.53.148:443:
 
 ```
-E0403 10:47:08.012312       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.Node: failed to list *v1.Node: Get "https://67.58.53.147:6443/api/v1/nodes?fieldSelector=metadata.name%3Dhcc-nrp-shor-c5934.unl.edu&resourceVersion=9989991954": dial tcp 67.58.53.147:6443: connect: no route to host
+E0403 10:47:08.012312       1 reflector.go:147] k8s.io/client-go@v0.0.0/tools/cache/reflector.go:229: Failed to watch *v1.Node: failed to list *v1.Node: Get "https://67.58.53.148:443/api/v1/nodes?fieldSelector=metadata.name%3Dhcc-nrp-shor-c5934.unl.edu&resourceVersion=9989991954": dial tcp 67.58.53.148:443: connect: no route to host
 
 ```
 Delete the `kube-proxy` pod and wait for it to restart. 
