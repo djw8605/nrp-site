@@ -15,6 +15,8 @@ let client = new Client(new RequestManager([new HTTPTransport(props.baseUrl+"/rp
 const folders = ref([]);
 const pool = ref("west");
 const isAdmin = ref("false");
+const isNrpAdmin = ref(false);
+const loadingUsers = ref({});
 
 const getStorage = async () => {
     try {
@@ -43,6 +45,7 @@ const getStorage = async () => {
             var namespace = {
                 "Volumes": namespaces[curns],
                 "Name": curns+(pool.value.endsWith("_s3")?" user":" namespace"),
+                "Namespace": curns, // Store the actual namespace name
                 "SizeUsed": 0,
                 "SizeProvisioned": 0,
                 "Collapsed": true
@@ -82,7 +85,83 @@ const email = async (folderName) => {
     }
 };
 
+const checkNrpAdmin = async () => {
+    try {
+        const response = await client.request({
+            method: 'user.GetUserInfo',
+            params: { UserID: '' },
+        });
+        isNrpAdmin.value = response.IsNrpAdmin || false;
+    } catch (error) {
+        console.error('Error checking NRP admin status:', error);
+        isNrpAdmin.value = false;
+    }
+};
+
+const emailNamespaceUsers = async (namespace) => {
+    if (loadingUsers.value[namespace]) return;
+    
+    loadingUsers.value[namespace] = true;
+    try {
+        const response = await client.request({
+            method: 'admin.GetNSUsers',
+            params: { Namespace: namespace },
+        });
+        
+        const allUsers = [...(response.Users || []), ...(response.Admins || [])];
+        
+        if (allUsers.length === 0) {
+            alert('No users found in this namespace.');
+            return;
+        }
+        
+        const allEmails = allUsers.map(user => user.Email).join(',');
+        const subject = `[NAUTILUS] Storage - ${namespace}`;
+        const body = `Hello,\n\nThis email is regarding storage usage in the namespace: ${namespace}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+        
+        const mailtoLink = `mailto:${allEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink, '_blank');
+    } catch (error) {
+        console.error('Error fetching namespace users:', error);
+        alert('Error fetching users: ' + (error.message || 'Unknown error'));
+    } finally {
+        loadingUsers.value[namespace] = false;
+    }
+};
+
+const emailNamespaceAdmins = async (namespace) => {
+    if (loadingUsers.value[namespace + '_admins']) return;
+    
+    loadingUsers.value[namespace + '_admins'] = true;
+    try {
+        const response = await client.request({
+            method: 'admin.GetNSUsers',
+            params: { Namespace: namespace },
+        });
+        
+        const adminUsers = response.Admins || [];
+        
+        if (adminUsers.length === 0) {
+            alert('No admin users found in this namespace.');
+            return;
+        }
+        
+        const adminEmails = adminUsers.map(user => user.Email).join(',');
+        const subject = `[NAUTILUS] Storage - ${namespace}`;
+        const body = `Hello,\n\nThis email is regarding storage usage in the namespace: ${namespace}\n\nPlease let me know if you have any questions.\n\nBest regards`;
+        
+        const mailtoLink = `mailto:${adminEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink, '_blank');
+    } catch (error) {
+        console.error('Error fetching namespace admins:', error);
+        alert('Error fetching admins: ' + (error.message || 'Unknown error'));
+    } finally {
+        loadingUsers.value[namespace + '_admins'] = false;
+    }
+};
+
 onMounted(() => {
+    checkNrpAdmin();
     getStorage();
 });
 
@@ -123,6 +202,22 @@ const size = (bytes) => {
             <div class="text table-cell"><div class="title">Used</div>{{ size( folder.SizeUsed ) }}</div>
             <div class="text table-cell"><div class="title">Provisioned</div>{{ size( folder.SizeProvisioned ) }}</div>
             <div class="text table-cell" v-if="isAdmin == 'true'"><button @click.stop="email(folder.Name)">Email</button></div>
+            <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace" @click.stop>
+                <button 
+                    @click="emailNamespaceUsers(folder.Namespace)" 
+                    :disabled="loadingUsers[folder.Namespace]"
+                    style="margin-right: 5px; padding: 5px 10px; cursor: pointer;"
+                >
+                    {{ loadingUsers[folder.Namespace] ? 'Loading...' : 'Email Users' }}
+                </button>
+                <button 
+                    @click="emailNamespaceAdmins(folder.Namespace)" 
+                    :disabled="loadingUsers[folder.Namespace + '_admins']"
+                    style="padding: 5px 10px; cursor: pointer;"
+                >
+                    {{ loadingUsers[folder.Namespace + '_admins'] ? 'Loading...' : 'Email Admins' }}
+                </button>
+            </div>
             <div class="table-row" v-if="!folder.Collapsed">
                 <div class="table-row" v-for="vol in folder.Volumes" v-bind:key="vol.Name">
                     <div class="text table-cell"><div class="title">Name</div>{{ 
