@@ -29,7 +29,7 @@ To fully unleash the GitLab powers, introduce yourself to [Continuous Integratio
 1. If you need to build your Dockerfile and create a container from it, adjust this `.gitlab-ci.yml` template (remove `--cache=true` if you don't need layer caching):
 
 ```yaml
-image: ghcr.io/kaniko-build/dist/osscontainertools-kaniko/executor:latest-debug
+image: ghcr.io/osscontainertools/kaniko:debug
 
 stages:
 - build-and-push
