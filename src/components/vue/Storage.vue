@@ -309,27 +309,29 @@ const size = (bytes) => {
             <!-- debugging-logging: Button visibility check -->
             <!-- Email buttons for Kubernetes namespaces -->
             <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace && !folder.IsS3" @click.stop>
-                <button 
-                    @click="emailNamespaceUsers(folder.Namespace)" 
-                    :disabled="loadingUsers[folder.Namespace]"
-                    style="margin-right: 5px; padding: 5px 10px; cursor: pointer;"
-                >
-                    {{ loadingUsers[folder.Namespace] ? 'Loading...' : 'Email Users' }}
-                </button>
-                <button 
-                    @click="emailNamespaceAdmins(folder.Namespace)" 
-                    :disabled="loadingUsers[folder.Namespace + '_admins']"
-                    style="padding: 5px 10px; cursor: pointer;"
-                >
-                    {{ loadingUsers[folder.Namespace + '_admins'] ? 'Loading...' : 'Email Admins' }}
-                </button>
+                <div class="email-buttons-container">
+                    <button 
+                        @click="emailNamespaceUsers(folder.Namespace)" 
+                        :disabled="loadingUsers[folder.Namespace]"
+                        class="email-btn email-btn-users"
+                    >
+                        {{ loadingUsers[folder.Namespace] ? 'Loading...' : 'Email Users' }}
+                    </button>
+                    <button 
+                        @click="emailNamespaceAdmins(folder.Namespace)" 
+                        :disabled="loadingUsers[folder.Namespace + '_admins']"
+                        class="email-btn email-btn-admins"
+                    >
+                        {{ loadingUsers[folder.Namespace + '_admins'] ? 'Loading...' : 'Email Admins' }}
+                    </button>
+                </div>
             </div>
             <!-- Email button for S3 buckets (single user) -->
             <div class="text table-cell" v-if="isNrpAdmin && folder.Namespace && folder.IsS3" @click.stop>
                 <button 
                     @click="emailS3User(folder.Namespace, folder.Pool)" 
                     :disabled="loadingUsers['s3_' + folder.Pool + '_' + folder.Namespace]"
-                    style="padding: 5px 10px; cursor: pointer;"
+                    class="email-btn email-btn-s3"
                 >
                     {{ loadingUsers['s3_' + folder.Pool + '_' + folder.Namespace] ? 'Loading...' : 'Email User' }}
                 </button>
@@ -418,6 +420,127 @@ const size = (bytes) => {
 
     html.dark .namespace {
         background-color: #040329 !important;
+    }
+
+    .email-buttons-container {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .email-btn {
+        padding: 8px 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background-color: #ffffff;
+        color: #374151;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .email-btn:hover:not(:disabled) {
+        background-color: #f9fafb;
+        border-color: #9ca3af;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .email-btn:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .email-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #f3f4f6;
+    }
+
+    .email-btn-users {
+        background-color: #3b82f6;
+        color: #ffffff;
+        border-color: #3b82f6;
+    }
+
+    .email-btn-users:hover:not(:disabled) {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .email-btn-admins {
+        background-color: #f59e0b;
+        color: #ffffff;
+        border-color: #f59e0b;
+    }
+
+    .email-btn-admins:hover:not(:disabled) {
+        background-color: #d97706;
+        border-color: #d97706;
+        color: #ffffff;
+    }
+
+    .email-btn-s3 {
+        background-color: #10b981;
+        color: #ffffff;
+        border-color: #10b981;
+    }
+
+    .email-btn-s3:hover:not(:disabled) {
+        background-color: #059669;
+        border-color: #059669;
+        color: #ffffff;
+    }
+
+    /* Dark mode support */
+    html.dark .email-btn {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border-color: #4b5563;
+    }
+
+    html.dark .email-btn:hover:not(:disabled) {
+        background-color: #374151;
+        border-color: #6b7280;
+    }
+
+    html.dark .email-btn:disabled {
+        background-color: #111827;
+        opacity: 0.5;
+    }
+
+    html.dark .email-btn-users {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    html.dark .email-btn-users:hover:not(:disabled) {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+
+    html.dark .email-btn-admins {
+        background-color: #f59e0b;
+        border-color: #f59e0b;
+    }
+
+    html.dark .email-btn-admins:hover:not(:disabled) {
+        background-color: #d97706;
+        border-color: #d97706;
+    }
+
+    html.dark .email-btn-s3 {
+        background-color: #10b981;
+        border-color: #10b981;
+    }
+
+    html.dark .email-btn-s3:hover:not(:disabled) {
+        background-color: #059669;
+        border-color: #059669;
     }
 
 </style>
