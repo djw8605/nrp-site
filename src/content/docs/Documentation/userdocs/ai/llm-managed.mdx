@@ -157,25 +157,116 @@ Contents of `~/.kimi/config.json`:
 
 <Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed if there are no major group or user usage, or switched to a deprecated state. This is to provide our users with the best models within our limited allocation of GPUs.
 
-<Badge text="dep" variant="caution" /> - LLM is **deprecated** and is likely to go away soon. Please do not start using this model; this is only for existing user groups who have specific purposes of this model.
+<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under heavy load.
 
-<Badge text="eval" variant="tip" /> - The LLM is added **for testing** and we're evaluating it's capabilities. The model may be unavailable sometimes, and configurations may be changed without notification.
+<Badge text="tool" variant="success" /> - The LLM has tools calling enabled.
+
+<Badge text="multimodal" variant="success" /> - The LLM is multimodal.
+
+<Badge text="evaluating" variant="tip" /> - The LLM is added **for testing** and we're evaluating it's capabilities. The model may be unavailable sometimes, and configurations may be changed without notification.
+
+<Badge text="deprecated" variant="caution" /> - LLM is **deprecated** and is likely to go away soon. Please do not start using this model; this is only for existing user groups who have specific purposes of this model.
 
 You can follow all updates and participate in the discussions within our [Matrix](https://nrp.ai/contact/#matrix) [Nautilus Machine Learning/Data Science](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) ([NRP Matrix.to](https://matrix-to.nrp-nautilus.io/#/#ml:matrix.nrp-nautilus.io), [Matrix.to](https://matrix.to/#/#ml:matrix.nrp-nautilus.io)) channel. Suggestions and decisions for new models are also made here.
 
-| API Title | Model | Features |
-| ----------- | ----------- | ---------- |
-| qwen3<br/><Badge text="main" variant="success" /> | [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8) | Multimodal (vision, video), 262,144 tokens, 235B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/en/stable/features/tool_calling.html#qwen-models), Claude/Gemini-level frontier multimodal performance |
-| gpt-oss<br/><Badge text="eval" variant="tip" /> | [openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b) | 131,072 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic performance, **recommended for batched prompts** |
-| kimi<br/><Badge text="eval" variant="tip" /> | [moonshotai/Kimi-K2-Thinking](https://huggingface.co/moonshotai/Kimi-K2-Thinking) | 262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2-Think.html), Native INT4 model weights, frontier general and agentic coding performance |
-| glm-4.6<br/><Badge text="eval" variant="tip" /> | [QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix](https://huggingface.co/QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix) | 202,752 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5.html), GPTQ mixed quantization, frontier agentic coding performance |
-| minimax-m2<br/><Badge text="eval" variant="tip" /> | [MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2) | 262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 model weights, frontier agentic coding performance |
-| glm-v<br/><Badge text="eval" variant="tip" /> | [zai-org/GLM-4.5V-FP8](https://huggingface.co/zai-org/GLM-4.5V-FP8) | Multimodal (vision, video), 65,536 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5V.html), Official FP8 quantization, GPT-4o level multimodal performance, **recommended for batched prompts** |
-| gemma3<br/><Badge text="main" variant="success" /> | [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) | Multimodal (vision), 131,072 tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149), **recommended for batched prompts** |
-| embed-mistral<br/><Badge text="main" variant="success" /> | [intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct) | embeddings |
-| gorilla<br/><Badge text="eval" variant="tip" /> | [gorilla-llm/gorilla-openfunctions-v2](https://huggingface.co/gorilla-llm/gorilla-openfunctions-v2) | function calling |
-| olmo<br/><Badge text="eval" variant="tip" /> | [allenai/OLMo-2-0325-32B-Instruct](https://allenai.org/blog/olmo2-32B) | open source |
-| llama3-sdsc<br/><Badge text="dep" variant="caution" />  | [meta-llama/Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct) | 8 languages, 131,072 tokens, tool use |
+<Card title="qwen3" icon="star">
+
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8)**
+  
+  Multimodal (vision, video), 262,144 tokens, 235B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/en/stable/features/tool_calling.html#qwen-models), Claude/Gemini-level frontier multimodal performance
+</Card>
+
+<Card title="gpt-oss" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" />
+
+  **[openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)**
+  
+  131,072 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic performance
+</Card>
+
+<Card title="kimi" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" />
+
+  **moonshotai/Kimi-K2-Thinking](https://huggingface.co/moonshotai/Kimi-K2-Thinking)**
+  
+  262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2-Think.html), Native INT4 model weights, frontier general and agentic coding performance
+</Card>
+
+<Card title="glm-4.6" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" />
+
+  **[QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix](https://huggingface.co/QuantTrio/GLM-4.6-GPTQ-Int4-Int8Mix)**
+  
+  202,752 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5.html), GPTQ mixed quantization, frontier agentic coding performance
+</Card>
+
+<Card title="minimax-m2" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" />
+
+  **[MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2)**
+  
+  262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 model weights, frontier agentic coding performance
+</Card>
+
+<Card title="glm-v" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[zai-org/GLM-4.5V-FP8](https://huggingface.co/zai-org/GLM-4.5V-FP8)**
+  
+  Multimodal (vision, video), 65,536 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5V.html), Official FP8 quantization, GPT-4o level multimodal performance
+</Card>
+
+<Card title="gemma3" icon="star">
+
+  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  
+  **[google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it)**
+  
+  Multimodal (vision), 131,072 tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149)
+</Card>
+
+<Card title="embed-mistral" icon="star">
+
+  <Badge text="main" variant="success" />
+
+  **[intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)**
+  
+  Embeddings
+</Card>
+
+<Card title="gorilla" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" />
+
+  **[gorilla-llm/gorilla-openfunctions-v2](https://huggingface.co/gorilla-llm/gorilla-openfunctions-v2)**
+  
+  Function calling
+</Card>
+
+<Card title="olmo" icon="star">
+
+  <Badge text="evaluating" variant="tip" />
+
+  **[allenai/OLMo-2-0325-32B-Instruct](https://allenai.org/blog/olmo2-32B)**
+  
+  Open source
+</Card>
+
+<Card title="llama3-sdsc" icon="star">
+
+  <Badge text="deprecated" variant="caution" />
+
+  **[meta-llama/Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)**
+  
+  8 languages, 131,072 tokens, tool use
+</Card>
 
 {/* REMOVED OR DORMANT MODELS */}
 {/* | qwen3-nairr<br/><Badge text="eval" variant="tip" /> | [Qwen/Qwen3-235B-A22B-Thinking-2507-FP8](https://huggingface.co/Qwen/Qwen3-235B-A22B-Thinking-2507-FP8) | 235B parameters, FP8 quantization, 262,144 tokens, [tool calling](https://docs.vllm.ai/en/stable/features/tool_calling.html#qwen-models), Claude and o3 performance, running on Expanse NAIRR H100 node | */}
