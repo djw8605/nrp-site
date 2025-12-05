@@ -115,6 +115,7 @@ export default defineConfig({
                   items: [
                     { label: 'Client scripts', link: 'documentation/userdocs/running/scripts' },
                     { label: 'Exposing HTTP', link: 'documentation/userdocs/running/ingress' },
+                    { label: 'GatewayAPI', link: 'documentation/userdocs/running/gateway' },
                     { label: 'Special use', link: 'documentation/userdocs/running/special' },
                     { label: 'Faster images download', link: 'documentation/userdocs/running/fast-img-download' },
                     { label: 'Globus-connect', link: 'documentation/userdocs/running/globus-connect' },
