@@ -26,7 +26,7 @@ root@controller0:/home/nautilus# nerdctl run --rm --network host -v /etc/kuberne
 7783737844
 root@controller0:/home/nautilus# nerdctl run --rm --network host -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd:ro --env ETCDCTL_API=3 registry.k8s.io/etcd:3.5.16-0 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key compact <the revision from above>
 compacted revision 7783737844
-root@controller0:/home/nautilus# nerdctl run --rm --network host -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd:ro --env ETCDCTL_API=3 registry.k8s.io/etcd:3.5.16-0 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key defrag
+root@controller0:/home/nautilus# nerdctl run --rm --network host -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd:ro --env ETCDCTL_API=3 registry.k8s.io/etcd:3.5.16-0 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key --command-timeout=30s defrag
 Finished defragmenting etcd member[https://127.0.0.1:2379]
 ```
 
