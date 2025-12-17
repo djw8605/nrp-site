@@ -316,6 +316,7 @@ export default defineConfig({
                 { label: 'Cluster user management', link: 'documentation/admindocs/cluster/cluster-user-mgmt' },
                 { label: 'Cluster node management', link: 'documentation/admindocs/cluster/node-mgmt' },
                 { label: 'Authentik', link: 'documentation/admindocs/cluster/authentik' },
+                { label: 'Etcd', link: 'documentation/admindocs/cluster/etcd' },
                 { label: 'JupyterLab', link: 'documentation/admindocs/cluster/jupyterlab-admin' },
                 { label: 'KubeVirt', link: 'documentation/admindocs/cluster/kubevirt-gpu' },
                 { label: 'FPGA Flashing', link: 'documentation/admindocs/cluster/fpga' },
