@@ -120,7 +120,7 @@ or if pod was terminated for a different reason (for example a node was rebooted
 
 There is no fair queue implemented on Nautilus. If you submit 1000 jobs, you block **all** other users from submitting in the cluster.
 
-To limit your submittion to a fair portion of the cluster, refer to [this guide](https://kubernetes.io/docs/tasks/job/fine-parallel-processing-work-queue/). Make sure to use a deployment and persistent storage for Redis pod. Here's [our example](https://gitlab.nrp-nautilus.io/prp/job-queue/-/blob/master/redis.yaml)
+To limit your submission to a fair portion of the cluster, refer to [this guide](https://kubernetes.io/docs/tasks/job/fine-parallel-processing-work-queue/). Make sure to use a deployment and persistent storage for Redis pod. Here's [our example](https://gitlab.nrp-nautilus.io/prp/job-queue/-/blob/master/redis.yaml)
 
 
 #### Private repo
