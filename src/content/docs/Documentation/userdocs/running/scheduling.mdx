@@ -14,7 +14,11 @@ import { LinkButton } from '@astrojs/starlight/components';
   The content of the jobs (yaml file) will be initially visible to all users. It's not possible to limit it by namespace. We will probably limit access to lookout in the future or implement the limited visibility per group.
 :::
 
+## Introduction
+
 [Armada](http://armadaproject.io/) multi-Kubernetes cluster batch job meta-scheduler designed to handle massive-scale workloads. Built on top of Kubernetes, Armada enables organizations to distribute millions of batch jobs per day across tens of thousands of nodes spanning multiple clusters, making it an ideal solution for high-throughput computational workloads.
+
+## Installation
 
 To start using Armada [download the client application](https://media.nrp.ai/etc/armadactl) for Arm MacOS. Linux and Windows versions will be released soon. You can build one from [the armadactl-cache-token merge request source](https://github.com/dejanzele/armada/tree/feat/armadactl-cache-token) until the feature request is merged into the project.
 
@@ -30,7 +34,11 @@ Save the armadactl config file in your home folder:
     Download Config File
 </LinkButton>
 
-You're ready to use armada. Start from listing the queues:
+You're ready to use armada.
+
+## Usage
+
+Start from listing the queues:
 
 ```bash
 armadactl get queues
@@ -77,3 +85,83 @@ You can use `armada-preemptible` for lower priority jobs.
 :::danger
   Preempted jobs will **not** be automatically resheduled.
 :::
+
+## Using python client
+
+To use python client, you can get the OIDC token from the [lookout page](https://armada-lookout.nrp-nautilus.io) in web browser. After logging in, check the site storage developer tab. There will be the id_token stored for authentik.
+
+Example of the python client:
+
+```bash
+pip install armada-client
+```
+
+```python
+import os
+import uuid
+
+import grpc
+
+from armada_client.client import ArmadaClient
+from armada_client.k8s.io.api.core.v1 import generated_pb2 as core_v1
+from armada_client.k8s.io.apimachinery.pkg.api.resource import (
+    generated_pb2 as api_resource,
+)
+
+def create_dummy_job(client: ArmadaClient):
+    """
+    Create a dummy job with a single container.
+    """
+
+    pod = core_v1.PodSpec(
+        containers=[
+            core_v1.Container(
+                name="container1",
+                image="index.docker.io/library/ubuntu:latest",
+                args=["sleep", "10s"],
+                securityContext=core_v1.SecurityContext(runAsUser=1000),
+                resources=core_v1.ResourceRequirements(
+                    requests={
+                        "cpu": api_resource.Quantity(string="120m"),
+                        "memory": api_resource.Quantity(string="510Mi"),
+                    },
+                    limits={
+                        "cpu": api_resource.Quantity(string="120m"),
+                        "memory": api_resource.Quantity(string="510Mi"),
+                    },
+                ),
+            )
+        ],
+    )
+
+    return [client.create_job_request_item(priority=0, pod_spec=pod, namespace="your_namespace")]
+
+token = "your_id_token"
+
+HOST = "armada.nrp-nautilus.io"
+PORT = "50051"
+
+queue = f"your_namespace"
+job_set_id = f"simple-jobset-{uuid.uuid1()}"
+
+class BearerAuth(grpc.AuthMetadataPlugin):
+    def __call__(self, context, callback):
+        callback((("authorization", f"Bearer {token}"),), None)
+
+channel = grpc.secure_channel(f"{HOST}:{PORT}",
+    grpc.composite_channel_credentials(
+        grpc.ssl_channel_credentials(),
+        grpc.metadata_call_credentials(BearerAuth())
+    )
+)
+
+client = ArmadaClient(channel)
+
+job_request_items = create_dummy_job(client)
+
+client.submit_jobs(
+    queue=queue, job_set_id=job_set_id, job_request_items=job_request_items
+)
+
+print("Completed Workflow")
+```
