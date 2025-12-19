@@ -1,0 +1,79 @@
+---
+title: Scheduling
+description: Scheduling large jobs
+---
+
+import { LinkButton } from '@astrojs/starlight/components';
+
+:::caution
+  Current support for everything on this page is experimental. We might change it at anytime.
+  We welcome friendly users to test this function and would like feedback.
+:::
+
+:::danger
+  The content of the jobs (yaml file) will be initially visible to all users. It's not possible to limit it by namespace. We will probably limit access to lookout in the future or implement the limited visibility per group.
+:::
+
+[Armada](http://armadaproject.io/) multi-Kubernetes cluster batch job meta-scheduler designed to handle massive-scale workloads. Built on top of Kubernetes, Armada enables organizations to distribute millions of batch jobs per day across tens of thousands of nodes spanning multiple clusters, making it an ideal solution for high-throughput computational workloads.
+
+To start using Armada [download the client application](https://media.nrp.ai/etc/armadactl) for Arm MacOS. Linux and Windows versions will be released soon. You can build one from [the armadactl-cache-token merge request source](https://github.com/dejanzele/armada/tree/feat/armadactl-cache-token) until the feature request is merged into the project.
+
+<LinkButton href="https://media.nrp.ai/etc/armadactl">
+    Download Armadactl for MacOS/arm
+</LinkButton>
+
+Put it in your PATH folder (f.e. `~/bin/`) and make runnable (`chmod +x ~/bin/armadactl`)
+
+Save the armadactl config file in your home folder:
+
+<LinkButton href="/.armadactl.yaml">
+    Download Config File
+</LinkButton>
+
+You're ready to use armada. Start from listing the queues:
+
+```bash
+armadactl get queues
+```
+
+It will list all queues matching the list of all namespaces in the cluster. You can submit to the ones you normally access in the cluster.
+
+Submit a job:
+
+```yaml title="test-job.yaml"
+queue: <your_namespace>
+jobSetId: job-set
+jobs:
+  - namespace: <your_namespace>
+    priorityClassName: armada-default
+    podSpec:
+      terminationGracePeriodSeconds: 0
+      restartPolicy: Never
+      containers:
+        - name: tester
+          image: alpine:latest
+          command:
+            - sh
+          args:
+            - -c
+            - echo $(( (RANDOM % 60) + 10 ))
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 2
+            requests:
+              memory: 128Mi
+              cpu: 2
+```
+
+```bash
+armadactl submit test-job.yaml
+```
+
+Login to the [lookout page](https://armada-lookout.nrp-nautilus.io) and see the status of your job. Also you should see the pod running in your namespace.
+
+You can use `armada-preemptible` for lower priority jobs.
+
+:::danger
+  Preempted jobs will **not** be automatically resheduled.
+:::

@@ -1,0 +1,13 @@
+currentContext: main
+contexts:
+  main:
+    cacheRefreshToken: true
+    armadaUrl: armada.nrp-nautilus.io:50051
+    openIdAuth:
+      providerUrl: "https://authentik.nrp-nautilus.io/application/o/armada/"
+      clientId: "8AeUAhsM1rA8WRJoX586BhJk8t5Icfrm169ESz8Y"
+      localPort: 50000
+      scopes:
+        - "openid"
+        - "profile_prefixed"
+        - "offline_access"

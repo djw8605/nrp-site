@@ -106,13 +106,13 @@ export default defineConfig({
                     { label: 'Monitoring', link: 'documentation/userdocs/running/monitoring' },
                     { label: 'Running batch jobs', link: 'documentation/userdocs/running/jobs' },
                     { label: 'Running CPU only jobs', link: 'documentation/userdocs/running/cpu-only' },
-                    { label: 'Scheduling', link: 'documentation/userdocs/running/scheduling' },
                   ],
                 },
                 {
                   label: 'Intermediate',
                   collapsed: true,
                   items: [
+                    { label: 'Scheduling', link: 'documentation/userdocs/running/scheduling' },
                     { label: 'Client scripts', link: 'documentation/userdocs/running/scripts' },
                     { label: 'Exposing HTTP', link: 'documentation/userdocs/running/ingress' },
                     { label: 'GatewayAPI', link: 'documentation/userdocs/running/gateway' },
