@@ -216,11 +216,11 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="glm-v" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="main" variant="tip" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
 
-  **[zai-org/GLM-4.5V-FP8](https://huggingface.co/zai-org/GLM-4.5V-FP8)**
+  **[zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8)**
   
-  Multimodal (vision, video), 65,536 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-4.5V.html), Official FP8 quantization, GPT-4o level multimodal performance
+  Multimodal (vision, video), 131,072 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-V.html), Official FP8 quantization, Gemini Flash level multimodal performance
 </Card>
 
 <Card title="gemma3" icon="star">
@@ -296,7 +296,11 @@ Such discussion is done in the [Nautilus Machine Learning/Data Science](https://
 <details>
   <summary>Click to expand</summary>
 
-**Week of November 9th, 2025:**
+#### **December 2025:**
+
+Added/Changed:`glm-v` was changed to [zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8), an upgraded model with larger context size.
+
+#### **November 2025:**
 
 Added/Changed:
 - `qwen3` ([Qwen/Qwen3-235B-A22B-Thinking-2507-FP8](https://huggingface.co/Qwen/Qwen3-235B-A22B-Thinking-2507-FP8)) has been changed to [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8). Very similar characteristics such as number of parameters, context size, and benchmarks, but adds state-of-the-art vision and video multimodal capabilities.
@@ -305,7 +309,7 @@ Added/Changed:
 - `minimax-m2` ([MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2)) is a widely popular programming LLM model and exhibits a similar level of model performance to Claude Sonnet 4 or Gemini 2.5 Pro models, while being able to fit the official FP8 parameters in four A100 GPUs with ample context length.
 - `gpt-oss` ([openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)) is a very capable agentic model, adequate for general-purpose usage, while requiring only one A100 GPU or two RTX A6000 GPUs for full context due to sliding window attention and official MXFP4 quantization, which is a fraction of other frontier models. This is our candidate for an "LTS" model used for reproducible research, that supersedes the deprecated or removed Llama3 models.
 - `gemma3` was changed to 2x RTX A6000 GPUs instead of 2x A100 GPUs to conserve the latter. The model's special sliding window attention method allows full context to fit in this case.
-- `glm-4.5v` was changed to the official [zai-org/GLM-4.5V-FP8](https://huggingface.co/zai-org/GLM-4.5V-FP8) model and uses 4x L40 GPUs instead of 2x A100 GPUs to conserve the latter and gain FP8 capabilities.
+- `glm-v` was changed to the official [zai-org/GLM-4.5V-FP8](https://huggingface.co/zai-org/GLM-4.5V-FP8) model and uses 4x L40 GPUs instead of 2x A100 GPUs to conserve the latter and gain FP8 capabilities.
 
 Removed:
 - `llama3` ([meta-llama/Llama-3.2-90B-Vision-Instruct](https://huggingface.co/meta-llama/Llama-3.2-90B-Vision-Instruct)) has been officially pulled down, due to consuming 4 A100 GPUs that can be used for much more frontier models, such as MiniMax-M2 or GLM-4.6, while being much worse in performance than models that fit in one GPU.
