@@ -31,3 +31,5 @@ Do **not** use `kubectl create namespace`.
 2. Remove the Authentik group.  
 3. Delete the namespace.
 4. Remove any exceptions in the portal configuration and any Gatekeeper exceptions. 
+
+Note: If you edit a group, the Authentik form populates for everything but parent, so if you edit and save, you have to re-enter the parent, otherwise the group gets orphaned.
