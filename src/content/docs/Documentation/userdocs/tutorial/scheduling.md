@@ -7,7 +7,7 @@ description: Learn how to schedule and optimize the placement of pods in the Nau
 
 In Kubernetes, scheduling refers to the process of assigning pods to nodes in a cluster based on various factors such as resource requirements, node capacity, and other constraints. Kubernetes scheduler is responsible for determining where and how to run pods within the cluster.
 
-:exclamation: While you can run jobs without any special node selectors, understanding this section will allow you to better optimize the placement of your workloads and significantly increase the computations performance. You can request the more performant CPUs, GPUs with more memory, faster network links. Also you can select nodes in a specific geographical region to optimize the latency to your selected storage.
+❗ While you can run jobs without any special node selectors, understanding this section will allow you to better optimize the placement of your workloads and significantly increase the computations performance. You can request the more performant CPUs, GPUs with more memory, faster network links. Also you can select nodes in a specific geographical region to optimize the latency to your selected storage.
 
 ## Prerequisites
 
@@ -40,13 +40,13 @@ Now, pick one node, and see what other resources it has:
 kubectl get nodes -o yaml <nodename>
 ```
 
-:question:If you picked a node with a GPU, look for the "nvidia.com/gpu.product" in the output.
+❓If you picked a node with a GPU, look for the "nvidia.com/gpu.product" in the output.
 
 You might not find it right away, as this output is rather long. But we can try a simpler command:
 
 `kubectl describe node <node_name>`
 
-This will return a shorter, but less descriptive result. The `describe` command can be used to get the description of many kinds of resources or processes in Kubernetes. :question:What other things can you think of that you could use this command for?
+This will return a shorter, but less descriptive result. The `describe` command can be used to get the description of many kinds of resources or processes in Kubernetes. ❓What other things can you think of that you could use this command for?
 
 ## Validating requirements
 
@@ -58,7 +58,7 @@ As a simple example, let's pick a specific GPU type:
 kubectl get node -l 'nvidia.com/gpu.product=NVIDIA-GeForce-RTX-3090'
 ```
 
-:question: Did you get any hits?
+❓ Did you get any hits?
 
 Here we look for nodes with 100Gbps NICs:
 
@@ -66,14 +66,14 @@ Here we look for nodes with 100Gbps NICs:
 kubectl get node -l 'nautilus.io/network=100000'
 ```
 
-:question: Did you get any hits?
+❓ Did you get any hits?
 
 How about a negative selector? And let's see what do we get:
 
 ```
 kubectl get node -l 'nvidia.com/gpu.product!=NVIDIA-GeForce-GTX-1080, nvidia.com/gpu.product!=NVIDIA-GeForce-RTX-3090' -L nvidia.com/gpu.product
 ```
-:exclamation:By the way, many of these queries are exposed as part of the Nautilus portal. You can visit the [Resources](https://nrp.ai/viz/resources) page to see a table with all the current nodes and their features.
+❗By the way, many of these queries are exposed as part of the Nautilus portal. You can visit the [Resources](https://nrp.ai/viz/resources) page to see a table with all the current nodes and their features.
 
 ## Requirements in pods
 
@@ -102,7 +102,7 @@ But we set the resource requests and limits to be really low, so it was virtuall
 
 Now, let's add one more requirement. Let's ask for a GPU. We also change the container, so that we get the proper drivers in place.
 
-:exclamation: **Note:** While you can ask for a fraction of a CPU, you cannot ask for a fraction of a GPU in our current setup. You should also keep the same number for requirements and limits.
+❗ **Note:** While you can ask for a fraction of a CPU, you cannot ask for a fraction of a GPU in our current setup. You should also keep the same number for requirements and limits.
 
 ```yaml
 apiVersion: v1
@@ -130,7 +130,7 @@ Once the pod started, login using kubectl exec and check what kind of GPU you go
 ```
 nvidia-smi
 ```
-:exclamation: Remember to destroy the old pod.
+❗ Remember to destroy the old pod.
 
 Let's now ask for a specific GPU type by creating a new `yaml` file, called 'test-gpupod'
 ```yaml
@@ -360,8 +360,8 @@ spec:
 
 Try to submit this one.
 
-:question: Did the Pod start?
+❓ Did the Pod start?
 
-:exclamation: Please make sure you did not leave any pods behind.
+❗ Please make sure you did not leave any pods behind.
 
 ## The end

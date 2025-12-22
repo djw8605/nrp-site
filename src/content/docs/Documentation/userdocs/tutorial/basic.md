@@ -236,13 +236,16 @@ This may take a moment, as the system will remove the pod gracefully. After a fe
 kubectl get pods
 ```
 
-:::note[Question?] Is it gone?
+:::note[Question?]
+Is it gone?
 
 If yes, let’s create it again:
 
 ```bash
 kubectl create -f pod1.yaml
 ```
+:::
+
 
 :::tip[Accessing prior commands from the CLI]
 
