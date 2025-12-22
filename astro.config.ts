@@ -213,6 +213,7 @@ export default defineConfig({
                     { label: 'Linstor', link: 'documentation/userdocs/storage/linstor' },
                     { label: 'Nextcloud', link: 'documentation/userdocs/storage/nextcloud' },
                     { label: 'Syncthing', link: 'documentation/userdocs/storage/syncthing' },
+                    { label: 'Mounting FUSE', link: 'documentation/userdocs/storage/fuse' }
                   ],
                 },
                 {
