@@ -82,7 +82,7 @@ spec:
         emptyDir: {}
 ```
 
-:question: Examine the sample `yaml`code above. Why do you think we specified a "deployment" instead of a simple pod? Are there other things that are different about this deployment? :exclamation: Hint: examine the `image` we are using? :question: What image is it? Would we expect this image to behave like other images?
+:question: Examine the sample `yaml`code above. Why do you think we specified a "deployment" instead of a simple pod? Are there other things that are different about this deployment? ❗ Hint: examine the `image` we are using? :question: What image is it? Would we expect this image to behave like other images?
 
 ### Start the deployment
 
@@ -100,7 +100,7 @@ If you used the command:
 
 :question: What was the outcome? :question: Were you able to log into the pod?
 
-:exclamation: In fact, the `yaml` file is using the Linux distribution known as "Alpine".
+❗ In fact, the `yaml` file is using the Linux distribution known as "Alpine".
 
 
 The Alpine Linux distribution is a lightweight and security-oriented Linux distribution commonly used in containerized environments, including Kubernetes. Alpine Linux is known for its minimalistic design, small footprint, and focus on security. It provides a simple and efficient base for containerized applications, offering a smaller attack surface and reduced resource usage compared to other Linux distributions.
@@ -203,9 +203,9 @@ Attaching persistent storage is usually done based on storage class. You can exp
 
 Note that the one we used is the default - it will be used if you define none.
 
-:exclamation: Not all Linux distributions share the same functionalities, though many of the basics may be the same (e.g. POSIX-compliance). It's important to choose the right distribution based on your needs. It's also important to remember to balance your requests against your actual needs, keeping in mind that optimizing system resource requirements is important when large numbers of tasks are executed concurrently. Minimizing system resource requirements improves scalability, speed, reliability and stability.
+❗ Not all Linux distributions share the same functionalities, though many of the basics may be the same (e.g. POSIX-compliance). It's important to choose the right distribution based on your needs. It's also important to remember to balance your requests against your actual needs, keeping in mind that optimizing system resource requirements is important when large numbers of tasks are executed concurrently. Minimizing system resource requirements improves scalability, speed, reliability and stability.
 
-:exclamation: Remember that you can choose compute nodes location closer to your preferred storage class as described in the [scheduling tutorial](/documentation/userdocs/tutorial/scheduling/#using-geographical-topology).
+❗ Remember that you can choose compute nodes location closer to your preferred storage class as described in the [scheduling tutorial](/documentation/userdocs/tutorial/scheduling/#using-geographical-topology).
 
 ## Cleaning up
 
