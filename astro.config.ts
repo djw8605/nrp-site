@@ -315,6 +315,7 @@ export default defineConfig({
               items: [
                 { label: 'Cluster user management', link: 'documentation/admindocs/cluster/cluster-user-mgmt' },
                 { label: 'Cluster node management', link: 'documentation/admindocs/cluster/node-mgmt' },
+                { label: 'Namespace management', link: 'documentation/admindocs/cluster/ns-mgmt' },
                 { label: 'Authentik', link: 'documentation/admindocs/cluster/authentik' },
                 { label: 'Etcd', link: 'documentation/admindocs/cluster/etcd' },
                 { label: 'JupyterLab', link: 'documentation/admindocs/cluster/jupyterlab-admin' },
