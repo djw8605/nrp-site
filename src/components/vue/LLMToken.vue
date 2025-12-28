@@ -123,7 +123,7 @@ var chatboxConfigTemplate = {
 				contextWindow: 131072
 			},
 			{
-				modelId: "glm-4.6",
+				modelId: "glm-4.7",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 202752
 			},
