@@ -135,7 +135,7 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "glm-v",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 65536
+				contextWindow: 131072
 			},
 			{
 				modelId: "gemma3",
