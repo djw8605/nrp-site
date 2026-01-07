@@ -1,11 +1,11 @@
 ---
-title: A New Way to Manage Resources on the National Research Platform (NRP)
+title: How National Research Platform (NRP) Manages Resources
 ---
 
-The National Research Platform (NRP) is transitioning to a new system for managing computational resources. This upgrade gives research groups more direct control by delegating permissions to you. This new model will allow you to manage your own team's access and resources without needing to contact the NRP core team for every change, enabling everyone to get their work done faster and more efficiently.
+The National Research Platform (NRP) is using a novel way for managing computational resources. This new model allows managing the team's access and resources without needing to contact the NRP core team for every change, enabling everyone to get their work done faster and more efficiently.
 
 :::note[Info]
-- The portal caches information about groups every minute.
+- The portal updates the caches for groups info every minute.
 - The k8s access token expires in half an hour. If you need to update the group membership sooner, use the [oidc-login clean command](/documentation/userdocs/start/getting-started#updating-namespace-membership).
 :::
 
@@ -21,7 +21,7 @@ This structure allows designated administrators to manage permissions for their 
 
 ### Getting Started: Your First Login
 
-Access to the NRP is managed through **Authentik**, our new authentication system. It connects to your existing university or institutional account via [CILogon](https://www.cilogon.org).
+Access to the NRP is managed through **Authentik**, our single-sign-on authentication system. It connects to your existing university or institutional account via [CILogon](https://www.cilogon.org).
 
 1.  The first time you log in, you will be required to read and accept the [NRP Acceptable Use Policy (AUP)](/NRP-AUP.pdf).
 2.  Once you accept the AUP, you become a registered user with access to all standard [NRP services and resources](/documentation/userdocs/start/resources/).
@@ -34,9 +34,15 @@ This new hierarchical model applies to all resources you use on the platform.
 
 Our primary service is providing compute resources via Kubernetes. Under the new system, each **Project** you create in the hierarchy directly corresponds to a **namespace** in the Kubernetes cluster. This gives you a secure, dedicated space for your team's applications and workflows.
 
-Some entities might not be tied to kubernetes namespace and instead be an LLM group or just an aggregator for another set of namespaces. Those will be created by cluster admins initially, but later also managed by namespace admins.
+#### LLM Proxy
 
-#### Group Administrators
+Groups can have the LLM Proxy capability, allowing creating LLM tokens in those.
+
+#### Vector database
+
+Groups can have the Vector DB capability, which creates the database in our managed Vector DB.
+
+### Group Administrators
 
 Users with **faculty**, **researcher**, or **postdoc** status can request administrator permissions for their Lab or Organization. Admins can:
 
@@ -44,15 +50,8 @@ Users with **faculty**, **researcher**, or **postdoc** status can request admini
 * Create new Projects (i.e., Kubernetes namespaces).
 * Manage resource allocations for their teams.
 
-#### Other Resources
-
-This same management approach will be used for other NRP resources, including:
-
-* LLM proxy teams
-* Storage allocations
-
 ### Fair Share Scheduling & Resource Allocation
 
-The resource hierarchy will be integrated with the [Apache YuniKorn scheduler](https://yunikorn.apache.org) to manage how compute jobs are prioritized and allocated.
+The resource hierarchy will be integrated with scheduling add-ons to manage how compute jobs are prioritized and allocated.
 
-To ensure fairness and reward contributions, groups that donate hardware to the cluster receive an increased resource allowance. This bonus is automatically passed down to all the labs and projects within that group, ensuring your team directly benefits from your contributions on top of the base allocation available to everyone.
+To ensure fairness and reward contributions, groups that donate hardware to the cluster will receive an increased resource allowance. This bonus is automatically passed down to all the labs and projects within that group, ensuring your team directly benefits from your contributions on top of the base allocation available to everyone.
