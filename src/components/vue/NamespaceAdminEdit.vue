@@ -1,4 +1,5 @@
 <template>
+    <ConfirmDialog />
     <Card class="my-8">
         <template #title>Editing {{ selectedNamespace.Name }}</template>
         <template #content>
@@ -140,7 +141,7 @@
             </div>
         </template>
     </Card>
-    <Card class="my-8" >
+    <Card class="my-8">
         <template #title>Create subgroup</template>
         <template #content>
             <InputGroup>
@@ -163,7 +164,7 @@
             </Card>
         </template>
     </Card>
-    <Card>
+    <Card class="my-8">
         <template #title>Group tenants (hardware owners)</template>
         <template #content>
             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
@@ -179,12 +180,20 @@
 
         </template>
     </Card>
+    <Card>
+        <template #title><span class="text-red-500">Danger Zone</span></template>
+        <template #content>
+                <Button label="Delete the group" :loading="deleteNamespaceLoading" @click="deleteNamespace" severity="danger" />
+        </template>
+    </Card>
 </template>
 
 <script setup>
 import 'primeicons/primeicons.css'
 import {Form} from '@primevue/forms';
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from "primevue/useconfirm";
+import ConfirmDialog from 'primevue/confirmdialog';
 import AutoComplete from "primevue/autocomplete";
 import Badge from 'primevue/badge';
 import Button from "primevue/button";
@@ -230,6 +239,7 @@ const tenants = ref([]);
 const bulkUsers = ref("");
 
 const toast = useToast();
+const confirm = useConfirm();
 
 const emit = defineEmits(['onNSChanged']);
 
@@ -250,6 +260,7 @@ const delUserLoading = ref({});
 const createNamespaceLoading = ref(false);
 const promoteUserLoading = ref({});
 const addBulkUserLoading = ref(false);
+const deleteNamespaceLoading = ref(false);
 const assignTenantLoading = ref(false);
 const saveLoading = ref(false);
 const isFormLoading = ref(true);
@@ -851,6 +862,67 @@ const createNamespace = () => {
         });
     }).finally(() => {
         createNamespaceLoading.value = false;
+    });
+};
+
+const deleteNamespace = () => {
+    
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    confirm.require({
+        message: 'Do you want to delete this group?',
+        header: 'Danger Zone',
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Cancel',
+        rejectProps: {
+            label: 'Cancel',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Delete',
+            severity: 'danger'
+        },
+        accept: () => {
+            deleteNamespaceLoading.value = true;
+            client.request({
+                method: "admin.DeleteNamespace",
+                params: {
+                    Namespace: nsName,
+                }
+            }).then((response) => {
+                if (response.error) {
+                    toast.add({
+                        severity: 'error',
+                        summary: 'Error deleting group',
+                        detail: response.error.message,
+                        life: 3000
+                    });
+                    return;
+                }
+                
+                toast.add({
+                    severity: 'success',
+                    summary: 'Successfully deleted group '+newNamespace.value,
+                    life: 3000
+                });
+                emit('onNSChanged');
+
+            }).catch((err) => {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error deleting group',
+                    detail: err,
+                    life: 3000
+                });
+            }).finally(() => {
+                deleteNamespaceLoading.value = false;
+            });
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected the deletion', life: 3000 });
+        }
     });
 };
 
