@@ -261,7 +261,7 @@ The fastest way to delete is to use `rclone`. The steps for configuring `rclone`
 #### Delete Data
 
 ```bash
-rclone delete S3:bucket-name>/<data-path> --transfers 1000 --checkers 2000 --disable ListR --progress
+rclone delete <S3:bucket-name>/<data-path> --transfers 1000 --checkers 2000 --disable ListR --progress
 ```
 
 - `--transfers 1000`: Number of parallel file transfers.
@@ -272,7 +272,7 @@ rclone delete S3:bucket-name>/<data-path> --transfers 1000 --checkers 2000 --dis
 #### Delete Buckets (After Deleting All Data)
 
 ```bash
-rclone rmdir S3:bucket-name> --progress
+rclone rmdir <S3:bucket-name> --progress
 ```
 
 ### Host a File for Public Download
@@ -366,7 +366,7 @@ See this [TFRecord][2] presentation for details.
 </details>
 
 <details>
-<summary>Using S3 in GitLab CI</summary>summary>
+<summary>Using S3 in GitLab CI</summary>
 
 In GitLab project go to `Settings`->`CI/CD`, open the `Variables` tab, and add the variables holding your S3 credentials:
 `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY`. Choose `protect variable` and `mask variable`.
@@ -390,7 +390,7 @@ build:
 <details>
 <summary>Creating a new bucket in S3</summary>
 
-- Create a new bucket (change profile to match what is in `~/.aws/credentials`, and endpoint to the appropriate endpoint (Ceph/S3/West is used in this example):
+- Create a new bucket: change profile to match what is in `~/.aws/credentials`, and endpoint to the appropriate endpoint (Ceph/S3/West is used in this example):
 
 ```
 aws --endpoint https://s3-west.nrp-nautilus.io s3api create-bucket --bucket my-bucket-name --profile prp
