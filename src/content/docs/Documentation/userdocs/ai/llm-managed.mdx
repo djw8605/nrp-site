@@ -266,6 +266,8 @@ Added/Changed:
 
 - `glm-4.7` was switched to the official [zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8) with more GPUs diverted from what was used for `kimi`.
 
+Removed:
+
 - `olmo` ([allenai/OLMo-2-0325-32B-Instruct](https://allenai.org/blog/olmo2-32B)) and `gorilla` ([gorilla-llm/gorilla-openfunctions-v2](https://huggingface.co/gorilla-llm/gorilla-openfunctions-v2)) were not working for many months, yet nobody reported the issue. Therefore, they are removed. A newer variant may return if needed.
 
 - `kimi` ([moonshotai/Kimi-K2-Thinking](https://huggingface.co/moonshotai/Kimi-K2-Thinking)) is removed due to taking 8 GPUs and having no advantage to `glm-4.7`, as well as tool calling bugs in vLLM.
