@@ -223,6 +223,14 @@ Finally, update the [Chatbox Config Template](https://gitlab.nrp-nautilus.io/prp
 7. Update the [Envoy Proxy configuration](#envoy-ai-gateway-management) above, and the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue).
 8. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including Context Parallelism (`--decode-context-parallel`), or Data Parallelism Attention of Experts (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
 
+### Increasing Context Length with RoPE
+
+RoPE (Rotary Position Embedding) allows expanding the context size beyond the default allowed by the model. For smaller factors (`max_position_embeddings / original_max_position_embeddings`), `dynamic` RoPE can be used. For larger factors, `yarn` RoPE could also be used, if the model supports the type. **Note that if there are separate instructions from the model, those instructions are prioritized.**
+
+Example for small factors: `--max-model-len 262144 --hf-overrides '{"max_position_embeddings": 262144, "rope_scaling": {"type": "dynamic", "factor": 1.5, "original_max_position_embeddings": 202752}}'`
+
+Example for large factors: `--max-model-len 1000000 --hf-overrides '{"max_position_embeddings": 1000000, "rope_scaling": {"type": "yarn", "factor": 4.0, "original_max_position_embeddings": 262144}}'`
+
 ### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
 Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
