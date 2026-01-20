@@ -1,0 +1,64 @@
+---
+title: Fixing node issues
+description: Fixing node issues
+---
+
+:::caution
+This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users
+:::
+
+import { Steps } from '@astrojs/starlight/components';
+
+## Once you find an issue on the node that can affect any user job
+
+<Steps>
+
+    1. Create an issue in GitLab describing the problem and taint the node with the issue number
+
+        ```
+        kubectl taint node-1 nautilus.io/issue=issue_number:NoSchedule
+        ```
+
+        <Steps>
+
+        1. If you're using the [zsh-scripts.sh](https://gitlab.nrp-nautilus.io/prp/nautilus-ansible/-/blob/master/zsh-scripts.sh) script from Ansible repo, use the `node_maint` function to automagically create the issue and taint the node with it
+
+        </Steps>
+
+    1. Drain the node. **Check all pods except the system ones are gone**
+
+    1. Check that all storage volumes are successfully unmounted from the node (both `lsblk` devices and k8s volumeattachments)
+
+    1. Check **in linstor controller pod** that [no linstor volumes exist on the node (even diskless ones)](/documentation/admindocs/storage/linstor/#cleaning-up-a-node)
+
+    1. Delete the spegel pod - it's not tolerating the `nautilus.io/issue` taint and won't restart. If you need containerd to work, change the config:
+
+        ```
+        sudo -s
+        sed -i '/^[[:space:]]*config_path = "\/etc\/containerd\/certs\.d"$/d' /etc/containerd/config.toml
+        rm -rf /etc/containerd/certs.d
+        systemctl restart containerd
+        ```
+
+    1. Fix the issue
+
+</Steps>
+
+## When the issue is fixed
+
+<Steps>
+
+    1. [Verify the node connectivity](/documentation/admindocs/fiona/install/#verifying-the-connectivity)
+
+    2. If spegel was diabled, put back the config for it and restart containerd:
+
+        ```yaml title=/etc/containerd/config.toml
+            [plugins."io.containerd.grpc.v1.cri".registry]
+              config_path = "/etc/containerd/certs.d"
+        ```
+
+    3. Close the issue in gitlab and *untaint the node*
+
+    4. Check that all pods are running on the node without issues
+
+</Steps>
