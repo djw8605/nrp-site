@@ -165,6 +165,7 @@ prePuller:
   continuous:
     enabled: false
 
+# This will be deprecated soon, httpRoute sufficies, can set enabled: false
 ingress:
   enabled: true
   ingressClassName: haproxy
@@ -173,6 +174,14 @@ ingress:
   tls:
     - hosts:
       - your_name.nrp-nautilus.io
+
+httpRoute:
+  enabled: true
+  hostnames:
+    - your_name.nrp-nautilus.io
+  gateway:
+    name: ingress
+    namespace: haproxy
 
 cull:
   enabled: true
