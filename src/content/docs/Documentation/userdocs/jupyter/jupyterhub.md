@@ -59,7 +59,7 @@ Create a namespace for your project on [Nautilus portal](https://nrp.ai/namespac
 Follow the [install guide](https://zero-to-jupyterhub.readthedocs.io/en/stable/jupyterhub/installation.html), and use [this template](../values) for the config:
 
 1. Run `openssl rand -hex 32` and replace the `secret_token` in the yaml file with the generated key
-2. Minimally set the `client_id`, `client_secret`, `admin_users`, `secret_token`, `oauth_callback_url`, `ingress.hosts` fields.
+2. Minimally set the `client_id`, `client_secret`, `admin_users`, `secret_token`, `oauth_callback_url`, `httproute.hostnames` fields.
 3. Add security with either `allowed_idps` or `allowed_users`. Do NOT leave your JupyterHub instance open for anyone to sign in, this may result in locking of your namespace. You may find your IDP at https://cilogon.org/idplist
 4. `helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/ && helm repo update`
 5. `helm upgrade --cleanup-on-fail --install jhub jupyterhub/jupyterhub --namespace <namespace> --version=3.3.7 --values config.yaml`
@@ -80,7 +80,12 @@ The [template values file](../values) provides a comprehensive starting point wi
 - **Resource limits** and guarantees for CPU and memory
 - **Storage configuration** with Ceph block storage
 - **Authentication settings** for CILogon integration
-- **Ingress configuration** for external access
+- **HTTPRoute configuration** for external access
+
+
+:::note
+The Nautilus cluster is in the process of migrating from Ingresses to Gateway API HTTPRoute, and services will be exposed on ports 50080 and 50443. (your-name.nrp-nautilus.io will be accessible at your-name.nrp-nautilus.io:50443) for JupyterHub while we finalize migration. You can temporarily proceed to use Ingress for now as provided in the values.yaml example.
+:::
 
 ### Adding Your Own Container Image
 
