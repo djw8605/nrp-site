@@ -53,7 +53,7 @@ new Runtime().module(define, name => {
       <td markdown="span">US Central / UNL</td>
       <td markdown="span">ReadWriteOnce</td>
       <td markdown="span">Spinning drives RAID 10</td>
-      <td markdown="span">1x</td>
+      <td markdown="span">1x (raid-z2 storage)</td>
     </tr>
     <tr>
       <td markdown="span">linstor-sdsu</td>
@@ -68,13 +68,6 @@ new Runtime().module(define, name => {
       <td markdown="span">ReadWriteOnce</td>
       <td markdown="span">NVME</td>
       <td markdown="span">2x</td>
-    </tr>
-    <tr>
-      <td markdown="span">linstor-ucsc</td>
-      <td markdown="span">US West / UCSC</td>
-      <td markdown="span">ReadWriteOnce</td>
-      <td markdown="span">SSDs RAID 10</td>
-      <td markdown="span">1x</td>
     </tr>
   </tbody>
 </table>
