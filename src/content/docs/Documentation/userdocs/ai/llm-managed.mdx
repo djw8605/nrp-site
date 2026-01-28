@@ -86,7 +86,7 @@ client = OpenAI(
 )
 
 completion = client.chat.completions.create(
-    model="gemma3",
+    model="gpt-oss",
     messages=[
         {"role": "system", "content": "Talk like a pirate."},
         {
@@ -109,9 +109,9 @@ curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/models
 curl -H "Authorization: Bearer <TOKEN>" -X POST "https://ellm.nrp-nautilus.io/v1/chat/completions" \
 -H "Content-Type: application/json" \
 -d '{
-    "model": "meta-llama/Llama-3.2-90B-Vision-Instruct",
+    "model": "gpt-oss",
     "messages": [
-      {"role": "user", "content": "Hey!"}
+      {"role": "user", "content": "Hey Ya!"}
     ]
   }'
 ```
@@ -127,11 +127,11 @@ Contents of `~/.kimi/config.json`:
 
 ```json
 {
-  "default_model": "qwen3",
+  "default_model": "kimi",
   "models": {
-    "qwen3": {
+    "kimi": {
       "provider": "nrp",
-      "model": "qwen3",
+      "model": "kimi",
       "max_context_size": 262144,
       "capabilities": ["thinking", "image_in", "video_in"]
     }
