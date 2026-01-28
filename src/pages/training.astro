@@ -2,24 +2,168 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'NRP Fall Training Sessions - September 2025',
+  title: 'NRP Training Sessions - February 2026',
 };
 ---
 
 <Layout metadata={metadata}>
-  <section class="py-16 bg-blue-50 dark:bg-slate-800">
+  <!-- New February 2026 Training Section -->
+  <section class="py-16 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-800 dark:to-blue-900 text-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 dark:text-blue-200 mb-6">NRP Fall Training Sessions</h1>
+      <div class="mb-4">
+        <span class="inline-block bg-yellow-400 text-blue-900 font-bold px-4 py-1 rounded-full text-sm mb-4">NEW TRAINING ANNOUNCED</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-6">NRP Training - February 2026</h1>
       
-      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">A comprehensive series of workshops, tutorials, and hands-on sessions designed to help you get started with the NRP, accelerate your research, and connect with the community. All sessions are now available as recordings!</p>
-      <a href="#recordings" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow transition">Watch Recordings</a>
+      <p class="text-lg text-blue-100 mb-8">Two identical sets of comprehensive training sessions covering beginner and intermediate topics. Join us for hands-on learning via Zoom with integrated NRP JupyterHub/Coder access.</p>
+      
+      <!-- Registration Form Link -->
+      <div class="mt-8 mb-4">
+        <a href="https://nextcloud.nrp-nautilus.io/apps/forms/s/k84NGNFLwWMg7N2BPSYn3Qkk" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="inline-block bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition transform hover:scale-105">
+          Register Now - Training Registration Form
+        </a>
+      </div>
     </div>
   </section>
 
-
-  <section class="py-8">
+  <!-- Training Schedule Section -->
+  <section class="py-12 bg-white dark:bg-slate-900">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Session Table</h2>
+      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-8 text-center">Training Schedule</h2>
+      
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+          <!-- Set A -->
+          <div class="bg-blue-50 dark:bg-slate-800 rounded-lg p-6 border-2 border-blue-300 dark:border-blue-600">
+            <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Set A</h3>
+            <div class="space-y-4">
+              <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
+                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Beginner Track</div>
+                <div class="text-slate-700 dark:text-slate-200">
+                  <p class="font-semibold">📅 Wednesday, February 12, 2026</p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="text-sm mt-2">3-hour Zoom session with hands-on exercises</p>
+                  <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">📧 You'll receive the Zoom link after registration</p>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
+                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Intermediate Track</div>
+                <div class="text-slate-700 dark:text-slate-200">
+                  <p class="font-semibold">📅 Thursday, February 13, 2026</p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="text-sm mt-2">3-hour Zoom session with advanced topics</p>
+                  <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">📧 You'll receive the Zoom link after registration</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Set B -->
+          <div class="bg-blue-50 dark:bg-slate-800 rounded-lg p-6 border-2 border-blue-300 dark:border-blue-600">
+            <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Set B</h3>
+            <div class="space-y-4">
+              <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
+                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Beginner Track</div>
+                <div class="text-slate-700 dark:text-slate-200">
+                  <p class="font-semibold">📅 Wednesday, February 18, 2026</p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="text-sm mt-2">3-hour Zoom session with hands-on exercises</p>
+                  <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">📧 You'll receive the Zoom link after registration</p>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
+                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Intermediate Track</div>
+                <div class="text-slate-700 dark:text-slate-200">
+                  <p class="font-semibold">📅 Friday, February 20, 2026</p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="text-sm mt-2">3-hour Zoom session with advanced topics</p>
+                  <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">📧 You'll receive the Zoom link after registration</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <!-- Registration Form Link -->
+      <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 dark:from-yellow-500 dark:to-yellow-600 rounded-lg p-6 mb-8 text-center shadow-lg">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-900 mb-4">Ready to Register?</h3>
+        <a href="https://nextcloud.nrp-nautilus.io/apps/forms/s/k84NGNFLwWMg7N2BPSYn3Qkk" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="inline-block bg-blue-900 hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition transform hover:scale-105">
+          Complete Registration Form
+        </a>
+        <p class="text-sm text-gray-800 dark:text-gray-900 mt-4">Click the button above to access the training registration form</p>
+      </div>
+
+      <!-- Training Details -->
+      <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-6 mb-8">
+        <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Training Details</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Beginner Track Topics</h4>
+            <ul class="list-disc list-inside space-y-2 text-slate-700 dark:text-slate-300">
+              <li><strong>Introduction to the National Research Platform</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Overview of NRP's mission, capabilities, how to gain access, and policy guidelines.</span></li>
+              <li><strong>The Portal: GUI Access to Resources</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Navigate the NRP portal, manage namespaces/groups, and explore the integrated LiteLLM interface.</span></li>
+              <li><strong>Basic and Intermediate Docker and Kubernetes</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Foundations of containers and orchestration: Pods, Deployments, PVCs, and S3 storage. Scripting with kubectl, exposing services, using taints/tolerations, node affinity, and Python APIs.</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold text-lg text-slate-800 dark:text-slate-200 mb-2">Intermediate Track Topics</h4>
+            <ul class="list-disc list-inside space-y-2 text-slate-700 dark:text-slate-300">
+              <li><strong>Using JupyterHub</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Launch and use interactive development environments. Ideal for researchers, students, and educators.</span></li>
+              <li><strong>Using Coder</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Launch and use interactive development environments. Ideal for researchers, students, and educators.</span></li>
+              <li><strong>Deploying JupyterHub</strong><br/>
+                <span class="text-sm text-slate-600 dark:text-slate-400">Learn how to deploy and manage JupyterHub and Coder environments for groups or courses.</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-300 dark:border-slate-600">
+          <p class="text-slate-700 dark:text-slate-300 mb-4">
+            <strong>Format:</strong> Each session is 3 hours via Zoom with integrated NRP JupyterHub/Coder access for hands-on exercises.
+          </p>
+          <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-400 dark:border-blue-600 rounded-lg p-4">
+            <p class="text-slate-800 dark:text-slate-200 font-bold text-lg mb-2">
+              ⚠️ Prerequisites:
+            </p>
+            <p class="text-slate-700 dark:text-slate-300">
+              <strong>Institutional account access to NRP</strong> is required. If you don't have access yet, please visit our getting started guide:
+            </p>
+            <a href="https://nrp.ai/documentation/userdocs/start/getting-started/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="inline-block mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+              📖 Get Started with NRP Access
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <section class="py-8 bg-slate-100 dark:bg-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="border-t-2 border-slate-300 dark:border-slate-600"></div>
+    </div>
+  </section>
+
+  <!-- Previous Training Section -->
+  <section class="py-12 bg-slate-50 dark:bg-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-4">Previous Training: Fall 2025 Sessions</h2>
+      <p class="text-lg text-slate-700 dark:text-slate-200 mb-8">A comprehensive series of workshops, tutorials, and hands-on sessions from September 2025. All sessions are now available as recordings!</p>
+      <a href="#recordings" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow transition mb-8">Watch Recordings</a>
+
+
+      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Fall 2025 Session Table</h2>
       <div class="overflow-x-auto">
         <table class="min-w-full border border-slate-300 dark:border-slate-700 text-sm md:text-base rounded-lg overflow-hidden">
           <thead class="bg-blue-200 dark:bg-slate-700 text-blue-900 dark:text-blue-100">
@@ -109,11 +253,10 @@ const metadata = {
         </table>
       </div>
     </div>
-  </section>
 
   <section id="recordings" class="py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Session Recordings & Materials</h2>
+      <h2 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Fall 2025 Session Recordings & Materials</h2>
       <div class="overflow-x-auto">
         <table class="min-w-full border border-slate-300 dark:border-slate-700 text-sm md:text-base rounded-lg overflow-hidden">
           <thead class="bg-blue-200 dark:bg-slate-700 text-blue-900 dark:text-blue-100">

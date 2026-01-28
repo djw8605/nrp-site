@@ -53,28 +53,27 @@ const metadata = {
     </Fragment>
 
     <Fragment slot="alert">
-      <div class="flex flex-col items-center text-center space-y-1 -mt-7">
-        <div>
+      <div class="flex flex-col items-center text-center space-y-4 -mt-7">
+        <!-- 7NRP announcement - most prominent -->
+        <div class="text-xl font-bold text-blue-700 dark:text-blue-300">
           <img
             src={SevenNRP.src}
             alt="7NRP logo"
             class="inline-block h-6 w-10 align-middle mr-1"
           />
-          📣📣📣 Announcing 7NRP --  May 5 - 7 2026 More Info  
-          <a
-            class="text-blue-500 hover:text-blue-700 font-bold"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://na.eventscloud.com/website/91919/">here</a>
-            📣📣📣
+          📣📣📣 Announcing 7NRP -- May 5 - 7 2026 <a href="https://na.eventscloud.com/website/91919/" class="text-blue-500 hover:text-blue-700 font-bold" target="_blank" rel="noopener noreferrer">More Info Here</a> 📣📣📣
         </div>
+        
+        <!-- Training announcement -->
+        <div class="text-lg">
+          📣📣📣 NRP Training Sessions - February 12-13 & 18-20, 2026 📣📣📣
+          <br />
+          <a href="/training/" class="text-blue-500 hover:text-blue-700 font-bold">Learn more and register here</a>
+        </div>
+        
+        <!-- Updated office hours message -->
         <div>
-          Ready to learn more about the NRP and how to get started? Join our office hours on <NextOfficeHours/>.
-          <a
-            class="text-blue-500 hover:text-blue-700 font-bold"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="https://ucsd.zoom.us/j/96377381436">Join Here</a>
+          Office Hours will resume on Tuesday, February 24, 2026 after training is over.
         </div>
       </div>
     </Fragment>
