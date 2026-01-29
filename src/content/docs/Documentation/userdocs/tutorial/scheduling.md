@@ -283,6 +283,10 @@ kubectl logs test-geo
 
 Some nodes are restricted and require explicit tolerations.
 
+:::caution
+Tolerating a taint you're not explicitly allowed to tolerator by the cluster admins will result in being banned.
+:::
+
 If a pod cannot be scheduled, inspect events:
 
 ```
@@ -293,9 +297,9 @@ You may see a NoSchedule taint. To tolerate it:
 
 ```yaml
 tolerations:
-- effect: NoSchedule
-  key: nautilus.io/noceph
-  operator: Exists
+- key: nautilus.io/reservations
+  operator: Equals
+  value: "name"
+  effect: NoSchedule
 ```
 
-## The end
