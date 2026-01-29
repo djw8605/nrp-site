@@ -281,7 +281,7 @@ kubectl logs test-geo
 
 ## Optional: Reserved nodes and taints
 
-Some nodes are restricted and require explicit tolerations.
+Some nodes are restricted and require explicit tolerations. You can view node taints at: https://nrp.ai/viz/resources/.
 
 :::caution
 Tolerating a taint you're not explicitly allowed to tolerator by the cluster admins will result in being banned.
