@@ -87,6 +87,20 @@ The [template values file](../values) provides a comprehensive starting point wi
 The Nautilus cluster is in the process of migrating from Ingresses to Gateway API HTTPRoute, and services will be exposed on ports 50080 and 50443. (your-name.nrp-nautilus.io will be accessible at your-name.nrp-nautilus.io:50443) for JupyterHub while we finalize migration. You can temporarily proceed to use Ingress for now as provided in the values.yaml example.
 :::
 
+:::note
+For better support, debugging, and faster turnaround when issues arise, we **strongly recommend adding the NRP admins as admins in your JupyterHub Helm values** when deploying or customizing JupyterHub.
+
+Please include the following admin users:
+- `mfsada@ucsd.edu`
+- `d4diaz@ucsd.edu`
+- `dmishin@ucsd.edu`
+
+If your deployment uses an **institution / IdP allowlist**, make sure **UCSD is included** so these admins can authenticate successfully.
+
+Granting admin access enables NRP administrators to inspect hub and user pod state, review logs, and provide effective assistance via the NRP Matrix support channels.
+:::
+
+
 ### Adding Your Own Container Image
 
 To add your own custom container image to JupyterHub, you need to modify the `profileList` section in your `values.yaml`:

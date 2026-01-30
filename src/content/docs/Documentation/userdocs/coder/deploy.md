@@ -160,6 +160,19 @@ Visit `https://your_name.nrp-nautilus.io` to access your Coder instance.
 
 You can add your own templates or use the examples we have at [NRP Coder Templates](https://gitlab.nrp-nautilus.io/prp/coder-templates).
 
+
+:::note
+For better support, debugging, and faster turnaround when issues arise, we **strongly recommend adding the NRP admins as admins in your Coder instance** when deploying or customizing Coder.
+
+Please include the following admin users:
+- `mfsada@ucsd.edu`
+- `d4diaz@ucsd.edu`
+- `dmishin@ucsd.edu`
+
+Granting admin access enables NRP administrators to inspect Coder from within and provide effective assistance via the NRP Matrix support channels.
+:::
+
+
 ---
 
 You're all set to use your customized Coder instance!
