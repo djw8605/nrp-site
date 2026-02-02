@@ -53,8 +53,6 @@ Generate the config for it in the [LLM token generation page](/llmtoken). Copy t
 
 In chatbox app go to _Settings_->_Model Provider_, scroll down to the end of providers list and click _Import from clipboard_.
 
-**Please always leave empty or do not specify `Max Output Tokens`/`max_tokens`/`max_output_tokens`.** If required, specify it to somewhere between 1/8 to 1/2 of the total context length. **Do NOT specify the full context length.**
-
 ## API Access to LLMs via Envoy gateway
 
 To access our LLMs through the [Envoy AI Gateway](https://aigateway.envoyproxy.io), you need to be a [member of a group with LLM flag](/documentation/userdocs/start/hierarchy). Your membership info can be found on the [namespaces page](/namespaces).
@@ -68,6 +66,8 @@ with CURL or any OpenAI API compatible tool.
 ```
 curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/models
 ```
+
+**NOTE: Please leave empty or do not specify `Max Output Tokens`/`max_tokens`/`max_output_tokens`.** Only when required by the client or library, specify it to somewhere under 1/2 of the total context length. **NEVER specify the full context length.**
 
 ## Examples
 
