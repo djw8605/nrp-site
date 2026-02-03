@@ -8,6 +8,10 @@ This page contains administrative documentation intended for cluster administrat
 :::
 
 
+:::note
+The steps below are using the NVIDIA GPU Operator to bind the correct drivers.
+:::
+
 
 
 Follow these steps to configure a Kubernetes node for VFIO passthrough, enabling GPU resources for KubeVirt VMs.
@@ -23,27 +27,10 @@ kubectl drain {node name} --ignore-daemonsets --delete-emptydir-data --force
 Add a label to the node indicating it is configured for VFIO passthrough:
 
 ```bash
-kubectl label nodes node-name nautilus.io/vfio=true
+kubectl label nodes node-name nvidia.com/gpu.workload.config=vm-passthrough
 ```
 
-#### Step 3: SSH into the Node
-SSH into the node.
-
-#### Step 4: Record Installed NVIDIA Driver Names
-List the installed NVIDIA drivers to note the versions for potential reinstallation later:
-
-```bash
-dpkg -l | grep nvidia
-```
-
-#### Step 5: Uninstall All NVIDIA Drivers
-Uninstall the NVIDIA drivers from the node:
-
-```bash
-sudo apt-get remove --purge '^nvidia-.*'
-```
-
-#### Step 6: Enable IOMMU and Shut Down the Node
+#### Step 3: Enable IOMMU and Shut Down the Node
 Modify the `GRUB_CMDLINE_LINUX_DEFAULT` line in `/etc/default/grub` to include `iommu=pt amd_iommu=on`:
 
 ```bash
@@ -54,40 +41,13 @@ Then update GRUB and shut down the node:
 
 ```bash
 sudo update-grub
-sudo shutdown now
+sudo reboot
 ```
 
-#### Step 7: Enable IOMMU in BIOS
-Reboot the machine and enter BIOS/UEFI settings. Locate and enable the **IOMMU** option, usually under **Advanced Settings**, **Chipset**, or **CPU Configuration**. Save the changes and exit the BIOS.
 
-#### Step 8: Start the Node Back Up
-Reboot the node after enabling IOMMU.
+#### Step 4: Verify
 
-#### Step 9: Verify Driver Removal
-Check that the NVIDIA drivers and device plugin are no longer present:
-
-```bash
-dpkg -l | grep nvidia
-```
-
-#### Step 10: Install `driverctl`
-Install `driverctl` to manage device bindings:
-
-```bash
-sudo apt install driverctl -y
-```
-
-#### Step 11: Bind the GPU to `vfio-pci`
-Bind the specific GPU (e.g., `81:00.0`) to `vfio-pci`:
-
-```bash
-sudo driverctl set-override 0000:81:00.0 vfio-pci
-```
-
-Replace `81:00.0` with the correct PCI address for your GPU.
-
-#### Step 12: Check if the Devices are Bound to `vfio-pci`
-Verify that the GPUs are bound to `vfio-pci`:
+SSH into the node and verify that the GPUs are bound to `vfio-pci`.
 
 ```bash
 lspci -k -s 81:00.0
@@ -99,23 +59,7 @@ For all `vfio-pci` bound devices:
 lspci -nnk | grep -i vfio
 ```
 
-#### Step 13: Verify DaemonSet for GPU Management
-After binding the GPUs, check the logs of the `nvidia-kubevirt-gpu-dp-daemonset` pod:
-
-```bash
-kubectl logs nvidia-kubevirt-gpu-dp-daemonset-pod-name
-```
-
-Look for lines like:
-
-```bash
-2024/10/31 03:16:06 Allocated devices map[PCI_RESOURCE_NVIDIA_COM_TU102GL_QUADRO_RTX_6000_8000:0000:81:00.0]
-```
-
-
-This confirms how KubeVirt manages the GPU.
-
-#### Step 14: Add the GPU Resource Name to KubeVirt
+#### Step 5: Add the GPU Resource Name to KubeVirt
 Edit the KubeVirt configuration to add the GPU resource name:
 
 ```bash
@@ -143,13 +87,9 @@ Find the `pciVendorSelector` values by running:
 ```bash
 lspci -nn
 ```
+#### Step 6: Switching back
 
-##### Step 15: Restart the DaemonSet Pod
-After updating the configuration, restart the NVIDIA DaemonSet pod:
-
-```bash
-kubectl delete pod -l app=nvidia-kubevirt-gpu-dp -n kubevirt
-```
+To switch back to the nvidia drivers, remove the added node label, and observe the gpu operator device plugin and driver pods start. After a few minutes, you can verify that node lists GPUs as allocatable resource, and can be safe to untaint after a test gpu pod.
 
 ### Conclusion
 Your Kubernetes node is now fully configured for VFIO passthrough, enabling GPU resources for KubeVirt VMs. You can test this configuration using one of the KubeVirt virtualization examples, such as [Running Virtualization on Windows](https://docs.nrp.ai/userdocs/running/virtualization-windows/).
