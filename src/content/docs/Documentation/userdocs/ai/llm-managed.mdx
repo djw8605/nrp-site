@@ -125,7 +125,7 @@ curl -H "Authorization: Bearer <TOKEN>" -X POST "https://ellm.nrp-nautilus.io/v1
 -d '{
     "model": "gpt-oss",
     "messages": [
-      {"role": "user", "content": "Hey Ya!"}
+      {"role": "user", "content": "How do I check if a Python object is an instance of a class?"}
     ]
   }'
 ```
@@ -165,10 +165,10 @@ Contents of `~/.config/crush/crush.json`:
       "api_key": "<LLM_API_KEY>",
       "models": [
         {
-          "id": "kimi",
-          "name": "kimi",
-          "context_window": 262144,
-          "default_max_tokens": 65536
+          "id": "gpt-oss",
+          "name": "gpt-oss",
+          "context_window": 131072,
+          "default_max_tokens": 32768
         }
       ]
     }
