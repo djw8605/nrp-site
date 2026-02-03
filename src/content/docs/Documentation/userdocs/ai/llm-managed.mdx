@@ -13,8 +13,8 @@ The NRP provides several hosted open-weights LLM for either API access, or use w
 <CardGrid>
   <LinkCard 
     title="Chat with NRP LLMs" 
-    href="https://nrp-openwebui.nrp-nautilus.io/"
-    description="Use the OpenWebUI interface to chat with NRP hosted LLMs" />
+    href="https://nrp-openwebui.nrp-nautilus.io"
+    description="Use the Open WebUI interface to chat with NRP hosted LLMs" />
     <LinkCard 
     title="Get an API token for NRP LLMs" 
     href="#api-access-to-llms-via-envoy-gateway"
@@ -23,9 +23,23 @@ The NRP provides several hosted open-weights LLM for either API access, or use w
 
 ## Chat Interfaces
 
+### Open WebUI
+
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com), we provide the [NRP Open WebUI](https://nrp-openwebui.nrp-nautilus.io), based on the [Open WebUI](https://openwebui.com) project. This is a feature-filled chat interface for all of the NRP-hosted models. You can use it to chat with or test out the models.
+
+<LinkButton
+  href="https://nrp-openwebui.nrp-nautilus.io"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the NRP Open WebUI interface
+</LinkButton>
+
+On MacOS and Safari you can make it always available in Dock for quick access: having Open WebUI open in Safari, click **File->Add to Dock**.
+
 ### Librechat
 
-If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com/), we provide [LibreChat](https://librechat.nrp-nautilus.io), based on the [LibreChat](https://www.librechat.ai/) project.  This is a simple chat interface for all of the NRP hosted models.  You can use it to chat with the models, or to test out the models.
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com), we provide [LibreChat](https://librechat.nrp-nautilus.io), based on the [LibreChat](https://www.librechat.ai) project.  This is a simple chat interface for all of the NRP-hosted models.  You can use it to chat with or test out the models.
 
 <LinkButton
   href="https://librechat.nrp-nautilus.io"
@@ -35,7 +49,7 @@ If you are looking to chat with an LLM model similar to the interface provided b
     Visit the LibreChat interface
 </LinkButton>
 
-On MacOS and Safari you can make it always available in Dock for quick access: having librechat open in Safari, click **File->Add to Dock**.
+On MacOS and Safari you can make it always available in Dock for quick access: having LibreChat open in Safari, click **File->Add to Dock**.
 
 ### Chatbox
 
@@ -115,6 +129,54 @@ curl -H "Authorization: Bearer <TOKEN>" -X POST "https://ellm.nrp-nautilus.io/v1
     ]
   }'
 ```
+
+### Crush
+
+https://github.com/charmbracelet/crush
+
+Please refer to https://www.zonca.dev/posts/2026-01-29-configure-nrp-llm-opencode-crush as well.
+
+After applying the configuration below, search for `NRP` in the list of models.
+
+<details>
+<summary>Open Configuration</summary>
+
+Contents of `~/.config/crush/crush.json`:
+
+```json
+{
+  "$schema": "https://charm.land/crush.json",
+  "options": {
+    "disable_metrics": true,
+    "disable_provider_auto_update": false,
+    "debug": false,
+    "debug_lsp": false,
+    "attribution": {
+      "trailer_style": "none",
+      "generated_with": false
+    }
+  },
+  "mcp": {},
+  "providers": {
+    "nrp": {
+      "name": "NRP",
+      "type": "openai-compat",
+      "base_url": "https://ellm.nrp-nautilus.io/v1",
+      "api_key": "<LLM_API_KEY>",
+      "models": [
+        {
+          "id": "kimi",
+          "name": "kimi",
+          "context_window": 262144,
+          "default_max_tokens": 65536
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
 
 ### Kimi CLI
 
