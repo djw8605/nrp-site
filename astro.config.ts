@@ -133,6 +133,7 @@ export default defineConfig({
                     { label: 'General', link: 'documentation/userdocs/running/virtualization-general' },
                     { label: 'Live ubuntu', link: 'documentation/userdocs/running/virtualization-ubuntu' },
                     { label: 'Windows', link: 'documentation/userdocs/running/virtualization-windows' },
+                    { label: 'Talos', link: 'documentation/userdocs/running/virtualization-talos' },
                   ],
                 },
                 {
