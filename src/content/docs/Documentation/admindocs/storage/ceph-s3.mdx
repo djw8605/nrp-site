@@ -7,6 +7,10 @@ description: Description
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 
+:::caution
+Everything written here is for non Multi-site S3, which at this point is true for NRP S3.
+:::
+
 To log into the Ceph control pod:
 
 West Control Pod:
@@ -25,7 +29,7 @@ kubectl exec -it -n rook-central $(kubectl get pods -n rook-central --selector=a
 ```
 
 
-### Adding Users
+## Adding Users
 
 
 Once logged into the Ceph control pod, run the command to add a user:
@@ -49,9 +53,9 @@ The `access_key` and `secret_key` is in the output from the above command.
 
 If the request is from the Matrix support channel, use the user's nickname as `uid`, name as `name` and the email address as `email`.
 
-### Deleting Users' Buckets
+## Deleting Users' Buckets
 
-#### Step 1: Link the Bucket
+### Step 1: Link the Bucket
 
 ```bash
 radosgw-admin bucket link --uid=USER --bucket=BUCKET
@@ -60,19 +64,111 @@ radosgw-admin bucket link --uid=USER --bucket=BUCKET
 - Replace `USER` with the admin’s ID.
 - Replace `BUCKET` with the name of the user’s bucket.
 
-#### Step 2: Delete All Objects in the Bucket
+### Step 2: Delete All Objects in the Bucket
 
 ```bash
-rclone delete S3:bucket-name/ --transfers 1000 --checkers 2000 --disable ListR --progress
+rclone purge S3:bucket-name --checkers-128 --progress
 ```
 
-- `--transfers 1000`: Number of parallel file transfers.
-- `--checkers 2000`: Number of simultaneous checks.
-- `--disable ListR`: **Speeds up deletion** by skipping recursive listing.
+- `--checkers 128`: Number of simultaneous checks.
 - `--progress`: Shows progress.
 
-#### Step 3: Remove the Bucket
+### Step 3: If the bucket failed to be removed (some files are corrupted), exec into the tools pod and run:
 
 ```bash
-rclone rmdir S3:bucket-name --progress
+radosgw-admin bucket rm --bucket=bucket-name --purge-objects --bypass-gc
+```
+
+This command is slower than rclone, but deletes broken stuff too.
+
+## Cleaning up
+
+### List the buckets sorted by number of files:
+
+```bash
+radosgw-admin bucket limit check | jq -r '[.[] | .user_id as $uid | .buckets[] | {user: $uid, bucket_name: .bucket, num_objects: .num_objects}] | sort_by(.num_objects) | .[] | "\(.num_objects) \(.user)/\(.bucket_name)"' | sort -nr
+```
+
+Largest can be purged if need space, empty ones are probably abandoned.
+
+### Listing the buckets that need to be resharded
+
+There's a limit to the automatic reshard, after that needs manual. `WARN` is fine.
+
+```bash
+radosgw-admin bucket limit check | jq '.[] as $user | $user.buckets[] | select(.fill_status != "OK") | {user_id: $user.user_id, bucket: .bucket, fill_status: .fill_status}'
+```
+
+### Finding orphans
+
+#### rgw-orphan-list tool
+
+rgw-orphan-list is [an experimental tool](https://docs.ceph.com/en/latest/man/8/rgw-orphan-list/) that will run the below commands and help finding orphans. It did npt find all orphans for me, thus this guide.
+
+#### Deep exploration of S3 pools
+
+##### Listing bucket instances
+
+This will provide the bucket instances - concrete physical instance of a bucket used for metadata.
+
+```bash
+radosgw-admin metadata list bucket.instance --max-entries=10000 \
+    | jq -r '.keys | .[]' > bucket_instances.txt
+```
+
+##### Getting bucket markers
+
+```bash
+radosgw-admin bucket stats | jq -r '.[] | \
+    "\(.bucket):\(.marker)"' > bucket_markers.txt
+```
+
+##### Listing objects by bucket marker.
+
+This will get objects from the data pool - including all orphan objects, that might be not referenced by index pool. This takes tens of GB, so better put on a linstor volume.
+
+```bash
+rados ls -p nautiluss3.rgw.buckets.data > rados.intermediate
+```
+
+##### Get the numbers of objects by bucket instance
+
+This is slow - it needs to sort millions of lines. Also make sure you have enough space in `/tmp` to sort.
+
+```bash
+awk -F_ '{print $1}' rados.intermediate | sort | \
+    uniq -c | sort -nr > buckets_numbers.txt
+```
+
+##### Finding orphaned bucket instances (by marker) in the rados objects list from data pool
+
+```bash
+comm -23 \
+    <(awk '{print $2}' buckets_numbers.txt | sort) \
+    <(awk -F: '{print $2}' bucket_markers.txt | sort)
+```
+
+##### Do the above and get the number of orphaned objects per orphaned bucket instance
+
+```bash
+comm -23 \
+  <(awk '{print $2}' buckets_numbers.txt | sort) \
+  <(awk -F: '{print $2}' bucket_instances.txt | sort) | \
+  | grep -F -f - buckets_numbers.txt
+```
+
+##### Finding the total number of orphaned files
+
+```bash
+comm -23 \
+  <(awk '{print $2}' buckets_numbers.txt | sort) \
+  <(awk -F: '{print $2}' bucket_instances.txt | sort) | \
+  | grep -F -f - buckets_numbers.txt \
+  | awk '{for(i=1;i<=NF;i++) sum+=$i} END {print sum}'
+```
+
+##### Check the object info directly from the data pool
+
+```bash
+rados -p nautiluss3.rgw.buckets.data stat object_id
 ```
