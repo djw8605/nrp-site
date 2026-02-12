@@ -118,6 +118,8 @@ radosgw-admin metadata list bucket.instance --max-entries=10000 \
 
 ##### Getting bucket markers
 
+This will provide the bucket markers - those seem to be a modified bucket instances, and will be used further instead of instances.
+
 ```bash
 radosgw-admin bucket stats | jq -r '.[] | \
     "\(.bucket):\(.marker)"' > bucket_markers.txt
@@ -131,7 +133,7 @@ This will get objects from the data pool - including all orphan objects, that mi
 rados ls -p nautiluss3.rgw.buckets.data > rados.intermediate
 ```
 
-##### Get the numbers of objects by bucket instance
+##### Get the numbers of objects by bucket marker
 
 This is slow - it needs to sort millions of lines. Also make sure you have enough space in `/tmp` to sort.
 
