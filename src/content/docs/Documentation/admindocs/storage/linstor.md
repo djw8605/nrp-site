@@ -17,7 +17,7 @@ All commands start with "linstor".
 
 Listing broken resources: `linstor r l --faulty`
 
-Listing specific resources: `linstor r l --r <resource-name>`
+Listing specific resources: `linstor r l -r <resource-name>`
 
 Listing resources on a specific node: `linstor r l -n <node-name>`
 
