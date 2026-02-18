@@ -141,21 +141,45 @@
             </div>
         </template>
     </Card>
+
     <Card class="my-8">
     <template #title>Create subgroup</template>
 
     <template #content>
-        <Message severity="info" class="mb-3">
-        Make sure you've selected the correct parent group. Group names are cluster-wide and must be unique.
-        Use descriptive lowercase alphanumeric names with dashes.
-        Avoid names like: kubernetes-ai, kube-testing, llm-group, llm-access, testing-group.
-        If this is a Kubernetes subgroup, fill out PI, Description, Institution, etc.
+
+        <Message severity="info" class="mb-4">
+        <div class="flex flex-col gap-2 text-sm">
+            <div class="font-medium">
+            Create a subgroup under this parent group
+            </div>
+
+            <div>
+            • Make sure you selected the correct parent group.
+            </div>
+
+            <div>
+            • Group names must be <b>unique across the cluster</b>.
+            </div>
+
+            <div>
+            • Use <b>lowercase letters, numbers, and dashes only</b>.
+            </div>
+
+            <div>
+            • Choose clear, descriptive names (avoid generic ones like
+            <code>kubernetes-ai</code>, <code>testing-group</code>, <code>llm-access</code>).
+            </div>
+
+            <div>
+            • For Kubernetes namespaces (subgroups), fill out PI, Description, and Institution after creation.
+            </div>
+        </div>
         </Message>
 
         <InputGroup>
         <FloatLabel variant="on">
             <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
-            <label for="newNamespace">New group (should not exist already)</label>
+            <label for="newNamespace">New subgroup name</label>
         </FloatLabel>
         <Button label="Create" :loading="createNamespaceLoading" @click="createNamespace" />
         </InputGroup>
@@ -177,8 +201,10 @@
             </div>
         </template>
         </Card>
+
     </template>
     </Card>
+
 
     <Card class="my-8">
         <template #title>Group tenants (hardware owners)</template>
