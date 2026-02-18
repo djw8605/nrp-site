@@ -155,7 +155,7 @@ comm -23 \
 ```bash
 comm -23 \
   <(awk '{print $2}' buckets_numbers.txt | sort) \
-  <(awk -F: '{print $2}' bucket_instances.txt | sort) | \
+  <(awk -F: '{print $2}' bucket_instances.txt | sort) \
   | grep -F -f - buckets_numbers.txt
 ```
 
@@ -164,7 +164,7 @@ comm -23 \
 ```bash
 comm -23 \
   <(awk '{print $2}' buckets_numbers.txt | sort) \
-  <(awk -F: '{print $2}' bucket_instances.txt | sort) | \
+  <(awk -F: '{print $2}' bucket_instances.txt | sort) \
   | grep -F -f - buckets_numbers.txt \
   | awk '{for(i=1;i<=NF;i++) sum+=$i} END {print sum}'
 ```
