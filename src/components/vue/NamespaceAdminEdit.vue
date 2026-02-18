@@ -142,28 +142,44 @@
         </template>
     </Card>
     <Card class="my-8">
-        <template #title>Create subgroup</template>
+    <template #title>Create subgroup</template>
+
+    <template #content>
+        <Message severity="info" class="mb-3">
+        Make sure you've selected the correct parent group. Group names are cluster-wide and must be unique.
+        Use descriptive lowercase alphanumeric names with dashes.
+        Avoid names like: kubernetes-ai, kube-testing, llm-group, llm-access, testing-group.
+        If this is a Kubernetes subgroup, fill out PI, Description, Institution, etc.
+        </Message>
+
+        <InputGroup>
+        <FloatLabel variant="on">
+            <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
+            <label for="newNamespace">New group (should not exist already)</label>
+        </FloatLabel>
+        <Button label="Create" :loading="createNamespaceLoading" @click="createNamespace" />
+        </InputGroup>
+
+        <Card>
+        <template #subtitle>Features</template>
         <template #content>
-            <InputGroup>
-                <FloatLabel variant="on">
-                    <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
-                    <label for="newNamespace">New group (should not exist already)</label>
-                </FloatLabel>
-                <Button label="Create" :loading="createNamespaceLoading" @click="createNamespace" />
-            </InputGroup>
-            <Card>
-                <template #subtitle>Features</template>
-                <template #content>
-                    <div class="flex gap-2">
-                        <span  v-for="feature of features" :key="feature.key">
-                            <Checkbox v-model="selectedFeatures" :inputId="feature.key" name="feature" :value="feature.key" :disabled="feature.disabled" />
-                            <label class="m-1" :for="feature.key"> {{ feature.name }} </label>
-                        </span>
-                    </div>
-                </template>
-            </Card>
+            <div class="flex gap-2">
+            <span v-for="feature of features" :key="feature.key">
+                <Checkbox
+                v-model="selectedFeatures"
+                :inputId="feature.key"
+                name="feature"
+                :value="feature.key"
+                :disabled="feature.disabled"
+                />
+                <label class="m-1" :for="feature.key"> {{ feature.name }} </label>
+            </span>
+            </div>
         </template>
+        </Card>
+    </template>
     </Card>
+
     <Card class="my-8">
         <template #title>Group tenants (hardware owners)</template>
         <template #content>
