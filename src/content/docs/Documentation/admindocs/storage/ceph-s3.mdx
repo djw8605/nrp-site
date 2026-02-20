@@ -121,8 +121,7 @@ radosgw-admin metadata list bucket.instance --max-entries=10000 \
 This will provide the bucket markers - those seem to be a modified bucket instances, and will be used further instead of instances.
 
 ```bash
-radosgw-admin bucket stats | jq -r '.[] | \
-    "\(.bucket):\(.marker)"' > bucket_markers.txt
+radosgw-admin bucket stats | jq -r '.[] | "\(.bucket):\(.marker)"' > bucket_markers.txt
 ```
 
 ##### Listing objects by bucket marker.
