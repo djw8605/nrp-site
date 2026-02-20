@@ -12,6 +12,8 @@ This page contains administrative documentation intended for cluster administrat
 
 Check the [versions skew policy](https://kubernetes.io/releases/version-skew-policy/)
 
+Also a good reading on [how to find the changes and how to upgrade](https://www.tauceti.blog/posts/kubernetes-upgrade-notes-1.32-1.33)
+
 1. Scale down admiralty deployments and delete all virtual nodes - those prevent the upgrades
 2. Follow the [upgrade guide](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/) for master.
    1. During the upgrade it's better to pre-pull the new images with `kubeadm config images pull`
