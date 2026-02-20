@@ -2,179 +2,110 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'NRP Training Sessions - February 2026',
+  title: 'NRP Training Sessions',
 };
 ---
 
 <Layout metadata={metadata}>
-  <!-- New February 2026 Training Section -->
+  <!-- Past Training Section - February 2026 -->
   <section class="py-16 bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-800 dark:to-blue-900 text-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
       <div class="mb-4">
-        <span class="inline-block bg-yellow-400 text-blue-900 font-bold px-4 py-1 rounded-full text-sm mb-4">NEW TRAINING ANNOUNCED</span>
+        <span class="inline-block bg-slate-400 text-blue-900 font-bold px-4 py-1 rounded-full text-sm mb-4">COMPLETED - FEBRUARY 2026</span>
       </div>
       <h1 class="text-4xl md:text-5xl font-extrabold mb-6">NRP Training - February 2026</h1>
-      
-      <p class="text-lg text-blue-100 mb-8">Two <strong>identical copies</strong> of comprehensive training sessions (Set A & Set B). You only need to attend one set! Join us for hands-on learning via Zoom (link provided upon registration) with integrated NRP JupyterHub/Coder access.</p>
-      
-      <!-- Registration Form Link -->
-      <div class="mt-8 mb-4">
-        <a href="https://nextcloud.nrp-nautilus.io/apps/forms/s/k84NGNFLwWMg7N2BPSYn3Qkk" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           class="inline-block bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition transform hover:scale-105">
-          Register Now - Training Registration Form
-        </a>
-      </div
-         <div class="mt-8 mb-4">
-        <a href="https://github.com/nrp-nautilus/NRP-Winter2026-Training/tree/main" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           class="inline-block bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition transform hover:scale-105">
-          The training Materials
-        </a>
-        <div class="mb-4">
-        <span class="inline-block bg-yellow-400 text-blue-900 font-bold px-4 py-1 rounded-full text-sm mb-4">VIDEOS WILL BE UPLOADED SOON</span>
-      </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Important Notice - Moved to Top -->
-  <section class="py-8 bg-yellow-50 dark:bg-yellow-900/20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <div class="bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600 rounded-lg p-6 mb-8">
-        <h3 class="text-2xl font-bold text-yellow-800 dark:text-yellow-200 mb-4">⚠️ Important Information - Please Read Before Attending</h3>
-        <div class="space-y-4 text-yellow-900 dark:text-yellow-100">
-          <div class="bg-yellow-100 dark:bg-yellow-800/30 rounded p-4 border-l-4 border-yellow-600">
-            <p class="font-bold text-lg mb-2">📝 Registration is Required</p>
-            <p>You <strong>must register</strong> using the registration form above before attending. While Zoom links are provided, registration helps us prepare resources, track attendance, and ensure you receive all necessary information.</p>
-          </div>
-          
-          <div class="bg-yellow-100 dark:bg-yellow-800/30 rounded p-4 border-l-4 border-yellow-600">
-            <p class="font-bold text-lg mb-2">🔐 NRP Access in Authentik is Required</p>
-            <p><strong>If you are not already registered in Authentik, you will NOT be able to fully follow along with the training.</strong> The hands-on exercises require active NRP access. Please set up your NRP access and Authentik account <strong>before the training sessions begin</strong> to participate in all activities.</p>
-          </div>
-          
-          <div class="bg-yellow-100 dark:bg-yellow-800/30 rounded p-4 border-l-4 border-yellow-600">
-            <p class="font-bold text-lg mb-2">👤 Namespace Admin Status for Intermediate Track</p>
-            <p><strong>If you are not a namespace admin, you will NOT be able to reproduce deploying multi-tenant JupyterHub environments within your namespace</strong> during the Intermediate Track session. The "Deploying JupyterHub" topic requires namespace admin privileges. You can still attend and learn, but hands-on practice will require admin access.</p>
-          </div>
-          
-          <div class="bg-yellow-100 dark:bg-yellow-800/30 rounded p-4 border-l-4 border-yellow-600">
-            <p class="font-bold text-lg mb-2">🌍 Eligibility Requirements</p>
-            <p><strong>NRP access is available to:</strong></p>
-            <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
-              <li>Users from <strong>US academic institutions</strong></li>
-              <li>Users collaborating with US institutions on joint projects</li>
-            </ul>
-            <p class="mt-2"><strong>If you are from a non-US institution or industry (non-academic),</strong> please contact us to discuss your eligibility before registering.</p>
-          </div>
+      <p class="text-lg text-blue-100 mb-8">Comprehensive training sessions were held in February 2026. Thank you to all who participated!</p>
+
+      <!-- Mailing List for Future Trainings -->
+      <div class="mt-4 mb-8">
+        <a href="https://nextcloud.nrp-nautilus.io/apps/forms/s/2MHAeoDA89We5YeE9zQj28Do"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-block bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg transition transform hover:scale-105">
+          📬 Join Mailing List for Future Trainings
+        </a>
+      </div>
+
+      <!-- Recordings and Materials Links -->
+      <div class="mt-8 mb-4">
+        <div class="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto">
+          <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-block bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 px-6 rounded-lg text-lg shadow-lg transition transform hover:scale-105">
+            📺 Watch Recordings
+          </a>
+          <a href="https://github.com/nrp-nautilus/NRP-Winter2026-Training/tree/main"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-block bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold py-4 px-6 rounded-lg text-lg shadow-lg transition transform hover:scale-105">
+            📂 Training Materials
+          </a>
         </div>
       </div>
+
+      <!-- Future Training Notice -->
+      <div class="mt-8 p-4 bg-blue-700/50 rounded-lg max-w-2xl mx-auto">
+        <p class="text-blue-100">
+          <strong>Future Trainings:</strong> Additional training sessions will be posted on this page as they are scheduled. Stay tuned for upcoming opportunities to learn about the National Research Platform!
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- Training Schedule Section -->
+  <!-- Training Schedule Section (Now showing completed dates) -->
   <section class="py-12 bg-white dark:bg-slate-900">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
-      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-8 text-center">Training Schedule</h2>
-      
+      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-8 text-center">February 2026 Training Schedule (Completed)</h2>
+
         <div class="grid md:grid-cols-2 gap-8 mb-8">
           <!-- Set A -->
-          <div class="bg-blue-50 dark:bg-slate-800 rounded-lg p-6 border-2 border-blue-300 dark:border-blue-600">
-            <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Set A</h3>
+          <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-6 border-2 border-slate-300 dark:border-slate-600 opacity-75">
+            <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-4">Set A (Completed)</h3>
             <div class="space-y-4">
               <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
-                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Beginner Track</div>
+                <div class="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Beginner Track</div>
                 <div class="text-slate-700 dark:text-slate-200">
                   <p class="font-semibold">📅 Wednesday, February 11, 2026</p>
-                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM Pacific Time</p>
                   <p class="text-sm mt-2">3-hour Zoom session with hands-on exercises</p>
-                  <div class="mt-3 p-3 bg-blue-50 dark:bg-slate-600 rounded border border-blue-200 dark:border-blue-700">
-                    <p class="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Zoom Link:</p>
-                    <a href="https://ucsd.zoom.us/j/95991287529" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all text-sm">https://ucsd.zoom.us/j/95991287529</a>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Meeting ID: 959 9128 7529</p>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                      <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=NRP+Training+-+Beginner+Track&dates=20260211T190000Z/20260211T220000Z&details=National+Research+Platform+Training+Session+-+Beginner+Track%0A%0AZoom+Link%3A+https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529%0AMeeting+ID%3A+959+9128+7529&location=https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">📅 Add to Google Calendar</a>
-                      <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260211T190000Z%0ADTEND:20260211T220000Z%0ASUMMARY:NRP Training - Beginner Track%0ADESCRIPTION:National Research Platform Training Session - Beginner Track%5Cn%5CnZoom Link: https://ucsd.zoom.us/j/95991287529%5CnMeeting ID: 959 9128 7529%0ALOCATION:https://ucsd.zoom.us/j/95991287529%0AEND:VEVENT%0AEND:VCALENDAR" download="nrp-training-beginner-feb11.ics" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">📅 Download Invite</a>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
-                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Intermediate Track</div>
+                <div class="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Intermediate Track</div>
                 <div class="text-slate-700 dark:text-slate-200">
                   <p class="font-semibold">📅 Thursday, February 12, 2026</p>
-                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM Pacific Time</p>
                   <p class="text-sm mt-2">3-hour Zoom session with advanced topics</p>
-                  <div class="mt-3 p-3 bg-blue-50 dark:bg-slate-600 rounded border border-blue-200 dark:border-blue-700">
-                    <p class="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Zoom Link:</p>
-                    <a href="https://ucsd.zoom.us/j/95991287529" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all text-sm">https://ucsd.zoom.us/j/95991287529</a>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Meeting ID: 959 9128 7529</p>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                      <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=NRP+Training+-+Intermediate+Track&dates=20260212T190000Z/20260212T220000Z&details=National+Research+Platform+Training+Session+-+Intermediate+Track%0A%0AZoom+Link%3A+https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529%0AMeeting+ID%3A+959+9128+7529&location=https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">📅 Add to Google Calendar</a>
-                      <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260212T190000Z%0ADTEND:20260212T220000Z%0ASUMMARY:NRP Training - Intermediate Track%0ADESCRIPTION:National Research Platform Training Session - Intermediate Track%5Cn%5CnZoom Link: https://ucsd.zoom.us/j/95991287529%5CnMeeting ID: 959 9128 7529%0ALOCATION:https://ucsd.zoom.us/j/95991287529%0AEND:VEVENT%0AEND:VCALENDAR" download="nrp-training-intermediate-feb12.ics" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">📅 Download Invite</a>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Set B -->
-          <div class="bg-blue-50 dark:bg-slate-800 rounded-lg p-6 border-2 border-blue-300 dark:border-blue-600">
-            <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-4">Set B</h3>
+          <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-6 border-2 border-slate-300 dark:border-slate-600 opacity-75">
+            <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-4">Set B (Completed)</h3>
             <div class="space-y-4">
               <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
-                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Beginner Track</div>
+                <div class="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Beginner Track</div>
                 <div class="text-slate-700 dark:text-slate-200">
                   <p class="font-semibold">📅 Wednesday, February 18, 2026</p>
-                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM Pacific Time</p>
                   <p class="text-sm mt-2">3-hour Zoom session with hands-on exercises</p>
-                  <div class="mt-3 p-3 bg-blue-50 dark:bg-slate-600 rounded border border-blue-200 dark:border-blue-700">
-                    <p class="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Zoom Link:</p>
-                    <a href="https://ucsd.zoom.us/j/95991287529" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all text-sm">https://ucsd.zoom.us/j/95991287529</a>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Meeting ID: 959 9128 7529</p>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                      <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=NRP+Training+-+Beginner+Track&dates=20260218T190000Z/20260218T220000Z&details=National+Research+Platform+Training+Session+-+Beginner+Track%0A%0AZoom+Link%3A+https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529%0AMeeting+ID%3A+959+9128+7529&location=https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">📅 Add to Google Calendar</a>
-                      <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260218T190000Z%0ADTEND:20260218T220000Z%0ASUMMARY:NRP Training - Beginner Track%0ADESCRIPTION:National Research Platform Training Session - Beginner Track%5Cn%5CnZoom Link: https://ucsd.zoom.us/j/95991287529%5CnMeeting ID: 959 9128 7529%0ALOCATION:https://ucsd.zoom.us/j/95991287529%0AEND:VEVENT%0AEND:VCALENDAR" download="nrp-training-beginner-feb18.ics" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">📅 Download Invite</a>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div class="bg-white dark:bg-slate-700 rounded-lg p-4">
-                <div class="font-bold text-lg text-blue-700 dark:text-blue-300 mb-2">Intermediate Track</div>
+                <div class="font-bold text-lg text-slate-700 dark:text-slate-300 mb-2">Intermediate Track</div>
                 <div class="text-slate-700 dark:text-slate-200">
                   <p class="font-semibold">📅 Friday, February 20, 2026</p>
-                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM <span class="text-blue-600 dark:text-blue-400 font-bold underline">Pacific Time</span></p>
+                  <p class="font-semibold">⏰ 11:00 AM - 2:00 PM Pacific Time</p>
                   <p class="text-sm mt-2">3-hour Zoom session with advanced topics</p>
-                  <div class="mt-3 p-3 bg-blue-50 dark:bg-slate-600 rounded border border-blue-200 dark:border-blue-700">
-                    <p class="text-sm font-semibold text-blue-800 dark:text-blue-200 mb-1">Zoom Link:</p>
-                    <a href="https://ucsd.zoom.us/j/95991287529" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all text-sm">https://ucsd.zoom.us/j/95991287529</a>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Meeting ID: 959 9128 7529</p>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                      <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=NRP+Training+-+Intermediate+Track&dates=20260220T190000Z/20260220T220000Z&details=National+Research+Platform+Training+Session+-+Intermediate+Track%0A%0AZoom+Link%3A+https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529%0AMeeting+ID%3A+959+9128+7529&location=https%3A%2F%2Fucsd.zoom.us%2Fj%2F95991287529" target="_blank" rel="noopener noreferrer" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">📅 Add to Google Calendar</a>
-                      <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260220T190000Z%0ADTEND:20260220T220000Z%0ASUMMARY:NRP Training - Intermediate Track%0ADESCRIPTION:National Research Platform Training Session - Intermediate Track%5Cn%5CnZoom Link: https://ucsd.zoom.us/j/95991287529%5CnMeeting ID: 959 9128 7529%0ALOCATION:https://ucsd.zoom.us/j/95991287529%0AEND:VEVENT%0AEND:VCALENDAR" download="nrp-training-intermediate-feb20.ics" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">📅 Download Invite</a>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-      <!-- Registration Form Link -->
-      <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 dark:from-yellow-500 dark:to-yellow-600 rounded-lg p-6 mb-8 text-center shadow-lg">
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-900 mb-4">Ready to Register?</h3>
-        <a href="https://nextcloud.nrp-nautilus.io/apps/forms/s/k84NGNFLwWMg7N2BPSYn3Qkk" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           class="inline-block bg-blue-900 hover:bg-blue-800 text-white font-bold py-4 px-8 rounded-lg text-xl shadow-lg transition transform hover:scale-105">
-          Complete Registration Form
-        </a>
-        <p class="text-sm text-gray-800 dark:text-gray-900 mt-4">Click the button above to access the training registration form</p>
-      </div>
 
       <!-- Training Details -->
       <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-6 mb-8">
@@ -205,22 +136,8 @@ const metadata = {
         </div>
         <div class="mt-4 pt-4 border-t border-slate-300 dark:border-slate-600">
           <p class="text-slate-700 dark:text-slate-300 mb-4">
-            <strong>Format:</strong> Each session is 3 hours via Zoom with integrated NRP JupyterHub/Coder access for hands-on exercises.
+            <strong>Format:</strong> Each session was 3 hours via Zoom with integrated NRP JupyterHub/Coder access for hands-on exercises.
           </p>
-          <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-400 dark:border-blue-600 rounded-lg p-4">
-            <p class="text-slate-800 dark:text-slate-200 font-bold text-lg mb-2">
-              ⚠️ Prerequisites:
-            </p>
-            <p class="text-slate-700 dark:text-slate-300">
-              <strong>Institutional account access to NRP</strong> is required. If you don't have access yet, please visit our getting started guide:
-            </p>
-            <a href="https://nrp.ai/documentation/userdocs/start/getting-started/" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="inline-block mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
-              📖 Get Started with NRP Access
-            </a>
-          </div>
         </div>
       </div>
     </div>
@@ -389,7 +306,7 @@ const metadata = {
           </tbody>
         </table>
       </div>
-      
+
       <!-- Resources Section -->
       <div class="mt-8 p-6 bg-blue-50 dark:bg-slate-800 rounded-lg">
         <h3 class="text-2xl font-bold text-blue-800 dark:text-blue-200 mb-6 text-center">Training Materials Available</h3>
@@ -397,8 +314,8 @@ const metadata = {
           <div class="text-center">
             <h4 class="text-xl font-bold mb-2">Video Recordings</h4>
             <p class="text-sm mb-4">Complete session recordings with timestamps and chapters</p>
-            <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y" 
-               class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition" 
+            <a href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohB4jE8VRfyS0xjzqgUAFx-Y"
+               class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition"
                target="_blank" rel="noopener">
               Watch All Sessions
             </a>
@@ -406,38 +323,13 @@ const metadata = {
           <div class="text-center">
             <h4 class="text-xl font-bold mb-2">Code & Slides</h4>
             <p class="text-sm mb-4">All code examples, slides, and materials</p>
-            <a href="https://github.com/nrp-nautilus/fall25training" 
-               class="inline-block bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg text-lg transition" 
+            <a href="https://github.com/nrp-nautilus/fall25training"
+               class="inline-block bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg text-lg transition"
                target="_blank" rel="noopener">
               View on GitHub
             </a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Training Survey Section -->
-  <section class="py-12 bg-blue-50 dark:bg-slate-800">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-3xl font-bold text-blue-800 dark:text-blue-200 mb-6">Training Feedback</h2>
-      <p class="text-lg text-blue-700 dark:text-blue-100 mb-8">
-        Your feedback helps us improve future training sessions! Whether you attended one session or all of them, 
-        we'd love to hear about your experience, what you learned, and suggestions for improvement.
-      </p>
-      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
-        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Share Your Experience</h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Help us understand what worked well and what we can improve for future training series.
-        </p>
-        <a href="https://forms.gle/1RYdJ75A64MLwcyP6" 
-           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg transition" 
-           target="_blank" rel="noopener">
-          Take Training Survey
-        </a>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
-          Survey takes approximately 5-10 minutes to complete
-        </p>
       </div>
     </div>
   </section>

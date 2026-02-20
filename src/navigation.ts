@@ -21,6 +21,10 @@ export const headerData = {
           text: 'Network requirements',
           href: getPermalink('/documentation/admindocs/participating/network'),
         },
+        {
+          text: 'LightScope Deployment',
+          href: getPermalink('/lightscope'),
+        },
       ],
     },
     {
