@@ -27,9 +27,14 @@ Do **not** use `kubectl create namespace`.
 
 ## Delete a Namespace
 
-1. Move any Authentik group children.  
-2. Remove the Authentik group.  
-3. Delete the namespace.
-4. Remove any exceptions in the portal configuration and any Gatekeeper exceptions. 
+1. If it has children (subgroups), move them to parent in **Authentik**.
+2. Delete from the website (NOT AUTHENTIK).
+3. Remove any exceptions in the portal configuration and any Gatekeeper exceptions. 
 
-Note: If you edit a group, the Authentik form populates for everything but parent, so if you edit and save, you have to re-enter the parent, otherwise the group gets orphaned.
+:::danger
+The website uses a cached version of authentik groups. Changed in Authentik directly will have users see old cache until portal refreshes cache.
+:::
+
+:::caution
+There's an Authentik bug. If you edit a group and save, you have to re-enter the parent, otherwise the group gets orphaned. 
+:::
