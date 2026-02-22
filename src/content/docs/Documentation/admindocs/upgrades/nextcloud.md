@@ -1,5 +1,5 @@
 ---
-title: Nextcloud
+title: Nextcloud / LanguageTool
 description: Description
 ---
 
@@ -56,4 +56,10 @@ Because of database initialization, the startup for Nextcloud may take some time
 
 After the upgrade, you need to go to [Settings Overview](https://nextcloud.nrp-nautilus.io/settings/admin/overview) page and run the specified [long running steps](https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html#long-running-migration-steps) manually (include `php occ db:convert-mysql-charset`, `php occ db:convert-filecache-bigint`, `php occ db:add-missing-columns`, `php occ db:add-missing-indices`, `php occ db:add-missing-primary-keys`), and finally run `php occ maintenance:repair --include-expensive` (regardless of whether this is required or not).
 
-Collabora and LanguageTool should only require a restart to upgrade.
+#### Upgrading LanguageTool
+
+Check if there are any breaking changes in the [GitHub README](https://github.com/meyayl/docker-languagetool) of the [Docker image](https://hub.docker.com/r/meyay/languagetool), and update the tag of the image after updating relevant details. Normally, just changing the tag should work.
+
+#### Upgrading Collabora
+
+Collabora should only require a restart to upgrade.
