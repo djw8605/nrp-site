@@ -1,0 +1,318 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from '~/components/ui/Button.astro';
+
+export interface AnnouncementItem {
+  id: string;
+  category?: string;
+  title: string;
+  tagline?: string;
+  dateLocation?: string;
+  ctaLabel: string;
+  ctaUrl: string;
+  secondaryCtaLabel?: string;
+  secondaryCtaUrl?: string;
+  /** @deprecated Use `tagline` instead */
+  message?: string;
+  icon?: string;
+}
+
+export interface Props {
+  announcements?: AnnouncementItem[];
+  autoRotate?: boolean;
+  intervalMs?: number;
+  dismissKey?: string;
+  ariaLabel?: string;
+  showDots?: boolean;
+}
+
+const {
+  announcements = [],
+  autoRotate = true,
+  intervalMs = 7000,
+  dismissKey = 'nrp:announcement-bar-dismissed',
+  ariaLabel = 'Site announcements',
+  showDots = false,
+} = Astro.props;
+
+const visibleAnnouncements = announcements.filter((item) => item?.id && item?.title && item?.ctaLabel);
+const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
+---
+
+{
+  visibleAnnouncements.length > 0 && (
+    <section
+      class="w-full"
+      role="region"
+      aria-label={ariaLabel}
+      data-announcement-bar
+      data-auto-rotate={String(autoRotate)}
+      data-interval-ms={String(intervalMs)}
+      data-dismiss-key={dismissKey}
+    >
+      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
+        <div
+          class="relative overflow-hidden rounded-lg"
+          style="background:rgba(25,50,100,0.90);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.16);box-shadow:0 10px 28px rgba(0,0,0,0.40)"
+        >
+          {/* Brand accent edge */}
+          <div class="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
+          <div class="flex items-center gap-2 px-5 py-4 sm:py-5">
+            {/* Prev chevron (inline, subtle) */}
+            {hasMultipleAnnouncements && (
+              <button
+                type="button"
+                class="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded text-white/40 transition hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                aria-label="Previous announcement"
+                data-announcement-prev
+              >
+                <Icon name="tabler:chevron-left" class="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
+
+            {/* Slides */}
+            <div class="min-w-0 flex-1" aria-live="polite" aria-atomic="true">
+              {visibleAnnouncements.map((announcement, index) => (
+                <article
+                  class:list={['announcement-item', { hidden: index !== 0 }]}
+                  data-announcement-item
+                  data-announcement-id={announcement.id}
+                  data-index={index}
+                  aria-hidden={index !== 0 ? 'true' : 'false'}
+                >
+                  <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    {/* Left: category + title + tagline + date */}
+                    <div class="min-w-0 flex-1">
+                      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        {/* Category pill */}
+                        {announcement.category && (
+                          <span class="inline-flex shrink-0 items-center rounded-full bg-primary/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/95 ring-1 ring-primary/60">
+                            {announcement.category}
+                          </span>
+                        )}
+                        {/* Title */}
+                        <span class="text-base font-bold leading-snug text-white sm:text-[17px]">
+                          {announcement.title}
+                        </span>
+                        {/* Date/location metadata */}
+                        {announcement.dateLocation && (
+                          <span class="text-xs font-medium text-white/45">{announcement.dateLocation}</span>
+                        )}
+                      </div>
+                      {/* Tagline (falls back to legacy message) */}
+                      {(announcement.tagline || announcement.message) && (
+                        <p class="mt-1 text-[13px] leading-snug text-white/[.50] line-clamp-1 sm:line-clamp-2">
+                          {announcement.tagline || announcement.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Right: CTAs */}
+                    <div class="flex shrink-0 items-center gap-3">
+                      {announcement.secondaryCtaLabel && announcement.secondaryCtaUrl && (
+                        <a
+                          href={announcement.secondaryCtaUrl}
+                          class="hidden text-xs font-medium text-white/70 underline underline-offset-2 transition hover:text-white sm:inline"
+                        >
+                          {announcement.secondaryCtaLabel}
+                        </a>
+                      )}
+                      <Button
+                        variant="primary"
+                        text={announcement.ctaLabel}
+                        href={announcement.ctaUrl}
+                        class="min-h-[44px] whitespace-nowrap !rounded-full !px-7 !py-3 !text-[15px] !font-semibold !shadow-lg hover:!-translate-y-0.5 !transition-transform"
+                      />
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Next chevron (inline, subtle) */}
+            {hasMultipleAnnouncements && (
+              <button
+                type="button"
+                class="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded text-white/40 transition hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                aria-label="Next announcement"
+                data-announcement-next
+              >
+                <Icon name="tabler:chevron-right" class="h-4 w-4" aria-hidden="true" />
+              </button>
+            )}
+
+            {/* Dismiss */}
+            <button
+              type="button"
+              class="shrink-0 ml-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white/50 transition hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label="Dismiss announcement"
+              data-announcement-dismiss
+            >
+              <Icon name="tabler:x" class="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </div>
+
+          {/* Optional dots */}
+          {showDots && hasMultipleAnnouncements && (
+            <div class="flex items-center justify-center gap-1.5 pb-2">
+              {visibleAnnouncements.map((_, index) => (
+                <button
+                  type="button"
+                  class:list={[
+                    'h-1.5 w-1.5 rounded-full transition',
+                    index === 0 ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50',
+                  ]}
+                  data-announcement-dot={index}
+                  aria-label={`Show announcement ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  const announcementBars = document.querySelectorAll('[data-announcement-bar]');
+
+  for (const node of announcementBars) {
+    if (!(node instanceof HTMLElement)) continue;
+
+    const root = node;
+    const itemNodes = Array.from(root.querySelectorAll('[data-announcement-item]')).filter(
+      (item) => item instanceof HTMLElement
+    );
+
+    if (itemNodes.length === 0) continue;
+
+    const items = itemNodes;
+    const previousButton = root.querySelector('[data-announcement-prev]');
+    const nextButton = root.querySelector('[data-announcement-next]');
+    const dismissButton = root.querySelector('[data-announcement-dismiss]');
+    const dotButtons = Array.from(root.querySelectorAll('[data-announcement-dot]')).filter(
+      (el) => el instanceof HTMLElement
+    );
+    const dismissStorageKey = root.dataset.dismissKey || 'nrp:announcement-bar-dismissed';
+    const intervalMs = Number(root.dataset.intervalMs || '7000');
+    const shouldAttemptAutoRotate = root.dataset.autoRotate === 'true';
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let activeIndex = 0;
+    let rotationTimer: ReturnType<typeof setInterval> | null = null;
+    let userInteracted = false;
+
+    const updateDots = () => {
+      dotButtons.forEach((dot, i) => {
+        const isActive = i === activeIndex;
+        dot.classList.toggle('bg-white/80', isActive);
+        dot.classList.toggle('bg-white/30', !isActive);
+      });
+    };
+
+    const showAnnouncement = (index: number) => {
+      const validIndex = (index + items.length) % items.length;
+      items.forEach((item, itemIndex) => {
+        const isVisible = itemIndex === validIndex;
+        item.classList.toggle('hidden', !isVisible);
+        item.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+      });
+      activeIndex = validIndex;
+      updateDots();
+    };
+
+    const stopRotation = () => {
+      if (rotationTimer !== null) {
+        clearInterval(rotationTimer);
+        rotationTimer = null;
+      }
+    };
+
+    const startRotation = () => {
+      if (!shouldAttemptAutoRotate || reducedMotion.matches || items.length <= 1 || userInteracted) {
+        return;
+      }
+      stopRotation();
+      rotationTimer = setInterval(() => {
+        showAnnouncement(activeIndex + 1);
+      }, intervalMs);
+    };
+
+    // Dismiss persistence
+    try {
+      const isDismissed = window.localStorage.getItem(dismissStorageKey) === '1';
+      if (isDismissed) {
+        root.classList.add('hidden');
+        continue;
+      }
+    } catch {
+      // no-op when localStorage is unavailable
+    }
+
+    showAnnouncement(0);
+    startRotation();
+
+    // Arrow navigation — stop auto-rotation permanently after user click
+    previousButton?.addEventListener('click', () => {
+      userInteracted = true;
+      stopRotation();
+      showAnnouncement(activeIndex - 1);
+    });
+
+    nextButton?.addEventListener('click', () => {
+      userInteracted = true;
+      stopRotation();
+      showAnnouncement(activeIndex + 1);
+    });
+
+    // Dot navigation
+    dotButtons.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        userInteracted = true;
+        stopRotation();
+        showAnnouncement(index);
+      });
+    });
+
+    // Dismiss
+    dismissButton?.addEventListener('click', () => {
+      stopRotation();
+      root.classList.add('hidden');
+      try {
+        window.localStorage.setItem(dismissStorageKey, '1');
+      } catch {
+        // no-op when localStorage is unavailable
+      }
+    });
+
+    // Pause on hover/focus (only affects auto-rotation, not post-interaction)
+    root.addEventListener('mouseenter', stopRotation);
+    root.addEventListener('mouseleave', () => { if (!userInteracted) startRotation(); });
+    root.addEventListener('focusin', stopRotation);
+    root.addEventListener('focusout', (event) => {
+      const focusTarget = (event as FocusEvent).relatedTarget;
+      if (!(focusTarget instanceof Node) || !root.contains(focusTarget)) {
+        if (!userInteracted) startRotation();
+      }
+    });
+
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopRotation();
+      } else if (!userInteracted) {
+        startRotation();
+      }
+    });
+
+    // Respect prefers-reduced-motion changes
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        stopRotation();
+      } else if (!userInteracted) {
+        startRotation();
+      }
+    });
+  }
+</script>

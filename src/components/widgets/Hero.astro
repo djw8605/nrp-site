@@ -41,10 +41,8 @@ const {
   <div class="pointer-events-none md:pt-[96px] pt-0"></div>
     {
       alert && (
-        <div class="relative bg-blue-50 dark:bg-slate-800 mx-auto w-full">
-          <p class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-md text-center font-medium"
-            set:html={alert} 
-          />
+        <div class="relative  mx-auto w-full">
+          <div set:html={alert}></div>
 
         </div>
       )
