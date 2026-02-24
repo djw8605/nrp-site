@@ -13,31 +13,122 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current time IN PACIFIC timezone, not browser local time
-    const nowInPacific = new Date(new Date().toLocaleString('en-US', { timeZone: pacificTimezone }));
+    // Get current hour in Pacific timezone using Intl
+    const getPacificNow = () => {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: pacificTimezone,
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        weekday: 'short',
+        hour12: false,
+      });
 
-    // Get day of week in Pacific (0 = Sunday)
-    const dayOfWeek = nowInPacific.getDay();
-    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+      const parts = {};
+      formatter.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
+
+      // Create a date in Pacific timezone
+      // We need to convert Pacific time to UTC
+      // Pacific is UTC-8 (standard) or UTC-7 (daylight)
+      const pacificHour = parseInt(parts.hour);
+      const pacificMinute = parseInt(parts.minute);
+
+      // Get UTC offset for Pacific
+      const getPacificOffset = () => {
+        const jan = new Date(new Date().getFullYear(), 0, 1);
+        const jul = new Date(new Date().getFullYear(), 6, 1);
+        const janOffset = -jan.getTimezoneOffset() / 60;
+        const julOffset = -jul.getTimezoneOffset() / 60;
+
+        // If Pacific is observing daylight saving, use July offset
+        if (pacificHour >= 3 || (pacificHour >= 2 && new Date().getMonth() >= 3 && new Date().getMonth() <= 10)) {
+          return -7;
+        }
+        return -8;
+      };
+
+      // We can't easily get Pacific offset in browser, so let's try both and see which makes sense
+      // Actually, let's just work with what we have: we know what Pacific time is "now"
+      // The parts object tells us the Pacific time right now
+
+      return {
+        year: parseInt(parts.year),
+        month: parseInt(parts.month),
+        day: parseInt(parts.day),
+        hour: pacificHour,
+        minute: parseInt(parts.minute),
+        weekday: parts.weekday
+      };
+    };
+
+    const pacificNow = getPacificNow();
+
+    // Calculate days until Tuesday
+    const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+    const dayOfWeek = daysMap[pacificNow.weekday];
+    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
     // If today is Tuesday and past 10:30 AM PT, go to next Tuesday
-    let nextTuesday = new Date(nowInPacific);
-    if (dayOfWeek === 2 && (nowInPacific.getHours() > 10 || (nowInPacific.getHours() === 10 && nowInPacific.getMinutes() >= 30))) {
-      nextTuesday.setDate(nowInPacific.getDate() + 14);
-    } else {
-      nextTuesday.setDate(nowInPacific.getDate() + daysUntilTuesday);
+    if (dayOfWeek === 2 && (pacificNow.hour > 10 || (pacificNow.hour === 10 && pacificNow.minute >= 30))) {
+      daysUntilTuesday = 14;
     }
 
-    // Set to 10 AM Pacific time
-    nextTuesday.setHours(10, 0, 0, 0);
+    // Create date for next Tuesday at 10 AM
+    // We'll create it by adding days to current Pacific date
+    let nextTuesday = new Date();
+    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
+    nextTuesday.setHours(10, 0, 0, 0); // 10:00 AM - this is in browser local time
 
-    // If still in the past, add 2 weeks
-    if (nextTuesday.getTime() <= nowInPacific.getTime() - 30 * 60 * 1000) {
-      nextTuesday.setDate(nextTuesday.getDate() + 14);
-    }
+    // Now adjust for timezone difference
+    // We need to add/subtract hours to make it 10 AM Pacific
+    // Since browser uses local time and we're displaying in Pacific, we need to offset
 
-    // Format for display in Pacific timezone
+    // Get the browser's timezone offset from UTC
+    const browserOffset = -new Date().getTimezoneOffset() / 60; // e.g., -5 for Eastern
+
+    // Pacific standard offset is -8, daylight is -7
+    // Let's compute what UTC time is 10 AM Pacific
+    // 10 AM Pacific + Pacific offset = UTC
+    // But we don't know if it's standard or daylight time
+
+    // Simpler approach: compare what the formatter says vs what we set
     const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: pacificTimezone,
+      hour: 'numeric',
+      hour12: false,
+    });
+
+    // Check what hour the current date shows in Pacific
+    const testFormatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: pacificTimezone,
+      hour: 'numeric',
+      hour12: false,
+    });
+
+    // Get current Pacific hour
+    const getCurrentPacificHour = () => {
+      const now = new Date();
+      const pacificTime = new Date(now.toLocaleString('en-US', { timeZone: pacificTimezone }));
+      const diff = (now.getTime() - pacificTime.getTime()) / 3600000;
+      return Math.round(now.getHours() - diff);
+    };
+
+    const pacificHour = getCurrentPacificHour();
+
+    // Calculate offset: browser hour - Pacific hour = offset needed
+    const currentBrowserHour = new Date().getHours();
+    const offset = currentBrowserHour - pacificHour;
+
+    // Apply offset to get 10 AM in Pacific
+    const targetHour = 10 + offset;
+
+    nextTuesday.setHours(targetHour, 0, 0, 0);
+
+    // Format for display
+    const displayFormatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
@@ -48,7 +139,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       timeZoneName: 'short',
     });
 
-    targetElement.textContent = formatter.format(nextTuesday);
+    targetElement.textContent = displayFormatter.format(nextTuesday);
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
