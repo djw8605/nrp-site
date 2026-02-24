@@ -1,0 +1,220 @@
+---
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'LightScope - Network Threat Intelligence for NRP Contributors',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Widget ******************* -->
+
+  <Hero
+    tagline="Opt-In Network Threat Intelligence"
+    title="Deploy Network Threat Intelligence on Your NRP Infrastructure"
+    subtitle="NRP contributors can opt-in to run LightScope on their NRP nodes. LightScope transforms closed ports on your machines into network telescopes, forwarding observed traffic to USC-managed honeypots. Simply open a set of ports—LightScope handles the rest."
+    actions={[
+      { variant: 'primary', target: '_blank', text: 'Sign Up to Opt-In', href: '#' },
+      { variant: 'secondary', target: '_blank', text: 'Learn More About LightScope', href: 'https://thelightscope.com/' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      alt: 'LightScope Network Security',
+    }}
+  />
+
+  <!-- What is LightScope? ************** -->
+
+  <Content
+    isReversed
+    items={[
+      {
+        title: 'Network Telescopes, Not Honeypots',
+        description:
+          'LightScope turns closed ports on your nodes into network telescopes. Your servers remain your servers—traffic is simply observed and forwarded to USC-managed honeypots. No honeypot software runs on your machines, and your actual services are never affected.',
+        icon: 'tabler:shield-search',
+      },
+      {
+        title: 'See Who Is Targeting You',
+        description:
+          'Get detailed information about who is targeting your infrastructure. LightScope provides comprehensive insights into scanning activities, attack patterns, and malicious actors attempting to access your systems.',
+        icon: 'tabler:eye',
+      },
+      {
+        title: 'Automatic Threat Reporting',
+        description:
+          'LightScope automatically reports attackers to AbuseIPDB and participating ISPs, helping to take down malicious infrastructure while contributing to the broader cybersecurity community.',
+        icon: 'tabler:alert-triangle',
+      },
+      {
+        title: 'Personalized IP Blocklists',
+        description:
+          'Receive customized IP blocklists tailored to your specific threat profile, enabling you to proactively protect your infrastructure against known malicious actors.',
+        icon: 'tabler:shield-lock',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+      alt: 'LightScope Features',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">What is LightScope?</h3>
+    </Fragment>
+  </Content>
+
+  <!-- What It Does ******************** -->
+
+  <Features2
+    title="What LightScope Does"
+    subtitle="LightScope provides powerful network security insights with minimal performance overhead."
+    columns={2}
+    items={[
+      {
+        title: 'Observes Attacker Interactions',
+        description:
+          'Monitors traffic sent to closed ports on your live hosts, capturing valuable data about scanning and attack activities.',
+        icon: 'tabler:network',
+      },
+      {
+        title: 'Privacy-First Design',
+        description:
+          'All IP addresses are fully anonymized before being stored or shared. The research is IRB certified (UP-25-00124).',
+        icon: 'tabler:lock',
+      },
+      {
+        title: 'Minimal Performance Overhead',
+        description:
+          'LightScope observes traffic to closed ports only and has minimal impact on system resources. Your services run unaffected.',
+        icon: 'tabler:activity',
+      },
+      {
+        title: 'Support Open Research',
+        description:
+          'Contribute to cybersecurity research studying scanner behavior, spoofed traffic, and scan type fingerprinting.',
+        icon: 'tabler:flask',
+      },
+    ]}
+  />
+
+  <!-- Technical Details for Security Teams ****************** -->
+
+  <Features2
+    title="Technical Details for Security Teams"
+    subtitle="What LightScope requires from your infrastructure and how it works."
+    columns={1}
+    items={[
+      {
+        title: 'What You Need to Do',
+        description:
+          'Simply configure your firewall to allow incoming TCP connections on a specific set of ports (e.g., 10000-60000). LightScope will bind to these ports and forward all observed traffic to USC honeypots. No additional software, agents, or kernel modules required on your nodes.',
+        icon: 'tabler:shield',
+      },
+      {
+        title: 'Traffic Forwarding Architecture',
+        description:
+          'When traffic arrives at a closed port, LightScope captures the SYN packet and forwards the entire interaction to USC-managed honeypots via an outbound connection. Your server never processes the attack traffic—it is transparently redirected to USC for analysis.',
+        icon: 'tabler:arrow-forward',
+      },
+      {
+        title: 'No Impact on Your Services',
+        description:
+          'LightScope only binds to ports you explicitly assign. Your actual production services on other ports run completely unaffected. The forwarding happens asynchronously with minimal CPU and memory overhead.',
+        icon: 'tabler:server',
+      },
+      {
+        title: 'Security & Compliance',
+        description:
+          'LightScope is read-only observation—no data leaves your network except the forwarded attack samples. All IP addresses are anonymized before storage. The research has received IRB certification (UP-25-00124).',
+        icon: 'tabler:shield-check',
+      },
+    ]}
+  />
+
+  <!-- Research Focus ****************** -->
+
+  <Content
+    isAfterContent
+    items={[
+      {
+        title: 'Differences in Attacker Behavior',
+        description:
+          'Research how attacker interactions differ across network telescopes, honeypots, and production machines.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Spoofed Traffic Analysis',
+        description:
+          'Study the proportion and characteristics of spoofed TCP traffic in real-world network environments.',
+        icon: 'tabler:ghost',
+      },
+      {
+        title: 'Scan Type Fingerprinting',
+        description:
+          'Develop techniques to identify and classify different types of network scans based on packet sequences.',
+        icon: 'tabler:fingerprint',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+      alt: 'Cybersecurity Research',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Research Focus</h3>
+      <p class="text-muted dark:text-muted-light">LightScope supports graduate cybersecurity research at USC Information Sciences Institute</p>
+    </Fragment>
+  </Content>
+
+  <!-- What It's Not ******************* -->
+
+  <Features2
+    title="What LightScope Is NOT"
+    subtitle="Important clarifications about what LightScope does and does not do."
+    columns={2}
+    items={[
+      {
+        title: 'Not Antivirus or EDR',
+        description:
+          'LightScope does not detect or block malware on your systems. It focuses on external threat intelligence.',
+        icon: 'tabler:x',
+      },
+      {
+        title: 'Not a WAF',
+        description:
+          'It does not examine or filter traffic going to your running services like webservers or APIs.',
+        icon: 'tabler:x',
+      },
+      {
+        title: 'Does Not Run Honeypots on Your Servers',
+        description:
+          'Your nodes are NOT honeypots. Traffic is only observed at closed ports and forwarded to USC-managed honeypots. Your actual services are never impacted.',
+        icon: 'tabler:x',
+      },
+      {
+        title: 'Does Not Access Your Data',
+        description:
+          'It only observes traffic to closed ports and does not access or monitor any legitimate traffic to running services.',
+        icon: 'tabler:x',
+      },
+    ]}
+  />
+
+  <!-- CTA Widget ********************** -->
+
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Sign Up to Opt-In',
+        href: '#',
+      },
+    ]}
+    title="Ready to Deploy LightScope on Your NRP Nodes?"
+    subtitle="Join other NRP contributors in supporting cybersecurity research while gaining valuable threat intelligence for your infrastructure. This is an optional opt-in—participation is entirely voluntary."
+  />
+</Layout>
