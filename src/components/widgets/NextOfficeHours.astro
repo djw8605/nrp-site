@@ -14,7 +14,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 {/* The HTML part of the component. It gets the unique ID. */}
 <span id={uniqueId}>Loading next office hours...</span>
 
-{/* The client-side script. 
+{/* The client-side script.
   - `define:vars` passes the uniqueId from the server-side frontmatter to the client script.
   - The script now targets the element using the specific `elementId`.
   - The event listener ensures it re-runs and finds the correct element after page transitions.
@@ -23,39 +23,59 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
   function calculateAndDisplayNextOfficeHours(targetElementId) {
     // Find the specific element instance using the unique ID
     const targetElement = document.getElementById(targetElementId);
-    
+
     // Important: Check if the element exists. During Astro's page transitions,
     // the script might run before the *new* element is fully ready, or the
     // old one might already be gone.
     if (!targetElement) {
-      // console.warn(`NextOfficeHours component target (ID: ${targetElementId}) not found during update.`);
-      return; // Exit gracefully if the element isn't found
+      return;
     }
 
-    const MS_PER_WEEK = 1000 * 60 * 60 * 24 * 7;
-    // IMPORTANT: Month is 0-indexed in Date.UTC/Date, so 4 = May
-    // const knownOfficeStartUTC = Date.UTC(2025, 5, 2, 17); // May 12, 2025 at 10am PDT == 17:00 UTC
-    const knownOfficeStartUTC = Date.UTC(2025, 4, 6, 17); // May 6, 2025 at 10am PDT == 17:00 UTC
+    // Office hours are every other Tuesday at 10 AM Pacific Time
+    // We want it to always be 10 AM PT regardless of DST
+    const pacificTimezone = 'America/Los_Angeles';
 
-    const nowUTC = Date.now();
-    let nextOfficeUTC = knownOfficeStartUTC;
+    // Get current date in Pacific time
+    const now = new Date();
+    const nowInPacific = new Date(now.toLocaleString('en-US', { timeZone: pacificTimezone }));
 
-    // Loop until we find the next office hours start time that is
-    // not more than 30 minutes in the past.
-    while (nextOfficeUTC <= nowUTC - 30 * 60 * 1000) {
-      nextOfficeUTC += 2 * MS_PER_WEEK; // Add two weeks
+    // Calculate the next Tuesday at 10 AM PT
+    // 10 AM = 10 hours, 0 minutes
+    let nextTuesday = new Date(nowInPacific);
+    nextTuesday.setHours(10, 0, 0, 0);
+
+    // Day of week: 0 = Sunday, 1 = Monday, 2 = Tuesday, ...
+    const dayOfWeek = nextTuesday.getDay();
+
+    // Days until next Tuesday (if today is Tuesday, we check if it's before or after 10am)
+    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+
+    // If today is Tuesday and it's already past 10am, move to next Tuesday
+    if (dayOfWeek === 2 && nowInPacific.getHours() >= 10) {
+      daysUntilTuesday = 14;
+    } else if (daysUntilTuesday === 0) {
+      // If today is Tuesday but before 10am, use today
+      daysUntilTuesday = 0;
     }
 
-    const nextOffice = new Date(nextOfficeUTC);
+    // Add days to get to Tuesday
+    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
+
+    // If we've passed that Tuesday (more than 30 minutes ago), add 2 weeks
+    const MS_PER_TWO_WEEKS = 1000 * 60 * 60 * 24 * 14;
+    while (nextTuesday.getTime() <= nowInPacific.getTime() - 30 * 60 * 1000) {
+      nextTuesday.setTime(nextTuesday.getTime() + MS_PER_TWO_WEEKS);
+    }
+
     // Format the date/time for display
-    const formatted = nextOffice.toLocaleString("en-US", {
+    const formatted = nextTuesday.toLocaleString("en-US", {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric",
       hour: "numeric",
       minute: "2-digit",
-      timeZone: "America/Los_Angeles", // Display in Pacific Time
+      timeZone: pacificTimezone,
       timeZoneName: "short",
     });
 
@@ -64,10 +84,10 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
   }
 
   // --- Astro Integration ---
-  
+
   // Run the function for the initial render of this component instance
   // Pass the unique elementId received from define:vars
-  calculateAndDisplayNextOfficeHours(elementId); 
+  calculateAndDisplayNextOfficeHours(elementId);
 
   // Add an event listener to run the function after Astro's page transitions.
   // The listener will call the function again, ensuring the specific element
