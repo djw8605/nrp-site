@@ -239,15 +239,15 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
       }, intervalMs);
     };
 
-    // Dismiss persistence
+    // Dismiss persistence (session-only)
     try {
-      const isDismissed = window.localStorage.getItem(dismissStorageKey) === '1';
+      const isDismissed = window.sessionStorage.getItem(dismissStorageKey) === '1';
       if (isDismissed) {
         root.classList.add('hidden');
         continue;
       }
     } catch {
-      // no-op when localStorage is unavailable
+      // no-op when sessionStorage is unavailable
     }
 
     showAnnouncement(0);
@@ -280,9 +280,9 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
       stopRotation();
       root.classList.add('hidden');
       try {
-        window.localStorage.setItem(dismissStorageKey, '1');
+        window.sessionStorage.setItem(dismissStorageKey, '1');
       } catch {
-        // no-op when localStorage is unavailable
+        // no-op when sessionStorage is unavailable
       }
     });
 
