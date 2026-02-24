@@ -115,12 +115,17 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "qwen3",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 262144
+				contextWindow: 1010000
 			},
 			{
 				modelId: "gpt-oss",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 131072
+			},
+            {
+				modelId: "kimi",
+				capabilities: ["reasoning", "vision", "tool_use"],
+				contextWindow: 262144
 			},
 			{
 				modelId: "glm-4.7",

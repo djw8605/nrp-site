@@ -233,7 +233,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8)**
   
-  Multimodal (vision, video), 262,144 tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  Multimodal (vision, video), 1,010,000 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="gpt-oss" icon="star">
@@ -242,7 +242,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)**
   
-  131,072 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic task performance
+  131,072 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic task performance
 </Card>
 
 <Card title="kimi" icon="star">
@@ -251,7 +251,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[moonshotai/Kimi-K2.5](https://huggingface.co/moonshotai/Kimi-K2.5)**
   
-  262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), Native MXFP4 model weights, frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": False}}` to disable thinking
+  262,144 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), Native MXFP4 model weights, frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": False}}` to disable thinking
 </Card>
 
 <Card title="glm-4.7" icon="star">
@@ -260,7 +260,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8)**
   
-  202,752 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), Official FP8 quantization, frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  202,752 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), Official FP8 quantization, frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="minimax-m2" icon="star">
@@ -269,7 +269,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5)**
   
-  262,144 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 model weights, frontier agentic coding performance
+  262,144 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 model weights, frontier agentic coding performance
 </Card>
 
 <Card title="glm-v" icon="star">
@@ -278,7 +278,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8)**
   
-  Multimodal (vision, video), 131,072 tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-V.html), Official FP8 quantization, Gemini Flash level multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  Multimodal (vision, video), 131,072 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-V.html), Official FP8 quantization, Gemini Flash level multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="gemma3" icon="star">
@@ -287,7 +287,7 @@ You can follow all updates and participate in the discussions within our [Matrix
   
   **[google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it)**
   
-  Multimodal (vision), 131,072 tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149)
+  Multimodal (vision), 131,072 context tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149)
 </Card>
 
 <Card title="embed-mistral" icon="star">
@@ -305,7 +305,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[meta-llama/Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)**
   
-  8 languages, 131,072 tokens, tool use
+  8 languages, 131,072 context tokens, tool use
 </Card>
 
 ## How Models are Added and Removed
