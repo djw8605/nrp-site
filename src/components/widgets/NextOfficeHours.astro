@@ -1,97 +1,54 @@
 ---
 // src/components/NextOfficeHours.astro
 
-// Generate a unique ID for this specific instance of the component.
-// This ensures that if you use the component multiple times on a page,
-// the script targets the correct HTML element.
 const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
-
-// You could add component props here if needed, e.g., to customize the display format
-// export interface Props { /* ... */ }
-// const { ... } = Astro.props;
 ---
 
-{/* The HTML part of the component. It gets the unique ID. */}
 <span id={uniqueId}>Loading next office hours...</span>
 
-{/* The client-side script.
-  - `define:vars` passes the uniqueId from the server-side frontmatter to the client script.
-  - The script now targets the element using the specific `elementId`.
-  - The event listener ensures it re-runs and finds the correct element after page transitions.
-*/}
 <script define:vars={{ elementId: uniqueId }}>
   function calculateAndDisplayNextOfficeHours(targetElementId) {
-    // Find the specific element instance using the unique ID
     const targetElement = document.getElementById(targetElementId);
+    if (!targetElement) return;
 
-    // Important: Check if the element exists. During Astro's page transitions,
-    // the script might run before the *new* element is fully ready, or the
-    // old one might already be gone.
-    if (!targetElement) {
-      return;
-    }
-
-    // Office hours are every other Tuesday at 10 AM Pacific Time
-    // We want it to always be 10 AM PT regardless of DST
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current date in Pacific time
-    const now = new Date();
-    const nowInPacific = new Date(now.toLocaleString('en-US', { timeZone: pacificTimezone }));
+    // Get current time in Pacific
+    const nowInPacific = new Date(new Date().toLocaleString('en-US', { timeZone: pacificTimezone }));
 
-    // Calculate the next Tuesday at 10 AM PT
-    // 10 AM = 10 hours, 0 minutes
-    let nextTuesday = new Date(nowInPacific);
-    nextTuesday.setHours(10, 0, 0, 0);
+    // Current day of week (0 = Sunday)
+    const dayOfWeek = nowInPacific.getDay();
 
-    // Day of week: 0 = Sunday, 1 = Monday, 2 = Tuesday, ...
-    const dayOfWeek = nextTuesday.getDay();
-
-    // Days until next Tuesday (if today is Tuesday, we check if it's before or after 10am)
+    // Days until next Tuesday
     let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    // If today is Tuesday and it's already past 10am, move to next Tuesday
-    if (dayOfWeek === 2 && nowInPacific.getHours() >= 10) {
+    // If today is Tuesday and it's past 10:30 AM PT, go to next Tuesday
+    if (dayOfWeek === 2 && (nowInPacific.getHours() > 10 || (nowInPacific.getHours() === 10 && nowInPacific.getMinutes() >= 30))) {
       daysUntilTuesday = 14;
-    } else if (daysUntilTuesday === 0) {
-      // If today is Tuesday but before 10am, use today
-      daysUntilTuesday = 0;
     }
 
-    // Add days to get to Tuesday
-    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
+    // Create next Tuesday at 10 AM Pacific
+    const nextTuesday = new Date(nowInPacific);
+    nextTuesday.setDate(nowInPacific.getDate() + daysUntilTuesday);
+    nextTuesday.setHours(10, 0, 0, 0);
 
-    // If we've passed that Tuesday (more than 30 minutes ago), add 2 weeks
-    const MS_PER_TWO_WEEKS = 1000 * 60 * 60 * 24 * 14;
-    while (nextTuesday.getTime() <= nowInPacific.getTime() - 30 * 60 * 1000) {
-      nextTuesday.setTime(nextTuesday.getTime() + MS_PER_TWO_WEEKS);
-    }
-
-    // Format the date/time for display
-    const formatted = nextTuesday.toLocaleString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    // Format for display
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
       timeZone: pacificTimezone,
-      timeZoneName: "short",
+      timeZoneName: 'short',
     });
 
-    // Update the specific element's text content
-    targetElement.textContent = formatted;
+    targetElement.textContent = formatter.format(nextTuesday);
   }
 
-  // --- Astro Integration ---
-
-  // Run the function for the initial render of this component instance
-  // Pass the unique elementId received from define:vars
   calculateAndDisplayNextOfficeHours(elementId);
 
-  // Add an event listener to run the function after Astro's page transitions.
-  // The listener will call the function again, ensuring the specific element
-  // identified by elementId is updated on the *new* page content.
   document.addEventListener('astro:page-load', () => {
     calculateAndDisplayNextOfficeHours(elementId);
   });
