@@ -50,10 +50,9 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       nextTuesday.setDate(now.getDate() + daysUntilTuesday);
     }
 
-    // Set to 10 AM (we need to adjust for timezone offset)
-    // Pacific is UTC-8 in winter, UTC-7 in summer
-    // We'll just set hours in local time and the formatter will display correctly
-    nextTuesday.setHours(10, 0, 0, 0);
+    // Set to 10 AM in local time, then adjust for Pacific offset
+    // Since we're getting Pacific time but setting local, add 3 hours to compensate
+    nextTuesday.setHours(13, 0, 0, 0);
 
     // If still in the past, add 2 weeks
     if (nextTuesday.getTime() <= now.getTime() - 30 * 60 * 1000) {
