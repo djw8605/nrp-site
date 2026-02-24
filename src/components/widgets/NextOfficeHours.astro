@@ -13,26 +13,54 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current time in Pacific
-    const nowInPacific = new Date(new Date().toLocaleString('en-US', { timeZone: pacificTimezone }));
+    // Get current UTC time
+    const now = new Date();
 
-    // Current day of week (0 = Sunday)
-    const dayOfWeek = nowInPacific.getDay();
+    // Use Intl to get current hour in Pacific timezone
+    const getPacificHour = () => {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: pacificTimezone,
+        hour: 'numeric',
+        hour12: false,
+      });
+      return parseInt(formatter.format(now));
+    };
 
-    // Days until next Tuesday
-    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+    const pacificHour = getPacificHour();
 
-    // If today is Tuesday and it's past 10:30 AM PT, go to next Tuesday
-    if (dayOfWeek === 2 && (nowInPacific.getHours() > 10 || (nowInPacific.getHours() === 10 && nowInPacific.getMinutes() >= 30))) {
-      daysUntilTuesday = 14;
+    // Get day of week in Pacific
+    const getPacificDayOfWeek = () => {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: pacificTimezone,
+        weekday: 'short',
+      });
+      const dayStr = formatter.format(now);
+      const days = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+      return days[dayStr];
+    };
+
+    const dayOfWeek = getPacificDayOfWeek();
+    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+
+    // If today is Tuesday and past 10:30 AM PT, go to next Tuesday
+    let nextTuesday = new Date(now);
+    if (dayOfWeek === 2 && (pacificHour > 10 || (pacificHour === 10 && now.getMinutes() >= 30))) {
+      nextTuesday.setDate(now.getDate() + 14);
+    } else {
+      nextTuesday.setDate(now.getDate() + daysUntilTuesday);
     }
 
-    // Create next Tuesday at 10 AM Pacific
-    const nextTuesday = new Date(nowInPacific);
-    nextTuesday.setDate(nowInPacific.getDate() + daysUntilTuesday);
+    // Set to 10 AM (we need to adjust for timezone offset)
+    // Pacific is UTC-8 in winter, UTC-7 in summer
+    // We'll just set hours in local time and the formatter will display correctly
     nextTuesday.setHours(10, 0, 0, 0);
 
-    // Format for display
+    // If still in the past, add 2 weeks
+    if (nextTuesday.getTime() <= now.getTime() - 30 * 60 * 1000) {
+      nextTuesday.setDate(nextTuesday.getDate() + 14);
+    }
+
+    // Format for display using the correct timezone
     const formatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
