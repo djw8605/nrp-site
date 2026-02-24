@@ -13,27 +13,50 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current time in Pacific
-    const nowInPacific = new Date(new Date().toLocaleString('en-US', { timeZone: pacificTimezone }));
+    // Get current Pacific hour and day directly via Intl - no browser time needed
+    const getPacificInfo = () => {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: pacificTimezone,
+        hour: 'numeric',
+        hour12: false,
+        weekday: 'short',
+      });
 
-    // Current day of week (0 = Sunday)
-    const dayOfWeek = nowInPacific.getDay();
+      const parts = {};
+      formatter.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
 
-    // Days until next Tuesday
-    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+      return { hour: parseInt(parts.hour), weekday: parts.weekday };
+    };
 
-    // If today is Tuesday and it's past 10:30 AM PT, go to next Tuesday
-    if (dayOfWeek === 2 && (nowInPacific.getHours() > 10 || (nowInPacific.getHours() === 10 && nowInPacific.getMinutes() >= 30))) {
-      daysUntilTuesday = 14;
+    const { hour: pacificHour, weekday: pacificDay } = getPacificInfo();
+    const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+    const dayOfWeek = daysMap[pacificDay];
+    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+
+    // Calculate next Tuesday in UTC that represents 10 AM Pacific
+    // Pacific time: UTC-8 (standard) or UTC-7 (DST)
+    // 10 AM Pacific = 18:00 UTC (standard) or 17:00 UTC (DST)
+    // Use 18:00 UTC as safe default (standard time)
+    const msPerDay = 86400000;
+    let nextTuesday = new Date();
+
+    if (dayOfWeek === 2 && (pacificHour > 10 || (pacificHour === 10 && new Date().getMinutes() >= 30))) {
+      nextTuesday = new Date(nextTuesday.getTime() + 14 * msPerDay);
+    } else {
+      nextTuesday = new Date(nextTuesday.getTime() + daysUntilTuesday * msPerDay);
     }
 
-    // Create next Tuesday at 10 AM Pacific
-    const nextTuesday = new Date(nowInPacific);
-    nextTuesday.setDate(nowInPacific.getDate() + daysUntilTuesday);
-    nextTuesday.setHours(10, 0, 0, 0);
+    // Set to 18:00 UTC = 10 AM Pacific (standard time)
+    nextTuesday.setUTCHours(18, 0, 0, 0);
 
-    // Format for display
-    const formatter = new Intl.DateTimeFormat('en-US', {
+    // If we need DST (March-November), adjust to 17:00 UTC
+    const month = new Date().getUTCMonth();
+    if (month >= 3 && month <= 10) {
+      nextTuesday.setUTCHours(17, 0, 0, 0);
+    }
+
+    // Format for display in Pacific timezone
+    const displayFormatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
@@ -44,7 +67,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       timeZoneName: 'short',
     });
 
-    targetElement.textContent = formatter.format(nextTuesday);
+    targetElement.textContent = displayFormatter.format(nextTuesday);
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
