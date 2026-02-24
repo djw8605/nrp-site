@@ -13,53 +13,30 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current UTC time
-    const now = new Date();
+    // Get current time IN PACIFIC timezone, not browser local time
+    const nowInPacific = new Date(new Date().toLocaleString('en-US', { timeZone: pacificTimezone }));
 
-    // Use Intl to get current hour in Pacific timezone
-    const getPacificHour = () => {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: pacificTimezone,
-        hour: 'numeric',
-        hour12: false,
-      });
-      return parseInt(formatter.format(now));
-    };
-
-    const pacificHour = getPacificHour();
-
-    // Get day of week in Pacific
-    const getPacificDayOfWeek = () => {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: pacificTimezone,
-        weekday: 'short',
-      });
-      const dayStr = formatter.format(now);
-      const days = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-      return days[dayStr];
-    };
-
-    const dayOfWeek = getPacificDayOfWeek();
+    // Get day of week in Pacific (0 = Sunday)
+    const dayOfWeek = nowInPacific.getDay();
     const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
     // If today is Tuesday and past 10:30 AM PT, go to next Tuesday
-    let nextTuesday = new Date(now);
-    if (dayOfWeek === 2 && (pacificHour > 10 || (pacificHour === 10 && now.getMinutes() >= 30))) {
-      nextTuesday.setDate(now.getDate() + 14);
+    let nextTuesday = new Date(nowInPacific);
+    if (dayOfWeek === 2 && (nowInPacific.getHours() > 10 || (nowInPacific.getHours() === 10 && nowInPacific.getMinutes() >= 30))) {
+      nextTuesday.setDate(nowInPacific.getDate() + 14);
     } else {
-      nextTuesday.setDate(now.getDate() + daysUntilTuesday);
+      nextTuesday.setDate(nowInPacific.getDate() + daysUntilTuesday);
     }
 
-    // Set to 10 AM in local time, then adjust for Pacific offset
-    // Since we're getting Pacific time but setting local, add 3 hours to compensate
-    nextTuesday.setHours(13, 0, 0, 0);
+    // Set to 10 AM Pacific time
+    nextTuesday.setHours(10, 0, 0, 0);
 
     // If still in the past, add 2 weeks
-    if (nextTuesday.getTime() <= now.getTime() - 30 * 60 * 1000) {
+    if (nextTuesday.getTime() <= nowInPacific.getTime() - 30 * 60 * 1000) {
       nextTuesday.setDate(nextTuesday.getDate() + 14);
     }
 
-    // Format for display using the correct timezone
+    // Format for display in Pacific timezone
     const formatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
