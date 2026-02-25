@@ -77,6 +77,10 @@ export const headerData = {
       text: 'News',
       links: [
         {
+          text: 'Latest News',
+          href: getPermalink('/live'),
+        },
+        {
           text: 'All',
           href: getBlogPermalink(),
         },
