@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .feed-viewport { overflow: hidden; border-radius: 12px; }
 .feed-track { position: relative; }
 
-.feed-slide { display: none; animation: slideIn 0.35s ease; height: 220px; background: var(--card-bg); border: 1px solid var(--feed-border); border-radius: 12px; padding: 24px; flex-direction: column; }
+.feed-slide { display: none; animation: slideIn 0.35s ease; min-height: 260px; height: 260px; background: var(--card-bg); border: 1px solid var(--feed-border); border-radius: 12px; padding: 24px; flex-direction: column; }
 .feed-slide.active { display: flex; }
 @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
@@ -196,7 +196,11 @@ document.addEventListener('DOMContentLoaded', function() {
 .slide-meta { display: flex; flex-direction: column; gap: 2px; }
 .author-name { font-weight: 700; color: var(--feed-text); font-size: 16px; }
 .post-time { font-size: 13px; color: var(--feed-text-muted); }
-.slide-content { color: var(--feed-text); font-size: 15px; line-height: 1.7; padding-left: 58px; word-wrap: break-word; flex: 1; overflow: hidden; }
+.slide-content { color: var(--feed-text); font-size: 15px; line-height: 1.7; padding-left: 58px; word-wrap: break-word; flex: 1; overflow-y: auto; font-family: inherit; max-height: 150px; }
+.slide-content::-webkit-scrollbar { width: 4px; }
+.slide-content::-webkit-scrollbar-track { background: transparent; }
+.slide-content::-webkit-scrollbar-thumb { background: var(--feed-border); border-radius: 2px; }
+.slide-content::-webkit-scrollbar-thumb:hover { background: var(--feed-text-muted); }
 .slide-content a { color: #3b82f6; }
 .slide-content strong { font-weight: 700; }
 
@@ -207,5 +211,5 @@ document.addEventListener('DOMContentLoaded', function() {
 .feed-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--feed-border); cursor: pointer; padding: 0; }
 .feed-dot.active { background: #3b82f6; width: 28px; border-radius: 5px; }
 
-@media (max-width: 640px) { .feed-slide { padding: 18px; height: 200px; } .author-avatar { width: 38px; height: 38px; font-size: 15px; } .slide-content { padding-left: 0; margin-top: 12px; font-size: 14px; } }
+@media (max-width: 640px) { .feed-slide { padding: 18px; min-height: 220px; } .author-avatar { width: 38px; height: 38px; font-size: 15px; } .slide-content { padding-left: 0; margin-top: 12px; font-size: 14px; max-height: 130px; } }
 </style>
