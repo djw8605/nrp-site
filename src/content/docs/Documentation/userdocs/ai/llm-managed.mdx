@@ -211,6 +211,27 @@ Contents of `~/.kimi/config.json`:
 
 </details>
 
+### Claude Code
+
+https://github.com/anthropics/claude-code
+
+<details>
+<summary>Open Configuration</summary>
+
+Environment Variables needed for Claude Code:
+
+```json
+ANTHROPIC_BASE_URL="https://ellm.nrp-nautilus.io/anthropic"
+ANTHROPIC_API_KEY="<llm-token>"
+ANTHROPIC_DEFAULT_OPUS_MODEL="<name-of-nrp-model>"
+ANTHROPIC_DEFAULT_SONNET_MODEL="<name-of-nrp-model>"
+ANTHROPIC_DEFAULT_HAIKU_MODEL="<name-of-nrp-model>"
+```
+
+</details>
+
+Note that not all NRP models support Anthropic-compatible endpoints or tools like Claude Code. Please consult the model documentation and the vLLM integration guide: https://docs.vllm.ai/en/stable/serving/integrations/claude_code/.
+
 ## Available Models
 
 <Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed if there are no major group or user usage, or switched to a deprecated state. This is to provide our users with the best models within our limited allocation of GPUs. Moreover, models may be upgraded to a newer variant without prior notice.
