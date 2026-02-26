@@ -1,6 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import MatrixFeed from '~/components/widgets/MatrixFeed.astro';
+import MatrixList from '~/components/widgets/MatrixList.astro';
 
 const metadata = {
   title: 'Latest NRP Cluster News',
@@ -21,11 +21,9 @@ const metadata = {
           </p>
         </div>
 
-        <div class="rounded-xl overflow-hidden">
-          <MatrixFeed />
-        </div>
+        <MatrixList />
 
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-6 text-center">
           This news is pulled from Matrix. Make sure you're on Matrix for real-time updates.
           <a href="https://nrp.ai/contact/" class="text-blue-600 hover:underline">Join here</a>
         </p>
