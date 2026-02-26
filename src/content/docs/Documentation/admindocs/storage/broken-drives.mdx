@@ -58,7 +58,9 @@ To remove the OSD first instead of `osd out` use this: `ceph osd crush reweight 
     for i in ...; do sgdisk --zap-all --clear --mbrtogpt -g /dev/$i && wipefs -a /dev/$i; done
     ```
 
-    Delete the OSDs from `/var/lib/rook` (not `MON` if it exists on the node)
+    ** You should not be able to see any drives for ceph in the output of `blkid` **
+
+1. Delete the OSDs from `/var/lib/rook` (not `MON` if it exists on the node)
 
 1. Uncordon the node
 
