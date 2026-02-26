@@ -1,0 +1,33 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import MatrixList from '~/components/widgets/MatrixList.astro';
+
+const metadata = {
+  title: 'Latest NRP Cluster News',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative pt-8 pb-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Latest NRP Cluster News
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400">
+            Real-time updates from the NRP community
+          </p>
+        </div>
+
+        <MatrixList />
+
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-6 text-center">
+          This news is pulled from Matrix. Make sure you're on Matrix for real-time updates.
+          <a href="https://nrp.ai/contact/" class="text-blue-600 hover:underline">Join here</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
