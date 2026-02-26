@@ -37,7 +37,7 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function initMatrixFeed() {
   var feed = document.getElementById('matrix-feed');
   if (!feed) return;
 
@@ -95,7 +95,21 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function render() {
-    if (messages.length === 0) return;
+    if (messages.length === 0) {
+      // Show no messages message
+      track.innerHTML = '<div class="feed-slide active" data-index="0">' +
+        '<div class="slide-header">' +
+          '<div class="author-avatar bg-gray-400">!</div>' +
+          '<div class="slide-meta">' +
+            '<span class="author-name">No News</span>' +
+            '<span class="post-time">Currently unavailable</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="slide-content">No news messages available. Check Matrix for updates.</div>' +
+      '</div>';
+      dotsContainer.innerHTML = '<button class="feed-dot active" data-index="0"></button>';
+      return;
+    }
 
     // Sort newest first
     messages.sort(function(a, b) { return b.origin_server_ts - a.origin_server_ts; });
@@ -163,21 +177,29 @@ document.addEventListener('DOMContentLoaded', function() {
     autoAdvanceInterval = setInterval(function() { goTo((currentIndex + 1) % total); }, 8000);
   }
 
-  // Fetch immediately after DOM is ready
+  // Fetch and render
   fetch('/api/matrix-feed')
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.success && data.messages) {
+      if (data.success && data.messages && data.messages.length > 0) {
         messages = data.messages;
         render();
       } else {
         console.log('No messages or failed response:', data);
+        render(); // Will show "No News" message
       }
     })
     .catch(function(e) {
       console.error('Failed to fetch news:', e);
+      render(); // Will show "No News" message
     });
-});
+}
+
+// Run on DOMContentLoaded (first page load)
+document.addEventListener('DOMContentLoaded', initMatrixFeed);
+
+// Run on astro:page-load (after View Transitions)
+document.addEventListener('astro:page-load', initMatrixFeed);
 </script>
 
 <style is:global>
