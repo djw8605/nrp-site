@@ -423,11 +423,5 @@ export default defineConfig({
         '~': path.resolve(__dirname, './src'),
       },
     },
-    server: {
-      allowedHosts: [
-        'localhost',
-        '4321--main--teal-caribou-1--mfsada.coder-dev.nrp-nautilus.io',
-      ],
-    },
   },
 });
