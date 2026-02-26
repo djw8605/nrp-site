@@ -77,11 +77,11 @@ export const headerData = {
       text: 'News',
       links: [
         {
-          text: 'Latest News',
+          text: 'Latest Matrix News',
           href: getPermalink('/live'),
         },
         {
-          text: 'All',
+          text: 'News Posts',
           href: getBlogPermalink(),
         },
         {
