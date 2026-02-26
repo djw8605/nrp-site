@@ -11,7 +11,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <section class="relative pt-8 pb-16">
     <div class="container mx-auto px-4">
-      <div class="max-w-3xl mx-auto">
+      <div class="max-w-5xl mx-auto">
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Reservations
@@ -187,6 +187,11 @@ const metadata = {
   background: #ffffff;
 }
 
+/* Airtable embed - full width of body */
+.airtable-embed {
+  width: 100% !important;
+}
+
 .body-description {
   color: #4b5563;
   font-size: 14px;
@@ -272,16 +277,38 @@ const metadata = {
 }
 
 @media (max-width: 640px) {
+  .reservation-dropdown {
+    margin-bottom: 12px;
+    position: relative;
+    left: 0;
+  }
   .reservation-header {
     flex-direction: column;
     text-align: center;
     gap: 12px;
+    padding: 12px 16px;
   }
   .header-left {
     flex-direction: column;
   }
   .header-chevron {
     display: none;
+  }
+  .reservation-body {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+  }
+  .body-description,
+  .action-button,
+  .embed-note {
+    margin: 16px;
+  }
+  .airtable-embed {
+    margin: 0;
+    width: 100vw !important;
+    border-radius: 0 !important;
+    border: none !important;
   }
 }
 </style>
