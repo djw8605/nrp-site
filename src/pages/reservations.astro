@@ -1,0 +1,217 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Reservations - NRP',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative pt-8 pb-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Reservations
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400">
+            Request access to A100 GPUs or reserve dedicated nodes
+          </p>
+        </div>
+
+        <details class="reservation-dropdown">
+          <summary class="list-none cursor-pointer">
+            <div class="reservation-summary a100-card">
+              <div>
+                <h3>A100 GPU Access</h3>
+                <p>Request high-performance GPU access for your research</p>
+              </div>
+              <svg class="reservation-chevron w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+
+          <div class="reservation-content">
+            <CallToAction actions={[{
+                variant: "primary",
+                text: "Request A100 access",
+                href: "https://airtable.com/appfVVZLgTvG04pKe/pagrZFgrh3fNqbV4c/form"
+            }]}
+            >
+            <Fragment slot="title">
+                A100 GPU Access
+            </Fragment>
+            <Fragment slot="subtitle">
+                <p>We've noticed that many A100 resources are being used for jobs that don't require their capabilities. To ensure fair and efficient utilization, we are implementing limits on A100 usage across all namespaces.</p>
+                <p>If your work requires access to A100s, please reach out to us, and we'll gladly adjust the limits for your namespace.</p>
+                <p>Groups that contributed A100s to the cluster will continue to have unrestricted access.</p>
+            </Fragment>
+            </CallToAction>
+
+            <div class="info-box blue">
+                <strong>A100 Access Form</strong>
+                <p>Use the form below to request A100 GPU access for your namespace.</p>
+            </div>
+
+            <iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shruKqqBIYZG0yiqx?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc; border-radius: 12px;"></iframe>
+          </div>
+        </details>
+
+
+        <details class="reservation-dropdown">
+          <summary class="list-none cursor-pointer">
+            <div class="reservation-summary node-card">
+              <div>
+                <h3>Node Reservation</h3>
+                <p>Reserve dedicated nodes for experiments and workshops</p>
+              </div>
+              <svg class="reservation-chevron w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+
+          <div class="reservation-content">
+            <CallToAction actions={[{
+                variant: "primary",
+                text: "Request node reservation",
+                href: "https://airtable.com/appfVVZLgTvG04pKe/pagfrjdaRo6UtSoux/form"
+            }]}
+            >
+            <Fragment slot="title">
+                Node Taint Requests
+            </Fragment>
+            <Fragment slot="subtitle">
+                We can taint a number of nodes for the specified amount of time based on availability and provided reasons. This ensures your jobs have dedicated resources when you need them.
+            </Fragment>
+            </CallToAction>
+
+            <div class="info-box amber">
+                <strong>How to Use Reserved Nodes</strong>
+                <p>After your reservation is approved, set the <a href="/documentation/userdocs/running/special/">appropriate taint</a> on your pods to use the reserved nodes.</p>
+            </div>
+
+            <iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shr3fD7xl6JDQkck3?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc; border-radius: 12px;"></iframe>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+.reservation-dropdown {
+  margin-bottom: 16px;
+}
+.reservation-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.reservation-summary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.reservation-summary h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+.reservation-summary p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.reservation-chevron {
+  transition: transform 0.3s ease;
+  color: currentColor;
+  flex-shrink: 0;
+}
+.reservation-dropdown[open] .reservation-chevron {
+  transform: rotate(180deg);
+}
+
+.a100-card {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
+}
+.a100-card h3 { color: #1e40af; }
+.a100-card p { color: #1e3a8a; }
+
+.node-card {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+.node-card h3 { color: #b45309; }
+.node-card p { color: #92400e; }
+
+.reservation-content {
+  padding: 24px;
+  margin-top: -8px;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  background: #f9fafb;
+}
+
+.info-box {
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+}
+.info-box.blue {
+  background: #eff6ff;
+  border: 1px solid #3b82f6;
+}
+.info-box.blue strong { color: #1d4ed8; }
+.info-box.blue p { color: #1e40af; }
+.info-box.blue a { color: #2563eb; }
+
+.info-box.amber {
+  background: #fffbeb;
+  border: 1px solid #f59e0b;
+}
+.info-box.amber strong { color: #b45309; }
+.info-box.amber p { color: #92400e; }
+.info-box.amber a { color: #d97706; }
+
+@media (max-width: 640px) {
+  .reservation-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  .reservation-chevron {
+    display: none;
+  }
+}
+
+:global(.dark) .reservation-summary {
+  border-color: #374151;
+}
+:global(.dark) .reservation-content {
+  background: #111827;
+  border-color: #374151;
+}
+:global(.dark) .a100-card {
+  background: linear-gradient(135deg, #1e3a5f 0%, #172554 100%);
+}
+:global(.dark) .a100-card h3 { color: #93c5fd; }
+:global(.dark) .a100-card p { color: #bfdbfe; }
+
+:global(.dark) .node-card {
+  background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+}
+:global(.dark) .node-card h3 { color: #fcd34d; }
+:global(.dark) .node-card p { color: #fde68a; }
+</style>
