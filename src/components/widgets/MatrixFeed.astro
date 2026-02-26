@@ -1,0 +1,237 @@
+---
+// Simple client-side rendered carousel
+---
+
+<div class="matrix-feed" id="matrix-feed">
+  <div class="feed-viewport">
+    <div class="feed-track">
+      <div class="feed-slide active" data-index="0">
+        <div class="slide-header">
+          <div class="author-avatar bg-blue-500">?</div>
+          <div class="slide-meta">
+            <span class="author-name">Loading...</span>
+            <span class="post-time">Please wait</span>
+          </div>
+        </div>
+        <div class="slide-content">
+          Fetching latest news...
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feed-nav">
+    <button class="nav-btn prev" aria-label="Previous">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="feed-dots" id="feed-dots">
+      <button class="feed-dot active" data-index="0" aria-label="Slide 1"></button>
+    </div>
+    <button class="nav-btn next" aria-label="Next">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+function initMatrixFeed() {
+  var feed = document.getElementById('matrix-feed');
+  if (!feed) return;
+
+  var track = feed.querySelector('.feed-track');
+  var dotsContainer = feed.querySelector('#feed-dots');
+  var prevBtn = feed.querySelector('.nav-btn.prev');
+  var nextBtn = feed.querySelector('.nav-btn.next');
+
+  var messages = [];
+  var currentIndex = 0;
+  var autoAdvanceInterval = null;
+
+  var authorMap = {
+    'ddiaz': 'Daniel (NRP Admin)',
+    'msada': 'Mohammad (NRP Admin)',
+    'dimm': 'Dmitry (NRP Admin)',
+    'ehfd': 'Seungmin (NRP Admin)'
+  };
+
+  var colorMap = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-indigo-500', 'bg-rose-500'];
+
+  function getAuthor(sender) {
+    var m = sender.match(/^@([^:]+):/);
+    var u = m ? m[1] : sender;
+    return authorMap[u] || u;
+  }
+
+  function getColor(sender) {
+    var h = 0;
+    for (var i = 0; i < sender.length; i++) h = sender.charCodeAt(i) + ((h << 5) - h);
+    return colorMap[Math.abs(h) % colorMap.length];
+  }
+
+  function formatTime(ts) {
+    var d = new Date(ts), n = new Date(), diff = n - d;
+    var mins = Math.floor(diff / 60000);
+    var hrs = Math.floor(diff / 3600000);
+    var days = Math.floor(diff / 86400000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    if (hrs < 24) return hrs + 'h ago';
+    if (days < 7) return days + 'd ago';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function formatContent(html, body) {
+    if (!html && body) {
+      var t = body.startsWith('* ') ? body.slice(2) : body;
+      return t.replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+    }
+    if (html) {
+      return html.replace(/^\*\s*/, '').replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+    }
+    return '';
+  }
+
+  function render() {
+    if (messages.length === 0) {
+      // Show no messages message
+      track.innerHTML = '<div class="feed-slide active" data-index="0">' +
+        '<div class="slide-header">' +
+          '<div class="author-avatar bg-gray-400">!</div>' +
+          '<div class="slide-meta">' +
+            '<span class="author-name">No News</span>' +
+            '<span class="post-time">Currently unavailable</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="slide-content">No news messages available. Check Matrix for updates.</div>' +
+      '</div>';
+      dotsContainer.innerHTML = '<button class="feed-dot active" data-index="0"></button>';
+      return;
+    }
+
+    // Sort newest first
+    messages.sort(function(a, b) { return b.origin_server_ts - a.origin_server_ts; });
+    messages = messages.slice(0, 10);
+
+    var html = '';
+    messages.forEach(function(msg, i) {
+      var c = msg.content || {};
+      var content = formatContent(c.formatted_body, c.body);
+      var author = getAuthor(msg.sender);
+      var time = formatTime(msg.origin_server_ts);
+      var color = getColor(msg.sender);
+
+      html += '<div class="feed-slide' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">' +
+        '<div class="slide-header">' +
+          '<div class="author-avatar ' + color + '">' + author.charAt(0).toUpperCase() + '</div>' +
+          '<div class="slide-meta">' +
+            '<span class="author-name">' + author + '</span>' +
+            '<span class="post-time">' + time + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="slide-content">' + content + '</div>' +
+      '</div>';
+    });
+
+    track.innerHTML = html;
+
+    // Update dots
+    var dotsHtml = '';
+    messages.forEach(function(_, i) {
+      dotsHtml += '<button class="feed-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>';
+    });
+    dotsContainer.innerHTML = dotsHtml;
+
+    currentIndex = 0;
+    setupNav();
+  }
+
+  function setupNav() {
+    // Clear any existing interval
+    if (autoAdvanceInterval) {
+      clearInterval(autoAdvanceInterval);
+      autoAdvanceInterval = null;
+    }
+
+    var slides = feed.querySelectorAll('.feed-slide');
+    var dots = feed.querySelectorAll('.feed-dot');
+    var total = slides.length;
+    if (total <= 1) return;
+
+    function goTo(idx) {
+      currentIndex = Math.max(0, Math.min(idx, total - 1));
+      slides.forEach(function(s, i) { s.classList.toggle('active', i === currentIndex); });
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === currentIndex); });
+    }
+
+    prevBtn.onclick = function() { goTo((currentIndex - 1 + total) % total); };
+    nextBtn.onclick = function() { goTo((currentIndex + 1) % total); };
+
+    dots.forEach(function(dot, i) {
+      dot.onclick = function() { goTo(i); };
+    });
+
+    // Auto-advance
+    autoAdvanceInterval = setInterval(function() { goTo((currentIndex + 1) % total); }, 20000);
+  }
+
+  // Fetch and render
+  fetch('/api/matrix-feed')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success && data.messages && data.messages.length > 0) {
+        messages = data.messages;
+        render();
+      } else {
+        console.log('No messages or failed response:', data);
+        render(); // Will show "No News" message
+      }
+    })
+    .catch(function(e) {
+      console.error('Failed to fetch news:', e);
+      render(); // Will show "No News" message
+    });
+}
+
+// Run on DOMContentLoaded (first page load)
+document.addEventListener('DOMContentLoaded', initMatrixFeed);
+
+// Run on astro:page-load (after View Transitions)
+document.addEventListener('astro:page-load', initMatrixFeed);
+</script>
+
+<style is:global>
+.matrix-feed { --feed-bg: #ffffff; --feed-border: #e5e7eb; --feed-text: #1f2937; --feed-text-muted: #6b7280; --card-bg: #f9fafb; }
+.dark .matrix-feed { --feed-bg: #111827; --feed-border: #374151; --feed-text: #f3f4f6; --feed-text-muted: #9ca3af; --card-bg: #1f2937; }
+.matrix-feed { width: 100%; }
+.feed-viewport { overflow: hidden; border-radius: 12px; }
+.feed-track { position: relative; }
+
+.feed-slide { display: none; animation: slideIn 0.35s ease; min-height: 260px; height: 260px; background: var(--card-bg); border: 1px solid var(--feed-border); border-radius: 12px; padding: 24px; flex-direction: column; }
+.feed-slide.active { display: flex; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+.slide-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.author-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; flex-shrink: 0; }
+.slide-meta { display: flex; flex-direction: column; gap: 2px; }
+.author-name { font-weight: 700; color: var(--feed-text); font-size: 16px; }
+.post-time { font-size: 13px; color: var(--feed-text-muted); }
+.slide-content { color: var(--feed-text); font-size: 15px; line-height: 1.7; padding-left: 58px; word-wrap: break-word; flex: 1; overflow-y: auto; font-family: inherit; max-height: 150px; }
+.slide-content::-webkit-scrollbar { width: 4px; }
+.slide-content::-webkit-scrollbar-track { background: transparent; }
+.slide-content::-webkit-scrollbar-thumb { background: var(--feed-border); border-radius: 2px; }
+.slide-content::-webkit-scrollbar-thumb:hover { background: var(--feed-text-muted); }
+.slide-content a { color: #3b82f6; }
+.slide-content strong { font-weight: 700; }
+
+.feed-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 16px; }
+.nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--feed-border); background: var(--feed-bg); color: var(--feed-text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.nav-btn:hover { background: #f3f4f6; }
+.feed-dots { display: flex; gap: 8px; }
+.feed-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--feed-border); cursor: pointer; padding: 0; }
+.feed-dot.active { background: #3b82f6; width: 28px; border-radius: 5px; }
+
+@media (max-width: 640px) { .feed-slide { padding: 18px; min-height: 220px; } .author-avatar { width: 38px; height: 38px; font-size: 15px; } .slide-content { padding-left: 0; margin-top: 12px; font-size: 14px; max-height: 130px; } }
+</style>

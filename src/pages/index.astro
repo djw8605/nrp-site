@@ -4,6 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro'
 import AnnouncementBar from '~/components/common/AnnouncementBar.astro';
 import Note from '~/components/widgets/Note.astro';
+import MatrixFeed from '~/components/widgets/MatrixFeed.astro';
 import Features from '~/components/widgets/Features.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
@@ -99,6 +100,31 @@ const homepageAnnouncements = [
   <!-- Note Widget ******************* -->
 
   <Note />
+
+  <!-- Live Feed Widget -->
+  <section class="py-8 bg-gray-50 dark:bg-gray-800/50">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
+            Latest NRP Cluster News
+          </h2>
+          <a href="/live" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            View All →
+          </a>
+        </div>
+        <MatrixFeed />
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
+          This news is pulled from Matrix. Make sure you're on Matrix for real-time updates.
+          <a href="https://nrp.ai/contact/" class="text-blue-600 hover:underline">Join here</a>
+        </p>
+      </div>
+    </div>
+  </section>
 
   <!-- Features Widget *************** -->
 

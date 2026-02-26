@@ -1,0 +1,314 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Reservations - NRP',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative pt-8 pb-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            Reservations
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400">
+            Request access to A100 GPUs or reserve dedicated nodes
+          </p>
+        </div>
+
+        <details class="reservation-dropdown">
+          <summary class="list-none cursor-pointer">
+            <div class="reservation-header">
+              <div class="header-left">
+                <span class="header-badge">GPU</span>
+                <div class="header-text">
+                  <h3>A100 GPU Access</h3>
+                  <p>Request high-performance GPU access for research workloads</p>
+                </div>
+              </div>
+              <svg class="header-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+
+          <div class="reservation-body">
+            <p class="body-description">
+              We've noticed that many A100 resources are being used for jobs that don't require their capabilities.
+              To ensure fair and efficient utilization, we are implementing limits on A100 usage across all namespaces.
+              If your work requires access to A100s, please reach out to us, and we'll gladly adjust the limits for your namespace.
+              Groups that contributed A100s to the cluster will continue to have unrestricted access.
+            </p>
+
+            <a href="https://airtable.com/appfVVZLgTvG04pKe/pagrZFgrh3fNqbV4c/form" class="action-button">
+              Submit A100 Access Request
+            </a>
+
+            <div class="embed-note">
+              <strong>Track your request status:</strong>
+              <p>View and monitor your submitted requests below.</p>
+            </div>
+
+            <iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shruKqqBIYZG0yiqx?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc; border-radius: 12px;"></iframe>
+          </div>
+        </details>
+
+
+        <details class="reservation-dropdown">
+          <summary class="list-none cursor-pointer">
+            <div class="reservation-header node-header">
+              <div class="header-left">
+                <span class="header-badge amber">Nodes</span>
+                <div class="header-text">
+                  <h3>Node Reservation</h3>
+                  <p>Reserve dedicated nodes for experiments and workshops</p>
+                </div>
+              </div>
+              <svg class="header-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+
+          <div class="reservation-body">
+            <p class="body-description">
+              Node reservations are exclusive for groups that contribute hardware to the NRP cluster and want to reserve their own hardware for dedicated use, as well as groups that have a specific use case that would benefit from whole-node reservations.
+              We can taint a number of nodes for the specified amount of time based on availability and provided reasons.
+              This ensures your jobs have dedicated resources when you need them.
+              After your reservation is approved, set the <a href="/documentation/userdocs/running/special/">appropriate taint</a> on your pods to use the reserved nodes.
+            </p>
+
+            <a href="https://airtable.com/appfVVZLgTvG04pKe/pagfrjdaRo6UtSoux/form" class="action-button amber">
+              Submit Node Reservation Request
+            </a>
+
+            <div class="embed-note">
+              <strong>Track your reservation status:</strong>
+              <p>View and monitor your submitted reservations below.</p>
+            </div>
+
+            <iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shr3fD7xl6JDQkck3?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc; border-radius: 12px;"></iframe>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+.reservation-dropdown {
+  margin-bottom: 16px;
+}
+
+/* Accordion Header - Announcement bar style */
+.reservation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(25, 50, 100, 0.92) 0%, rgba(30, 64, 175, 0.92) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.reservation-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.node-header {
+  background: linear-gradient(135deg, rgba(30, 64, 100, 0.92) 0%, rgba(30, 58, 138, 0.92) 100%);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.header-badge.amber {
+  background: rgba(251, 191, 36, 0.3);
+}
+
+.header-text h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.header-text p {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.header-chevron {
+  width: 24px;
+  height: 24px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.reservation-dropdown[open] .header-chevron {
+  transform: rotate(180deg);
+}
+
+/* Accordion Body */
+.reservation-body {
+  padding: 24px;
+  margin-top: -4px;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  background: #ffffff;
+}
+
+/* Airtable embed - full width of body */
+.airtable-embed {
+  width: 100% !important;
+}
+
+.body-description {
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 20px 0;
+}
+
+.body-description a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* Action Button */
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: #1e40af;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  border: 1px solid #1e3a8a;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: #1e3a8a;
+}
+
+.action-button.amber {
+  background: #b45309;
+  border-color: #92400e;
+}
+
+.action-button.amber:hover {
+  background: #92400e;
+}
+
+/* Embed Note */
+.embed-note {
+  margin: 28px 0 16px 0;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.embed-note strong {
+  color: #374151;
+  font-size: 14px;
+}
+
+.embed-note p {
+  color: #6b7280;
+  font-size: 13px;
+  margin: 6px 0 0 0;
+}
+
+/* Dark mode */
+:global(.dark) .reservation-body {
+  background: #111827;
+  border-color: #374151;
+}
+
+:global(.dark) .body-description {
+  color: #d1d5db;
+}
+
+:global(.dark) .embed-note {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+:global(.dark) .embed-note strong {
+  color: #f3f4f6;
+}
+
+:global(.dark) .embed-note p {
+  color: #9ca3af;
+}
+
+@media (max-width: 640px) {
+  .reservation-dropdown {
+    margin-bottom: 12px;
+    position: relative;
+    left: 0;
+  }
+  .reservation-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .header-left {
+    flex-direction: column;
+  }
+  .header-chevron {
+    display: none;
+  }
+  .reservation-body {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+  }
+  .body-description,
+  .action-button,
+  .embed-note {
+    margin: 16px;
+  }
+  .airtable-embed {
+    margin: 0;
+    width: 100vw !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+}
+</style>
