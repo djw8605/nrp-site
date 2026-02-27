@@ -69,6 +69,13 @@ new Runtime().module(define, name => {
       <td markdown="span">NVME</td>
       <td markdown="span">2x</td>
     </tr>
+    <tr>
+      <td markdown="span">linstor-csus</td>
+      <td markdown="span">US West / CSUS</td>
+      <td markdown="span">ReadWriteOnce</td>
+      <td markdown="span">NVME</td>
+      <td markdown="span">1x (use at your risk)</td>
+    </tr>
   </tbody>
 </table>
 
