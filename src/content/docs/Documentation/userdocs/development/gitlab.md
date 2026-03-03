@@ -107,42 +107,6 @@ build-and-push-job:
   - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
 ```
 
-#### Using the sysbox-provided docker
-
-```yaml
-image: docker:git
-
-default:
-  tags:
-  - sysbox
-
-services:
-- name: docker:dind
-variables:
-  DOCKER_HOST: tcp://docker:2376/
-  DOCKER_TLS_CERTDIR: "/certs"
-  DOCKER_TLS_VERIFY: 1
-  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
-
-stages:
-- build-and-push
-
-build-and-push-job:
-  stage: build-and-push
-  before_script:
-  - until docker info; do sleep 1; done
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - docker buildx create --driver docker-container --bootstrap --use
-  script:
-  - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
-```
-
-## Cloud IDE
-
-You can use our [Coder Web Instance](https://coder.nrp-nautilus.io) or [DevPod](https://github.com/loft-sh/devpod) with your own namespace for an environment similar to GitHub Codespaces or GitPod.
-
-Visual Studio Code allows remote access and editing within any Kubernetes pod with the combination of the [Kubernetes](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) and [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions. Right-click a pod in the Kubernetes sidebar (after changing the namespace within the `~/.kube/config` file if you have multiple namespaces) and click `Attach Visual Studio Code` with `kubectl` in your PATH.
-
 ## Build better containers
 
 Make yourself familiar with [Docker containers best practices](https://www.docker.com/blog/intro-guide-to-dockerfile-best-practices).
