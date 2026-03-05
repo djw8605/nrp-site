@@ -13,7 +13,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const pacificTimezone = 'America/Los_Angeles';
 
-    // Get current Pacific hour and day directly via Intl - no browser time needed
+    // Get current Pacific hour and day directly via Intl
     const getPacificInfo = () => {
       const formatter = new Intl.DateTimeFormat('en-US', {
         timeZone: pacificTimezone,
@@ -33,23 +33,15 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
     const dayOfWeek = daysMap[pacificDay];
     const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    // Calculate next Tuesday in UTC that represents 10 AM Pacific
-    // Pacific time: UTC-8 (standard) or UTC-7 (DST)
-    // 10 AM Pacific = 18:00 UTC (standard) or 17:00 UTC (DST)
-    // Use 18:00 UTC as safe default (standard time)
+    // Calculate next Tuesday and push one week further
     const msPerDay = 86400000;
     let nextTuesday = new Date();
+    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday + 7); // <--- adds 7 days
 
-    if (dayOfWeek === 2 && (pacificHour > 10 || (pacificHour === 10 && new Date().getMinutes() >= 30))) {
-      nextTuesday = new Date(nextTuesday.getTime() + 14 * msPerDay);
-    } else {
-      nextTuesday = new Date(nextTuesday.getTime() + daysUntilTuesday * msPerDay);
-    }
-
-    // Set to 18:00 UTC = 10 AM Pacific (standard time)
+    // Set to 18:00 UTC = 10 AM Pacific standard, will adjust for DST below
     nextTuesday.setUTCHours(18, 0, 0, 0);
 
-    // If we need DST (March-November), adjust to 17:00 UTC
+    // Adjust for DST (March-November)
     const month = new Date().getUTCMonth();
     if (month >= 3 && month <= 10) {
       nextTuesday.setUTCHours(17, 0, 0, 0);
