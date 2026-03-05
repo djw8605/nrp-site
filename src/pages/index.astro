@@ -40,7 +40,7 @@ const homepageAnnouncements = [
     category: 'Office Hours',
     title: 'Bi-Weekly Office Hours',
     tagline: 'Get hands-on help from the NRP team to unblock your research workloads.',
-    dateLocation: 'Next: loading…',
+    dateLocation: '',
     ctaLabel: 'Join Meeting',
     ctaUrl: 'https://ucsd.zoom.us/j/96377381436',
   },
@@ -304,61 +304,3 @@ const homepageAnnouncements = [
     </Fragment>
   </CallToAction>
 </Layout>
-
-<script>
-  // Compute next bi-weekly office hours date and inject into announcement bar
-  // Reuses same logic as NextOfficeHours.astro
-  function updateOfficeHoursDate() {
-    const el = document.querySelector('[data-announcement-id="office-hours"] [class*="text-white/45"]');
-    if (!el) return;
-
-    const tz = 'America/Los_Angeles';
-    const parts: Record<string, string> = {};
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      hour: 'numeric',
-      hour12: false,
-      weekday: 'short',
-    })
-      .formatToParts(new Date())
-      .forEach((p) => {
-        parts[p.type] = p.value;
-      });
-
-    const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
-    const dayOfWeek = dayMap[parts.weekday];
-    const pacificHour = parseInt(parts.hour);
-    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
-
-    const msPerDay = 86400000;
-    const now = new Date();
-    let nextTuesday = new Date(now.getTime() + daysUntilTuesday * msPerDay);
-
-    // If it's Tuesday past 10:30 AM PT, skip to next occurrence (bi-weekly → +14 days)
-    if (dayOfWeek === 2 && (pacificHour > 10 || (pacificHour === 10 && now.getMinutes() >= 30))) {
-      nextTuesday = new Date(now.getTime() + 14 * msPerDay);
-    }
-
-    // 10 AM Pacific = 18:00 UTC (standard) or 17:00 UTC (DST)
-    nextTuesday.setUTCHours(18, 0, 0, 0);
-    const month = now.getUTCMonth();
-    if (month >= 3 && month <= 10) {
-      nextTuesday.setUTCHours(17, 0, 0, 0);
-    }
-
-    const formatted = new Intl.DateTimeFormat('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: tz,
-      timeZoneName: 'short',
-    }).format(nextTuesday);
-
-    el.textContent = `Next: ${formatted}`;
-  }
-
-  updateOfficeHoursDate();
-  document.addEventListener('astro:page-load', updateOfficeHoursDate);
-</script>

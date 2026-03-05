@@ -1,5 +1,7 @@
 ---
 // src/components/NextOfficeHours.astro
+// Bi-weekly office hours on Tuesdays at 10 AM PT
+// Reference date: March 17, 2026 (a bi-weekly office hours Tuesday)
 
 const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 ---
@@ -9,61 +11,46 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 <script define:vars={{ elementId: uniqueId }}>
   function calculateAndDisplayNextOfficeHours(targetElementId) {
     const targetElement = document.getElementById(targetElementId);
-    if (!targetElement) return;
+    if (!targetElement) return
 
     const pacificTimezone = 'America/Los_Angeles';
     const now = new Date();
 
-    const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+    // Reference date: March 17, 2026 at 10 AM PT is a known bi-weekly office hours date
+    const referenceDate = new Date('2026-03-17T17:00:00Z'); // 10 AM PT = 17:00 UTC (during PDT)
+    const BIWEEKLY_MS = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
 
-    // Get current date/time in Pacific Time
-    const pacificNowStr = new Intl.DateTimeFormat('en-US', {
-      timeZone: pacificTimezone,
-      weekday: 'short',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    }).format(now);
+    // Calculate how many bi-weekly periods have passed since reference
+    const msSinceReference = now.getTime() - referenceDate.getTime();
+    const periodsSinceReference = Math.floor(msSinceReference / BIWEEKLY_MS);
 
-    // Parse the Pacific date string
-    const parts = pacificNowStr.split(/[\s,]+/);
-    const pacificWeekday = parts[0];
-    const month = parseInt(parts[1]) - 1;
-    const day = parseInt(parts[2]);
-    const year = parseInt(parts[3]);
-    const hours = parseInt(parts[4]);
+    // Start checking from the most recent bi-weekly Tuesday
+    let candidateDate = new Date(referenceDate.getTime() + periodsSinceReference * BIWEEKLY_MS);
 
-    const dayOfWeek = daysMap[pacificWeekday];
-
-    // Calculate days until next Tuesday
-    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
-
-    // If today is Tuesday and we've passed 10 AM, go to next week
-    if (daysUntilTuesday === 0 && hours >= 10) {
-      daysUntilTuesday = 7;
+    // If this candidate is in the past, move to the next one
+    if (candidateDate.getTime() < now.getTime()) {
+      candidateDate = new Date(candidateDate.getTime() + BIWEEKLY_MS);
     }
 
-    const nextTuesday = new Date(year, month, day);
-    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
-
-    // Set to 10 AM Pacific
-    nextTuesday.setHours(10, 0, 0, 0);
-
     const displayFormatter = new Intl.DateTimeFormat('en-US', {
-      weekday: 'long',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
-      year: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
       timeZone: pacificTimezone
     });
 
-    targetElement.textContent = displayFormatter.format(nextTuesday) + ' PT';
+    const formattedDate = displayFormatter.format(candidateDate) + ' PT';
+
+    targetElement.textContent = formattedDate;
+
+    // Also update announcement bar if it exists
+    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] .text-white\\/45');
+    if (announcementEl) {
+      announcementEl.textContent = 'Next: ' + formattedDate;
+    }
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
