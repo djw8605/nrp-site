@@ -12,42 +12,30 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
     if (!targetElement) return;
 
     const pacificTimezone = 'America/Los_Angeles';
+    const now = new Date();
 
-    // Get current Pacific hour and day directly via Intl
-    const getPacificInfo = () => {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: pacificTimezone,
-        hour: 'numeric',
-        hour12: false,
-        weekday: 'short',
-      });
-
-      const parts = {};
-      formatter.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
-
-      return { hour: parseInt(parts.hour), weekday: parts.weekday };
-    };
-
-    const { hour: pacificHour, weekday: pacificDay } = getPacificInfo();
+    // Map weekdays to numbers
     const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const dayOfWeek = daysMap[pacificDay];
+
+    // Get current Pacific weekday
+    const pacificWeekday = new Intl.DateTimeFormat('en-US', {
+      timeZone: pacificTimezone,
+      weekday: 'short'
+    }).format(now);
+
+    const dayOfWeek = daysMap[pacificWeekday];
+
+    // Days until next Tuesday
     const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    // Calculate next Tuesday and push one week further
-    const msPerDay = 86400000;
-    let nextTuesday = new Date();
-    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday + 7); // <--- adds 7 days
+    // Start with next Tuesday
+    const nextTuesday = new Date(now);
+    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
 
-    // Set to 18:00 UTC = 10 AM Pacific standard, will adjust for DST below
-    nextTuesday.setUTCHours(18, 0, 0, 0);
+    // Push one more week forward
+    nextTuesday.setDate(nextTuesday.getDate() + 7);
 
-    // Adjust for DST (March-November)
-    const month = new Date().getUTCMonth();
-    if (month >= 3 && month <= 10) {
-      nextTuesday.setUTCHours(17, 0, 0, 0);
-    }
-
-    // Format for display in Pacific timezone
+    // Set hours to 10:00 AM Pacific safely using Intl
     const displayFormatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
@@ -55,11 +43,20 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       year: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
+      hour12: true,
       timeZone: pacificTimezone,
-      timeZoneName: 'short',
+      timeZoneName: 'short'
     });
 
-    targetElement.textContent = displayFormatter.format(nextTuesday);
+    // Use a temporary string + parse to get DST-safe 10AM
+    const parts = displayFormatter.formatToParts(nextTuesday);
+    const pacificYear = parts.find(p => p.type === 'year').value;
+    const pacificMonth = parts.find(p => p.type === 'month').value;
+    const pacificDay = parts.find(p => p.type === 'day').value;
+
+    // Build DST-safe date string
+    const dstSafeDate = new Date(`${pacificMonth} ${pacificDay}, ${pacificYear} 10:00:00 ${pacificTimezone}`);
+    targetElement.textContent = displayFormatter.format(dstSafeDate);
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
