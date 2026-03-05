@@ -16,19 +16,40 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
 
-    const pacificWeekday = new Intl.DateTimeFormat('en-US', {
+    // Get current date/time in Pacific Time
+    const pacificNowStr = new Intl.DateTimeFormat('en-US', {
       timeZone: pacificTimezone,
-      weekday: 'short'
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
     }).format(now);
+
+    // Parse the Pacific date string
+    const parts = pacificNowStr.split(/[\s,]+/);
+    const pacificWeekday = parts[0];
+    const month = parseInt(parts[1]) - 1;
+    const day = parseInt(parts[2]);
+    const year = parseInt(parts[3]);
+    const hours = parseInt(parts[4]);
 
     const dayOfWeek = daysMap[pacificWeekday];
 
-    const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
+    // Calculate days until next Tuesday
+    let daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    const nextTuesday = new Date(now);
+    // If today is Tuesday and we've passed 10 AM, go to next week
+    if (daysUntilTuesday === 0 && hours >= 10) {
+      daysUntilTuesday = 7;
+    }
+
+    const nextTuesday = new Date(year, month, day);
     nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
 
-    // Set to 10 AM
+    // Set to 10 AM Pacific
     nextTuesday.setHours(10, 0, 0, 0);
 
     const displayFormatter = new Intl.DateTimeFormat('en-US', {
@@ -39,11 +60,10 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-      timeZone: pacificTimezone,
-      timeZoneName: 'short'
+      timeZone: pacificTimezone
     });
 
-    targetElement.textContent = displayFormatter.format(nextTuesday);
+    targetElement.textContent = displayFormatter.format(nextTuesday) + ' PT';
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
