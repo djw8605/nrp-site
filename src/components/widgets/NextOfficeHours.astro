@@ -14,10 +14,8 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
     const pacificTimezone = 'America/Los_Angeles';
     const now = new Date();
 
-    // Map weekdays to numbers
     const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
 
-    // Get current Pacific weekday
     const pacificWeekday = new Intl.DateTimeFormat('en-US', {
       timeZone: pacificTimezone,
       weekday: 'short'
@@ -25,17 +23,14 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 
     const dayOfWeek = daysMap[pacificWeekday];
 
-    // Days until next Tuesday
     const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    // Start with next Tuesday
     const nextTuesday = new Date(now);
     nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
 
-    // Push one more week forward
-    nextTuesday.setDate(nextTuesday.getDate() + 7);
+    // Set to 10 AM
+    nextTuesday.setHours(10, 0, 0, 0);
 
-    // Set hours to 10:00 AM Pacific safely using Intl
     const displayFormatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
@@ -48,15 +43,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       timeZoneName: 'short'
     });
 
-    // Use a temporary string + parse to get DST-safe 10AM
-    const parts = displayFormatter.formatToParts(nextTuesday);
-    const pacificYear = parts.find(p => p.type === 'year').value;
-    const pacificMonth = parts.find(p => p.type === 'month').value;
-    const pacificDay = parts.find(p => p.type === 'day').value;
-
-    // Build DST-safe date string
-    const dstSafeDate = new Date(`${pacificMonth} ${pacificDay}, ${pacificYear} 10:00:00 ${pacificTimezone}`);
-    targetElement.textContent = displayFormatter.format(dstSafeDate);
+    targetElement.textContent = displayFormatter.format(nextTuesday);
   }
 
   calculateAndDisplayNextOfficeHours(elementId);
