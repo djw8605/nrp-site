@@ -12,42 +12,25 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
     if (!targetElement) return;
 
     const pacificTimezone = 'America/Los_Angeles';
+    const now = new Date();
 
-    // Get current Pacific hour and day directly via Intl
-    const getPacificInfo = () => {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: pacificTimezone,
-        hour: 'numeric',
-        hour12: false,
-        weekday: 'short',
-      });
-
-      const parts = {};
-      formatter.formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
-
-      return { hour: parseInt(parts.hour), weekday: parts.weekday };
-    };
-
-    const { hour: pacificHour, weekday: pacificDay } = getPacificInfo();
     const daysMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const dayOfWeek = daysMap[pacificDay];
+
+    const pacificWeekday = new Intl.DateTimeFormat('en-US', {
+      timeZone: pacificTimezone,
+      weekday: 'short'
+    }).format(now);
+
+    const dayOfWeek = daysMap[pacificWeekday];
+
     const daysUntilTuesday = (2 - dayOfWeek + 7) % 7;
 
-    // Calculate next Tuesday and push one week further
-    const msPerDay = 86400000;
-    let nextTuesday = new Date();
-    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday + 7); // <--- adds 7 days
+    const nextTuesday = new Date(now);
+    nextTuesday.setDate(nextTuesday.getDate() + daysUntilTuesday);
 
-    // Set to 18:00 UTC = 10 AM Pacific standard, will adjust for DST below
-    nextTuesday.setUTCHours(18, 0, 0, 0);
+    // Set to 10 AM
+    nextTuesday.setHours(10, 0, 0, 0);
 
-    // Adjust for DST (March-November)
-    const month = new Date().getUTCMonth();
-    if (month >= 3 && month <= 10) {
-      nextTuesday.setUTCHours(17, 0, 0, 0);
-    }
-
-    // Format for display in Pacific timezone
     const displayFormatter = new Intl.DateTimeFormat('en-US', {
       weekday: 'long',
       month: 'long',
@@ -55,8 +38,9 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       year: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
+      hour12: true,
       timeZone: pacificTimezone,
-      timeZoneName: 'short',
+      timeZoneName: 'short'
     });
 
     targetElement.textContent = displayFormatter.format(nextTuesday);
