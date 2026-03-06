@@ -9,10 +9,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 <span id={uniqueId}>Loading next office hours...</span>
 
 <script define:vars={{ elementId: uniqueId }}>
-  function calculateAndDisplayNextOfficeHours(targetElementId) {
-    const targetElement = document.getElementById(targetElementId);
-    if (!targetElement) return;
-
+  function calculateNextOfficeHoursDate() {
     const pacificTimezone = 'America/Los_Angeles';
     const now = new Date();
 
@@ -42,20 +39,33 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       timeZone: pacificTimezone
     });
 
-    const formattedDate = displayFormatter.format(candidateDate) + ' PT';
+    return displayFormatter.format(candidateDate) + ' PT';
+  }
 
-    targetElement.textContent = formattedDate;
+  function updateOfficeHoursDisplay() {
+    const formattedDate = calculateNextOfficeHoursDate();
 
-    // Also update announcement bar if it exists
-    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] span.text-white\\/45');
+    // Update the standalone widget
+    const targetElement = document.getElementById(elementId);
+    if (targetElement) {
+      targetElement.textContent = formattedDate;
+    }
+
+    // Update announcement bar - try multiple selectors
+    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] span[class*="text-white/45"]');
     if (announcementEl) {
       announcementEl.textContent = 'Next: ' + formattedDate;
     }
   }
 
-  calculateAndDisplayNextOfficeHours(elementId);
+  // Run immediately
+  updateOfficeHoursDisplay();
 
-  document.addEventListener('astro:page-load', () => {
-    calculateAndDisplayNextOfficeHours(elementId);
-  });
+  // Run on page load (for Astro SPA navigation)
+  document.addEventListener('astro:page-load', updateOfficeHoursDisplay);
+
+  // Also try again after a short delay in case announcement bar wasn't ready
+  setTimeout(updateOfficeHoursDisplay, 100);
+  setTimeout(updateOfficeHoursDisplay, 500);
+  setTimeout(updateOfficeHoursDisplay, 1000);
 </script>
