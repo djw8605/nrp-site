@@ -11,14 +11,14 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
 <script define:vars={{ elementId: uniqueId }}>
   function calculateAndDisplayNextOfficeHours(targetElementId) {
     const targetElement = document.getElementById(targetElementId);
-    if (!targetElement) return
+    if (!targetElement) return;
 
     const pacificTimezone = 'America/Los_Angeles';
     const now = new Date();
 
     // Reference date: March 17, 2026 at 10 AM PT is a known bi-weekly office hours date
-    const referenceDate = new Date('2026-03-17T17:00:00Z'); // 10 AM PT = 17:00 UTC (during PDT)
-    const BIWEEKLY_MS = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
+    const referenceDate = new Date('2026-03-17T17:00:00Z');
+    const BIWEEKLY_MS = 14 * 24 * 60 * 60 * 1000;
 
     // Calculate how many bi-weekly periods have passed since reference
     const msSinceReference = now.getTime() - referenceDate.getTime();
@@ -47,7 +47,7 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
     targetElement.textContent = formattedDate;
 
     // Also update announcement bar if it exists
-    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] .text-white\\/45');
+    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] span.text-white\\/45');
     if (announcementEl) {
       announcementEl.textContent = 'Next: ' + formattedDate;
     }
