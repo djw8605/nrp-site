@@ -51,8 +51,8 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
       targetElement.textContent = formattedDate;
     }
 
-    // Update announcement bar - try multiple selectors
-    const announcementEl = document.querySelector('[data-announcement-id="office-hours"] span[class*="text-white/45"]');
+    // Update announcement bar (data attribute so we don't rely on Tailwind class output)
+    const announcementEl = document.querySelector('[data-office-hours-date]');
     if (announcementEl) {
       announcementEl.textContent = 'Next: ' + formattedDate;
     }
@@ -64,8 +64,6 @@ const uniqueId = `next-office-hours-${crypto.randomUUID().slice(0, 8)}`;
   // Run on page load (for Astro SPA navigation)
   document.addEventListener('astro:page-load', updateOfficeHoursDisplay);
 
-  // Also try again after a short delay in case announcement bar wasn't ready
-  setTimeout(updateOfficeHoursDisplay, 100);
-  setTimeout(updateOfficeHoursDisplay, 500);
-  setTimeout(updateOfficeHoursDisplay, 1000);
+  // Retry in case announcement bar mounts after this script (e.g. view transitions)
+  [100, 500, 1000, 2000].forEach((ms) => setTimeout(updateOfficeHoursDisplay, ms));
 </script>

@@ -94,9 +94,14 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                         <span class="text-base font-bold leading-snug text-white sm:text-[17px]">
                           {announcement.title}
                         </span>
-                        {/* Date/location metadata */}
+                        {/* Date/location metadata (data-office-hours-date for JS to inject next date) */}
                         {announcement.dateLocation && (
-                          <span class="text-xs font-medium text-white/45">{announcement.dateLocation}</span>
+                          <span
+                            class="text-xs font-medium text-white/45"
+                            {...(announcement.id === 'office-hours' ? { 'data-office-hours-date': '' } : {})}
+                          >
+                            {announcement.dateLocation}
+                          </span>
                         )}
                       </div>
                       {/* Tagline (falls back to legacy message) */}
