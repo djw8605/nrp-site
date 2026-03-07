@@ -7,7 +7,7 @@ While pods are not accessible from outside the cluster, you can expose the http 
 
 For a complete example see the ([Tutorial](/documentation/userdocs/tutorial/basic2/))
 
-Refer to the [haproxy ingress documentation](https://haproxy-ingress.github.io/docs/configuration/keys/) to set up additional config.
+Refer to the [HAProxy Ingress Documentation](https://haproxy-ingress.github.io/docs/configuration/keys/) to set up additional config. **The annotation to use is either `haproxy-ingress.github.io` or `ingress.kubernetes.io`. DO NOT use the `haproxy.org` annotation to configure the Ingress.**
 
 To expose a port in your pod, you first need to create a service for it. For the pod
 
