@@ -76,7 +76,7 @@ As an **`admin`**, you will have the ability to:
 
 <Steps>
 
-1. [Install][1] the Kubernetes command-line tool, `kubectl`.
+1. [Install][1] the Kubernetes command-line tool, `kubectl` from the [official instructions][1] of each OS.
 
 2. [Install kubelogin](https://github.com/int128/kubelogin?tab=readme-ov-file#setup) plugin
 
@@ -88,6 +88,23 @@ As an **`admin`**, you will have the ability to:
     Download kubelogin
     </LinkButton>
 
+    Example for Linux or OSX (`curl`, `jq`, and `unzip` should be installed):
+
+    ```bash
+    # OS_ARCHITECTURE should be in the format `amd64` or `arm64`
+    # For Debian/Ubuntu - change as adequate for RHEL or OSX
+    OS_ARCHITECTURE="$(dpkg --print-architecture)"
+
+    # Install kubelogin
+    KUBELOGIN_VERSION="$(curl -fsSL "https://api.github.com/repos/int128/kubelogin/releases/latest" | jq -r '.tag_name')"
+    curl -o kubelogin.zip -fSL "https://github.com/int128/kubelogin/releases/download/${KUBELOGIN_VERSION}/kubelogin_linux_${OS_ARCHITECTURE}.zip"
+    unzip kubelogin.zip kubelogin
+    chmod +x ./kubelogin
+    # Replace `/usr/local/bin` to `~/.local/bin` and set `export PATH="~/.local/bin:${PATH}"` for local user
+    sudo mv ./kubelogin /usr/local/bin/kubectl-oidc_login
+    sudo chown root: /usr/local/bin/kubectl-oidc_login
+    rm -f kubelogin.zip kubelogin
+    ```
 
 2. Save the [config file](/config) as **`config`** (without any extension) and put it in your `$HOME/.kube` folder. 
 
@@ -112,6 +129,11 @@ As an **`admin`**, you will have the ability to:
       ```
       (stores tokens on disk instead of Linux keyring)
 
+    - **No local browser available** (remote console):
+      ```bash
+      --grant-type=device-code --skip-open-browser
+      ```
+
     - **Browser issues** (won’t launch or opens incorrectly):
       ```bash
       --browser-command="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
@@ -123,11 +145,6 @@ As an **`admin`**, you will have the ability to:
       --listen-port=18000
       ```
       (change to any unused port)
-
-    - **No local browser available** (remote console):
-      ```bash
-      --grant-type=device-code --skip-open-browser
-      ```
 
     **Example config snippet:**
     ```yaml
