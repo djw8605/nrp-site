@@ -100,7 +100,7 @@ As an **`admin`**, you will have the ability to:
     curl -o kubelogin.zip -fSL "https://github.com/int128/kubelogin/releases/download/${KUBELOGIN_VERSION}/kubelogin_linux_${OS_ARCHITECTURE}.zip"
     unzip kubelogin.zip kubelogin
     chmod +x ./kubelogin
-    # Replace `/usr/local/bin` to `~/.local/bin` and set `export PATH="~/.local/bin:${PATH}"` for local user
+    # Replace `/usr/local/bin` to `~/.local/bin` (create the directory when nonexistent) and set `export PATH="~/.local/bin:${PATH}"` for local user
     sudo mv ./kubelogin /usr/local/bin/kubectl-oidc_login
     sudo chown root: /usr/local/bin/kubectl-oidc_login
     rm -f kubelogin.zip kubelogin
