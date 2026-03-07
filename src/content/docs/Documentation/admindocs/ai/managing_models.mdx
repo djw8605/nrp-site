@@ -369,6 +369,9 @@ spec:
 
 Deployment (Legacy, Should be ported to StatefulSet):
 
+<details>
+<summary>Open</summary>
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -515,7 +518,11 @@ spec:
   type: ClusterIP
 ```
 
-In this case, the `Backend` for Envoy AI Gateway should be configured as `hostname: minimax-vllm-inference.nrp-llm.svc.cluster.local` and `port: 5000`.
+</details>
+
+#### Miscellaneous Information
+
+In the above case, the `Backend` for Envoy AI Gateway should be configured as `hostname: minimax-vllm-inference.nrp-llm.svc.cluster.local` and `port: 5000`.
 
 Refer to the below instructions for configuring vLLM/SGLang and above instructions for configuring Envoy AI Gateway.
 
