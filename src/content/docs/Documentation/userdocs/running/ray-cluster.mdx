@@ -7,76 +7,92 @@ import { Steps } from '@astrojs/starlight/components';
 
 [Ray](https://docs.ray.io/en/latest/index.html) is an open-source unified framework for scaling AI and Python applications like machine learning. It provides the compute layer for parallel processing so that you don’t need to be a distributed systems expert. To run Ray applications on multiple nodes, you must first deploy a Ray cluster. This document is adapted from the official guide of [RayCluster Quickstart](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html#kuberay-raycluster-quickstart) for deploying and using a Ray Cluster on Nautilus in your namespace. 
 
-:::note
-This document assumes you're deploying in your default namespace. If you are in multiple namespaces and you are deploying Ray in a non-default namespace, you will need to append `-n <namespace-name>` to the `helm` and `kubectl` commands below.
+:::caution Namespace
+All commands below use `-n <namespace>`. Replace `<namespace>` with your actual namespace (e.g. `mfsada`). If you omit the namespace, `kubectl` may use your default.
 :::
 
 <Steps>
 
-1. Deploy a RayCluster custom resource
+1. **Prerequisites: add Helm repo and prepare values**
    
-    Once the KubeRay operator is running, create a RayCluster Custom Resource (CR):
-    ```
-    helm install raycluster kuberay/ray-cluster
-    ```
-    View the RayCluster CR:
+    Add the KubeRay Helm repo and ensure you have a values file that sets required `rayStartParams` (the RayCluster CRD rejects empty values):
     ```bash
-    kubectl get rayclusters
+    helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+    helm repo update
+    ```
+    Create a `values.yaml` in your working directory with at least:
+    ```yaml
+    head:
+      rayStartParams:
+        block: "true"
+        dashboard-host: "0.0.0.0"
+    worker:
+      rayStartParams:
+        block: "true"
+    ```
+
+2. Deploy a RayCluster custom resource
+   
+    Once the KubeRay operator is running, create a RayCluster Custom Resource (CR). You must pass the values file so head and worker have non-empty `rayStartParams`:
+    ```bash
+    helm install raycluster kuberay/ray-cluster -n <namespace> -f values.yaml
+    ```
+    View the RayCluster CR (use the same namespace as the install):
+    ```bash
+    kubectl get rayclusters -n <namespace>
     # NAME                 DESIRED WORKERS   AVAILABLE WORKERS   CPUS   MEMORY   GPUS   STATUS   AGE
-    # raycluster-kuberay   1                 1                   2      3G       0      ready    121m
+    # raycluster-kuberay   1                                     2      3G       0               39s
     ```
-    The KubeRay operator will detect the RayCluster object, then start your Ray cluster by creating head and worker pods. To vew Ray cluster's pods, run the following command:
+    The KubeRay operator will detect the RayCluster object, then start your Ray cluster by creating head and worker pods. To view Ray cluster's pods, run:
     ```bash
-    kubectl get pods --selector=ray.io/cluster=raycluster-kuberay
+    kubectl get pods --selector=ray.io/cluster=raycluster-kuberay -n <namespace>
     ```
-    A `raycluster-kuberay-head` pod and a `raycluster-kuberay-worker` pod should be listed in the output:
+    A `raycluster-kuberay-head-...` pod and a `raycluster-kuberay-worker-...` pod should be listed in the output:
     ```bash
     # NAME                                          READY   STATUS    RESTARTS   AGE
-    # raycluster-kuberay-head-8gjxh                 1/1     Running   0          124m
+    # raycluster-kuberay-head-txb7l                 1/1     Running   0          124m
     # raycluster-kuberay-worker-workergroup-w74gh   1/1     Running   0          124m
     ```
 
- 2. Run an application on a RayCluster
+ 3. Run an application on a RayCluster
 
     Once the RayCluster has been deployed, users in the namespace can run Ray jobs. The most straightforward way is to exec directly into the head pod. 
 
-    Identify the RayCluster's head pod:
+    Identify the RayCluster's head pod (include `-n <namespace>` or the selector returns nothing):
     ```bash
-    export HEAD_POD=$(kubectl get pods --selector=ray.io/node-type=head -o custom-columns=POD:metadata.name --no-headers)
+    export HEAD_POD=$(kubectl get pods --selector=ray.io/node-type=head -o custom-columns=POD:metadata.name --no-headers -n <namespace>)
     echo $HEAD_POD
-    # raycluster-kuberay-head-8gjxh
+    # raycluster-kuberay-head-txb7l
     ```
-    Execute a Ray job to print the cluster resources:
+    Execute a Ray job to print the cluster resources. Use `-n <namespace>` before `--`; putting the namespace after `--` can cause "pod not found":
     ```bash
-    kubectl exec -it $HEAD_POD -- python -c "import ray; ray.init(); print(ray.cluster_resources())" 
-    # 2024-07-24 20:51:00,788 INFO worker.py:1405 -- Using address 127.0.0.1:6379 set in the environment variable RAY_ADDRESS
-    # 2024-07-24 20:51:00,788 INFO worker.py:1540 -- Connecting to existing Ray cluster at address: 10.244.110.211:6379...
-    # 2024-07-24 20:51:00,797 INFO worker.py:1715 -- Connected to Ray cluster. View the dashboard at http://10.244.110.211:8265 
-    # {'node:10.244.231.23': 1.0, 'memory': 3000000000.0, 'object_store_memory': 751175270.0, 'CPU': 2.0, 'node:10.244.110.211': 1.0, 'node:__internal_head__': 1.0}
+    kubectl exec -it $HEAD_POD -n <namespace> -- python -c "import ray; ray.init(); print(ray.cluster_resources())"
+    # 2026-03-07 19:33:00,053 INFO worker.py:1554 -- Using address 127.0.0.1:6379 set in the environment variable RAY_ADDRESS
+    # 2026-03-07 19:33:00,053 INFO worker.py:1694 -- Connecting to existing Ray cluster at address: 10.244.118.7:6379...
+    # 2026-03-07 19:33:00,072 INFO worker.py:1879 -- Connected to Ray cluster. View the dashboard at 10.244.118.7:8265 
+    # {'CPU': 2.0, 'memory': 3000000000.0, 'object_store_memory': 469440921.0, 'node:10.244.118.2': 1.0, 'node:10.244.118.7': 1.0, 'node:__internal_head__': 1.0}
     ```
 
     You may also submit a Ray job to the RayCluster via ray job submission SDK. For more information, please refer to https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html#method-2-submit-a-ray-job-to-the-raycluster-via-ray-job-submission-sdk
 
-2. Access the Ray Dashboard
+4. Access the Ray Dashboard
    
-    Execute this command to create a tunnel:
+    Execute this command to create a tunnel (include `-n <namespace>`):
     ```bash
-    kubectl port-forward service/raycluster-kuberay-head-svc 8265:8265
+    kubectl port-forward service/raycluster-kuberay-head-svc 8265:8265 -n <namespace>
     ```
-    Visit http://localhost:8265 in your browser for the Dashboard.
+    Visit http://127.0.0.1:8265 in your browser for the Dashboard.
 
-3. Cleanup
+5. Cleanup
    
-    When the RayCluster is not needed anymore, delete the RayCluster CR:
+    When the RayCluster is not needed anymore, uninstall the Helm release in the same namespace:
     ```bash
-    # Uninstall the RayCluster Helm chart
-    helm uninstall raycluster
+    helm uninstall raycluster -n <namespace>
     # release "raycluster" uninstalled
     ```
-
     It might take several seconds for the RayCluster's pods to terminate. Confirm that the pods are gone by running:
     ```bash
-    kubectl get pods
+    kubectl get pods -n <namespace>
     ```
 
 </Steps>
