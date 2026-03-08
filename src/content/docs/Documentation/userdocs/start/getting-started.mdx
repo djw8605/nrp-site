@@ -88,16 +88,18 @@ As an **`admin`**, you will have the ability to:
     Download kubelogin
     </LinkButton>
 
-    Example for Linux or OSX (`curl`, `jq`, and `unzip` should be installed):
+    Example for Linux or macOS (`curl`, `jq`, and `unzip` should be installed):
 
     ```bash
     # OS_ARCHITECTURE should be in the format `amd64` or `arm64`
-    # For Debian/Ubuntu - change as adequate for RHEL or OSX
+    # For Debian/Ubuntu - change as adequate for RHEL or macOS
     OS_ARCHITECTURE="$(dpkg --print-architecture)"
+    # Change to `darwin` for macOS
+    OS_NAME="linux"
 
     # Install kubelogin
     KUBELOGIN_VERSION="$(curl -fsSL "https://api.github.com/repos/int128/kubelogin/releases/latest" | jq -r '.tag_name')"
-    curl -o kubelogin.zip -fSL "https://github.com/int128/kubelogin/releases/download/${KUBELOGIN_VERSION}/kubelogin_linux_${OS_ARCHITECTURE}.zip"
+    curl -o kubelogin.zip -fSL "https://github.com/int128/kubelogin/releases/download/${KUBELOGIN_VERSION}/kubelogin_${OS_NAME}_${OS_ARCHITECTURE}.zip"
     unzip kubelogin.zip kubelogin
     chmod +x ./kubelogin
     # Replace `/usr/local/bin` to `~/.local/bin` (create the directory when nonexistent) and set `export PATH="~/.local/bin:${PATH}"` for local user
