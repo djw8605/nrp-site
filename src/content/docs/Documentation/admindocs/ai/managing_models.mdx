@@ -218,6 +218,9 @@ The below are the set of example resources required to deploy an LLM model on th
 
 StatefulSet (Recommended):
 
+<details>
+<summary>Open</summary>
+
 ```yaml
 apiVersion: apps/v1
 kind: StatefulSet
@@ -367,7 +370,128 @@ spec:
   type: ClusterIP
 ```
 
-Deployment (Legacy, Should be ported to StatefulSet):
+</details>
+
+Example StatefulSet for an embedding model:
+
+In this case, `--runner pooling` and `--convert embed` are important arguments for embedding models.
+
+<details>
+<summary>Open</summary>
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: qwen3-embedding-8b-vllm-inference
+  name: qwen3-embedding-8b-vllm-inference
+  namespace: nrp-llm
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qwen3-embedding-8b-vllm-inference
+  serviceName: qwen3-embedding-8b-vllm-inference
+  template:
+    metadata:
+      labels:
+        app: qwen3-embedding-8b-vllm-inference
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.compute.major
+                operator: Gt
+                values:
+                - "6"
+              - key: nvidia.com/cuda.driver.major
+                operator: Gt
+                values:
+                - "565"
+              - key: nvidia.com/gpu.memory
+                operator: Gt
+                values:
+                - "20000"
+      containers:
+      - args:
+        - |
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model Qwen/Qwen3-VL-Embedding-8B --tensor-parallel-size 2 --max-model-len auto --runner pooling --convert embed --mm-processor-cache-gb 0 --trust-remote-code --gpu-memory-utilization 0.975
+        command:
+        - bash
+        - -c
+        envFrom:
+        - configMapRef:
+            name: qwen-vllm-inference-config
+        image: vllm/vllm-openai:v0.17.0
+        imagePullPolicy: Always
+        name: qwen3-embedding-8b-vllm-inference
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "8"
+            memory: 72Gi
+            nvidia.com/gpu: "2"
+          requests:
+            cpu: "4"
+            memory: 36Gi
+            nvidia.com/gpu: "2"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: false
+        volumeMounts:
+        - mountPath: /workspace/.cache
+          name: qwen3-embedding-8b-vllm-inference-volume
+          subPath: cache
+        - mountPath: /dev/shm
+          name: shm
+      priorityClassName: owner
+      securityContext:
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      tolerations:
+      - effect: NoSchedule
+        key: nautilus.io/reservation
+        value: nrp-llm
+      - effect: PreferNoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 10995116277760m
+        name: shm
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: qwen3-embedding-8b-vllm-inference-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 24Gi
+      storageClassName: linstor-igrok
+      volumeMode: Filesystem
+```
+
+</details>
+
+Deployment (Legacy and should be ported to a StatefulSet instead):
 
 <details>
 <summary>Open</summary>
@@ -532,7 +656,7 @@ Refer to the below instructions for configuring vLLM/SGLang and above instructio
 2. Tune `--gpu-memory-utilization` to ideally fit enough KV cache that is larger than `--max-model-len`, but with enough space for CUDA graphs to be built. This is typically calculated outside `--gpu-memory-utilization`, so if the CUDA graph build stage errors with not enough memory, `--gpu-memory-utilization` has to be lowered. Moreover, some multimodal models may also consume more memory outside `--gpu-memory-utilization` for certain reasons. If there is an error about insufficient KV cache, `--gpu-memory-utilization` has to be increased, or if both errors occur, consult the next step.
 3. Moreover, note that if the `num_key_value_heads` in `config.json` is lower than the `--tensor-parallel-size` (typically the number of GPUs in a simple configuration), KV cache is duplicated, reducing the context width available from vLLM. In multi-head latent attention (MLA) models like DeepSeek or Kimi, `num_key_value_heads` is always considered `1` even if `config.json` says otherwise. An initial solution is deduplicating the KV cache by: (1) only increasing `--tensor-parallel-size` until `num_key_value_heads`, then use `--pipeline-parallel-size` for the rest of the GPUs required to load the weights, or (2) to use Context Parallelism (`--decode-context-parallel-size`) so that the product (multiplication) of `--decode-context-parallel-size` and `num_key_value_heads` equals `--tensor-parallel-size`, especially in multi-head latent attention (MLA) models such as DeepSeek and Kimi families. Consult the detailed dedicated instructions for various types of parallelism below.
 4. Do not use `--enforce-eager` unless absolutely necessary, as this cuts the token throughput into 1/4 to 1/6 in many cases. CUDA graphs lead to a substantial performance benefit. Using this should only happen if other efforts below have failed to achieve the designed context length of the model. An alternative is to use `--compilation-config "{\"cudagraph_mode\": \"PIECEWISE\"}"`, as this argument retains some level of CUDA graph capability while conserving VRAM, but the conservation is likely about half to one GB, and has visible token throughput sacrifices.
-5. Tune `--max-num-seqs` first, before modifying the maximum context length (`--max-model-len`) anywhere below the full context. The initial priority is always to achieve the designed full context length of the model, so tune other parameters before changing `--max-model-len`. The `--mm-encoder-tp-mode`, `--mm-processor-cache-type`, and `--mm-processor-cache-gb` arguments may also be relevant for some multimodal models.
+5. Tune `--max-num-seqs` first, before modifying the maximum context length (`--max-model-len`) anywhere below the full context. The initial priority is always to achieve the designed full context length of the model, so tune other parameters before changing `--max-model-len`. The `--mm-encoder-tp-mode`, `--mm-processor-cache-type` (typically set to `shm` in more than one GPU), and `--mm-processor-cache-gb` arguments (set to `0` when the VRAM is inufficient and multimodel inputs are mostly unique and non-repeating) may also be relevant for some multimodal models.
 6. Test that the model works when a large part of the KV cache has been filled through the prompts. Some models may have volatile VRAM consumption during runtime and may get out-of-memory errors even after successful initialization.
 7. Update the [Envoy Proxy configuration](#envoy-ai-gateway-management) above, and the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue).
 8. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including Context Parallelism (`--decode-context-parallel-size`), or Data Parallelism Attention + Expert Parallelism (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
