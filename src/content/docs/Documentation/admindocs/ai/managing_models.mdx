@@ -319,6 +319,7 @@ spec:
       tolerations:
       - effect: NoSchedule
         key: nautilus.io/reservation
+        operator: Equal
         value: nrp-llm
       - effect: PreferNoSchedule
         key: nvidia.com/gpu
@@ -472,6 +473,7 @@ spec:
       tolerations:
       - effect: NoSchedule
         key: nautilus.io/reservation
+        operator: Equal
         value: nrp-llm
       - effect: PreferNoSchedule
         key: nvidia.com/gpu
@@ -621,6 +623,7 @@ spec:
       tolerations:
       - effect: NoSchedule
         key: nautilus.io/reservation
+        operator: Equal
         value: nrp-llm
       - effect: PreferNoSchedule
         key: nvidia.com/gpu
