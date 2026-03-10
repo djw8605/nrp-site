@@ -216,10 +216,7 @@ Finally, update the [Chatbox Config Template](https://gitlab.nrp-nautilus.io/prp
 
 The below are the set of example resources required to deploy an LLM model on the `nrp-llm` namespace (similar in the `sdsc-llm` namespace, but check the `StatefulSet` or `Deployment` examples within the namespace for differences):
 
-StatefulSet (Recommended):
-
-<details>
-<summary>Open</summary>
+**StatefulSet (Recommended):**
 
 ```yaml
 apiVersion: apps/v1
@@ -254,7 +251,7 @@ spec:
               #  operator: In
               #  values:
               #  - NVIDIA-L40
-              # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability
+              # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability (https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
               - key: nvidia.com/gpu.memory
                 operator: Gt
                 values:
@@ -278,7 +275,7 @@ spec:
         #  value: "1"
         envFrom:
         - configMapRef:
-            # Default configMap for nrp-llm, refer to other models for sdsc-llm
+            # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Use nightly container when recent commit fixes model or tool calling
         image: vllm/vllm-openai:v0.17.0
@@ -370,11 +367,9 @@ spec:
   type: ClusterIP
 ```
 
-</details>
+**Example StatefulSet for an embedding model:**
 
-Example StatefulSet for an embedding model:
-
-In this case, `--runner pooling` and `--convert embed` are important arguments for embedding models.
+In this case, **`--runner pooling` and `--convert embed`** are important arguments for embedding models, where there are no arguments regarding tool calling and reasoning parsers.
 
 <details>
 <summary>Open</summary>
@@ -407,20 +402,24 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
+              # Newer than Pascal GPUs (GTX 1000, https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
               - key: nvidia.com/gpu.compute.major
                 operator: Gt
                 values:
                 - "6"
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0
               - key: nvidia.com/cuda.driver.major
                 operator: Gt
                 values:
                 - "565"
+              # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability (https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
               - key: nvidia.com/gpu.memory
                 operator: Gt
                 values:
                 - "20000"
       containers:
       - args:
+        # Refer to the documentation for detailed setup
         - |
           uv pip install --system 'qwen-vl-utils>=0.0.14' && python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model Qwen/Qwen3-VL-Embedding-8B --tensor-parallel-size 2 --max-model-len auto --runner pooling --convert embed --mm-processor-cache-gb 0 --trust-remote-code --gpu-memory-utilization 0.975
         command:
@@ -428,7 +427,9 @@ spec:
         - -c
         envFrom:
         - configMapRef:
+            # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
+        # Use nightly container when recent commit fixes model
         image: vllm/vllm-openai:v0.17.0
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
@@ -438,12 +439,18 @@ spec:
           protocol: TCP
         resources:
           limits:
+            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
             cpu: "8"
+            # At least the model size
             memory: 72Gi
+            # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/gpu: "2"
           requests:
+            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
             cpu: "4"
+            # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
             memory: 36Gi
+            # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/gpu: "2"
         securityContext:
           allowPrivilegeEscalation: false
@@ -469,6 +476,11 @@ spec:
       - effect: PreferNoSchedule
         key: nvidia.com/gpu
         operator: Exists
+      # Only set this when using 4 or 8 GPUs, not any other count such as 1, 2, or 6
+      #- effect: NoSchedule
+      #  key: nautilus.io/hardware
+      #  operator: Equal
+      #  value: large-gpu
       volumes:
       - emptyDir:
           medium: Memory
@@ -484,14 +496,33 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
+          # 10-20% more than the model weight size in https://pypi.org/project/hf-mem/
           storage: 24Gi
+      # May be linstor-unl if target node is in us-central or us-east, but use linstor-igrok over linstor-sdsu normally
       storageClassName: linstor-igrok
       volumeMode: Filesystem
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: llm
+  name: qwen3-embedding-8b-vllm-inference
+  namespace: nrp-llm
+spec:
+  ports:
+  - name: http
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: qwen3-embedding-8b-vllm-inference
+  type: ClusterIP
 ```
 
 </details>
 
-Deployment (Legacy and should be ported to a StatefulSet instead):
+**Deployment (Deprecated, should be ported to a StatefulSet instead):**
 
 <details>
 <summary>Open</summary>
@@ -522,7 +553,7 @@ spec:
               #  operator: In
               #  values:
               #  - NVIDIA-L40
-              # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability
+              # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability (https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
               - key: nvidia.com/gpu.memory
                 operator: Gt
                 values:
@@ -546,7 +577,7 @@ spec:
         #  value: "1"
         envFrom:
         - configMapRef:
-            # Default configMap for nrp-llm, refer to other models for sdsc-llm
+            # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Use nightly container when recent commit fixes model or tool calling
         image: vllm/vllm-openai:v0.17.0
