@@ -122,6 +122,11 @@ var chatboxConfigTemplate = {
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 131072
 			},
+			{
+				modelId: "qwen3-small",
+				capabilities: ["reasoning", "vision", "tool_use"],
+				contextWindow: 262144
+			},
             {
 				modelId: "kimi",
 				capabilities: ["reasoning", "vision", "tool_use"],

@@ -239,7 +239,7 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 
 <Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed if there are no major group or user usage, or switched to a deprecated state. This is to provide our users with the best models within our limited allocation of GPUs. Moreover, models may be upgraded to a newer variant without prior notice.
 
-<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under heavy load.
+<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under heavy load. **For batching, code your script so that the chat request will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). It is possible that models may go down and come back up at various times.**
 
 <Badge text="tool" variant="success" /> - The LLM has tools calling enabled.
 
@@ -253,7 +253,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="qwen3" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
 
   **[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8)**
   
@@ -267,6 +267,15 @@ You can follow all updates and participate in the discussions within our [Matrix
   **[openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)**
   
   131,072 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic task performance
+</Card>
+
+<Card title="qwen3-small" icon="star">
+
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)**
+  
+  Multimodal (vision, video), 262,144 context tokens, 27B parameters, Native bfloat16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="kimi" icon="star">
@@ -296,9 +305,18 @@ You can follow all updates and participate in the discussions within our [Matrix
   196,608 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), Native FP8 model weights, frontier agentic coding performance
 </Card>
 
+<Card title="qwen3-embedding" icon="star">
+
+  <Badge text="main" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)**
+  
+  Embedding model, NOT for chat usage
+</Card>
+
 <Card title="glm-v" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="deprecated" variant="caution" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
 
   **[zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8)**
   
@@ -307,20 +325,11 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="gemma3" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="deprecated" variant="caution" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
   
   **[google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it)**
   
   Multimodal (vision), 131,072 context tokens, [tool calling](https://github.com/vllm-project/vllm/pull/17149)
-</Card>
-
-<Card title="qwen3-embedding" icon="star">
-
-  <Badge text="main" variant="success" /><Badge text="multimodal" variant="success" />
-
-  **[Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)**
-  
-  Embedding model, NOT for chat usage
 </Card>
 
 <Card title="llama3-sdsc" icon="star">
@@ -353,11 +362,14 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 #### **March 2026:**
 
-- `qwen3-embedding` ([Qwen/Qwen3-Embedding-8B](https://huggingface.co/Qwen/Qwen3-Embedding-8B)) was added as an available model on the AI Gateway.
+- `qwen3-embedding` ([Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)) was added as an available model on the AI Gateway.
+
+- `embed-mistral` ([intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)) was decommissioned and replaced with `qwen3-embedding` due to incompatibilities with Jupyter AI.
 
 #### **February 2026:**
 
 - `minimax-m2` was changed from [MiniMaxAI/MiniMax-M2.1](https://huggingface.co/MiniMaxAI/MiniMax-M2.1) to [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5).
+
 - `qwen3` was changed from [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8) to [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8).
 
 #### **January 2026:**

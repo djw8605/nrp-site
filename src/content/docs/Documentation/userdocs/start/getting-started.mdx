@@ -121,15 +121,8 @@ As an **`admin`**, you will have the ability to:
     ```
     Finally, you should have the Nautilus Kubernetes config on your machine (laptop, desktop) as `~/.kube/config` (e.g., `curl -o ~/.kube/config -fSL "https://nrp.ai/config"`)
 
-3. **Cross-platform kubelogin fixes (WSL / Linux / Windows / other non-Mac)**
+3. **Cross-platform kubelogin fixes (WSL / Linux / Windows / macOS)**
 
-    If you run into authentication issues with `kubelogin`:
-
-    - **Keyring errors** (e.g., `/run/user/1000/bus` not found):
-      ```bash
-      --token-cache-storage=disk
-      ```
-      (stores tokens on disk instead of Linux keyring)
 
     - **No local browser available** (remote console, use the link in `Please visit the following URL in your browser:` to login with CILogon):
       ```bash
@@ -156,6 +149,15 @@ As an **`admin`**, you will have the ability to:
       - --browser-command="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
       - --listen-address=0.0.0.0:18000
       - --token-cache-storage=disk
+    ```
+
+    You can store the token cache to the OS keyring for enhanced security.
+
+    ```yaml
+    args:
+      - oidc-login
+      - get-token
+      - --token-cache-storage=keyring
     ```
 
 
