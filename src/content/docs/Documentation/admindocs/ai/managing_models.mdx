@@ -206,6 +206,82 @@ spec:
       group: aigateway.envoyproxy.io
 ```
 
+### Role Bindings
+
+The following are example roles and bindings that allow users and admins of an LLM namespace to edit the Envoy AI Gateway resources.
+
+<details>
+<summary>Open</summary>
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: nrp-llm
+  name: ai-gateway-role
+rules:
+- apiGroups:
+  - aigateway.envoyproxy.io
+  resources:
+  - aigatewayroutes
+  - aiservicebackends
+  - backendsecuritypolicies
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - gateway.envoyproxy.io
+  resources:
+  - backends
+  - envoyproxies
+  - clienttrafficpolicies
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gatewayclasses
+  - gateways
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: nrp-llm
+  name: ai-gateway-rolebinding
+subjects:
+- kind: Group
+  name: "oidcgroup:nrp-llm"
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: "oidcgroup:nrp-llm:admin"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: ai-gateway-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+</details>
+
 ### Chatbox Template
 
 Finally, update the [Chatbox Config Template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue).
