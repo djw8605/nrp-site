@@ -35,8 +35,8 @@ This is a very long list — and growing. While you can see basic node informati
 > Nautilus users have list-only access to nodes.
 >
 > - ✅ kubectl get nodes
+> - ✅ kubectl get nodes -L
 > - ✅ kubectl get node -l
-> - ✅ kubectl get node -L
 > - ❌ kubectl get node <node>
 > - ❌ kubectl describe node <node>
 > - ❌ kubectl get nodes -o yaml
