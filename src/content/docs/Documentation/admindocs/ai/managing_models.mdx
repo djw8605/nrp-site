@@ -11,6 +11,9 @@ This page contains administrative documentation intended for cluster administrat
 When changing the provided models, also change the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue).
 :::
 
+:::caution
+If you are a namespace administrator reading this manual for your own namespace, use a relatively high `ingress.kubernetes.io/timeout-server` annotation on your **Ingress** if you experience any timeouts.
+:::
 
 ## Envoy AI Gateway Management
 
