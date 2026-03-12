@@ -43,6 +43,14 @@ This is a very long list — and growing. While you can see basic node informati
 
 ### Viewing node capabilities with labels
 
+You may view the full labels of a node through the following (change `<NODE_HOST>` to the hostname of the node you are concerned with):
+
+```
+kubectl get nodes --field-selector 'metadata.name=<NODE_HOST>' -o go-template='{{range $k, $v := (index .items 0).metadata.labels}}{{$k}}={{$v}}{{println}}{{end}}'
+```
+
+Below, you can list nodes that have a certain type of node capabilities.
+
 For example, you can see which nodes provide which GPU types:
 
 ```
