@@ -244,6 +244,9 @@ You might want to try one of these GUI tools for Kubernetes:
 
 #### Visual Studio Code
 
+<details>
+<summary>Open Instructions</summary>
+
 Install both the [Kubernetes](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) and [Remote Development](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack) extensions.
 
 After configuring the requirements below and setting the namespace (look at the bottom of the interface after entering the Kubernetes tab), right-click the Deployment, Pod, or any other resource, and press **`Attach Visual Studio`**.
@@ -253,6 +256,7 @@ After configuring the requirements below and setting the namespace (look at the 
  - The interface prompt for installing `kubectl` within Visual Studio Code will **NOT** work for accessing the resource. **Both `kubectl` and `kubectl-oidc_login` executable files** must be in the `PATH`.
  - For **Windows**, an easy way to make `kubectl` and `kubectl-oidc_login` work is to copy the two `.exe` executable files into `%LOCALAPPDATA%\Programs\Microsoft VS Code\bin` or `C:\Program Files\Microsoft VS Code\bin` (depending on the Visual Studio Code installation), where these directories are already added into the `PATH` in Windows.
 
+</details>
 
 [1]: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 [2]: https://nrp.ai
