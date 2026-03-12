@@ -35,6 +35,8 @@ This is a very long list — and growing. While you can see basic node informati
 > Nautilus users have list-only access to nodes.
 >
 > - ✅ kubectl get nodes
+> - ✅ kubectl get node -l
+> - ✅ kubectl get node -L
 > - ❌ kubectl get node <node>
 > - ❌ kubectl describe node <node>
 > - ❌ kubectl get nodes -o yaml
@@ -43,11 +45,61 @@ This is a very long list — and growing. While you can see basic node informati
 
 ### Viewing node capabilities with labels
 
-You may view the full labels of a node through the following (change `<NODE_HOST>` to the hostname of the node you are concerned with):
+You may view the full labels of a node through the following (change `<NODE_HOST>` to the hostname of the node you are concerned with, e.g., `node-1-1.sdsc.optiputer.net`):
 
 ```
 kubectl get nodes --field-selector 'metadata.name=<NODE_HOST>' -o go-template='{{range $k, $v := (index .items 0).metadata.labels}}{{$k}}={{$v}}{{println}}{{end}}'
 ```
+
+Examples of commonly used labels (not exhaustive and consistently added):
+
+<details>
+<summary>Open</summary>
+
+```
+cpu-feature.node.kubevirt.io/adx=true
+cpu-feature.node.kubevirt.io/aes=true
+cpu-feature.node.kubevirt.io/avx=true
+cpu-feature.node.kubevirt.io/avx2=true
+cpu-feature.node.kubevirt.io/fma=true
+cpu-feature.node.kubevirt.io/sse=true
+cpu-feature.node.kubevirt.io/sse2=true
+cpu-feature.node.kubevirt.io/sse4.1=true
+cpu-feature.node.kubevirt.io/sse4.2=true
+cpu-feature.node.kubevirt.io/ssse3=true
+cpu-model.node.kubevirt.io/Broadwell=true
+cpu-model.node.kubevirt.io/Haswell=true
+cpu-vendor.node.kubevirt.io/Intel=true
+kubernetes.io/arch=amd64
+kubernetes.io/hostname=dtn-gpu2.kreonet.net
+kubernetes.io/os=linux
+mtu=9000
+nautilus.io/network=40000
+netbox.io/site=kreonet
+nvidia.com/cuda.driver-version.full=580.126.09
+nvidia.com/cuda.driver-version.major=580
+nvidia.com/cuda.driver-version.minor=126
+nvidia.com/cuda.driver-version.revision=09
+nvidia.com/cuda.driver.major=580
+nvidia.com/cuda.driver.minor=126
+nvidia.com/cuda.driver.rev=09
+nvidia.com/cuda.runtime-version.full=13.0
+nvidia.com/cuda.runtime-version.major=13
+nvidia.com/cuda.runtime-version.minor=0
+nvidia.com/cuda.runtime.major=13
+nvidia.com/cuda.runtime.minor=0
+nvidia.com/gpu.compute.major=6
+nvidia.com/gpu.compute.minor=1
+nvidia.com/gpu.count=5
+nvidia.com/gpu.family=pascal
+nvidia.com/gpu.memory=12288
+nvidia.com/gpu.present=true
+nvidia.com/gpu.product=NVIDIA-TITAN-Xp
+topology.kubernetes.io/region=pacific
+topology.kubernetes.io/zone=korea
+```
+
+</details>
 
 Below, you can list nodes that have a certain type of node capabilities.
 
