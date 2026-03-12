@@ -51,7 +51,7 @@ You may view the full labels of a node through the following (change `<NODE_HOST
 kubectl get nodes --field-selector 'metadata.name=<NODE_HOST>' -o go-template='{{range $k, $v := (index .items 0).metadata.labels}}{{$k}}={{$v}}{{println}}{{end}}'
 ```
 
-Examples of commonly used labels (not exhaustive and consistently added):
+Examples of commonly usable labels (not exhaustive and variable):
 
 <details>
 <summary>Open</summary>
