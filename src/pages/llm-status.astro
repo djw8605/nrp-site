@@ -1,0 +1,309 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'LLM Status',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative pt-8 pb-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            NRP LLM Status
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Live status of LLM inference endpoints on the NRP cluster
+          </p>
+          <div id="health-indicator" class="inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+            <span class="w-2 h-2 rounded-full bg-gray-400 animate-pulse" id="health-dot"></span>
+            <span id="health-text">Connecting...</span>
+          </div>
+        </div>
+
+        <!-- Error banner (hidden by default) -->
+        <div id="error-banner" class="hidden mb-6 p-4 rounded-lg border border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-800 text-red-700 dark:text-red-300 text-center">
+          <p class="font-medium" id="error-text">Error reading LLM status from the cluster</p>
+          <button id="retry-btn" class="mt-2 px-4 py-1.5 text-sm font-medium rounded bg-red-600 text-white hover:bg-red-700 transition-colors">
+            Retry
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div id="filter-bar" class="hidden mb-6 flex flex-wrap gap-3 items-center justify-between">
+          <div class="flex gap-2">
+            <button data-filter="all" class="llm-filter-btn active px-3 py-1.5 text-sm rounded-full font-medium transition-colors">All</button>
+            <button data-filter="online" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Online</button>
+            <button data-filter="down" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Down</button>
+            <button data-filter="archived" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Archived</button>
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400" id="model-count"></p>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div id="loading-skeleton" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map(() => (
+            <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse">
+              <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+              <div class="flex gap-3">
+                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Model cards container -->
+        <div id="models-grid" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  .llm-filter-btn {
+    background: transparent;
+    color: rgb(107 114 128);
+    border: 1px solid rgb(229 231 235);
+  }
+  .dark .llm-filter-btn {
+    color: rgb(156 163 175);
+    border-color: rgb(55 65 81);
+  }
+  .llm-filter-btn.active {
+    background: rgb(59 130 246);
+    color: white;
+    border-color: rgb(59 130 246);
+  }
+  .llm-uptime-bar {
+    display: flex;
+    gap: 1px;
+    height: 16px;
+    align-items: stretch;
+  }
+  .llm-uptime-bucket {
+    flex: 1;
+    border-radius: 2px;
+    min-width: 2px;
+  }
+  .llm-uptime-bucket.up { background: rgb(34 197 94); }
+  .llm-uptime-bucket.down { background: rgb(239 68 68); }
+  .llm-uptime-bucket.unknown { background: rgb(209 213 219); }
+  .dark .llm-uptime-bucket.unknown { background: rgb(75 85 99); }
+
+  .llm-status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .llm-status-dot.online { background: rgb(34 197 94); }
+  .llm-status-dot.down { background: rgb(239 68 68); }
+  .llm-status-dot.archived { background: rgb(156 163 175); }
+</style>
+
+<script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '' }}>
+  const API_BASE = portalUrl || '';
+
+  let currentFilter = 'all';
+  let modelsData = [];
+
+  function $(id) { return document.getElementById(id); }
+
+  function formatNumber(val) {
+    if (val === undefined || val === null) return '—';
+    if (typeof val === 'number') {
+      if (val >= 1000) return val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      if (val < 0.01 && val > 0) return val.toExponential(1);
+      return val.toFixed(val % 1 === 0 ? 0 : 1);
+    }
+    return String(val);
+  }
+
+  function friendlyModelName(model) {
+    if (model.model_name) return model.model_name;
+    return model.container || `${model.namespace}/${model.container}`;
+  }
+
+  function buildUptimeBar(uptime) {
+    if (!uptime || !uptime.length) return '';
+    return `<div class="llm-uptime-bar" title="24h uptime (30min buckets, newest on right)">${
+      uptime.map((up, i) => {
+        const cls = up ? 'up' : (i < uptime.length - 1 ? 'down' : 'unknown');
+        return `<div class="llm-uptime-bucket ${cls}"></div>`;
+      }).join('')
+    }</div>`;
+  }
+
+  function buildMetricPills(latest) {
+    if (!latest || Object.keys(latest).length === 0) return '';
+    const pills = [];
+    const labels = {
+      num_requests_running: 'Running',
+      num_requests_waiting: 'Waiting',
+      kv_cache_usage_perc: 'KV Cache',
+      generation_tokens_rate: 'Tok/s',
+      gpu_count: 'GPUs',
+    };
+    for (const [key, val] of Object.entries(latest)) {
+      const label = labels[key] || key;
+      let display;
+      if (typeof val === 'object' && val !== null) {
+        const entries = Object.entries(val);
+        if (key === 'gpu_count') {
+          display = entries.map(([k, v]) => `${v} × ${k.replace('NVIDIA ', '')}`).join(', ');
+        } else {
+          display = entries.map(([k, v]) => `${k}: ${formatNumber(v)}`).join(', ');
+        }
+      } else {
+        if (key === 'kv_cache_usage_perc') {
+          display = formatNumber(val * 100) + '%';
+        } else {
+          display = formatNumber(val);
+        }
+      }
+      pills.push(`<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${label}: ${display}</span>`);
+    }
+    return `<div class="flex flex-wrap gap-1.5 mt-3">${pills.join('')}</div>`;
+  }
+
+  function renderCard(model) {
+    const statusColors = {
+      online: 'border-green-400 dark:border-green-600',
+      down: 'border-red-400 dark:border-red-600',
+      archived: 'border-gray-300 dark:border-gray-600',
+    };
+    const statusLabels = {
+      online: '<span class="text-green-600 dark:text-green-400 text-xs font-semibold uppercase">Online</span>',
+      down: '<span class="text-red-600 dark:text-red-400 text-xs font-semibold uppercase">Down</span>',
+      archived: '<span class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Archived</span>',
+    };
+
+    const borderClass = statusColors[model.status] || 'border-gray-200 dark:border-gray-700';
+    const name = friendlyModelName(model);
+    const lastSeen = model.last_seen ? new Date(model.last_seen).toLocaleString() : '—';
+
+    return `
+      <div class="rounded-xl border-l-4 ${borderClass} border border-gray-200 dark:border-gray-700 p-5 bg-white dark:bg-gray-800/50 transition-shadow hover:shadow-md" data-status="${model.status}">
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <h3 class="text-base font-semibold text-gray-900 dark:text-white truncate" title="${name}">${name}</h3>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="llm-status-dot ${model.status}"></span>
+            ${statusLabels[model.status] || ''}
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">${model.namespace} &middot; Last seen: ${lastSeen}</p>
+        ${buildUptimeBar(model.uptime)}
+        ${buildMetricPills(model.latest)}
+      </div>
+    `;
+  }
+
+  function renderModels(models) {
+    const grid = $('models-grid');
+    const filtered = currentFilter === 'all' ? models : models.filter(m => m.status === currentFilter);
+
+    grid.innerHTML = filtered.length === 0
+      ? '<div class="col-span-2 text-center py-12 text-gray-500 dark:text-gray-400">No models match this filter</div>'
+      : filtered.map(renderCard).join('');
+
+    // Update count
+    const online = models.filter(m => m.status === 'online').length;
+    const down = models.filter(m => m.status === 'down').length;
+    const archived = models.filter(m => m.status === 'archived').length;
+    $('model-count').textContent = `${models.length} models (${online} online, ${down} down, ${archived} archived)`;
+  }
+
+  function showError(msg) {
+    $('loading-skeleton').classList.add('hidden');
+    $('models-grid').classList.add('hidden');
+    $('filter-bar').classList.add('hidden');
+    $('error-banner').classList.remove('hidden');
+    $('error-text').textContent = msg || 'Error reading LLM status from the cluster';
+    $('health-dot').className = 'w-2 h-2 rounded-full bg-red-500';
+    $('health-text').textContent = 'Disconnected';
+    $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400';
+  }
+
+  function showModels() {
+    $('loading-skeleton').classList.add('hidden');
+    $('error-banner').classList.add('hidden');
+    $('models-grid').classList.remove('hidden');
+    $('filter-bar').classList.remove('hidden');
+  }
+
+  async function fetchStatus() {
+    if (!API_BASE) {
+      showError('Portal URL not configured (PUBLIC_SVC_URL is empty)');
+      return;
+    }
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const resp = await fetch(`${API_BASE}/api/llm/status/overview`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      modelsData = Array.isArray(data) ? data : [];
+
+      if (modelsData.length === 0) {
+        showModels();
+        renderModels([]);
+        $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
+        $('health-text').textContent = 'No models discovered';
+        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
+        return;
+      }
+
+      showModels();
+      renderModels(modelsData);
+
+      const hasDown = modelsData.some(m => m.status === 'down');
+      if (hasDown) {
+        $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
+        $('health-text').textContent = 'Some models down';
+        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
+      } else {
+        $('health-dot').className = 'w-2 h-2 rounded-full bg-green-500';
+        $('health-text').textContent = 'All models online';
+        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400';
+      }
+
+    } catch (err) {
+      const msg = err.name === 'AbortError'
+        ? 'Request timed out — the portal may be unavailable'
+        : `Error reading LLM status from the cluster (${err.message})`;
+      showError(msg);
+    }
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.llm-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.llm-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderModels(modelsData);
+    });
+  });
+
+  // Retry button
+  $('retry-btn')?.addEventListener('click', fetchStatus);
+
+  // Initial fetch + auto-refresh every 30s
+  fetchStatus();
+  setInterval(fetchStatus, 30000);
+</script>
