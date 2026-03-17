@@ -84,6 +84,9 @@ const metadata = {
   .dark .llm-stat-box { background: rgba(255,255,255,0.05); }
 </style>
 
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
 <script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '' }}>
   const API_BASE = portalUrl || '';
   let modelsData = [];
@@ -228,10 +231,185 @@ const metadata = {
       renderSection('Archived', 'bg-gray-400', archived, true);
   }
 
-  function showDetailOverlay(model) {
-    const summaryMeta = metricsMeta.filter(m => m.summary);
-    const allMeta = metricsMeta;
+  let detailCharts = [];
+  let currentDetailModel = null;
+  let currentDuration = '24h';
 
+  function destroyDetailCharts() {
+    detailCharts.forEach(c => c.destroy());
+    detailCharts = [];
+  }
+
+  async function fetchMetricHistory(modelId, metricName, range) {
+    try {
+      const resp = await fetch(`${API_BASE}/api/llm/status/metrics?id=${modelId}&metric=${metricName}&range=${range}`, {
+        signal: AbortSignal.timeout(15000)
+      });
+      if (!resp.ok) return [];
+      return await resp.json();
+    } catch { return []; }
+  }
+
+  function isDark() {
+    return document.documentElement.classList.contains('dark');
+  }
+
+  const chartColors = [
+    { border: 'rgb(59, 130, 246)', bg: 'rgba(59, 130, 246, 0.1)' },
+    { border: 'rgb(16, 185, 129)', bg: 'rgba(16, 185, 129, 0.1)' },
+    { border: 'rgb(245, 158, 11)', bg: 'rgba(245, 158, 11, 0.1)' },
+    { border: 'rgb(239, 68, 68)',  bg: 'rgba(239, 68, 68, 0.1)' },
+    { border: 'rgb(139, 92, 246)', bg: 'rgba(139, 92, 246, 0.1)' },
+  ];
+
+  function buildChartConfigs() {
+    const configs = [];
+    const latencyMetrics = [];
+    for (const m of metricsMeta) {
+      if (m.storage_name.startsWith('latency_p')) {
+        latencyMetrics.push(m);
+      } else if (m.storage_name !== 'gpu_count') {
+        configs.push({ key: m.storage_name, title: m.display_name, metrics: [m], unit: m.unit || '', hasLabels: m.has_labels });
+      }
+    }
+    if (latencyMetrics.length > 0) {
+      configs.push({
+        key: 'latency_combined',
+        title: 'Latency (' + latencyMetrics.map(m => m.display_name.replace('Latency ', '')).join(' / ') + ')',
+        metrics: latencyMetrics,
+        unit: latencyMetrics[0].unit || 's',
+        hasLabels: false,
+      });
+    }
+    return configs;
+  }
+
+  function timeUnit(range) {
+    if (range === '3h') return 'minute';
+    if (range === '24h') return 'hour';
+    return 'day';
+  }
+
+  function makeChartOptions(unit, range, multiSeries) {
+    const dark = isDark();
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: multiSeries,
+          position: 'top',
+          labels: { color: dark ? '#9ca3af' : '#6b7280', usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } }
+        },
+        tooltip: {
+          backgroundColor: dark ? 'rgba(31,41,55,0.95)' : 'rgba(255,255,255,0.95)',
+          titleColor: dark ? '#f9fafb' : '#111827',
+          bodyColor: dark ? '#d1d5db' : '#374151',
+          borderColor: dark ? '#4b5563' : '#e5e7eb',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: (ctx) => {
+              const val = ctx.parsed.y;
+              if (val == null) return null;
+              if (unit === '%') return ctx.dataset.label + ': ' + val.toFixed(1) + '%';
+              if (unit === 's') return ctx.dataset.label + ': ' + val.toFixed(2) + 's';
+              if (unit === 'tok/s') return ctx.dataset.label + ': ' + val.toFixed(1) + ' tok/s';
+              return ctx.dataset.label + ': ' + val.toFixed(1) + (unit ? ' ' + unit : '');
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: timeUnit(range),
+            displayFormats: { minute: 'h:mm a', hour: 'MMM d, ha', day: 'MMM d' }
+          },
+          grid: { color: dark ? 'rgba(75,85,99,0.3)' : 'rgba(229,231,235,0.8)', drawBorder: false },
+          ticks: { color: dark ? '#9ca3af' : '#6b7280', maxRotation: 0, autoSkipPadding: 20 }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: dark ? 'rgba(75,85,99,0.3)' : 'rgba(229,231,235,0.8)', drawBorder: false },
+          ticks: {
+            color: dark ? '#9ca3af' : '#6b7280',
+            callback: (v) => unit === '%' ? v + '%' : unit === 's' ? v + 's' : v
+          }
+        }
+      }
+    };
+  }
+
+  async function renderDetailCharts(model, range) {
+    destroyDetailCharts();
+    const configs = buildChartConfigs();
+    const container = document.getElementById('detail-charts-grid');
+    if (!container) return;
+    container.innerHTML = '';
+
+    for (const config of configs) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4' + (config.key === 'latency_combined' ? ' sm:col-span-2' : '');
+      wrapper.innerHTML = `
+        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">${config.title}</h4>
+        <div style="position:relative;height:220px;"><canvas></canvas></div>
+        <div class="text-xs text-gray-400 text-center mt-1 chart-loading">Loading...</div>
+      `;
+      container.appendChild(wrapper);
+
+      const canvas = wrapper.querySelector('canvas');
+      const loadingEl = wrapper.querySelector('.chart-loading');
+
+      const datasets = [];
+      for (let mi = 0; mi < config.metrics.length; mi++) {
+        const meta = config.metrics[mi];
+        const seriesArr = await fetchMetricHistory(model.id, meta.storage_name, range);
+        for (let si = 0; si < seriesArr.length; si++) {
+          const s = seriesArr[si];
+          const color = chartColors[(mi + si) % chartColors.length];
+          const label = config.metrics.length > 1 ? meta.display_name.replace('Latency ', '') : (s.label || config.title);
+          const scale = meta.display_scale || 1;
+          const data = (s.points || []).map(p => ({ x: new Date(p.timestamp), y: p.value * scale }));
+          datasets.push({
+            label,
+            data,
+            borderColor: color.border,
+            backgroundColor: config.hasLabels ? 'transparent' : color.bg,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 3,
+            tension: 0.2,
+            fill: !config.hasLabels && config.metrics.length === 1,
+            spanGaps: false
+          });
+        }
+      }
+
+      if (loadingEl) loadingEl.remove();
+
+      if (datasets.length === 0 || datasets.every(d => d.data.length === 0)) {
+        const noData = wrapper.querySelector('div[style]');
+        if (noData) noData.innerHTML = '<p class="text-gray-400 text-sm text-center" style="padding-top:90px">No data available</p>';
+        continue;
+      }
+
+      const chart = new Chart(canvas, {
+        type: 'line',
+        data: { datasets },
+        options: makeChartOptions(config.unit, range, datasets.length > 1)
+      });
+      detailCharts.push(chart);
+    }
+  }
+
+  function showDetailOverlay(model) {
+    currentDetailModel = model;
+    currentDuration = '24h';
+
+    const allMeta = metricsMeta;
     const gpuMeta = allMeta.find(m => m.storage_name === 'gpu_count');
     let gpuDisplay = '—';
     if (gpuMeta && model.latest && model.latest.gpu_count) {
@@ -240,15 +418,6 @@ const metadata = {
 
     const statusColor = { online: 'text-green-600 dark:text-green-400', down: 'text-red-600 dark:text-red-400', archived: 'text-gray-500 dark:text-gray-400' };
     const statusLabel = { online: 'Online', down: 'Down', archived: 'Archived' };
-
-    const metricsGrid = allMeta.map(meta => {
-      const raw = model.latest ? model.latest[meta.storage_name] : undefined;
-      const display = formatMetricValue(raw, meta) || '—';
-      return `<div class="llm-stat-box">
-        <span class="text-xs text-gray-500 dark:text-gray-400">${meta.display_name}</span>
-        <p class="font-mono font-medium text-gray-900 dark:text-white">${display}</p>
-      </div>`;
-    }).join('');
 
     $('detail-content').innerHTML = `
       <div class="flex items-center justify-between mb-4">
@@ -283,15 +452,40 @@ const metadata = {
         </div>
       </div>
 
-      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">All Metrics</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">${metricsGrid}</div>
-
       ${buildUptimeBar(model.uptime)}
+
+      <div class="flex items-center gap-2 mt-6 mb-4">
+        <span class="text-sm text-gray-500 dark:text-gray-400">Time range:</span>
+        <div class="flex gap-1" id="duration-selector">
+          ${['3h','24h','7d','30d'].map(d =>
+            `<button class="px-3 py-1 text-xs font-medium rounded transition-colors ${d === '24h'
+              ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }" onclick="window._llmSetDuration('${d}')">${d}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div id="detail-charts-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     `;
 
     $('detail-overlay').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+
+    renderDetailCharts(model, '24h');
   }
+
+  window._llmSetDuration = function(dur) {
+    currentDuration = dur;
+    const btns = document.querySelectorAll('#duration-selector button');
+    btns.forEach(b => {
+      if (b.textContent === dur) {
+        b.className = 'px-3 py-1 text-xs font-medium rounded transition-colors bg-blue-600 text-white';
+      } else {
+        b.className = 'px-3 py-1 text-xs font-medium rounded transition-colors bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600';
+      }
+    });
+    if (currentDetailModel) renderDetailCharts(currentDetailModel, dur);
+  };
 
   window._llmShowDetail = function(id) {
     const model = modelsData.find(m => m.id === id);
@@ -299,6 +493,8 @@ const metadata = {
   };
 
   window._llmCloseDetail = function() {
+    destroyDetailCharts();
+    currentDetailModel = null;
     $('detail-overlay').classList.add('hidden');
     document.body.style.overflow = '';
   };
