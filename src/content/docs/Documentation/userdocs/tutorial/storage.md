@@ -38,7 +38,7 @@ There are other types of storage options in other Kubernetes clusters, but they 
 
 In Kubernetes, an `emptyDir` is a type of volume that is initially empty and created when a Pod is assigned to a node. It's intended to be used as temporary storage within a pod. An `emptyDir` volume exists as long as the Pod that uses it is running on a node. When the Pod is removed from the node for any reason, the data in the emptyDir is deleted permanently.
 
-> **On Nautilus:** Pods that write more than **10Gi** of ephemeral scratch data (for example, to an `emptyDir`) can be evicted. When you use an `emptyDir` scratch volume, set `resources.requests.ephemeral-storage` (and optionally `resources.limits.ephemeral-storage`) in your container spec to cover the largest scratch size you expect. See the [Local Scratch](/documentation/userdocs/storage/local) and [High I/O Jobs](/documentation/userdocs/running/io-jobs) guides for complete examples of how to request `ephemeral-storage` together with `emptyDir`.
+> **On Nautilus:** Pods that write more than **50Gi** of ephemeral scratch data (for example, to an `emptyDir`) can be evicted. When you use an `emptyDir` scratch volume, set `resources.requests.ephemeral-storage` (and optionally `resources.limits.ephemeral-storage`) in your container spec to cover the largest scratch size you expect. See the [Local Scratch](/documentation/userdocs/storage/local) and [High I/O Jobs](/documentation/userdocs/running/io-jobs) guides for complete examples of how to request `ephemeral-storage` together with `emptyDir`.
 
 Let’s explore the `emptyDir`by creating a simple example.
 

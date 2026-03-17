@@ -13,7 +13,7 @@ You can try copying the files from ceph to the local node disk. Most of our node
 
 #### Adjust ephemeral-size to your data volume, otherwise pod can be killed by kubernetes
 
-> **Note:** On Nautilus, pods that write more than **10Gi** of ephemeral scratch data per container (for example, to an `emptyDir` used for local NVMe scratch) can be evicted. When your job uses an `emptyDir` scratch volume, request `ephemeral-storage` in the container `resources` to cover the maximum scratch size you expect (for example, `ephemeral-storage: 100Gi` as in the example below), and optionally set a matching limit.
+> **Note:** On Nautilus, pods that write more than **50Gi** of ephemeral scratch data per container (for example, to an `emptyDir` used for local NVMe scratch) can be evicted. When your job uses an `emptyDir` scratch volume, request `ephemeral-storage` in the container `resources` to cover the maximum scratch size you expect (for example, `ephemeral-storage: 100Gi` as in the example below), and optionally set a matching limit.
 
 ```yaml
 apiVersion: batch/v1
