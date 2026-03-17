@@ -10,7 +10,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <section class="relative pt-8 pb-16">
     <div class="container mx-auto px-4">
-      <div class="max-w-5xl mx-auto">
+      <div class="max-w-6xl mx-auto">
         <div class="text-center mb-8">
           <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             NRP LLM Status
@@ -24,7 +24,7 @@ const metadata = {
           </div>
         </div>
 
-        <!-- Error banner (hidden by default) -->
+        <!-- Error banner -->
         <div id="error-banner" class="hidden mb-6 p-4 rounded-lg border border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-800 text-red-700 dark:text-red-300 text-center">
           <p class="font-medium" id="error-text">Error reading LLM status from the cluster</p>
           <button id="retry-btn" class="mt-2 px-4 py-1.5 text-sm font-medium rounded bg-red-600 text-white hover:bg-red-700 transition-colors">
@@ -32,197 +32,288 @@ const metadata = {
           </button>
         </div>
 
-        <!-- Filter bar -->
-        <div id="filter-bar" class="hidden mb-6 flex flex-wrap gap-3 items-center justify-between">
-          <div class="flex gap-2">
-            <button data-filter="all" class="llm-filter-btn active px-3 py-1.5 text-sm rounded-full font-medium transition-colors">All</button>
-            <button data-filter="online" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Online</button>
-            <button data-filter="down" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Down</button>
-            <button data-filter="archived" class="llm-filter-btn px-3 py-1.5 text-sm rounded-full font-medium transition-colors">Archived</button>
-          </div>
-          <p class="text-sm text-gray-500 dark:text-gray-400" id="model-count"></p>
-        </div>
-
         <!-- Loading skeleton -->
-        <div id="loading-skeleton" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 4 }).map(() => (
-            <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse">
-              <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-              <div class="flex gap-3">
-                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-                <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+        <div id="loading-skeleton">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map(() => (
+              <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-4 animate-pulse">
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                  <div class="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div class="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                </div>
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <!-- Model cards container -->
-        <div id="models-grid" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <!-- Models container -->
+        <div id="models-container" class="hidden"></div>
+
+        <!-- Detail overlay -->
+        <div id="detail-overlay" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-12 overflow-y-auto">
+          <div class="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-3xl w-full mx-4 mb-12 border border-gray-200 dark:border-gray-700">
+            <div id="detail-content" class="p-6"></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </Layout>
 
 <style is:global>
-  .llm-filter-btn {
-    background: transparent;
-    color: rgb(107 114 128);
-    border: 1px solid rgb(229 231 235);
-  }
-  .dark .llm-filter-btn {
-    color: rgb(156 163 175);
-    border-color: rgb(55 65 81);
-  }
-  .llm-filter-btn.active {
-    background: rgb(59 130 246);
-    color: white;
-    border-color: rgb(59 130 246);
-  }
-  .llm-uptime-bar {
-    display: flex;
-    gap: 1px;
-    height: 16px;
-    align-items: stretch;
-  }
-  .llm-uptime-bucket {
-    flex: 1;
-    border-radius: 2px;
-    min-width: 2px;
-  }
+  .llm-uptime-bar { display: flex; gap: 1px; align-items: stretch; }
+  .llm-uptime-bucket { flex: 1; border-radius: 2px; min-width: 2px; transition: background-color 0.15s; }
   .llm-uptime-bucket.up { background: rgb(34 197 94); }
+  .llm-uptime-bucket.up:hover { background: rgb(74 222 128); }
   .llm-uptime-bucket.down { background: rgb(239 68 68); }
-  .llm-uptime-bucket.unknown { background: rgb(209 213 219); }
-  .dark .llm-uptime-bucket.unknown { background: rgb(75 85 99); }
-
-  .llm-status-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
+  .llm-uptime-bucket.down:hover { background: rgb(248 113 113); }
+  .llm-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .llm-status-dot.online { background: rgb(34 197 94); }
-  .llm-status-dot.down { background: rgb(239 68 68); }
+  .llm-status-dot.down { background: rgb(239 68 68); animation: pulse 2s infinite; }
   .llm-status-dot.archived { background: rgb(156 163 175); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+
+  .llm-card { transition: box-shadow 0.2s, border-color 0.2s; cursor: pointer; }
+  .llm-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.15); }
+  .dark .llm-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.15); }
+
+  .llm-stat-box { background: rgba(0,0,0,0.03); border-radius: 6px; padding: 6px 8px; }
+  .dark .llm-stat-box { background: rgba(255,255,255,0.05); }
 </style>
 
 <script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '' }}>
   const API_BASE = portalUrl || '';
-
-  let currentFilter = 'all';
   let modelsData = [];
+  let metricsMeta = [];
 
   function $(id) { return document.getElementById(id); }
 
-  function formatNumber(val) {
-    if (val === undefined || val === null) return '—';
-    if (typeof val === 'number') {
-      if (val >= 1000) return val.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      if (val < 0.01 && val > 0) return val.toExponential(1);
-      return val.toFixed(val % 1 === 0 ? 0 : 1);
-    }
-    return String(val);
+  function timeAgo(isoStr) {
+    if (!isoStr) return '—';
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    return days + 'd ago';
   }
 
-  function friendlyModelName(model) {
-    if (model.model_name) return model.model_name;
-    return model.container || `${model.namespace}/${model.container}`;
+  function formatMetricValue(raw, meta) {
+    if (raw === undefined || raw === null) return null;
+
+    if (meta.has_labels && typeof raw === 'object') {
+      const entries = Object.entries(raw);
+      if (!entries.length) return null;
+      if (meta.storage_name === 'gpu_count') {
+        return entries.map(([name, count]) =>
+          Math.round(count) + 'x ' + name.replace('NVIDIA ', '')
+        ).join(', ');
+      }
+      return entries.map(([k, v]) => k + ': ' + v.toFixed(1)).join(', ');
+    }
+
+    const scale = meta.display_scale || 1;
+    const val = raw * scale;
+    if (meta.unit === '%') return val.toFixed(1) + '%';
+    if (meta.unit === 's') return val.toFixed(2) + 's';
+    if (meta.unit === 'tok/s') return val.toFixed(1) + ' tok/s';
+    if (meta.unit) return val.toFixed(1) + ' ' + meta.unit;
+    return String(Math.round(val));
   }
 
   function buildUptimeBar(uptime) {
     if (!uptime || !uptime.length) return '';
-    return `<div class="llm-uptime-bar" title="24h uptime (30min buckets, newest on right)">${
-      uptime.map((up, i) => {
-        const cls = up ? 'up' : (i < uptime.length - 1 ? 'down' : 'unknown');
-        return `<div class="llm-uptime-bucket ${cls}"></div>`;
-      }).join('')
-    }</div>`;
+    const upCount = uptime.filter(Boolean).length;
+    const pct = ((upCount / uptime.length) * 100).toFixed(1);
+    return `
+      <div class="mt-3">
+        <div class="llm-uptime-bar" style="height:16px" title="${pct}% uptime (${upCount}/${uptime.length} intervals)">
+          ${uptime.map((up, i) => {
+            const hrs = ((uptime.length - 1 - i) * 30 / 60).toFixed(1);
+            return `<div class="llm-uptime-bucket ${up ? 'up' : 'down'}" title="${hrs}h ago: ${up ? 'up' : 'down'}"></div>`;
+          }).join('')}
+        </div>
+        <div class="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">
+          <span>24h ago</span><span>now</span>
+        </div>
+      </div>`;
   }
 
-  function buildMetricPills(latest) {
-    if (!latest || Object.keys(latest).length === 0) return '';
-    const pills = [];
-    const labels = {
-      num_requests_running: 'Running',
-      num_requests_waiting: 'Waiting',
-      kv_cache_usage_perc: 'KV Cache',
-      generation_tokens_rate: 'Tok/s',
-      gpu_count: 'GPUs',
-    };
-    for (const [key, val] of Object.entries(latest)) {
-      const label = labels[key] || key;
-      let display;
-      if (typeof val === 'object' && val !== null) {
-        const entries = Object.entries(val);
-        if (key === 'gpu_count') {
-          display = entries.map(([k, v]) => `${v} × ${k.replace('NVIDIA ', '')}`).join(', ');
-        } else {
-          display = entries.map(([k, v]) => `${k}: ${formatNumber(v)}`).join(', ');
-        }
-      } else {
-        if (key === 'kv_cache_usage_perc') {
-          display = formatNumber(val * 100) + '%';
-        } else {
-          display = formatNumber(val);
-        }
+  function buildStatWidgets(model) {
+    const summaryMeta = metricsMeta.filter(m => m.summary);
+    if (!summaryMeta.length || !model.latest) return '';
+
+    const stats = [];
+    for (const meta of summaryMeta) {
+      const raw = model.latest[meta.storage_name];
+      const display = formatMetricValue(raw, meta);
+      if (display !== null) {
+        stats.push({ label: meta.display_name, display });
       }
-      pills.push(`<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">${label}: ${display}</span>`);
     }
-    return `<div class="flex flex-wrap gap-1.5 mt-3">${pills.join('')}</div>`;
+    if (!stats.length) return '';
+
+    return `<div class="grid grid-cols-2 gap-2 text-xs mt-3">
+      ${stats.map(s => `
+        <div class="llm-stat-box">
+          <span class="text-gray-500 dark:text-gray-400">${s.label}</span>
+          <p class="font-mono font-medium truncate text-gray-900 dark:text-white">${s.display}</p>
+        </div>
+      `).join('')}
+    </div>`;
   }
 
   function renderCard(model) {
-    const statusColors = {
-      online: 'border-green-400 dark:border-green-600',
-      down: 'border-red-400 dark:border-red-600',
-      archived: 'border-gray-300 dark:border-gray-600',
-    };
-    const statusLabels = {
-      online: '<span class="text-green-600 dark:text-green-400 text-xs font-semibold uppercase">Online</span>',
-      down: '<span class="text-red-600 dark:text-red-400 text-xs font-semibold uppercase">Down</span>',
-      archived: '<span class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase">Archived</span>',
-    };
+    const bgClass = model.status === 'down'
+      ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900'
+      : model.status === 'archived'
+        ? 'bg-gray-50 dark:bg-gray-800/50 opacity-75'
+        : 'bg-white dark:bg-gray-800';
 
-    const borderClass = statusColors[model.status] || 'border-gray-200 dark:border-gray-700';
-    const name = friendlyModelName(model);
-    const lastSeen = model.last_seen ? new Date(model.last_seen).toLocaleString() : '—';
+    const statusColor = { online: 'text-green-600 dark:text-green-400', down: 'text-red-600 dark:text-red-400', archived: 'text-gray-500 dark:text-gray-400' };
+    const statusLabel = { online: 'Online', down: 'Down', archived: 'Archived' };
+
+    const name = model.model_name || model.container || 'Unknown';
 
     return `
-      <div class="rounded-xl border-l-4 ${borderClass} border border-gray-200 dark:border-gray-700 p-5 bg-white dark:bg-gray-800/50 transition-shadow hover:shadow-md" data-status="${model.status}">
-        <div class="flex items-start justify-between gap-2 mb-1">
-          <h3 class="text-base font-semibold text-gray-900 dark:text-white truncate" title="${name}">${name}</h3>
-          <div class="flex items-center gap-1.5 shrink-0">
+      <div class="llm-card border rounded-lg p-4 ${bgClass}" data-model-id="${model.id}" onclick="window._llmShowDetail(${model.id})">
+        <div class="flex items-start justify-between mb-1">
+          <div class="min-w-0 flex-1">
+            <h3 class="font-semibold text-sm truncate text-gray-900 dark:text-white" title="${name}">${name}</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">${model.namespace}/${model.container}</p>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs font-medium ${statusColor[model.status] || ''} shrink-0 ml-2">
             <span class="llm-status-dot ${model.status}"></span>
-            ${statusLabels[model.status] || ''}
+            ${statusLabel[model.status] || ''}
           </div>
         </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">${model.namespace} &middot; Last seen: ${lastSeen}</p>
+        ${model.status !== 'archived' ? buildStatWidgets(model) : ''}
         ${buildUptimeBar(model.uptime)}
-        ${buildMetricPills(model.latest)}
+        <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Last seen ${timeAgo(model.last_seen)}</div>
+      </div>`;
+  }
+
+  function renderSection(title, dotColor, models, collapsible) {
+    if (!models.length) return '';
+    const id = title.replace(/\s/g, '-').toLowerCase();
+    return `
+      <div class="mb-6">
+        <div class="flex items-center gap-2 mb-3 ${collapsible ? 'cursor-pointer select-none' : ''}"
+             ${collapsible ? `onclick="document.getElementById('section-${id}').classList.toggle('hidden')"` : ''}>
+          <span class="w-2.5 h-2.5 rounded-full ${dotColor}"></span>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">${title}</h2>
+          <span class="text-sm text-gray-500 dark:text-gray-400">(${models.length})</span>
+          ${collapsible ? '<span class="text-xs text-gray-400">▼</span>' : ''}
+        </div>
+        <div id="section-${id}" class="${collapsible ? 'hidden' : ''} grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${models.map(renderCard).join('')}
+        </div>
+      </div>`;
+  }
+
+  function renderModels() {
+    const online = modelsData.filter(m => m.status === 'online');
+    const down = modelsData.filter(m => m.status === 'down');
+    const archived = modelsData.filter(m => m.status === 'archived');
+
+    const container = $('models-container');
+    container.innerHTML =
+      renderSection('Online', 'bg-green-500', online, false) +
+      renderSection('Temporarily Down', 'bg-red-500', down, false) +
+      renderSection('Archived', 'bg-gray-400', archived, true);
+  }
+
+  function showDetailOverlay(model) {
+    const summaryMeta = metricsMeta.filter(m => m.summary);
+    const allMeta = metricsMeta;
+
+    const gpuMeta = allMeta.find(m => m.storage_name === 'gpu_count');
+    let gpuDisplay = '—';
+    if (gpuMeta && model.latest && model.latest.gpu_count) {
+      gpuDisplay = formatMetricValue(model.latest.gpu_count, gpuMeta);
+    }
+
+    const statusColor = { online: 'text-green-600 dark:text-green-400', down: 'text-red-600 dark:text-red-400', archived: 'text-gray-500 dark:text-gray-400' };
+    const statusLabel = { online: 'Online', down: 'Down', archived: 'Archived' };
+
+    const metricsGrid = allMeta.map(meta => {
+      const raw = model.latest ? model.latest[meta.storage_name] : undefined;
+      const display = formatMetricValue(raw, meta) || '—';
+      return `<div class="llm-stat-box">
+        <span class="text-xs text-gray-500 dark:text-gray-400">${meta.display_name}</span>
+        <p class="font-mono font-medium text-gray-900 dark:text-white">${display}</p>
+      </div>`;
+    }).join('');
+
+    $('detail-content').innerHTML = `
+      <div class="flex items-center justify-between mb-4">
+        <button onclick="window._llmCloseDetail()" class="text-sm text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+          ← Back
+        </button>
+        <div class="flex items-center gap-1.5 text-sm font-medium ${statusColor[model.status] || ''}">
+          <span class="llm-status-dot ${model.status}"></span>
+          ${statusLabel[model.status] || ''}
+        </div>
       </div>
+
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">${model.model_name || model.container}</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${model.namespace}/${model.container}</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div class="llm-stat-box">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Status</span>
+          <p class="font-medium ${statusColor[model.status] || ''}">${statusLabel[model.status] || '—'}</p>
+        </div>
+        <div class="llm-stat-box">
+          <span class="text-xs text-gray-500 dark:text-gray-400">First Seen</span>
+          <p class="font-medium text-gray-900 dark:text-white text-sm">${model.first_seen ? new Date(model.first_seen).toLocaleDateString() : '—'}</p>
+        </div>
+        <div class="llm-stat-box">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Last Seen</span>
+          <p class="font-medium text-gray-900 dark:text-white text-sm">${timeAgo(model.last_seen)}</p>
+        </div>
+        <div class="llm-stat-box">
+          <span class="text-xs text-gray-500 dark:text-gray-400">GPUs</span>
+          <p class="font-medium text-gray-900 dark:text-white text-sm">${gpuDisplay}</p>
+        </div>
+      </div>
+
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">All Metrics</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">${metricsGrid}</div>
+
+      ${buildUptimeBar(model.uptime)}
     `;
+
+    $('detail-overlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
   }
 
-  function renderModels(models) {
-    const grid = $('models-grid');
-    const filtered = currentFilter === 'all' ? models : models.filter(m => m.status === currentFilter);
+  window._llmShowDetail = function(id) {
+    const model = modelsData.find(m => m.id === id);
+    if (model) showDetailOverlay(model);
+  };
 
-    grid.innerHTML = filtered.length === 0
-      ? '<div class="col-span-2 text-center py-12 text-gray-500 dark:text-gray-400">No models match this filter</div>'
-      : filtered.map(renderCard).join('');
+  window._llmCloseDetail = function() {
+    $('detail-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  };
 
-    // Update count
-    const online = models.filter(m => m.status === 'online').length;
-    const down = models.filter(m => m.status === 'down').length;
-    const archived = models.filter(m => m.status === 'archived').length;
-    $('model-count').textContent = `${models.length} models (${online} online, ${down} down, ${archived} archived)`;
-  }
+  // Close overlay on backdrop click or Escape
+  $('detail-overlay')?.addEventListener('click', (e) => {
+    if (e.target === $('detail-overlay')) window._llmCloseDetail();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') window._llmCloseDetail();
+  });
 
   function showError(msg) {
     $('loading-skeleton').classList.add('hidden');
-    $('models-grid').classList.add('hidden');
-    $('filter-bar').classList.add('hidden');
+    $('models-container').classList.add('hidden');
     $('error-banner').classList.remove('hidden');
     $('error-text').textContent = msg || 'Error reading LLM status from the cluster';
     $('health-dot').className = 'w-2 h-2 rounded-full bg-red-500';
@@ -233,8 +324,26 @@ const metadata = {
   function showModels() {
     $('loading-skeleton').classList.add('hidden');
     $('error-banner').classList.add('hidden');
-    $('models-grid').classList.remove('hidden');
-    $('filter-bar').classList.remove('hidden');
+    $('models-container').classList.remove('hidden');
+  }
+
+  function updateHealthBadge() {
+    const online = modelsData.filter(m => m.status === 'online').length;
+    const down = modelsData.filter(m => m.status === 'down').length;
+
+    if (modelsData.length === 0) {
+      $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
+      $('health-text').textContent = 'No models discovered';
+      $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
+    } else if (down > 0) {
+      $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
+      $('health-text').textContent = `${online} online, ${down} down`;
+      $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
+    } else {
+      $('health-dot').className = 'w-2 h-2 rounded-full bg-green-500';
+      $('health-text').textContent = `All ${online} models online`;
+      $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400';
+    }
   }
 
   async function fetchStatus() {
@@ -247,40 +356,25 @@ const metadata = {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      const resp = await fetch(`${API_BASE}/api/llm/status/overview`, {
-        signal: controller.signal,
-      });
+      const [overviewResp, metaResp] = await Promise.all([
+        fetch(`${API_BASE}/api/llm/status/overview`, { signal: controller.signal }),
+        metricsMeta.length ? Promise.resolve(null) : fetch(`${API_BASE}/api/llm/status/meta`, { signal: controller.signal }),
+      ]);
       clearTimeout(timeoutId);
 
-      if (!resp.ok) {
-        throw new Error(`HTTP ${resp.status}`);
-      }
+      if (!overviewResp.ok) throw new Error(`HTTP ${overviewResp.status}`);
 
-      const data = await resp.json();
-      modelsData = Array.isArray(data) ? data : [];
+      modelsData = await overviewResp.json();
+      if (!Array.isArray(modelsData)) modelsData = [];
 
-      if (modelsData.length === 0) {
-        showModels();
-        renderModels([]);
-        $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
-        $('health-text').textContent = 'No models discovered';
-        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
-        return;
+      if (metaResp) {
+        const metaData = await metaResp.json();
+        metricsMeta = Array.isArray(metaData) ? metaData : [];
       }
 
       showModels();
-      renderModels(modelsData);
-
-      const hasDown = modelsData.some(m => m.status === 'down');
-      if (hasDown) {
-        $('health-dot').className = 'w-2 h-2 rounded-full bg-yellow-500';
-        $('health-text').textContent = 'Some models down';
-        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
-      } else {
-        $('health-dot').className = 'w-2 h-2 rounded-full bg-green-500';
-        $('health-text').textContent = 'All models online';
-        $('health-indicator').className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400';
-      }
+      renderModels();
+      updateHealthBadge();
 
     } catch (err) {
       const msg = err.name === 'AbortError'
@@ -290,20 +384,8 @@ const metadata = {
     }
   }
 
-  // Filter buttons
-  document.querySelectorAll('.llm-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.llm-filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
-      renderModels(modelsData);
-    });
-  });
-
-  // Retry button
   $('retry-btn')?.addEventListener('click', fetchStatus);
 
-  // Initial fetch + auto-refresh every 30s
   fetchStatus();
   setInterval(fetchStatus, 30000);
 </script>
