@@ -45,3 +45,5 @@ spec:
 ```
 
 Please note that in case a node starves on disk, ALL pods will be evicted from the node. If you set the request to be 50G, and limit is 100G, and you use 100G, it's likely this will destroy the node, as scheduler will put your workload on a 50G node. So make sure your request is close to the limit you set.
+
+> **Important:** On Nautilus, pods that write more than **10Gi** of ephemeral scratch data per container (for example, to an `emptyDir` local scratch volume) can be evicted. When you mount an `emptyDir` scratch volume and plan to use more than 10Gi, explicitly set `resources.requests.ephemeral-storage` (and optionally `resources.limits.ephemeral-storage`) in the container spec to the scratch size you need, as shown in the examples above.

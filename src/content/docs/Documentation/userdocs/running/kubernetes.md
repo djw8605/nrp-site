@@ -8,6 +8,8 @@ The following is an example Python client for Nautilus that can submit it's own 
 The config mounts the Ceph Shared FileSystem as well as the node's local scratch space.
 Be sure to configure resources appropriately to your application.
 
+> **Ephemeral storage on Nautilus:** Pods that write more than **10Gi** of ephemeral scratch data per container (for example, to an `emptyDir` at `/mnt/data`) can be evicted. When your code uses `emptyDir` or other scratch space, set `resources.requests.ephemeral-storage` in the container (and optionally `resources.limits.ephemeral-storage`) to the largest scratch size you expect (as in the example below). See [Local Scratch](/documentation/userdocs/storage/local) for more details and complete YAML.
+
 ```
 import os
 from kubernetes import client, config, utils

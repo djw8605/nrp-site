@@ -181,6 +181,8 @@ On Nautilus, you will be using both temporary (`ephemeral-storage`) and persiste
 A pod can access the requested `ephemeral-storage` from the local disks of the node. 
 Users need to create their own [PersistentVolumeClaim (PVC)](/documentation/userdocs/tutorial/storage#creating-a-persistent-volume-claim) under their namespace. 
 
+> **Important:** On Nautilus, pods that write more than **10Gi** of ephemeral scratch data per container (for example, to an `emptyDir`) can be evicted. If you attach an `emptyDir` scratch volume and expect to write more than 10Gi, set `resources.requests.ephemeral-storage` (and optionally `resources.limits.ephemeral-storage`) in your pod spec to the size you need. See the [Storage tutorial](/documentation/userdocs/tutorial/storage) and [Local Scratch](/documentation/userdocs/storage/local) pages for complete YAML examples that show both `emptyDir` and `ephemeral-storage` configured together.
+
 :::tip
 - Complete the Storage section from [the tutorial](/documentation/userdocs/tutorial/storage).
 - Read more about the different [storage options](/documentation/userdocs/storage/intro) on Nautilus.
