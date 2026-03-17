@@ -134,15 +134,24 @@ const metadata = {
     return String(Math.round(val));
   }
 
-  function buildUptimeBar(uptime) {
-    if (!uptime || !uptime.length) return '';
-    const upCount = uptime.filter(Boolean).length;
-    const pct = ((upCount / uptime.length) * 100).toFixed(1);
+  function buildUptimeBar(model) {
+    const uptime = model && model.uptime || [];
+    if (!uptime.length) return '';
+
+    // If the model is currently online, force the most recent bucket to show
+    // as "up" so the tip visually matches the status dot.
+    const adjusted = uptime.slice();
+    if (model && model.status === 'online') {
+      adjusted[adjusted.length - 1] = true;
+    }
+
+    const upCount = adjusted.filter(Boolean).length;
+    const pct = ((upCount / adjusted.length) * 100).toFixed(1);
     return `
       <div class="mt-3">
-        <div class="llm-uptime-bar" style="height:16px" title="${pct}% uptime (${upCount}/${uptime.length} intervals)">
-          ${uptime.map((up, i) => {
-            const hrs = ((uptime.length - 1 - i) * 30 / 60).toFixed(1);
+        <div class="llm-uptime-bar" style="height:16px" title="${pct}% uptime (${upCount}/${adjusted.length} intervals)">
+          ${adjusted.map((up, i) => {
+            const hrs = ((adjusted.length - 1 - i) * 30 / 60).toFixed(1);
             return `<div class="llm-uptime-bucket ${up ? 'up' : 'down'}" title="${hrs}h ago: ${up ? 'up' : 'down'}"></div>`;
           }).join('')}
         </div>
@@ -201,7 +210,7 @@ const metadata = {
           </div>
         </div>
         ${model.status !== 'archived' ? buildStatWidgets(model) : ''}
-        ${buildUptimeBar(model.uptime)}
+        ${buildUptimeBar(model)}
         <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">Last seen ${timeAgo(model.last_seen)}</div>
       </div>`;
   }
@@ -457,7 +466,7 @@ const metadata = {
         </div>
       </div>
 
-      ${buildUptimeBar(model.uptime)}
+      ${buildUptimeBar(model)}
 
       <div class="flex items-center gap-2 mt-6 mb-4">
         <span class="text-sm text-gray-500 dark:text-gray-400">Time range:</span>
