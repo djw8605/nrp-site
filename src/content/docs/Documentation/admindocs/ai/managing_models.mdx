@@ -344,7 +344,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup
         - |
-          python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model MiniMaxAI/MiniMax-M2.5 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 196608 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2
+          python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model MiniMaxAI/MiniMax-M2.5 --api-server-count 8 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 196608 --max-num-batched-tokens 16384 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2
         command:
         - bash
         - -c
@@ -357,7 +357,7 @@ spec:
             # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Use nightly container when recent commit fixes model or tool calling
-        image: vllm/vllm-openai:v0.17.0
+        image: vllm/vllm-openai:v0.17.1
         name: minimax-vllm-inference
         ports:
         - containerPort: 5000
@@ -365,17 +365,17 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "10"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "32"
             # At least the model size
-            memory: 360Gi
+            memory: 300Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/a100: "4"
           requests:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "10"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "26"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 160Gi
+            memory: 230Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/a100: "4"
         securityContext:
@@ -501,7 +501,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup
         - |
-          uv pip install --system 'qwen-vl-utils>=0.0.14' && python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model Qwen/Qwen3-VL-Embedding-8B --tensor-parallel-size 2 --max-model-len auto --runner pooling --convert embed --mm-processor-cache-gb 0 --trust-remote-code --gpu-memory-utilization 0.975
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model Qwen/Qwen3-VL-Embedding-8B --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.975
         command:
         - bash
         - -c
@@ -519,17 +519,17 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "8"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "20"
             # At least the model size
-            memory: 72Gi
+            memory: 128Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/gpu: "2"
           requests:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "4"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 36Gi
+            memory: 84Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/gpu: "2"
         securityContext:
@@ -648,7 +648,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup
         - |
-          python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model MiniMaxAI/MiniMax-M2.5 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 196608 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2
+          python3 -m vllm.entrypoints.openai.api_server --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --model MiniMaxAI/MiniMax-M2.5 --api-server-count 8 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 196608 --max-num-batched-tokens 16384 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2
         command:
         - bash
         - -c
@@ -661,7 +661,7 @@ spec:
             # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Use nightly container when recent commit fixes model or tool calling
-        image: vllm/vllm-openai:v0.17.0
+        image: vllm/vllm-openai:v0.17.1
         name: minimax-vllm-inference
         ports:
         - containerPort: 5000
@@ -669,17 +669,17 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "10"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "32"
             # At least the model size
-            memory: 360Gi
+            memory: 300Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/a100: "4"
           requests:
-            # Multiply 2 to the number of GPUs and add 2; Set maximum possible if offloading to CPU RAM
-            cpu: "10"
+            # Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            cpu: "26"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 160Gi
+            memory: 230Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache when fully on VRAM
             nvidia.com/a100: "4"
         securityContext:
@@ -765,6 +765,8 @@ Refer to the below instructions for configuring vLLM/SGLang and above instructio
 
 ### How to load models into GPUs
 
+**Refer to:** https://docs.vllm.ai/en/latest/configuration/conserving_memory/
+
 1. Read individual instructions for each model (both from Hugging Face and vLLM/SGLang) carefully, and also check deployment configurations from other models. The recommended number of CPU cores to request is `2 * [number of GPUs] + 2`, and the recommended RAM size is `request: [slightly over half of total loaded model size]`, `limit: [slightly over total loaded model size]`.
 2. Tune `--gpu-memory-utilization` to ideally fit enough KV cache that is larger than `--max-model-len`, but with enough space for CUDA graphs to be built. This is typically calculated outside `--gpu-memory-utilization`, so if the CUDA graph build stage errors with not enough memory, `--gpu-memory-utilization` has to be lowered. Moreover, some multimodal models may also consume more memory outside `--gpu-memory-utilization` for certain reasons. If there is an error about insufficient KV cache, `--gpu-memory-utilization` has to be increased, or if both errors occur, consult the next step.
 3. Moreover, note that if the `num_key_value_heads` in `config.json` is lower than the `--tensor-parallel-size` (typically the number of GPUs in a simple configuration), KV cache is duplicated, reducing the context width available from vLLM. In multi-head latent attention (MLA) models like DeepSeek or Kimi, `num_key_value_heads` is always considered `1` even if `config.json` says otherwise. An initial solution is deduplicating the KV cache by: (1) only increasing `--tensor-parallel-size` until `num_key_value_heads`, then use `--pipeline-parallel-size` for the rest of the GPUs required to load the weights, or (2) to use Context Parallelism (`--decode-context-parallel-size`) so that the product (multiplication) of `--decode-context-parallel-size` and `num_key_value_heads` equals `--tensor-parallel-size`, especially in multi-head latent attention (MLA) models such as DeepSeek and Kimi families. Consult the detailed dedicated instructions for various types of parallelism below.
@@ -773,13 +775,31 @@ Refer to the below instructions for configuring vLLM/SGLang and above instructio
 6. Test that the model works when a large part of the KV cache has been filled through the prompts. Some models may have volatile VRAM consumption during runtime and may get out-of-memory errors even after successful initialization.
 7. Update the [Envoy Proxy configuration](#envoy-ai-gateway-management) above, and the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue).
 8. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including Context Parallelism (`--decode-context-parallel-size`), or Data Parallelism Attention + Expert Parallelism (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
-9. Consider using `--kv-offloading-backend native --kv-offloading-size <size_in_GB>`, where more information is available in [KV Offloading Connector](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html). However, this is not a solution for when 1x full context does not fit within the KV cache of the GPU, and 1x full context should still fit inside the GPU KV cache regardless.
+9. Consider using `--kv-offloading-backend native --kv-offloading-size <size_in_GB>`, where more information is available in [KV Offloading Connector](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html). However, this is **not a solution for when 1x full context does not fit** within the KV cache of the GPU, and 1x full context should still fit inside the GPU KV cache regardless.
+
+### Improving LLM Engine Performance 
+
+**Optimizing vLLM performance and responsiveness:** https://docs.vllm.ai/en/latest/configuration/optimization/ and https://developers.redhat.com/articles/2026/03/09/5-steps-triage-vllm-performance
+
+The core equation for CPU thread consumption is: `Minimum Threads = 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`.
+
+**Set maximum threads possible if offloading weights or KV cache to CPU RAM.**
+
+1. Increase internal API server count (`--api-server-count`) to a value larger than `1` (perhaps `4` for smaller models or `8` for larger models); this allows multi-core processing for tokenization and input processing.
+2. For multimodal models, set `--mm-processor-cache-gb` (in GB, frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU) to a higher value than the default of `4` (perhaps `8`). Increase request and limit CPU RAM with `--mm-processor-cache-gb` multiplied by `--api-server-count`.
+2. (**Decreases available KV cache by potentially a large amount, so only when VRAM is surplus in large-context models**) Increase `--max-num-batched-tokens` to around `16384` but below `--max-model-len`. Default is currently `8192`.
+
+### CPU Offloading
+
+Key environment variables and arguments related to CPU offloading:
+- `VLLM_WEIGHT_OFFLOADING_DISABLE_PIN_MEMORY=1`, `VLLM_WEIGHT_OFFLOADING_DISABLE_UVA=1` (refer to https://github.com/vllm-project/vllm/pull/32993)
+- `VLLM_CPU_KVCACHE_SPACE` (in GB), `--mm-processor-cache-gb` (in GB for multimodal models, frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU)
 
 ### Increasing Context Length with RoPE
 
 RoPE (Rotary Position Embedding) allows expanding the context size beyond the default allowed by the model. For smaller factors (`max_position_embeddings / original_max_position_embeddings`), `dynamic` RoPE can be used. For larger factors, `yarn` RoPE could also be used, if the model supports this method. **Note that if there are separate instructions from the model, those instructions are prioritized**, and the format of `--hf-overrides` depends on the model's `config.json` file.
 
-Example for [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5): `--max-model-len 262144 --hf-overrides '{"max_position_embeddings": 262144, "rope_scaling": {"type": "dynamic", "factor": 1.5, "original_max_position_embeddings": 202752}}'`
+Example for [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5): `--max-model-len 262144 --hf-overrides '{"max_position_embeddings": 262144, "rope_scaling": {"type": "dynamic", "factor": 1.5, "original_max_position_embeddings": 196608}}'`
 
 Example for [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8): `--max-model-len 1010000 --hf-overrides '{"text_config": {"max_position_embeddings": 1010000, "rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}'`
 
@@ -788,7 +808,7 @@ Example for [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397
 - For deploying very new models with new architectures that cannot be inherited from a previous model generation, administrators would likely have to hunt through issues and pull request commits through GitHub, or in some cases, contribute changes themselves.
 - The real-life experiences of agentic LLM models depend extremely heavily on tool calling and reasoning parser implementations. What was advertised to work in the provider's own API may not work or lead to disappointing outcomes in the model engines (vLLM/SGLang) because of tool calling and reasoning parsers. Problems in tool calling and reasoning parsers are easily over 75% of all previously experienced issues, and the remaining under 25% are mostly issues in model parallelism or the backend kernels.
 - Model parallelism determines whether a model fits in the set of hardware we have, and how much KV cache we can extract from the hardware. This is the most important part of LLM deployment where we can control.
-- [hf-mem](https://pypi.org/project/hf-mem/) is useful, but the KV cache estimate may be inaccurate. Assume that the KV cache is bfloat16 to be conservative. Something like `uvx hf-mem --model-id MiniMaxAI/MiniMax-M2.5 --experimental --max-model-len 262144 --batch-size 1 --kv-cache-dtype bfloat16` is an example that can be used.
+- [hf-mem](https://pypi.org/project/hf-mem/) is useful, but the KV cache estimate may be inaccurate, **especially due to models that can take more context with sliding window attention (SWA)**. Assume that the KV cache is bfloat16 to be conservative, but **do not give up as long as the weights fit in the total VRAM** (or RAM when CPU offload is used). Something like `uvx hf-mem --model-id MiniMaxAI/MiniMax-M2.5 --experimental --max-model-len 196608 --batch-size 1 --kv-cache-dtype bfloat16` is an example that can be used.
 
 ### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
@@ -857,7 +877,6 @@ Mixture of Experts (MoE) models with data parallelism attention may reduce KV ca
 External load balancing using expert parallelism load balancers (EPLB) through an external router, such as the Envoy AI Gateway, combined with data parallelism and expert parallelism, has a good potential to balance performance improvements and provide better KV cache capacity through inter-instance coordination through RPC communication in large-scale deployments.
 
 Further reading:
-- Optimizing vLLM performance and responsiveness: https://developers.redhat.com/articles/2026/03/09/5-steps-triage-vllm-performance
 - https://docs.vllm.ai/en/latest/configuration/engine_args/
 - https://docs.vllm.ai/en/latest/serving/parallelism_scaling/
 - https://docs.vllm.ai/en/latest/serving/expert_parallel_deployment/
