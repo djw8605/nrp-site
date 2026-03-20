@@ -143,6 +143,11 @@ var chatboxConfigTemplate = {
 				contextWindow: 196608
 			},
 			{
+				modelId: "olmo",
+				capabilities: ["tool_use"],
+				contextWindow: 65536
+			},
+			{
 				modelId: "glm-v",
 				capabilities: ["reasoning", "vision", "tool_use"],
 				contextWindow: 131072
