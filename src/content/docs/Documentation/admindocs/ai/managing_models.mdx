@@ -518,8 +518,10 @@ The core equation for CPU thread consumption is: `Minimum Threads = 2 * (Number 
 ### CPU Offloading
 
 Key environment variables and arguments related to CPU offloading:
-- `VLLM_WEIGHT_OFFLOADING_DISABLE_PIN_MEMORY=1`, `VLLM_WEIGHT_OFFLOADING_DISABLE_UVA=1` (refer to https://github.com/vllm-project/vllm/pull/32993)
-- `VLLM_CPU_KVCACHE_SPACE` (in GB), `--mm-processor-cache-gb` (in GB for multimodal models, frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU)
+- `--offload-backend <prefetch/uva>`, `--cpu-offload-gb <size_in_GB>`, `--offload-group-size`, `--cpu-offload-params`, etc. (refer to `OffloadConfig` in https://docs.vllm.ai/en/latest/configuration/engine_args/)
+- `VLLM_WEIGHT_OFFLOADING_DISABLE_PIN_MEMORY=1` (mandatory for the time being), `VLLM_WEIGHT_OFFLOADING_DISABLE_UVA=1` when `--offload-backend prefetch` is set (refer to https://github.com/vllm-project/vllm/pull/32993)
+- In multimodal models, multimodal CPU RAM cache with `--mm-processor-cache-gb <size_in_GB>` (frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU)
+- `--kv-offloading-backend native --kv-offloading-size <size_in_GB>`, where more information is available in [KV Offloading Connector](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html)
 
 ### Increasing Context Length with RoPE
 
