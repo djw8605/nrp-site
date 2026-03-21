@@ -99,7 +99,7 @@ spec:
             nvidia.com/a100: "4"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
-            cpu: "15"
+            cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
             memory: 130Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
@@ -236,7 +236,7 @@ spec:
             # Default configMap for nrp-llm, refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Use nightly container when recent commit fixes model
-        image: vllm/vllm-openai:v0.17.0
+        image: vllm/vllm-openai:v0.17.1
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
         ports:
@@ -246,14 +246,14 @@ spec:
         resources:
           limits:
             # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
-            cpu: "20"
+            cpu: "16"
             # At least the model size
             memory: 32Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/gpu: "2"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
-            cpu: "14"
+            cpu: "8"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
             memory: 16Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
@@ -403,7 +403,7 @@ spec:
             nvidia.com/a100: "4"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
-            cpu: "15"
+            cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
             memory: 130Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
