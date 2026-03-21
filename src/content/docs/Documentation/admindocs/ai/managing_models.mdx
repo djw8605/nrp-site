@@ -91,17 +91,17 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Burstable Threads = 2 + 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "28"
             # At least the model size
-            memory: 300Gi
+            memory: 260Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
           requests:
-            # Minimum Threads = 2 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "15"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 150Gi
+            memory: 130Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
         securityContext:
@@ -245,14 +245,14 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Burstable Threads = 2 + 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "20"
             # At least the model size
             memory: 32Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/gpu: "2"
           requests:
-            # Minimum Threads = 2 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
             memory: 16Gi
@@ -395,17 +395,17 @@ spec:
           protocol: TCP
         resources:
           limits:
-            # Burstable Threads = 2 + 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "28"
             # At least the model size
-            memory: 300Gi
+            memory: 260Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
           requests:
-            # Minimum Threads = 2 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
+            # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "15"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 150Gi
+            memory: 130Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
         securityContext:
@@ -493,7 +493,7 @@ Refer to the below instructions for configuring vLLM/SGLang and above instructio
 
 **Refer to:** https://docs.vllm.ai/en/latest/configuration/conserving_memory/
 
-1. Read individual instructions for each model (both from Hugging Face and vLLM/SGLang) carefully, and also check deployment configurations from other models. The recommended number of CPU cores for `requests:` is `Minimum Threads = 2 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`, and for `limits:` is `Burstable Threads = 2 + 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`; read below for API Server Count (`--api-server-count`) and Data Parallelism Count (`--data-parallel-size`). However, set **CPU thread counts to the maximum possible if offloading to CPU RAM**. The recommended RAM size is `request: [slightly over half of total loaded model size]`, `limit: [slightly over total loaded model size]`, where more is required for multimodal models.
+1. Read individual instructions for each model (both from Hugging Face and vLLM/SGLang) carefully, and also check deployment configurations from other models. The recommended number of CPU threads for `requests:` is `Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`, and for `limits:` is `Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`; read below for API Server Count (`--api-server-count`) and Data Parallelism Count (`--data-parallel-size`). However, set **CPU thread counts to the maximum possible if offloading to CPU RAM**. The recommended RAM size is `request: [slightly over half of total loaded model size]`, `limit: [slightly over total loaded model size]`, where more is required for multimodal models.
 2. Tune `--gpu-memory-utilization` to ideally fit enough KV cache that is larger than `--max-model-len`, but with enough space for CUDA graphs to be built. This is typically calculated outside `--gpu-memory-utilization`, so if the CUDA graph build stage errors with not enough memory, `--gpu-memory-utilization` has to be lowered. Moreover, some multimodal models may also consume more memory outside `--gpu-memory-utilization` for certain reasons. If there is an error about insufficient KV cache, `--gpu-memory-utilization` has to be increased, or if both errors occur, consult the next step.
 3. Moreover, note that if the `num_key_value_heads` in `config.json` is lower than the `--tensor-parallel-size` (typically the number of GPUs in a simple configuration), KV cache is duplicated, reducing the context width available from vLLM. In multi-head latent attention (MLA) models like DeepSeek or Kimi, `num_key_value_heads` is always considered `1` even if `config.json` says otherwise. An initial solution is deduplicating the KV cache by: (1) only increasing `--tensor-parallel-size` until `num_key_value_heads`, then use `--pipeline-parallel-size` for the rest of the GPUs required to load the weights, or (2) to use Context Parallelism (`--decode-context-parallel-size`) so that the product (multiplication) of `--decode-context-parallel-size` and `num_key_value_heads` equals `--tensor-parallel-size`, especially in multi-head latent attention (MLA) models such as DeepSeek and Kimi families. Consult the detailed dedicated instructions for various types of parallelism below.
 4. Do not use `--enforce-eager` unless absolutely necessary, as this cuts the token throughput into 1/4 to 1/6 in many cases. CUDA graphs lead to a substantial performance benefit. Using this should only happen if other efforts below have failed to achieve the designed context length of the model. An alternative is to use `--compilation-config "{\"cudagraph_mode\": \"PIECEWISE\"}"`, as this argument retains some level of CUDA graph capability while conserving VRAM, but the conservation is likely about half to one GB, and has visible token throughput sacrifices.
@@ -507,7 +507,7 @@ Refer to the below instructions for configuring vLLM/SGLang and above instructio
 
 **Optimizing vLLM performance and responsiveness:** https://docs.vllm.ai/en/latest/configuration/optimization/ and https://developers.redhat.com/articles/2026/03/09/5-steps-triage-vllm-performance
 
-The core equation for CPU thread consumption for `requests:` is `Minimum Threads = 2 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`, and for `limits:` is `Burstable Threads = 2 + 2 * (Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`.
+The equation for CPU thread consumption for `requests:` is `Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`, and for `limits:` is `Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0))`.
 
 **However, set maximum threads possible if offloading weights or KV cache to CPU RAM.**
 
