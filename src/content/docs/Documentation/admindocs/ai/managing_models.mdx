@@ -94,14 +94,14 @@ spec:
             # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "28"
             # At least the model size
-            memory: 260Gi
+            memory: 360Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 130Gi
+            memory: 180Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
         securityContext:
@@ -248,14 +248,14 @@ spec:
             # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "16"
             # At least the model size
-            memory: 32Gi
+            memory: 128Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/gpu: "2"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "8"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 16Gi
+            memory: 64Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/gpu: "2"
         securityContext:
@@ -398,14 +398,14 @@ spec:
             # Burstable Threads = 2 * (1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "28"
             # At least the model size
-            memory: 260Gi
+            memory: 360Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
           requests:
             # Minimum Threads = 1 + Number of GPUs + API Server Count (Minimum 1) + Data Parallelism Count (Minimum 1) + (1 if Data Parallelism Count > 1 else 0)); Set maximum possible if offloading to CPU RAM
             cpu: "14"
             # Around half of the model size or whatever lesser amount the intended node can fit; more than half for multimodal models
-            memory: 130Gi
+            memory: 180Gi
             # VRAM >= Model weight size in https://pypi.org/project/hf-mem/ + KV cache without CPU offload
             nvidia.com/a100: "4"
         securityContext:
