@@ -48,16 +48,17 @@ Certain kinds of GPUs are advertised on nodes as a special resource, f.e. "nvidi
 
 The current list is:
 
-GPU Type | resource
----|---
-A40 | nvidia.com/a40
-A100 | nvidia.com/a100
-Nvidia RTX A6000 | nvidia.com/rtxa6000
-Quadro RTX 8000 | nvidia.com/rtx8000
-Grace Hopper GH200 | nvidia.com/gh200
-A100 MIG 1g.10gb | nvidia.com/mig-small
+| GPU Type                     | Resource                  |
+|-----------------------------|---------------------------|
+| NVIDIA A40                  | nvidia.com/a40            |
+| NVIDIA A100                 | nvidia.com/a100           |
+| NVIDIA RTX A6000            | nvidia.com/rtxa6000       |
+| NVIDIA Quadro RTX 8000      | nvidia.com/rtx8000        |
+| NVIDIA H200                 | nvidia.com/h200           |
+| NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
+| NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 
-Using A100s also requires [a reservation](/reservations).
+Using NVIDIA A100 or NVIDIA H200 also requires [a reservation](/reservations).
 
 For example, modifying the above example for one of these GPUs, the new yaml would be:
 
@@ -111,28 +112,30 @@ new Runtime().module(define, name => {
 
 If you need more graphical memory, use this table or official specs to choose the type:
 
-GPU Type | Memory size (GB)
----|---
-NVIDIA-GeForce-GTX-1070 | 8G
-NVIDIA-GeForce-GTX-1080 | 8G
-Quadro-M4000 | 8G
-NVIDIA-A100-PCIE-40GB-MIG-2g.10gb | 10G
-NVIDIA-GeForce-GTX-1080-Ti | 12G
-NVIDIA-GeForce-RTX-2080-Ti | 12G
-NVIDIA-TITAN-Xp | 12G
-Tesla-T4 | 16G
-NVIDIA-A10 | 24G
-NVIDIA-GeForce-RTX-3090 | 24G
-NVIDIA-GeForce-RTX-4090 | 24G
-NVIDIA-TITAN-RTX | 24G
-NVIDIA-RTX-A5000 | 24G
-Quadro-RTX-6000 | 24G
-Tesla-V100-SXM2-32GB | 32G
-NVIDIA-A40 | 48G
-NVIDIA-L40 | 48G
-NVIDIA-RTX-A6000 | 48G
-Quadro-RTX-8000 | 48G
-NVIDIA-A100-SXM4-80GB | 80G
+
+| GPU Type                          | Memory Size (GB) |
+|----------------------------------|------------------|
+| NVIDIA GeForce GTX 1070           | 8                |
+| NVIDIA GeForce GTX 1080           | 8                |
+| NVIDIA Quadro M4000               | 8                |
+| NVIDIA A100 MIG 2g.10gb           | 10               |
+| NVIDIA GeForce GTX 1080 Ti        | 12               |
+| NVIDIA GeForce RTX 2080 Ti        | 12               |
+| NVIDIA TITAN Xp                   | 12               |
+| NVIDIA Tesla T4                   | 16               |
+| NVIDIA A10                        | 24               |
+| NVIDIA GeForce RTX 3090           | 24               |
+| NVIDIA GeForce RTX 4090           | 24               |
+| NVIDIA TITAN RTX                  | 24               |
+| NVIDIA RTX A5000                  | 24               |
+| NVIDIA Quadro RTX 6000            | 24               |
+| NVIDIA Tesla V100 SXM2            | 32               |
+| NVIDIA A40                        | 48               |
+| NVIDIA L40                        | 48               |
+| NVIDIA RTX A6000                  | 48               |
+| NVIDIA Quadro RTX 8000            | 48               |
+| NVIDIA A100 SXM4                  | 80               |
+| NVIDIA H200 NVL                   | 141              |
 
 :::note
 [Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
