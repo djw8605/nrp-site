@@ -52,13 +52,13 @@ The current list is:
 |-----------------------------|---------------------------|
 | NVIDIA A40                  | nvidia.com/a40            |
 | NVIDIA A100                 | nvidia.com/a100           |
-| NVIDIA H100                 | nvidia.com/h100           |
 | NVIDIA RTX A6000            | nvidia.com/rtxa6000       |
 | NVIDIA Quadro RTX 8000      | nvidia.com/rtx8000        |
+| NVIDIA H200                 | nvidia.com/h200           |
 | NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 
-Using NVIDIA A100 or NVIDIA H100 also requires [a reservation](/reservations).
+Using NVIDIA A100 or NVIDIA H200 also requires [a reservation](/reservations).
 
 For example, modifying the above example for one of these GPUs, the new yaml would be:
 
@@ -112,6 +112,7 @@ new Runtime().module(define, name => {
 
 If you need more graphical memory, use this table or official specs to choose the type:
 
+
 | GPU Type                          | Memory Size (GB) |
 |----------------------------------|------------------|
 | NVIDIA GeForce GTX 1070           | 8                |
@@ -134,8 +135,7 @@ If you need more graphical memory, use this table or official specs to choose th
 | NVIDIA RTX A6000                  | 48               |
 | NVIDIA Quadro RTX 8000            | 48               |
 | NVIDIA A100 SXM4                  | 80               |
-| NVIDIA H100                       | 80               |
-| NVIDIA GH200 Grace Hopper         | 96               |
+| NVIDIA H200 NVL                   | 141              |
 
 :::note
 [Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
