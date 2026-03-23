@@ -15,9 +15,9 @@ When changing the provided models, also change the [Chatbox config template](htt
 
 ### Obtaining VRAM Requirements
 
-[hf-mem](https://pypi.org/project/hf-mem/) is a useful way to determine the total size of weights loaded to the system, and an **incomplete** estimate of KV cache requirements.
+[hf-mem](https://pypi.org/project/hf-mem/) is a useful way to determine the total size of weights loaded to the system, and shows an **incomplete** estimate of KV cache requirements (see notes below).
 
-Something like `uvx hf-mem --model-id MiniMaxAI/MiniMax-M2.5 --experimental --batch-size 1 --kv-cache-dtype bfloat16` is an example that can be used.
+Example (set `HF_TOKEN` after agreeing to the model's license in Hugging Face if a `401 Unauthorized` error shows): `uvx hf-mem --model-id MiniMaxAI/MiniMax-M2.5 --experimental --batch-size 1 --kv-cache-dtype bfloat16`
 
 **Example:**
 
