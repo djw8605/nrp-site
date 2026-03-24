@@ -647,7 +647,7 @@ Prefill context parallelism (`--prefill-context-parallel-size`) deduplicates KV 
 
 **Important:** It is entirely possible that when a high pipeline parallelism count is used to have vLLM wait a long time after `Application startup complete.`, then the requests come in; this is the LLM engine initializing the pipelines. Moreover, there may be an error `raise TimeoutError(f"RPC call to {method} timed out.")`.
 
-**So when using a high pipeline parallelism count**, add the below environment variables to eliminate the timeout error and wait until the responses come in (this may take at least minutes):
+**So when using pipeline parallelism**, add the below environment variables to eliminate the timeout error and wait until the responses come in (this may take at least minutes):
 
 ```yaml
         env:
