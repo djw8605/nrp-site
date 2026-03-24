@@ -18,11 +18,6 @@ const metadata = {
           <p class="text-gray-600 dark:text-gray-400 mb-4">
             Live status of LLM inference endpoints on the NRP cluster
           </p>
-          <p class="text-sm text-gray-500 dark:text-gray-500 max-w-2xl mx-auto mb-4 leading-relaxed">
-            Cards are keyed by Kubernetes workload (<code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">namespace/container</code>).
-            The title shows the vLLM <strong>model id</strong> from Prometheus (same as Hugging Face weights). Gateway short names such as <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">qwen3</code> or <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">gemma3</code> appear in OpenTelemetry as <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">gen_ai_original_model</code> in Grafana/Thanos, not necessarily on this page.
-            Decommissioned stacks move to <strong>Archived</strong> after they disappear from metrics for a short interval (they are not treated as online).
-          </p>
           <div id="health-indicator" class="inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
             <span class="w-2 h-2 rounded-full bg-gray-400 animate-pulse" id="health-dot"></span>
             <span id="health-text">Connecting...</span>
