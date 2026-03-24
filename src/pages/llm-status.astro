@@ -18,6 +18,11 @@ const metadata = {
           <p class="text-gray-600 dark:text-gray-400 mb-4">
             Live status of LLM inference endpoints on the NRP cluster
           </p>
+          <p class="text-sm text-gray-500 dark:text-gray-500 max-w-2xl mx-auto mb-4 leading-relaxed">
+            Cards are keyed by Kubernetes workload (<code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">namespace/container</code>).
+            The title shows the vLLM <strong>model id</strong> from Prometheus (same as Hugging Face weights). Gateway short names such as <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">qwen3</code> or <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">gemma3</code> appear in OpenTelemetry as <code class="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">gen_ai_original_model</code> in Grafana/Thanos, not necessarily on this page.
+            Decommissioned stacks move to <strong>Archived</strong> after they disappear from metrics for a short interval (they are not treated as online).
+          </p>
           <div id="health-indicator" class="inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
             <span class="w-2 h-2 rounded-full bg-gray-400 animate-pulse" id="health-dot"></span>
             <span id="health-text">Connecting...</span>
@@ -111,6 +116,19 @@ const metadata = {
     return days + 'd ago';
   }
 
+  /** Lower sort rank = earlier in GPU summary (H200 first for multi-pool screenshots). */
+  function gpuTypeSortKey(gpuLabel) {
+    const n = String(gpuLabel).toUpperCase();
+    if (n.includes('H200')) return 0;
+    if (n.includes('B200')) return 1;
+    if (n.includes('H100')) return 2;
+    if (n.includes('A100')) return 10;
+    if (n.includes('L40')) return 20;
+    if (n.includes('A6000')) return 21;
+    if (n.includes('4090')) return 30;
+    return 50;
+  }
+
   function formatMetricValue(raw, meta) {
     if (raw === undefined || raw === null) return null;
 
@@ -118,6 +136,7 @@ const metadata = {
       const entries = Object.entries(raw);
       if (!entries.length) return null;
       if (meta.storage_name === 'gpu_count') {
+        entries.sort(([a], [b]) => gpuTypeSortKey(a) - gpuTypeSortKey(b));
         return entries.map(([name, count]) =>
           Math.round(count) + 'x ' + name.replace('NVIDIA ', '')
         ).join(', ');
@@ -179,7 +198,7 @@ const metadata = {
       ${stats.map(s => `
         <div class="llm-stat-box">
           <span class="text-gray-500 dark:text-gray-400">${s.label}</span>
-          <p class="font-mono font-medium truncate text-gray-900 dark:text-white">${s.display}</p>
+          <p class="font-mono font-medium text-gray-900 dark:text-white ${s.label === 'GPU Count by Type' ? 'whitespace-normal break-words leading-snug' : 'truncate'}">${s.display}</p>
         </div>
       `).join('')}
     </div>`;
@@ -241,7 +260,7 @@ const metadata = {
     const container = $('models-container');
     container.innerHTML =
       renderSection('Online', 'bg-green-500', online, false) +
-      renderSection('Temporarily Down', 'bg-red-500', down, false) +
+      renderSection('Down (no recent metrics)', 'bg-red-500', down, false) +
       renderSection('Archived', 'bg-gray-400', archived, true);
   }
 
@@ -447,7 +466,7 @@ const metadata = {
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">${model.model_name || model.container}</h2>
       <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${model.namespace}/${model.container}</p>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
         <div class="llm-stat-box">
           <span class="text-xs text-gray-500 dark:text-gray-400">Status</span>
           <p class="font-medium ${statusColor[model.status] || ''}">${statusLabel[model.status] || '—'}</p>
@@ -460,10 +479,10 @@ const metadata = {
           <span class="text-xs text-gray-500 dark:text-gray-400">Last Seen</span>
           <p class="font-medium text-gray-900 dark:text-white text-sm">${timeAgo(model.last_seen)}</p>
         </div>
-        <div class="llm-stat-box">
-          <span class="text-xs text-gray-500 dark:text-gray-400">GPUs</span>
-          <p class="font-medium text-gray-900 dark:text-white text-sm">${gpuDisplay}</p>
-        </div>
+      </div>
+      <div class="llm-stat-box mb-6">
+        <span class="text-xs text-gray-500 dark:text-gray-400">GPUs (cluster allocation)</span>
+        <p class="font-medium text-gray-900 dark:text-white text-sm font-mono whitespace-normal break-words leading-snug mt-0.5">${gpuDisplay}</p>
       </div>
 
       ${buildUptimeBar(model)}

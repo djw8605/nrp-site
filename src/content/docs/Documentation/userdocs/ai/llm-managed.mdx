@@ -251,6 +251,10 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 
 You can follow all updates and participate in the discussions within our [Matrix](https://nrp.ai/contact/#matrix) [Nautilus Artificial Intelligence/Machine Learning](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) ([NRP Matrix.to](https://matrix-to.nrp-nautilus.io/#/#ml:matrix.nrp-nautilus.io), [Matrix.to](https://matrix.to/#/#ml:matrix.nrp-nautilus.io)) channel. Suggestions and decisions for new models are also made here.
 
+### Live inference status
+
+The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face model id**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
+
 <Card title="qwen3" icon="star">
 
   <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
@@ -258,6 +262,8 @@ You can follow all updates and participate in the discussions within our [Matrix
   **[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8)**
   
   Multimodal (vision, video), 1,010,000 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+
+  Capacity may be split across **multiple GPU pools** (for example A100 and H200); see [LLM Status](/llm-status) for per-workload allocation.
 </Card>
 
 <Card title="gpt-oss" icon="star">
@@ -323,15 +329,6 @@ You can follow all updates and participate in the discussions within our [Matrix
   Embedding model, NOT for chat usage
 </Card>
 
-<Card title="glm-v" icon="star">
-
-  <Badge text="deprecated" variant="caution" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
-
-  **[zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8)**
-  
-  Multimodal (vision, video), 131,072 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM-V.html), Official FP8 quantization, Gemini Flash level multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
-</Card>
-
 <Card title="gemma3" icon="star">
 
   <Badge text="deprecated" variant="caution" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
@@ -366,7 +363,9 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 - `embed-mistral` ([intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)) was decommissioned and replaced with `qwen3-embedding` due to incompatibilities with Jupyter AI.
 
-- `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) was decommissioned after a long period of deprecation, due to being a model from years ago.
+- `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) was **removed from the Envoy AI Gateway** after a long deprecation. It no longer appears in `/v1/models` or Chatbox; do not select it in new configs. (If it still appeared briefly on [LLM Status](/llm-status) as “down,” that was stale Prometheus series until the workload fully disappeared from metrics.)
+
+- `glm-v` (**GLM-4.6V** multimodal route) was **removed from the Envoy AI Gateway**; use `glm-4.7` for text and other multimodal options as documented above.
 
 #### **February 2026:**
 
