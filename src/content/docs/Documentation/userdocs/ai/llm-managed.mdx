@@ -234,6 +234,33 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 
 </details>
 
+## Isolating cached responses
+
+:::caution
+All API users are recommended to set the below configuration. This is very important information to prevent other people's cached responses or prompts from showing up in your response (and the opposite), as well as improving the quality of your responses.
+:::
+
+In your API call to models (vLLM and SGLang models are supported), you should specify the key `cache_salt` in `extra_body`, where the value of the key `cache_salt` is a random base64-encoded string known only to you, where the secret random text before the base64-encode is at least 43 characters (256 bits).
+
+**Example** (base64-encoded from `abcdefghijklmnopqrstuvwxyzabcdefghijklmnopq`): `extra_body={"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ=="}`
+
+```python
+response = client.chat.completions.create(
+    model=model,
+    messages=messages,
+    extra_body={
+        "cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==",
+    },
+)
+```
+
+**All API users are recommended to set the above configuration. This is very important information to prevent other people's cached responses or prompts from showing up in your response (and your cached responses or prompts from showing up in the responses of other users), and likely also improve the accuracy of your responses, since irrelevant caches are not referenced.**
+
+We would really like to have the above configuration applied automatically by default for each API key or in the web interfaces, but has several hurdles right now. ([Envoy AI Gateway Issue](https://github.com/envoyproxy/ai-gateway/issues/1985), [LibreChat Issue](https://github.com/danny-avila/LibreChat/issues/12388), [Open WebUI Issue](https://github.com/open-webui/open-webui/issues/23012))
+
+## Live inference status
+
+The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face model id**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
 
 ## Available Models
 
@@ -250,10 +277,6 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 <Badge text="deprecated" variant="caution" /> - LLM is **deprecated** and is likely to go away soon. Please do not start using this model; this is only for existing user groups who have specific purposes of this model.
 
 You can follow all updates and participate in the discussions within our [Matrix](https://nrp.ai/contact/#matrix) [Nautilus Artificial Intelligence/Machine Learning](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) ([NRP Matrix.to](https://matrix-to.nrp-nautilus.io/#/#ml:matrix.nrp-nautilus.io), [Matrix.to](https://matrix.to/#/#ml:matrix.nrp-nautilus.io)) channel. Suggestions and decisions for new models are also made here.
-
-### Live inference status
-
-The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face model id**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
 
 <Card title="qwen3" icon="star">
 
