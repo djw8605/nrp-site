@@ -260,7 +260,7 @@ We would really like to have the above configuration applied automatically by de
 
 ## Live inference status
 
-The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face model id**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
+The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
 
 ## Available Models
 
