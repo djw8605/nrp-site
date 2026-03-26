@@ -237,7 +237,7 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 ## Isolating cached responses
 
 :::caution
-API users are recommended to set the below configuration if their prompts of responses should only be cached for yourself and not for others. However, this will slightly decrease performance.
+API users are recommended to set the below configuration if their prompts or responses should only be cached for yourself and not for others. However, this will slightly decrease performance.
 :::
 
 In your API call to models (vLLM and SGLang models are supported), you should specify the key `cache_salt` in `extra_body`, where the value of the key `cache_salt` is a random base64-encoded string known only to you, where the secret random text before the base64-encode is at least 43 characters (256 bits).
