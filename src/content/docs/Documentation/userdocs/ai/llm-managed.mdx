@@ -254,7 +254,7 @@ response = client.chat.completions.create(
 )
 ```
 
-**API users are recommended to set the below configuration if their prompts of responses should only be cached for yourself and not for others. This is potentially very important information to prevent other people's cached responses or prompts from showing up in your response (and your cached responses or prompts from showing up in the responses of other users), and likely also improve the accuracy of your responses, since irrelevant caches are not referenced. However, this will slightly decrease performance.**
+**API users are recommended to set the above configuration if their prompts or responses should only be cached for yourself and not for others. This is potentially very important information to prevent other people's cached responses or prompts from showing up in your response (and your cached responses or prompts from showing up in the responses of other users), and likely also improve the accuracy of your responses, since irrelevant caches are not referenced. However, this will slightly decrease performance.**
 
 We would really like to have the above configuration applied automatically by default for each API key or in the web interfaces, but has several hurdles right now. ([Envoy AI Gateway Issue](https://github.com/envoyproxy/ai-gateway/issues/1985), [LibreChat Issue](https://github.com/danny-avila/LibreChat/issues/12388), [Open WebUI Issue](https://github.com/open-webui/open-webui/issues/23012))
 
