@@ -237,7 +237,7 @@ Note that not all NRP models support Anthropic-compatible endpoints or tools lik
 ## Isolating cached responses
 
 :::caution
-All API users are recommended to set the below configuration. This is very important information to prevent other people's cached responses or prompts from showing up in your response (and the opposite), as well as improving the quality of your responses.
+API users are recommended to set the below configuration if their prompts of responses should only be cached for yourself and not for others. However, this will slightly decrease performance.
 :::
 
 In your API call to models (vLLM and SGLang models are supported), you should specify the key `cache_salt` in `extra_body`, where the value of the key `cache_salt` is a random base64-encoded string known only to you, where the secret random text before the base64-encode is at least 43 characters (256 bits).
@@ -254,7 +254,7 @@ response = client.chat.completions.create(
 )
 ```
 
-**All API users are recommended to set the above configuration. This is very important information to prevent other people's cached responses or prompts from showing up in your response (and your cached responses or prompts from showing up in the responses of other users), and likely also improve the accuracy of your responses, since irrelevant caches are not referenced.**
+**API users are recommended to set the below configuration if their prompts of responses should only be cached for yourself and not for others. This is potentially very important information to prevent other people's cached responses or prompts from showing up in your response (and your cached responses or prompts from showing up in the responses of other users), and likely also improve the accuracy of your responses, since irrelevant caches are not referenced. However, this will slightly decrease performance.**
 
 We would really like to have the above configuration applied automatically by default for each API key or in the web interfaces, but has several hurdles right now. ([Envoy AI Gateway Issue](https://github.com/envoyproxy/ai-gateway/issues/1985), [LibreChat Issue](https://github.com/danny-avila/LibreChat/issues/12388), [Open WebUI Issue](https://github.com/open-webui/open-webui/issues/23012))
 
