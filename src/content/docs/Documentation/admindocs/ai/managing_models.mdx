@@ -140,8 +140,8 @@ spec:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
-        # Use latest release, and use nightly container if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:v0.17.1
+        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
+        image: vllm/vllm-openai:<version_or_nightly_commit>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -296,8 +296,8 @@ spec:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
-        # Use latest release, and use nightly container if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:v0.17.1
+        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
+        image: vllm/vllm-openai:<version_or_nightly_commit>
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
         ports:
@@ -451,8 +451,8 @@ spec:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
-        # Use latest release, and use nightly container if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:v0.17.1
+        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
+        image: vllm/vllm-openai:<version_or_nightly_commit>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -849,7 +849,7 @@ spec:
       timeouts:
         request: 1200s
       modelsOwnedBy: "SDSC"
-    # Multiple backendRefs do round-robin
+    # Multiple backendRefs do round-robin; must add BackendTrafficPolicy for failover
     - matches:
         - headers:
             - type: Exact
@@ -871,15 +871,16 @@ spec:
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
-  name: envoy-ai-gateway-nrp-qwen
+  name: envoy-ai-gateway-nrp
   namespace: nrp-llm
 spec:
   targetRefs:
+    # Add more HTTPRoutes here
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: envoy-ai-gateway-nrp-qwen  # Same name as your AIGatewayRoute
   retry:
-    numRetries: 5  # Total retry attempts across all backends
+    numRetries: 5  # Total retry attempts across all backendRefs
     perRetry:
       backOff:
         baseInterval: 100ms
