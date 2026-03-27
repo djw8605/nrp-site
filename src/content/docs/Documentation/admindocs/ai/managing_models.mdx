@@ -679,9 +679,9 @@ Prefill context parallelism (`--prefill-context-parallel-size`) deduplicates KV 
 
 **Abstract:** Pipeline parallelism (`--pipeline-parallel-size`) is the default method when sharding model weights across multiple GPU nodes, where it is combined with tensor parallelism (`--tensor-parallel-size`) within GPUs of single nodes. It is also an alternative to decode context parallelism (`--decode-context-parallel-size`) for deduplicating KV cache when specific models do not have decode context parallelism implemented, only setting `--tensor-parallel-size` up to the `num_key_value_heads` in `config.json` and using `--pipeline-parallel-size` to shard both the model weights and KV cache further within a single node, or when the model fits within an unconventional number of GPUs (not in powers of two).
 
-**Important:** It is entirely possible that when a high pipeline parallelism count is used to have vLLM wait a long time after `Application startup complete.`, then the requests come in; this is the LLM engine initializing the pipelines. Moreover, there may be an error `raise TimeoutError(f"RPC call to {method} timed out.")`.
+**Important:** It is entirely possible that **when a high pipeline parallelism count is used, for vLLM to wait a long time after the message `Application startup complete.`, then the requests come in**; this is the LLM engine initializing the pipelines in pipeline parallelism taking longer then tensor parallelism. Moreover, there may be an error `raise TimeoutError(f"RPC call to {method} timed out.")` if this prolongs.
 
-**So when using pipeline parallelism**, add the below environment variables to eliminate the timeout error and wait until the responses come in (this may take at least minutes):
+**So when using pipeline parallelism**, add the below environment variables to eliminate the timeout error and wait until the responses come in (this may take at least a few minutes to over ten minutes **even after `Application startup complete.` shows and requests come in**):
 
 ```yaml
         env:
