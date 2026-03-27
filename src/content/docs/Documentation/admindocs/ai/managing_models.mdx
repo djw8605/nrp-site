@@ -141,7 +141,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<version_or_nightly_commit>
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -297,7 +297,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<version_or_nightly_commit>
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
         ports:
@@ -452,7 +452,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<version_or_nightly_commit>
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -621,11 +621,11 @@ If using NVIDIA NIM, refer to the [Multi-LLM NIM](https://docs.nvidia.com/nim/la
 
 ### Increasing Context Length with RoPE
 
-RoPE (Rotary Position Embedding) allows expanding the context size beyond the default allowed by the model. For smaller factors (`max_position_embeddings / original_max_position_embeddings`), `dynamic` RoPE can be used. For larger factors, `yarn` RoPE could also be used, if the model supports this method. **Note that if there are separate instructions from the model, those instructions are prioritized**, and the format of `--hf-overrides` depends on the model's `config.json` file.
+RoPE (Rotary Position Embedding) allows expanding the context size beyond the default allowed by the model. For smaller factors (`max_position_embeddings / original_max_position_embeddings`), `dynamic` RoPE can be used. For larger factors, `yarn` RoPE could also be used, if the model supports this method. **Note that if there are separate instructions from the model, those instructions are prioritized**, and the format of `--hf-overrides` depends on the model's `config.json` file. Set `VLLM_ALLOW_LONG_MAX_MODEL_LEN` to `1` after adding the RoPE scaling configuration.
 
-Example for [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5): `--max-model-len 262144 --hf-overrides '{"max_position_embeddings": 262144, "rope_scaling": {"type": "dynamic", "factor": 1.5, "original_max_position_embeddings": 196608}}'`
+Example for [MiniMaxAI/MiniMax-M2.5](set `VLLM_ALLOW_LONG_MAX_MODEL_LEN` to `1`, https://huggingface.co/MiniMaxAI/MiniMax-M2.5): `--max-model-len 262144 --hf-overrides '{"rope_scaling": {"type": "dynamic", "factor": 1.5, "original_max_position_embeddings": 196608}}'`
 
-Example for [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8): `--max-model-len 1010000 --hf-overrides '{"text_config": {"max_position_embeddings": 1010000, "rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}'`
+Example for [Qwen/Qwen3.5-397B-A17B-FP8](set `VLLM_ALLOW_LONG_MAX_MODEL_LEN` to `1`, https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8): `--max-model-len 1010000 --hf-overrides '{"text_config": {"rope_parameters": {"mrope_interleaved": true, "mrope_section": [11, 11, 10], "rope_type": "yarn", "rope_theta": 10000000, "partial_rotary_factor": 0.25, "factor": 4.0, "original_max_position_embeddings": 262144}}}'`
 
 ### Miscellaneous Advice
 
