@@ -48,7 +48,7 @@ The above Kaniko builder [has severe speed problems pushing to GitLab](https://g
 The below example is the variant for using Docker (as there is only one dedicated build server available, only use when image compatibility with the Docker builder is an important priority):
 
 ```yaml
-image: docker:git
+image: docker:dind
 
 default:
   tags:
@@ -89,7 +89,7 @@ Docker can build images for multiple architectures and automatically create a ma
 Here's the example of such CI definition:
 
 ```yaml
-image: docker:git
+image: docker:dind
 
 default:
   tags:

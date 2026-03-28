@@ -3,9 +3,9 @@ title: GitLab Runners
 description: A Cluster Admin Guide Running Gitlab CI/CD Runners
 ---
 
-# Restore GitLab Runner KubeVirt VMs (docker:git, docker tag)
+# Restore GitLab Runner KubeVirt VMs (docker:dind, docker tag)
 
-Minimal guide for the production GitLab runners: **docker** executor, **docker:git** image, **docker** tag. The docker-tagged runners are KubeVirt VMs not Kubernetes Pods. The configuration for each VM is in a secret in the namespace. Duplicate and get a new runner token from Gitlab for new secret. Duplicate runner DataVolume before applying VM.
+Minimal guide for the production GitLab runners: **docker** executor, **docker:dind** image, **docker** tag. The docker-tagged runners are KubeVirt VMs not Kubernetes Pods. The configuration for each VM is in a secret in the namespace. Duplicate and get a new runner token from Gitlab for new secret. Duplicate runner DataVolume before applying VM.
 
 ### Running a Runner VM
 
@@ -98,7 +98,7 @@ spec:
 ```bash
 virtctl ssh ubuntu@runner1 -n gitlab -- sudo gitlab-runner status
 virtctl ssh ubuntu@runner2 -n gitlab -- sudo gitlab-runner status
-# Both: executor=docker, image=docker:git, tag_list=["docker"], S3 cache in config.toml
+# Both: executor=docker, image=docker:dind, tag_list=["docker"], S3 cache in config.toml
 ```
 
 SSH (after `ssh-add` your key or use password): `virtctl ssh ubuntu@runner1 -n gitlab` / `virtctl ssh ubuntu@runner2 -n gitlab`.

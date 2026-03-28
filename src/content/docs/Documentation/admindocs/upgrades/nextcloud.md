@@ -21,19 +21,21 @@ Make sure no database version upgrade is required, and if so, perform the MariaD
 
 Moreover, update the `nginx` ConfigMap to the newest [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf).
 
-Change the following sections in [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf) to customize to the cluster (without the description comments starting with `##`):
+Change the following sections in [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf) to customize to the cluster):
 
-```
-## Change app:9000 to 127.0.0.1:9000
+**Change `app:9000` to `127.0.0.1:9000`:**
 
+```conf
 resolver 127.0.0.11 valid=2s;
 upstream php-handler {
     zone backends 64k;
     server 127.0.0.1:9000 resolve;
 }
+```
 
-## Change and add the below values
+**Change and add the below values:**
 
+```conf
 # set max upload size and increase upload timeout:
 proxy_max_temp_file_size 0;
 proxy_buffering off;
@@ -52,14 +54,10 @@ Before upgrading, update all **Apps** on Nextcloud beforehand, as this will lead
 
 To upgrade, change all `nextcloud` images to the latest revision of the minor version (unless upgrading to the next major version, follow the major release upgrade procedures above), and wait for the pod to be restarted.
 
-Because of database initialization, the startup for Nextcloud may take some time. Read the upgrade logs inside the pod container to conclude, and use `php occ upgrade` if required.
+Because of database initialization, the startup for Nextcloud may take some time. Read the upgrade logs inside the pod container to conclude, and use `php occ upgrade` if instructed.
 
 After the upgrade, you need to go to [Settings Overview](https://nextcloud.nrp-nautilus.io/settings/admin/overview) page and run the specified [long running steps](https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html#long-running-migration-steps) manually (include `php occ db:convert-mysql-charset`, `php occ db:convert-filecache-bigint`, `php occ db:add-missing-columns`, `php occ db:add-missing-indices`, `php occ db:add-missing-primary-keys`), and finally run `php occ maintenance:repair --include-expensive` (regardless of whether this is required or not).
 
-#### Upgrading LanguageTool
+#### Upgrading Collabora and LanguageTool
 
-Check if there are any breaking changes in the [GitHub README](https://github.com/meyayl/docker-languagetool) of the [Docker image](https://hub.docker.com/r/meyay/languagetool), and update the tag of the image after updating relevant details. Normally, just changing the tag should work.
-
-#### Upgrading Collabora
-
-Collabora should only require a restart to upgrade.
+Collabora and LanguageTool should only require a restart to upgrade to the latest tag. Read https://hub.docker.com/r/collabora/code and https://hub.docker.com/r/meyay/languagetool to see if there are breaking changes if the container suddenly does not work.
