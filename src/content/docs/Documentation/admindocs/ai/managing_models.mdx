@@ -761,10 +761,11 @@ graph TD
     I[HTTPRoute] --> D
     C -.-> I
     J[SecurityPolicy] --> I
+    K[BackendTrafficPolicy] --> I
     D --> E[AIServiceBackend]
     E --> F[Backend]
     G[BackendSecurityPolicy] --> E
-    H[ClientTrafficPolicy] --> C[Gateway]
+    H[ClientTrafficPolicy] --> C
 
     click A "https://gateway.envoyproxy.io/docs/api/extension_types/#envoyproxy"
     click B "https://gateway-api.sigs.k8s.io/reference/spec/#gatewayclass"
@@ -776,6 +777,7 @@ graph TD
     click H "https://gateway.envoyproxy.io/docs/api/extension_types/#clienttrafficpolicy"
     click I "https://gateway-api.sigs.k8s.io/api-types/httproute/"
     click J "https://gateway.envoyproxy.io/docs/api/extension_types/#securitypolicy"
+    click K "https://gateway.envoyproxy.io/docs/api/extension_types/#backendtrafficpolicy"
 ```
 
 ### Gitlab Project
@@ -865,7 +867,9 @@ spec:
       modelsOwnedBy: "NRP"
 ```
 
-**Example BackendTrafficPolicy for failovers in multiple `backendRefs:`**:
+### BackendTrafficPolicy
+
+A BackendTrafficPolicy is required for failovers in multiple `backendRefs:` endpoints. Add an `HTTPRoute`, which is automatically generated with the same name as the `AIGatewayRoute`, to the existing `BackendTrafficPolicy`.
 
 ```yaml
 apiVersion: gateway.envoyproxy.io/v1alpha1
@@ -900,11 +904,9 @@ spec:
         - retriable-status-codes
 ```
 
-Start defining the [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) next.
-
 ### AIServiceBackend
 
-Add your [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) to one of the files in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend.
+Now, start defining the [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend). Add your [AIServiceBackend](https://aigateway.envoyproxy.io/docs/api/#aiservicebackend) to one of the files in https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend.
 
 **Make sure to delete the `AIServiceBackend` resource manually if a model is removed.**
 
