@@ -869,7 +869,7 @@ spec:
 
 ### BackendTrafficPolicy
 
-A BackendTrafficPolicy is required for failovers in multiple `backendRefs:` endpoints. Add an `HTTPRoute`, which is automatically generated with the same name as the `AIGatewayRoute`, to the existing `BackendTrafficPolicy`.
+A BackendTrafficPolicy is required for failovers in multiple `backendRefs:` endpoints. In the existing `BackendTrafficPolicy`, add the corresponding `HTTPRoute` of the `AIGatewayRoute` (which is automatically generated with the same name as the `AIGatewayRoute`), to the existing `BackendTrafficPolicy`.
 
 ```yaml
 apiVersion: gateway.envoyproxy.io/v1alpha1
@@ -879,10 +879,21 @@ metadata:
   namespace: nrp-llm
 spec:
   targetRefs:
-    # Add more HTTPRoutes here
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: envoy-ai-gateway-nrp-qwen  # Same name as your AIGatewayRoute
+      name: envoy-ai-gateway-nrp  # Same name as your AIGatewayRoute
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: envoy-ai-gateway-nrp-qwen
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: envoy-ai-gateway-nrp-glm
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: envoy-ai-gateway-nrp-test-pool
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: envoy-ai-gateway-nrp-testing
   retry:
     numRetries: 5  # Total retry attempts across all backendRefs
     perRetry:
