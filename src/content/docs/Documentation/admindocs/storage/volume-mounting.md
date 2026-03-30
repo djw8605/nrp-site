@@ -36,8 +36,10 @@ Then delete the `csi-*plugin` pod depending on the StorageClass of the volume. I
 Get the volume's StorageClass by command `kubectl describe pv`, e.g.:
 
 ```
-kubectl describe pv/pvc-f67277a5-dd6e-4150-9937-aac1b88b8bf9 | grep StorageClass
-StorageClass:    rook-ceph-block-east
+kubectl describe pv/pvc-f67277a5-dd6e-4150-9937-aac1b88b8bf9 | grep -E "pool|imageName|StorageClass"
+StorageClass:    rook-ceph-block
+imageName=csi-vol-e96cf3ee-f25b-4282-847c-1d8e307c23be7
+pool=rbd
 ```
 In the above example, its a ceph block storage, so delete the `csi-rbdplugin` pod. If it's a cephfs storage, delete the `csi-cephfsplugin` pod. Monitor the pods to start.
 
@@ -61,10 +63,19 @@ If and only if, there's a stale or orphaned Ceph RBD lock that was not properly 
 
 #### 1. Check for RBD Lock
 
-Open a shell into the Ceph tools pod:
+Obtain the `pool` and `imageName` from the PersistentVolumeClaim:
+
+```
+kubectl describe pv/pvc-f67277a5-dd6e-4150-9937-aac1b88b8bf9 | grep -E "pool|imageName|StorageClass"
+StorageClass:    rook-ceph-block
+imageName=csi-vol-e96cf3ee-f25b-4282-847c-1d8e307c23be7
+pool=rbd
+```
+
+Then, open a shell into the Ceph tools pod:
 
 ```sh
-kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- bash
+kubectl -n rook exec -it deploy/rook-ceph-tools -- bash
 rbd lock list <pool-name>/csi-vol-<uuid>
 ```
 
