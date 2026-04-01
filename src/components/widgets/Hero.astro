@@ -37,6 +37,7 @@ const {
       />
       ) : null}
     </slot>
+    {whiteText && <div class="absolute inset-0 bg-slate-950/60"></div>}
   </div>
   <div class="pointer-events-none md:pt-[96px] pt-0"></div>
     {
@@ -55,7 +56,7 @@ const {
         {
           tagline && (
             <p
-              class:list={["text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
+              class:list={["text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
               set:html={tagline}
             />
           )
@@ -63,7 +64,7 @@ const {
         {
           title && (
             <h1
-              class:list={["text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
+              class:list={["text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200 intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
               set:html={title}
             />
           )
@@ -72,7 +73,7 @@ const {
           {
             subtitle && (
               <p
-                class:list={["text-xl mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade", {'text-white': whiteText}, {'text-muted': !whiteText}]}
+                class:list={["text-xl mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}, {'text-muted': !whiteText}]}
                 set:html={subtitle}
               />
             )

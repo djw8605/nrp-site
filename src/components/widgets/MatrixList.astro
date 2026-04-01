@@ -5,7 +5,7 @@
 <div class="matrix-list" id="matrix-list">
   <div class="list-loading" id="list-loading">
     <div class="loading-card">
-      <div class="author-avatar bg-blue-500">?</div>
+      <div class="author-avatar bg-blue-700">?</div>
       <div class="slide-meta">
         <span class="author-name">Loading...</span>
         <span class="post-time">Please wait</span>
@@ -32,7 +32,7 @@ function initMatrixList() {
     'hzhu16': 'Huijun (NRP Admin)'
   };
 
-  var colorMap = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-indigo-500', 'bg-rose-500'];
+  var colorMap = ['bg-blue-700', 'bg-purple-700', 'bg-emerald-700', 'bg-orange-700', 'bg-indigo-700', 'bg-rose-700'];
 
   function getAuthor(sender) {
     var m = sender.match(/^@([^:]+):/);
@@ -58,15 +58,42 @@ function initMatrixList() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeText(raw) {
+    if (!raw) return '';
+    var text = raw;
+
+    // Strip markup from formatted Matrix messages before linkifying.
+    if (/<[a-z][\s\S]*>/i.test(raw)) {
+      var parser = document.createElement('div');
+      parser.innerHTML = raw;
+      text = parser.textContent || parser.innerText || '';
+    }
+
+    return text.startsWith('* ') ? text.slice(2) : text;
+  }
+
+  function linkifyText(text) {
+    var escaped = escapeHtml(text).replace(/\n/g, '<br>');
+    return escaped.replace(/(https?:\/\/[^\s<]+)/g, function(match) {
+      var clean = match.replace(/[),.;!?]+$/g, '');
+      var trailing = match.slice(clean.length);
+      return '<a href="' + clean + '" target="_blank" rel="noopener noreferrer">' + clean + '</a>' + trailing;
+    });
+  }
+
   function formatContent(html, body) {
-    if (!html && body) {
-      var t = body.startsWith('* ') ? body.slice(2) : body;
-      return t.replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-    }
-    if (html) {
-      return html.replace(/^\*\s*/, '').replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-    }
-    return '';
+    var source = html || body || '';
+    if (!source) return '';
+    return linkifyText(normalizeText(source));
   }
 
   function render(messages) {
