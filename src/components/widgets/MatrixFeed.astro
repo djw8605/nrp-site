@@ -7,7 +7,7 @@
     <div class="feed-track">
       <div class="feed-slide active" data-index="0">
         <div class="slide-header">
-          <div class="author-avatar bg-blue-500">?</div>
+          <div class="author-avatar bg-blue-700">?</div>
           <div class="slide-meta">
             <span class="author-name">Loading...</span>
             <span class="post-time">Please wait</span>
@@ -20,15 +20,15 @@
     </div>
   </div>
   <div class="feed-nav">
-    <button class="nav-btn prev" aria-label="Previous">
+    <button type="button" class="nav-btn prev" aria-label="Previous">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
     </button>
     <div class="feed-dots" id="feed-dots">
-      <button class="feed-dot active" data-index="0" aria-label="Slide 1"></button>
+      <button type="button" class="feed-dot active" data-index="0" aria-label="Slide 1"></button>
     </div>
-    <button class="nav-btn next" aria-label="Next">
+    <button type="button" class="nav-btn next" aria-label="Next">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
       </svg>
@@ -61,7 +61,7 @@ function initMatrixFeed() {
     'hzhu16': 'Huijun (NRP Admin)'
   };
 
-  var colorMap = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-indigo-500', 'bg-rose-500'];
+  var colorMap = ['bg-blue-700', 'bg-purple-700', 'bg-emerald-700', 'bg-orange-700', 'bg-indigo-700', 'bg-rose-700'];
 
   function getAuthor(sender) {
     var m = sender.match(/^@([^:]+):/);
@@ -87,15 +87,42 @@ function initMatrixFeed() {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function normalizeText(raw) {
+    if (!raw) return '';
+    var text = raw;
+
+    // Strip markup from formatted Matrix messages before linkifying.
+    if (/<[a-z][\s\S]*>/i.test(raw)) {
+      var parser = document.createElement('div');
+      parser.innerHTML = raw;
+      text = parser.textContent || parser.innerText || '';
+    }
+
+    return text.startsWith('* ') ? text.slice(2) : text;
+  }
+
+  function linkifyText(text) {
+    var escaped = escapeHtml(text).replace(/\n/g, '<br>');
+    return escaped.replace(/(https?:\/\/[^\s<]+)/g, function(match) {
+      var clean = match.replace(/[),.;!?]+$/g, '');
+      var trailing = match.slice(clean.length);
+      return '<a href="' + clean + '" target="_blank" rel="noopener noreferrer">' + clean + '</a>' + trailing;
+    });
+  }
+
   function formatContent(html, body) {
-    if (!html && body) {
-      var t = body.startsWith('* ') ? body.slice(2) : body;
-      return t.replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-    }
-    if (html) {
-      return html.replace(/^\*\s*/, '').replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-    }
-    return '';
+    var source = html || body || '';
+    if (!source) return '';
+    return linkifyText(normalizeText(source));
   }
 
   function render() {
@@ -103,7 +130,7 @@ function initMatrixFeed() {
       // Show no messages message
       track.innerHTML = '<div class="feed-slide active" data-index="0">' +
         '<div class="slide-header">' +
-          '<div class="author-avatar bg-gray-400">!</div>' +
+          '<div class="author-avatar bg-gray-600">!</div>' +
           '<div class="slide-meta">' +
             '<span class="author-name">No News</span>' +
             '<span class="post-time">Currently unavailable</span>' +
@@ -111,7 +138,7 @@ function initMatrixFeed() {
         '</div>' +
         '<div class="slide-content">No news messages available. Check Matrix for updates.</div>' +
       '</div>';
-      dotsContainer.innerHTML = '<button class="feed-dot active" data-index="0"></button>';
+      dotsContainer.innerHTML = '<button type="button" class="feed-dot active" data-index="0" aria-label="Slide 1"></button>';
       return;
     }
 
@@ -144,7 +171,7 @@ function initMatrixFeed() {
     // Update dots
     var dotsHtml = '';
     messages.forEach(function(_, i) {
-      dotsHtml += '<button class="feed-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>';
+      dotsHtml += '<button type="button" class="feed-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Slide ' + (i + 1) + '"></button>';
     });
     dotsContainer.innerHTML = dotsHtml;
 
@@ -233,9 +260,19 @@ document.addEventListener('astro:page-load', initMatrixFeed);
 .feed-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 16px; }
 .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--feed-border); background: var(--feed-bg); color: var(--feed-text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .nav-btn:hover { background: #f3f4f6; }
-.feed-dots { display: flex; gap: 8px; }
-.feed-dot { width: 10px; height: 10px; border-radius: 50%; border: none; background: var(--feed-border); cursor: pointer; padding: 0; }
-.feed-dot.active { background: #3b82f6; width: 28px; border-radius: 5px; }
+.feed-dots { display: flex; align-items: center; gap: 12px; }
+.feed-dot { width: 24px; height: 24px; border-radius: 9999px; border: none; background: transparent; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; position: relative; }
+.feed-dot::before { content: ''; width: 10px; height: 10px; border-radius: 9999px; background: var(--feed-border); transition: background-color 0.2s ease, width 0.2s ease; }
+.feed-dot.active::before { background: #3b82f6; width: 18px; }
+.feed-dot:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
 
-@media (max-width: 640px) { .feed-slide { padding: 18px; min-height: 220px; } .author-avatar { width: 38px; height: 38px; font-size: 15px; } .slide-content { padding-left: 0; margin-top: 12px; font-size: 14px; max-height: 130px; } }
+@media (max-width: 640px) {
+  .feed-slide { padding: 18px; min-height: 220px; }
+  .author-avatar { width: 38px; height: 38px; font-size: 15px; }
+  .slide-content { padding-left: 0; margin-top: 12px; font-size: 14px; max-height: 130px; }
+  .feed-nav { flex-wrap: wrap; gap: 10px; }
+  .nav-btn.prev { order: 1; }
+  .nav-btn.next { order: 2; }
+  .feed-dots { order: 3; width: 100%; justify-content: center; gap: 8px; }
+}
 </style>

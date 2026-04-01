@@ -68,10 +68,13 @@ html, body {
 }
 
 @media (min-width: 768px) {
+  #front-page #header:not(.scroll) > div:first-child {
+    @apply bg-slate-950/60;
+  }
   #front-page #header:not(.scroll) nav button,
   #front-page #header:not(.scroll) nav>ul>li>a,
   #front-page #header:not(.scroll) svg {
-    @apply text-white;
+    @apply text-slate-100;
   }
 }
 

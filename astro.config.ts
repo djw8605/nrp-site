@@ -38,11 +38,13 @@ export default defineConfig({
       autoTheme: true,
     }),
     starlight({
+      disable404Route: true,
       favicon: '/favicon.ico',
       title: 'NRP Nautilus',
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       components: {
         Footer: './src/components/DocsFooter.astro',
+        Search: './src/components/DocsSearch.astro',
       },
       social: {
         gitlab: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
