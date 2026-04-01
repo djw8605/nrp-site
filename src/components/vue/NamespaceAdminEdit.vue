@@ -372,7 +372,7 @@ const selectedFeatures = ref(["is_k8s_namespace"]);
 
 const features = ref([
     {name: "K8s Namespace", key: "is_k8s_namespace", disabled: false},
-    {name: "LLM Group", key: "is_litellm_org", disabled: false},
+    {name: "LLM Access", key: "is_litellm_org", disabled: false},
     {name: "Milvus database", key: "is_milvus_db", disabled: false},
 ]);
 
