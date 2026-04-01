@@ -916,7 +916,7 @@ const createNamespace = () => {
         return;
     }
 
-    const validation = validateNamespaceName(newNamespace.value);
+    const validation = validateNamespaceName(newNamespace.value, nsName);
     if (!validation.valid) {
         toast.add({ severity: 'error', summary: 'Invalid subgroup name', detail: validation.message, life: 8000 });
         return;
@@ -1083,9 +1083,12 @@ const emailAllUsers = () => {
     });
 };
 
-const validateNamespaceName = (name) => {
+const validateNamespaceName = (name, parentNamespace) => {
     const forbiddenWords = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'demo', 'example', 'fake', 'dummy'];
     const forbiddenPrefixes = ['sys-', 'kube-', 'sys', 'kube'];
+
+    // Exception: if parent is nrp-dev, nrp, or system, apply relaxed rules
+    const isExceptionParent = ['nrp-dev', 'nrp', 'system'].includes(parentNamespace?.toLowerCase());
 
     if (!name || name.trim() === '') {
         return { valid: false, message: '' };
@@ -1100,8 +1103,8 @@ const validateNamespaceName = (name) => {
         issues.push(`Invalid characters found: '${invalidChars}'. Only lowercase letters (a-z), numbers (0-9), and dashes (-) are allowed.`);
     }
 
-    // Must have at least one dash
-    if (!name.includes('-')) {
+    // Must have at least one dash (unless parent is exception)
+    if (!name.includes('-') && !isExceptionParent) {
         issues.push('Missing required dash (-). A dash is mandatory to separate at least two words (e.g., "my-group").');
     }
 
@@ -1124,23 +1127,23 @@ const validateNamespaceName = (name) => {
         // Skip empty parts (already reported)
         if (part.length === 0) continue;
 
-        // Each part must be at least 2 characters
-        if (part.length < 2) {
+        // Each part must be at least 2 characters (unless parent is exception)
+        if (part.length < 2 && !isExceptionParent) {
             issues.push(`Part "${part}" at position ${i + 1} is too short. Each part must be at least 2 characters.`);
         }
 
-        // Check forbidden exact matches (one-word names)
-        if (forbiddenWords.includes(part.toLowerCase())) {
+        // Check forbidden exact matches (one-word names) - exception applies
+        if (forbiddenWords.includes(part.toLowerCase()) && !isExceptionParent) {
             issues.push(`"${part}" is not allowed. Single-word generic names like this are forbidden.`);
         }
 
-        // Check if any part contains 'sys' anywhere
-        if (part.toLowerCase().includes('sys')) {
+        // Check if any part contains 'sys' anywhere - exception applies
+        if (part.toLowerCase().includes('sys') && !isExceptionParent) {
             issues.push(`"${part}" contains "sys" which is not allowed in any part of the name.`);
         }
 
-        // Check for forbidden prefixes
-        if (forbiddenPrefixes.includes(part.toLowerCase())) {
+        // Check for forbidden prefixes - exception applies
+        if (forbiddenPrefixes.includes(part.toLowerCase()) && !isExceptionParent) {
             issues.push(`"${part}" is a reserved prefix and cannot be used.`);
         }
     }
@@ -1148,9 +1151,12 @@ const validateNamespaceName = (name) => {
     // Build verbose message
     if (issues.length > 0) {
         const issueDetails = issues.map(issue => `• ${issue}`).join('\n');
+        const exampleText = isExceptionParent
+            ? `\n\nNote: Exception applied for parent "${parentNamespace}". Standard rules still apply.`
+            : '\n\nValid examples: physics-group, ml-training-cluster, data-science-team';
         return {
             valid: false,
-            message: `Subgroup name "${name}" is invalid:\n\n${issueDetails}\n\nValid examples: physics-group, ml-training-cluster, data-science-team`
+            message: `Subgroup name "${name}" is invalid:\n\n${issueDetails}${exampleText}`
         };
     }
 
@@ -1158,7 +1164,9 @@ const validateNamespaceName = (name) => {
 };
 
 const onNamespaceBlur = () => {
-    namespaceValidation.value = validateNamespaceName(newNamespace.value);
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+    namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
 };
 
 const onNamespaceKeyup = () => {
@@ -1169,14 +1177,18 @@ const onNamespaceKeyup = () => {
             newNamespace.value = formatted;
             // Validate after auto-format
             setTimeout(() => {
-                namespaceValidation.value = validateNamespaceName(newNamespace.value);
+                const nsNameSplit = props["selectedNamespace"].Name.split("/");
+                const nsName = nsNameSplit[nsNameSplit.length - 1];
+                namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
             }, 0);
         }
     }
 
     // Validate as user types
     if (newNamespace.value.trim()) {
-        namespaceValidation.value = validateNamespaceName(newNamespace.value);
+        const nsNameSplit = props["selectedNamespace"].Name.split("/");
+        const nsName = nsNameSplit[nsNameSplit.length - 1];
+        namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
     } else {
         namespaceValidation.value = { valid: true, message: "Enter a name with at least one dash (e.g., physics-group)" };
     }
