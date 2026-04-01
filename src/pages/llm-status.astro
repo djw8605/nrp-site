@@ -96,6 +96,7 @@ const metadata = {
   const API_BASE = portalUrl || '';
   let modelsData = [];
   let metricsMeta = [];
+  let envoyModels = {};
 
   function $(id) { return document.getElementById(id); }
 
@@ -216,7 +217,7 @@ const metadata = {
         <div class="flex items-start justify-between mb-1">
           <div class="min-w-0 flex-1">
             <h3 class="font-semibold text-sm truncate text-gray-900 dark:text-white" title="${name}">${name}</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">${model.namespace}/${model.container}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">NRP Name: ${envoyModels[name] || model.container}</p>
           </div>
           <div class="flex items-center gap-1.5 text-xs font-medium ${statusColor[model.status] || ''} shrink-0 ml-2">
             <span class="llm-status-dot ${model.status}"></span>
@@ -459,7 +460,7 @@ const metadata = {
       </div>
 
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">${model.model_name || model.container}</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${model.namespace}/${model.container}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">NRP Name: ${envoyModels[model.model_name || model.container] || model.container}</p>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
         <div class="llm-stat-box">
@@ -580,9 +581,10 @@ const metadata = {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-      const [overviewResp, metaResp] = await Promise.all([
+      const [overviewResp, metaResp, envoyData] = await Promise.all([
         fetch(`${API_BASE}/api/llm/status/overview`, { signal: controller.signal }),
         metricsMeta.length ? Promise.resolve(null) : fetch(`${API_BASE}/api/llm/status/meta`, { signal: controller.signal }),
+        fetch('https://prometheus.nrp-nautilus.io/api/v1/query?query=' + encodeURIComponent('gen_ai_client_token_usage_sum'), { signal: controller.signal }).then(r => r.json()).catch(() => null)
       ]);
       clearTimeout(timeoutId);
 
@@ -594,6 +596,21 @@ const metadata = {
       if (metaResp) {
         const metaData = await metaResp.json();
         metricsMeta = Array.isArray(metaData) ? metaData : [];
+      }
+
+      // Extract envoy model mappings
+      if (envoyData?.data?.result && envoyData.data.result.length > 0) {
+        envoyModels = {};
+        const seenKeys = new Set();
+        envoyData.data.result.forEach(r => {
+          const requestModel = r.metric.gen_ai_request_model;
+          const originalModel = r.metric.gen_ai_original_model;
+          // Deduplicate by request model, keep the latest occurrence
+          if (requestModel && originalModel && !seenKeys.has(requestModel)) {
+            seenKeys.add(requestModel);
+            envoyModels[requestModel] = originalModel;
+          }
+        });
       }
 
       showModels();
