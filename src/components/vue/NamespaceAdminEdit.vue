@@ -200,7 +200,7 @@
                 fluid
                 @blur="onNamespaceBlur"
                 @keyup="onNamespaceKeyup"
-                placeholder="example: physics-group, ml-training-cluster"
+                :placeholder="`${parentNamespace}-`"
                 :class="{ 'p-invalid': namespaceValidation.message && !namespaceValidation.valid && newNamespace.length > 0 }"
             />
             <label for="newNamespace">New subgroup name</label>
@@ -218,7 +218,7 @@
 
         <!-- Help message when empty -->
         <Message v-if="!namespaceValidation.message && newNamespace.length === 0" severity="info" size="small" variant="simple">
-            Enter a name with at least one dash (e.g., <code>physics-group</code>)
+            Enter a name with at least one dash
         </Message>
 
         <Button
@@ -303,7 +303,7 @@ import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
 import CryptoJS from 'crypto-js';
 
-import {ref, onMounted, defineEmits, watch} from 'vue';
+import {ref, onMounted, defineEmits, watch, computed} from 'vue';
 import { reactive } from 'vue';
 
 import {Hovercards} from '@gravatar-com/hovercards';
@@ -333,6 +333,11 @@ const emit = defineEmits(['onNSChanged']);
 const newNamespace = ref("");
 
 const namespaceValidation = ref({ valid: false, message: "Enter a subgroup name with at least one dash (e.g., physics-group)." });
+
+const parentNamespace = computed(() => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    return nsNameSplit[nsNameSplit.length - 1];
+});
 
 const selectedFeatures = ref(["is_k8s_namespace"]);
 
@@ -1190,7 +1195,7 @@ const onNamespaceKeyup = () => {
         const nsName = nsNameSplit[nsNameSplit.length - 1];
         namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
     } else {
-        namespaceValidation.value = { valid: true, message: "Enter a name with at least one dash (e.g., physics-group)" };
+        namespaceValidation.value = { valid: true, message: `Enter a name with at least one dash (e.g., ${parentNamespace}-group)` };
     }
 };
 </script>
