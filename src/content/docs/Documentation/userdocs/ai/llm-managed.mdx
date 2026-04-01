@@ -83,6 +83,10 @@ curl -H "Authorization: Bearer <your_token>" https://ellm.nrp-nautilus.io/v1/mod
 
 **NOTE: Please only specify `Max Output Tokens`/`max_tokens`/`max_output_tokens` when you know what they mean. This is the maximum output length under the context length, not the total context length.** If strictly required by the client or library, specify it to somewhere under 1/3 or 1/4 of the total context length. **NEVER specify the full context length in these configurations, as the LLM would be guaranteed to error.**
 
+## Deploying Your Own Models
+
+Please refer to [Managing AI Models](/documentation/admindocs/ai/managing_models/).
+
 ## Examples
 
 ### Python Code
@@ -289,6 +293,15 @@ You can follow all updates and participate in the discussions within our [Matrix
   Capacity may be split across **multiple GPU pools** (for example A100 and H200); see [LLM Status](/llm-status) for per-workload allocation.
 </Card>
 
+<Card title="qwen3-small" icon="star">
+
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8)**
+  
+  Multimodal (vision, video), 1,010,000 context tokens, 35B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+</Card>
+
 <Card title="gpt-oss" icon="star">
 
   <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" />
@@ -296,15 +309,6 @@ You can follow all updates and participate in the discussions within our [Matrix
   **[openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)**
   
   131,072 context tokens, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html), Native MXFP4 model weights, frontier agentic task performance
-</Card>
-
-<Card title="qwen3-small" icon="star">
-
-  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
-
-  **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)**
-  
-  Multimodal (vision, video), 262,144 context tokens, 27B parameters, Native bfloat16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="kimi" icon="star">
@@ -379,6 +383,11 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 <details>
   <summary>Click to expand</summary>
+
+
+#### **April 2026:**
+
+- `qwen3-small` has been changed from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8), and the context size has been changed.
 
 #### **March 2026:**
 
