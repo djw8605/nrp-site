@@ -212,14 +212,12 @@ const metadata = {
 
     const name = model.model_name || model.container || 'Unknown';
 
-    const envoyLabel = envoyModels[name] || `${model.namespace}/${model.container}`;
-
     return `
       <div class="llm-card border rounded-lg p-4 ${bgClass}" data-model-id="${model.id}" onclick="window._llmShowDetail(${model.id})">
         <div class="flex items-start justify-between mb-1">
           <div class="min-w-0 flex-1">
             <h3 class="font-semibold text-sm truncate text-gray-900 dark:text-white" title="${name}">${name}</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">${envoyLabel}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">NRP Name: ${envoyModels[name] || model.container}</p>
           </div>
           <div class="flex items-center gap-1.5 text-xs font-medium ${statusColor[model.status] || ''} shrink-0 ml-2">
             <span class="llm-status-dot ${model.status}"></span>
@@ -462,7 +460,7 @@ const metadata = {
       </div>
 
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">${model.model_name || model.container}</h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${envoyModels[model.model_name || model.container] || (model.namespace + '/' + model.container)}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">NRP Name: ${envoyModels[model.model_name || model.container] || model.container}</p>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
         <div class="llm-stat-box">
