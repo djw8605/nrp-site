@@ -191,6 +191,35 @@
         </div>
         </Message>
 
+        <!-- Feature Legend -->
+        <Card class="mb-4">
+        <template #title>Feature Legend</template>
+        <template #content>
+            <div class="flex flex-col gap-2 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded" style="background-color: #ff6b6b;"></span>
+                <span>Red: Organizational group (no special features)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded" style="background-color: #ffd93d;"></span>
+                <span>Yellow: LLM group</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded" style="background-color: #4dabf7;"></span>
+                <span>Blue: Kubernetes namespace only</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded" style="background-color: #51cf66;"></span>
+                <span>Green: Kubernetes namespace + LLM access</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-4 h-4 rounded" style="background-color: #cc5de8;"></span>
+                <span>Purple: Group with Milvus Vector DB access</span>
+            </div>
+            </div>
+        </template>
+        </Card>
+
         <InputGroup>
         <FloatLabel variant="on">
             <InputText
