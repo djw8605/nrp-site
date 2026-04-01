@@ -1115,10 +1115,10 @@ const validateNamespaceName = (name, parentNamespace) => {
     // Always forbidden: system (complete block)
     const alwaysForbidden = ['system'];
 
-    // Forbidden standalone (only when it's the whole word, not part of another word)
-    const forbiddenStandalone = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'example', 'fake', 'dummy'];
+    // Generic/placeholder terms - forbidden as single parts
+    const genericTerms = ['test', 'dev', 'production', 'staging', 'stage', 'temp', 'tmp', 'example', 'fake', 'dummy', 'my', 'group'];
 
-    // Forbidden prefixes (must be followed by dash)
+    // Forbidden prefixes (must be followed by dash at START of name)
     const forbiddenPrefixes = ['sys-', 'kube-'];
 
     if (!name || name.trim() === '') {
@@ -1168,15 +1168,26 @@ const validateNamespaceName = (name, parentNamespace) => {
             issues.push(`"${part}" is not allowed in subgroup names.`);
         }
 
-        // Check forbidden standalone words
-        if (forbiddenStandalone.includes(part.toLowerCase())) {
-            issues.push(`"${part}" alone is not allowed (e.g., don't name your group just "llm").`);
+        // Check generic/placeholder terms
+        if (genericTerms.includes(part.toLowerCase())) {
+            issues.push(`"${part}" is not allowed in subgroup names.`);
         }
 
-        // Check forbidden prefixes (sys-*, kube-*)
-        const partLower = part.toLowerCase();
-        if (forbiddenPrefixes.some(prefix => partLower.startsWith(prefix))) {
-            issues.push(`"${part}" is a reserved prefix and cannot be used.`);
+        // Check forbidden prefixes only at FIRST position
+        if (i === 0) {
+            const partLower = part.toLowerCase();
+            if (forbiddenPrefixes.some(prefix => partLower.startsWith(prefix.replace('-', '')))) {
+                issues.push(`"${part}" is a reserved prefix and cannot be used at the start of a subgroup name.`);
+            }
+        }
+    }
+
+    // Check for two-part names where both are generic
+    if (parts.length === 2 && !parts.some(p => p.length === 0)) {
+        const firstGeneric = genericTerms.includes(parts[0].toLowerCase());
+        const secondGeneric = genericTerms.includes(parts[1].toLowerCase());
+        if (firstGeneric && secondGeneric) {
+            issues.push(`Both parts are generic terms. Use specific, meaningful names (e.g., "physics-cluster" not "my-group").`);
         }
     }
 
