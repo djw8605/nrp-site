@@ -230,24 +230,25 @@
                 @blur="onNamespaceBlur"
                 @keyup="onNamespaceKeyup"
                 :placeholder="`${parentNamespace}-`"
-                :class="{ 'p-invalid': namespaceValidation.message && !namespaceValidation.valid && newNamespace.length > 0 }"
+                :class="{ 'p-invalid': !namespaceValidation.valid && newNamespace.length > 0 }"
             />
             <label for="newNamespace">New subgroup name</label>
         </FloatLabel>
 
-        <!-- Validation message - only show if user has typed something -->
+        <!-- Error message under input (only show actual errors, not info) -->
         <Message
             v-if="namespaceValidation.message && newNamespace.length > 0"
             :severity="namespaceValidation.valid ? 'success' : 'error'"
             size="small"
             variant="simple"
+            :pt="{ root: { class: namespaceValidation.valid ? 'mt-0' : '' } }"
         >
             {{ namespaceValidation.message }}
         </Message>
 
-        <!-- Help message when empty -->
+        <!-- Info message when empty (no errors) -->
         <Message v-if="!namespaceValidation.message && newNamespace.length === 0" severity="info" size="small" variant="simple">
-            Enter a name with at least one dash
+            Enter a name with at least one dash (e.g., <code>{{ parentNamespace }}-group</code>)
         </Message>
 
         <Button
@@ -361,7 +362,7 @@ const emit = defineEmits(['onNSChanged']);
 
 const newNamespace = ref("");
 
-const namespaceValidation = ref({ valid: false, message: "Enter a subgroup name with at least one dash (e.g., physics-group)." });
+const namespaceValidation = ref({ valid: true, message: '' });
 
 const parentNamespace = computed(() => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
@@ -950,12 +951,6 @@ const createNamespace = () => {
         return;
     }
 
-    const validation = validateNamespaceName(newNamespace.value, nsName);
-    if (!validation.valid) {
-        toast.add({ severity: 'error', summary: 'Invalid subgroup name', detail: validation.message, life: 8000 });
-        return;
-    }
-
     createNamespaceLoading.value = true;
 
     client.request({
@@ -975,13 +970,15 @@ const createNamespace = () => {
             });
             return;
         }
-        
+
         toast.add({
             severity: 'success',
             summary: 'Successfully created group '+newNamespace.value,
             life: 3000
         });
         emit('onNSChanged');
+        newNamespace.value = '';
+        namespaceValidation.value = { valid: true, message: '' };
 
     }).catch((err) => {
         toast.add({
@@ -1182,15 +1179,12 @@ const validateNamespaceName = (name, parentNamespace) => {
         }
     }
 
-    // Build verbose message
+    // Build clean error messages
     if (issues.length > 0) {
-        const issueDetails = issues.map(issue => `• ${issue}`).join('\n');
-        const exampleText = isExceptionParent
-            ? `\n\nNote: Exception applied for parent "${parentNamespace}". Standard rules still apply.`
-            : '\n\nValid examples: physics-group, ml-training-cluster, data-science-team';
+        const issueDetails = issues.map(issue => issue).join('\n');
         return {
             valid: false,
-            message: `Subgroup name "${name}" is invalid:\n\n${issueDetails}${exampleText}`
+            message: issueDetails
         };
     }
 
@@ -1200,7 +1194,13 @@ const validateNamespaceName = (name, parentNamespace) => {
 const onNamespaceBlur = () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
-    namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
+    const validation = validateNamespaceName(newNamespace.value, nsName);
+    // Only show verbose errors, not info messages
+    if (validation.valid) {
+        namespaceValidation.value = { valid: true, message: '' };
+    } else {
+        namespaceValidation.value = validation;
+    }
 };
 
 const onNamespaceKeyup = () => {
@@ -1222,9 +1222,15 @@ const onNamespaceKeyup = () => {
     if (newNamespace.value.trim()) {
         const nsNameSplit = props["selectedNamespace"].Name.split("/");
         const nsName = nsNameSplit[nsNameSplit.length - 1];
-        namespaceValidation.value = validateNamespaceName(newNamespace.value, nsName);
+        const validation = validateNamespaceName(newNamespace.value, nsName);
+        // Only show verbose errors, not info messages
+        if (validation.valid) {
+            namespaceValidation.value = { valid: true, message: '' };
+        } else {
+            namespaceValidation.value = validation;
+        }
     } else {
-        namespaceValidation.value = { valid: true, message: `Enter a name with at least one dash (e.g., ${parentNamespace}-group)` };
+        namespaceValidation.value = { valid: true, message: '' };
     }
 };
 </script>
