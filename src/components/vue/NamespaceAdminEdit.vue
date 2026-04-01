@@ -166,8 +166,23 @@
             </div>
 
             <div>
-            • Choose clear, descriptive names (avoid generic ones like
-            <code>kubernetes-ai</code>, <code>testing-group</code>, <code>llm-access</code>).
+            • Names must contain <b>at least one dash</b> (two parts minimum).
+            </div>
+
+            <div>
+            • Each part must be <b>at least 2 characters</b>.
+            </div>
+
+            <div>
+            • Forbidden patterns: <code>sys-*</code>, <code>kube-*</code>, <code>*sys*</code>.
+            </div>
+
+            <div>
+            • One-word names like <code>test</code>, <code>dev</code>, <code>llm</code> are not allowed.
+            </div>
+
+            <div>
+            • Choose clear, descriptive names (e.g., <code>physics-group</code>, <code>ml-training</code>).
             </div>
 
             <div>
@@ -178,10 +193,40 @@
 
         <InputGroup>
         <FloatLabel variant="on">
-            <InputText name="newNamespace" v-model="newNamespace" id="newNamespace" fluid />
+            <InputText
+                name="newNamespace"
+                v-model="newNamespace"
+                id="newNamespace"
+                fluid
+                @blur="onNamespaceBlur"
+                @keyup="onNamespaceKeyup"
+                placeholder="example: physics-group, ml-training-cluster"
+                :class="{ 'p-invalid': namespaceValidation.message && !namespaceValidation.valid && newNamespace.length > 0 }"
+            />
             <label for="newNamespace">New subgroup name</label>
         </FloatLabel>
-        <Button label="Create" :loading="createNamespaceLoading" @click="createNamespace" />
+
+        <!-- Validation message - only show if user has typed something -->
+        <Message
+            v-if="namespaceValidation.message && newNamespace.length > 0"
+            :severity="namespaceValidation.valid ? 'success' : 'error'"
+            size="small"
+            variant="simple"
+        >
+            {{ namespaceValidation.message }}
+        </Message>
+
+        <!-- Help message when empty -->
+        <Message v-if="!namespaceValidation.message && newNamespace.length === 0" severity="info" size="small" variant="simple">
+            Enter a name with at least one dash (e.g., <code>physics-group</code>)
+        </Message>
+
+        <Button
+            label="Create"
+            :loading="createNamespaceLoading"
+            :disabled="!namespaceValidation.valid || createNamespaceLoading"
+            @click="createNamespace"
+        />
         </InputGroup>
 
         <Card>
@@ -286,6 +331,8 @@ const confirm = useConfirm();
 const emit = defineEmits(['onNSChanged']);
 
 const newNamespace = ref("");
+
+const namespaceValidation = ref({ valid: false, message: "Enter a subgroup name with at least one dash (e.g., physics-group)." });
 
 const selectedFeatures = ref(["is_k8s_namespace"]);
 
@@ -865,6 +912,13 @@ const createNamespace = () => {
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
     if (!newNamespace.value) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Please enter a subgroup name', life: 3000 });
+        return;
+    }
+
+    const validation = validateNamespaceName(newNamespace.value);
+    if (!validation.valid) {
+        toast.add({ severity: 'error', summary: 'Invalid subgroup name', detail: validation.message, life: 8000 });
         return;
     }
 
@@ -999,7 +1053,7 @@ const emailNamespaceAdmins = () => {
 
 const emailAllUsers = () => {
     const allUsers = users.value;
-    
+
     if (allUsers.length === 0) {
         toast.add({
             severity: 'warn',
@@ -1009,23 +1063,122 @@ const emailAllUsers = () => {
         });
         return;
     }
-    
+
     const allEmails = allUsers.map(user => user.Email).join(',');
     const subject = `[NAUTILUS] ${props.selectedNamespace?.Name || 'Unknown'}`;
     const body = `Hello,\n\nThis email is regarding the namespace: ${props.selectedNamespace?.Name || 'Unknown'}\n\nPlease let me know if you have any questions.\n\nBest regards`;
-    
+
     const mailtoLink = `mailto:${allEmails}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
+
     window.open(mailtoLink, '_blank');
-    
+
     const adminCount = allUsers.filter(user => user.IsAdmin).length;
     const regularUserCount = allUsers.length - adminCount;
-    
+
     toast.add({
         severity: 'info',
         summary: 'Email client opened',
         detail: `Opened email to ${allUsers.length} user(s) (${adminCount} admin(s), ${regularUserCount} regular user(s)) in this namespace.`,
         life: 3000
     });
+};
+
+const validateNamespaceName = (name) => {
+    const forbiddenWords = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'demo', 'example', 'fake', 'dummy'];
+    const forbiddenPrefixes = ['sys-', 'kube-', 'sys', 'kube'];
+
+    if (!name || name.trim() === '') {
+        return { valid: false, message: '' };
+    }
+
+    let issues = [];
+
+    // Check for valid characters (lowercase letters, numbers, dashes only)
+    const validCharRegex = /^[a-z0-9-]+$/;
+    if (!validCharRegex.test(name)) {
+        const invalidChars = name.replace(/[a-z0-9-]/g, '');
+        issues.push(`Invalid characters found: '${invalidChars}'. Only lowercase letters (a-z), numbers (0-9), and dashes (-) are allowed.`);
+    }
+
+    // Must have at least one dash
+    if (!name.includes('-')) {
+        issues.push('Missing required dash (-). A dash is mandatory to separate at least two words (e.g., "my-group").');
+    }
+
+    // Split by dash and validate
+    const parts = name.split('-');
+
+    // Check for consecutive dashes (empty parts)
+    const emptyPartIndices = parts
+        .map((part, idx) => part === '' ? idx : -1)
+        .filter(idx => idx !== -1);
+
+    if (emptyPartIndices.length > 0) {
+        issues.push(`Empty parts detected at positions: ${emptyPartIndices.join(', ')}. Consecutive dashes (--) are not allowed.`);
+    }
+
+    // Check each part
+    for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+
+        // Skip empty parts (already reported)
+        if (part.length === 0) continue;
+
+        // Each part must be at least 2 characters
+        if (part.length < 2) {
+            issues.push(`Part "${part}" at position ${i + 1} is too short. Each part must be at least 2 characters.`);
+        }
+
+        // Check forbidden exact matches (one-word names)
+        if (forbiddenWords.includes(part.toLowerCase())) {
+            issues.push(`"${part}" is not allowed. Single-word generic names like this are forbidden.`);
+        }
+
+        // Check if any part contains 'sys' anywhere
+        if (part.toLowerCase().includes('sys')) {
+            issues.push(`"${part}" contains "sys" which is not allowed in any part of the name.`);
+        }
+
+        // Check for forbidden prefixes
+        if (forbiddenPrefixes.includes(part.toLowerCase())) {
+            issues.push(`"${part}" is a reserved prefix and cannot be used.`);
+        }
+    }
+
+    // Build verbose message
+    if (issues.length > 0) {
+        const issueDetails = issues.map(issue => `• ${issue}`).join('\n');
+        return {
+            valid: false,
+            message: `Subgroup name "${name}" is invalid:\n\n${issueDetails}\n\nValid examples: physics-group, ml-training-cluster, data-science-team`
+        };
+    }
+
+    return { valid: true, message: '' };
+};
+
+const onNamespaceBlur = () => {
+    namespaceValidation.value = validateNamespaceName(newNamespace.value);
+};
+
+const onNamespaceKeyup = () => {
+    // Auto-format: add dash before capital letters (e.g., "physicsGroup" -> "physics-group")
+    if (newNamespace.value && /[A-Z]/.test(newNamespace.value)) {
+        const formatted = newNamespace.value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        if (formatted !== newNamespace.value) {
+            newNamespace.value = formatted;
+            // Validate after auto-format
+            setTimeout(() => {
+                namespaceValidation.value = validateNamespaceName(newNamespace.value);
+            }, 0);
+        }
+    }
+
+    // Validate as user types
+    if (newNamespace.value.trim()) {
+        namespaceValidation.value = validateNamespaceName(newNamespace.value);
+    } else {
+        namespaceValidation.value = { valid: true, message: "Enter a name with at least one dash (e.g., physics-group)" };
+    }
 };
 </script>
