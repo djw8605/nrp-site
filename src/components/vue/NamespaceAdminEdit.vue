@@ -234,23 +234,6 @@
             />
             <label for="newNamespace">New subgroup name</label>
         </FloatLabel>
-
-        <!-- Error message under input (only show actual errors, not info) -->
-        <Message
-            v-if="namespaceValidation.message && newNamespace.length > 0"
-            :severity="namespaceValidation.valid ? 'success' : 'error'"
-            size="small"
-            variant="simple"
-            :pt="{ root: { class: namespaceValidation.valid ? 'mt-0' : '' } }"
-        >
-            {{ namespaceValidation.message }}
-        </Message>
-
-        <!-- Info message when empty (no errors) -->
-        <Message v-if="!namespaceValidation.message && newNamespace.length === 0" severity="info" size="small" variant="simple">
-            Enter a name with at least one dash (e.g., <code>{{ parentNamespace }}-group</code>)
-        </Message>
-
         <Button
             label="Create"
             :loading="createNamespaceLoading"
@@ -258,6 +241,20 @@
             @click="createNamespace"
         />
         </InputGroup>
+        <!-- Error message under input -->
+        <Message
+            v-if="namespaceValidation.message && newNamespace.length > 0"
+            severity="error"
+            size="small"
+            variant="simple"
+            class="mt-0"
+        >
+            {{ namespaceValidation.message }}
+        </Message>
+        <!-- Info message when empty -->
+        <Message v-if="!namespaceValidation.message && newNamespace.length === 0" severity="info" size="small" variant="simple" class="mt-0">
+            Enter a name with at least one dash (e.g., <code>{{ parentNamespace }}-group</code>)
+        </Message>
 
         <Card>
         <template #subtitle>Features</template>
@@ -1115,11 +1112,14 @@ const emailAllUsers = () => {
 };
 
 const validateNamespaceName = (name, parentNamespace) => {
-    const forbiddenWords = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'example', 'fake', 'dummy'];
-    const forbiddenPrefixes = ['sys-', 'kube-', 'sys', 'kube'];
+    // Always forbidden: system (complete block)
+    const alwaysForbidden = ['system'];
 
-    // Exception: if parent is nrp-dev, nrp, or system, apply relaxed rules
-    const isExceptionParent = ['nrp-dev', 'nrp', 'system'].includes(parentNamespace?.toLowerCase());
+    // Forbidden standalone (only when it's the whole word, not part of another word)
+    const forbiddenStandalone = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'example', 'fake', 'dummy'];
+
+    // Forbidden prefixes (must be followed by dash)
+    const forbiddenPrefixes = ['sys-', 'kube-'];
 
     if (!name || name.trim() === '') {
         return { valid: false, message: '' };
@@ -1134,8 +1134,8 @@ const validateNamespaceName = (name, parentNamespace) => {
         issues.push(`Invalid characters found: '${invalidChars}'. Only lowercase letters (a-z), numbers (0-9), and dashes (-) are allowed.`);
     }
 
-    // Must have at least one dash (unless parent is exception)
-    if (!name.includes('-') && !isExceptionParent) {
+    // Must have at least one dash
+    if (!name.includes('-')) {
         issues.push('Missing required dash (-). A dash is mandatory to separate at least two words (e.g., "my-group").');
     }
 
@@ -1158,23 +1158,24 @@ const validateNamespaceName = (name, parentNamespace) => {
         // Skip empty parts (already reported)
         if (part.length === 0) continue;
 
-        // Each part must be at least 2 characters (unless parent is exception)
-        if (part.length < 2 && !isExceptionParent) {
+        // Each part must be at least 2 characters
+        if (part.length < 2) {
             issues.push(`Part "${part}" at position ${i + 1} is too short. Each part must be at least 2 characters.`);
         }
 
-        // Check forbidden exact matches (one-word names) - exception applies
-        if (forbiddenWords.includes(part.toLowerCase()) && !isExceptionParent) {
-            issues.push(`"${part}" is not allowed. Single-word generic names like this are forbidden.`);
+        // Check always forbidden
+        if (alwaysForbidden.includes(part.toLowerCase())) {
+            issues.push(`"${part}" is not allowed in subgroup names.`);
         }
 
-        // Check if any part contains 'sys' anywhere - exception applies
-        if (part.toLowerCase().includes('sys') && !isExceptionParent) {
-            issues.push(`"${part}" contains "sys" which is not allowed in any part of the name.`);
+        // Check forbidden standalone words
+        if (forbiddenStandalone.includes(part.toLowerCase())) {
+            issues.push(`"${part}" alone is not allowed (e.g., don't name your group just "llm").`);
         }
 
-        // Check for forbidden prefixes - exception applies
-        if (forbiddenPrefixes.includes(part.toLowerCase()) && !isExceptionParent) {
+        // Check forbidden prefixes (sys-*, kube-*)
+        const partLower = part.toLowerCase();
+        if (forbiddenPrefixes.some(prefix => partLower.startsWith(prefix))) {
             issues.push(`"${part}" is a reserved prefix and cannot be used.`);
         }
     }
