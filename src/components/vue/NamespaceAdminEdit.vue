@@ -1084,7 +1084,7 @@ const emailAllUsers = () => {
 };
 
 const validateNamespaceName = (name, parentNamespace) => {
-    const forbiddenWords = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'demo', 'example', 'fake', 'dummy'];
+    const forbiddenWords = ['test', 'dev', 'production', 'llm', 'staging', 'stage', 'temp', 'tmp', 'example', 'fake', 'dummy'];
     const forbiddenPrefixes = ['sys-', 'kube-', 'sys', 'kube'];
 
     // Exception: if parent is nrp-dev, nrp, or system, apply relaxed rules
