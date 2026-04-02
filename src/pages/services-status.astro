@@ -1,0 +1,214 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Services Status',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative pt-8 pb-16">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            NRP Platform Status
+          </h1>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Live status of NRP platform services
+          </p>
+          <div id="health-indicator" class="inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+            <span class="w-2 h-2 rounded-full bg-gray-400 animate-pulse" id="health-dot"></span>
+            <span id="health-text">Connecting…</span>
+          </div>
+        </div>
+
+        <!-- Error banner -->
+        <div id="error-banner" class="hidden mb-6 p-4 rounded-lg border border-red-300 bg-red-50 dark:bg-red-900/20 dark:border-red-800 text-red-700 dark:text-red-300 text-center">
+          <p class="font-medium" id="error-text">Unable to load service status</p>
+          <button id="retry-btn" class="mt-2 px-4 py-1.5 text-sm font-medium rounded bg-red-600 text-white hover:bg-red-700 transition-colors">
+            Retry
+          </button>
+        </div>
+
+        <!-- Loading skeleton -->
+        <div id="loading-skeleton">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map(() => (
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse">
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-3 h-3 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
+                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+                </div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-1"></div>
+                <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Services grid -->
+        <div id="services-container" class="hidden"></div>
+
+        <!-- Summary footer -->
+        <div id="summary-footer" class="hidden mt-8 pt-4 border-t border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between text-xs text-gray-400 dark:text-gray-600">
+          <div class="flex items-center gap-4">
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-green-500"></span>
+              <span id="count-up">0</span> operational
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>
+              <span id="count-down">0</span> down
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+              <span id="count-unknown">0</span> unknown
+            </span>
+          </div>
+          <span>Updated <span id="last-updated">—</span></span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  .svc-card {
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .svc-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .dark .svc-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  }
+
+  .svc-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .svc-dot.up      { background: rgb(34 197 94); }
+  .svc-dot.down    { background: rgb(239 68 68); animation: svc-pulse 2s infinite; }
+  .svc-dot.unknown { background: rgb(156 163 175); }
+
+  @keyframes svc-pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+</style>
+
+<script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '' }}>
+const API_BASE = portalUrl || '';
+const POLL_MS = 30000;
+
+function timeAgo(isoStr) {
+  if (!isoStr) return '—';
+  const diff = Date.now() - new Date(isoStr).getTime();
+  const secs = Math.floor(diff / 1000);
+  if (secs < 60) return secs + 's ago';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return mins + 'm ago';
+  return Math.floor(mins / 60) + 'h ago';
+}
+
+function statusLabel(status) {
+  return { up: 'Operational', down: 'Down', unknown: 'Unknown' }[status] || 'Unknown';
+}
+
+function statusTextColor(status) {
+  return { up: 'text-green-600 dark:text-green-400', down: 'text-red-600 dark:text-red-400', unknown: 'text-gray-500 dark:text-gray-400' }[status] || '';
+}
+
+function buildCard(svc) {
+  const label = statusLabel(svc.status);
+  const textColor = statusTextColor(svc.status);
+
+  return `
+    <div class="svc-card rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="svc-dot ${svc.status}"></span>
+          <h3 class="font-semibold text-gray-900 dark:text-white truncate text-base">${svc.name}</h3>
+        </div>
+        <span class="shrink-0 text-xs font-medium ${textColor}">${label}</span>
+      </div>
+      ${svc.description
+        ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-snug">${svc.description}</p>`
+        : ''}
+      <div class="mt-3 text-xs text-gray-400 dark:text-gray-600">
+        Checked ${timeAgo(svc.last_scrape)}
+      </div>
+    </div>`;
+}
+
+function render(services) {
+  const container = document.getElementById('services-container');
+  const skeleton = document.getElementById('loading-skeleton');
+  const errBanner = document.getElementById('error-banner');
+  const summaryFooter = document.getElementById('summary-footer');
+
+  skeleton.classList.add('hidden');
+  errBanner.classList.add('hidden');
+  container.classList.remove('hidden');
+  summaryFooter.classList.remove('hidden');
+
+  let up = 0, down = 0, unknown = 0;
+  const cards = services.map(svc => {
+    if (svc.status === 'up') up++;
+    else if (svc.status === 'down') down++;
+    else unknown++;
+    return buildCard(svc);
+  });
+
+  container.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">${cards.join('')}</div>`;
+
+  document.getElementById('count-up').textContent = up;
+  document.getElementById('count-down').textContent = down;
+  document.getElementById('count-unknown').textContent = unknown;
+  document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+
+  // Health indicator
+  const healthDot = document.getElementById('health-dot');
+  const healthText = document.getElementById('health-text');
+  const healthIndicator = document.getElementById('health-indicator');
+  if (down > 0) {
+    healthDot.className = 'w-2 h-2 rounded-full bg-red-500';
+    healthText.textContent = `${down} service${down > 1 ? 's' : ''} down`;
+    healthIndicator.className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400';
+  } else if (up === services.length) {
+    healthDot.className = 'w-2 h-2 rounded-full bg-green-500';
+    healthText.textContent = 'All systems operational';
+    healthIndicator.className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400';
+  } else {
+    healthDot.className = 'w-2 h-2 rounded-full bg-yellow-500';
+    healthText.textContent = 'Partial availability';
+    healthIndicator.className = 'inline-flex items-center gap-2 text-sm px-3 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400';
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading-skeleton').classList.add('hidden');
+  document.getElementById('error-text').textContent = msg;
+  document.getElementById('error-banner').classList.remove('hidden');
+
+  const healthDot = document.getElementById('health-dot');
+  const healthText = document.getElementById('health-text');
+  healthDot.className = 'w-2 h-2 rounded-full bg-gray-400';
+  healthText.textContent = 'Status unavailable';
+}
+
+async function fetchStatus() {
+  try {
+    const resp = await fetch(`${API_BASE}/api/system/status/overview`);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    render(data);
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+document.getElementById('retry-btn').addEventListener('click', fetchStatus);
+
+fetchStatus();
+setInterval(fetchStatus, POLL_MS);
+</script>
