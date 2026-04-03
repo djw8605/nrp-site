@@ -127,7 +127,12 @@ var chatboxConfigTemplate = {
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 131072
 			},
-            {
+			{
+				modelId: "gemma",
+				capabilities: ["reasoning", "vision", "tool_use"],
+				contextWindow: 262144
+			},
+			{
 				modelId: "kimi",
 				capabilities: ["reasoning", "vision", "tool_use"],
 				contextWindow: 262144
@@ -146,12 +151,12 @@ var chatboxConfigTemplate = {
 				modelId: "olmo",
 				capabilities: ["tool_use"],
 				contextWindow: 65536
-			},
-			{
-				modelId: "gemma3",
-				capabilities: ["vision", "tool_use"],
-				contextWindow: 131072
 			}
+			{
+				modelId: "qwen3-27b",
+				capabilities: ["reasoning", "vision", "tool_use"],
+				contextWindow: 262144
+			},
 		]
 	}
 };

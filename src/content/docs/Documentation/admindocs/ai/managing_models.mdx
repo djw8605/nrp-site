@@ -52,11 +52,11 @@ Normally, in models without sliding window attention (SWA) capabilities, the KV 
 (EngineCore pid=432) INFO 00-00 00:00:00 [kv_cache_utils.py:1321] Maximum concurrency for 202,752 tokens per request: 1.01x
 ```
 
-But when models use **sliding window attention (SWA)**, a lower KV cache size than the context size of the model can accommodate the full context size.
+But when models use **sliding window attention (SWA)**, a much lower KV cache size than the context size of the model can accommodate the full context size.
 
 ```
-(EngineCore pid=160) INFO 00-00 00:00:00 [kv_cache_utils.py:1316] GPU KV cache size: 145,040 tokens
-(EngineCore pid=160) INFO 00-00 00:00:00 [kv_cache_utils.py:1321] Maximum concurrency for 262,144 tokens per request: 2.17x
+(EngineCore pid=147) INFO 00-00 00:00:00 [kv_cache_utils.py:1319] GPU KV cache size: 30,848 tokens
+(EngineCore pid=147) INFO 00-00 00:00:00 [kv_cache_utils.py:1324] Maximum concurrency for 262,144 tokens per request: 1.26x
 ```
 
 Because of the above reasons, assume that the KV cache is `bfloat16` to be conservative, but **do not give up fitting the model into available VRAM due to the reported KV cache in `hf-mem`, as long as at least the model weights fit in the total VRAM** (or CPU RAM when CPU offload is used). Moreover, vLLM/SGLang may use `fp8` KV cache automatically when the training of the model itself was performed quantized (like DeepSeek), and `hf-mem` cannot automatically detect this situation.
@@ -113,11 +113,16 @@ spec:
                 operator: Gt
                 values:
                 - "80000"
-              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0
+              # At least GTX 1000 Series Pascal GPUs (CUDA Capability 6.x) for CUDA 12, Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              - key: nvidia.com/gpu.compute.major
+                operator: Gt
+                values:
+                - "7"
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/cuda.driver.major
                 operator: Gt
                 values:
-                - "565"
+                - "575"
       containers:
       - args:
         # Refer to the documentation for detailed setup
@@ -135,7 +140,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
+        image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -230,6 +235,8 @@ spec:
 
 In this case, **`--runner pooling` and `--convert embed`** are important arguments for embedding models, where there are no arguments regarding tool calling and reasoning parsers.
 
+The below configuration example uses the CUDA 12.9 build of vLLM due to allowing older GPUs than Turing, such as the Tesla V100 GPU. The default is to use the CUDA 13 build.
+
 <details>
 <summary>Open</summary>
 
@@ -263,21 +270,26 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              # Newer than Pascal GPUs (GTX 1000, https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
-              - key: nvidia.com/gpu.compute.major
-                operator: Gt
-                values:
-                - "6"
-              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0
-              - key: nvidia.com/cuda.driver.major
-                operator: Gt
-                values:
-                - "565"
+              # Specify when requiring specific GPUs but not for designated special GPUs such as `nvidia.com/a100` or `nvidia.com/rtxa6000`
+              #- key: nvidia.com/gpu.product
+              #  operator: In
+              #  values:
+              #  - NVIDIA-L40
               # In smaller models under 80GB, just setting `nvidia.com/gpu.memory` should be enough unless requiring specific GPU generations; in such cases, use `nvidia.com/gpu.compute.major` or `nvidia.com/gpu.compute.minor`, which defines the CUDA GPU Compute Capability (https://en.wikipedia.org/wiki/CUDA#GPUs_supported)
               - key: nvidia.com/gpu.memory
                 operator: Gt
                 values:
                 - "20000"
+              # At least GTX 1000 Series Pascal GPUs (CUDA Capability 6.x) for CUDA 12, Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              - key: nvidia.com/gpu.compute.major
+                operator: Gt
+                values:
+                - "6"
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              - key: nvidia.com/cuda.driver.major
+                operator: Gt
+                values:
+                - "565"
       containers:
       - args:
         # Refer to the documentation for detailed setup
@@ -424,11 +436,16 @@ spec:
                 operator: Gt
                 values:
                 - "80000"
-              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0
+              # At least GTX 1000 Series Pascal GPUs (CUDA Capability 6.x) for CUDA 12, Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              - key: nvidia.com/gpu.compute.major
+                operator: Gt
+                values:
+                - "7"
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/cuda.driver.major
                 operator: Gt
                 values:
-                - "565"
+                - "575"
       containers:
       - args:
         # Refer to the documentation for detailed setup
@@ -446,7 +463,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
+        image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -600,7 +617,8 @@ The equation for CPU thread consumption for `requests:` is `Minimum Threads = 1 
 
 1. Increase internal API server count (`--api-server-count`) to a value larger than `1` (perhaps `4` for smaller models or `8` for larger models); this allows multithreaded processing for tokenization and input processing.
 2. For multimodal models, set `--mm-processor-cache-gb` (in GB, frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU) to a higher value than the default of `4` (perhaps `8`). Increase request and limit CPU RAM with `--mm-processor-cache-gb` multiplied by `--api-server-count`.
-2. (**Decreases available KV cache by potentially a large amount, so only when VRAM is surplus in large-context models.**) Increase `--max-num-batched-tokens` to around `16384` but below `--max-model-len`. The default is currently `8192`.
+3. For models that incorporate Mamba or Mamba-hybrid architectures, you must add `--mamba-cache-mode align` to enable prefix caching.
+4. (**Decreases available KV cache by potentially a large amount, so only when VRAM is surplus in large-context models.**) Increase `--max-num-batched-tokens` to around `16384` but below `--max-model-len`. The default is currently `8192`.
 
 ### CPU Offloading
 
