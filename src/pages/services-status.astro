@@ -6,75 +6,37 @@ const metadata = {
   ignoreTitleTemplate: true,
 };
 
-// Service metadata: UI links and documentation
+// Service metadata: UI links and documentation (only verified URLs/docs)
 const serviceInfo: Record<string, { uiUrl?: string; docUrl?: string }> = {
   'JupyterHub': {
-    uiUrl: 'https://jupyterhub.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/jupyterhub'
+    uiUrl: 'https://jupyterhub-west.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/jupyter/jupyterhub'
   },
   'Coder': {
     uiUrl: 'https://coder.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/coder'
+    docUrl: '/documentation/userdocs/coder/coder'
   },
   'Open WebUI': {
-    uiUrl: 'https://openwebui.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/llm'
+    uiUrl: 'https://nrp-openwebui.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/ai/llm-managed'
   },
   'AnythingLLM': {
-    uiUrl: 'https://anythingllm.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/llm'
+    docUrl: '/documentation/userdocs/ai/llm-managed'
   },
   'LibreChat': {
     uiUrl: 'https://librechat.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/llm'
+    docUrl: '/documentation/userdocs/ai/llm-managed'
   },
   'GitLab': {
     uiUrl: 'https://gitlab.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/gitlab'
-  },
-  'Overleaf': {
-    uiUrl: 'https://overleaf.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/overleaf'
-  },
-  'EtherPad': {
-    uiUrl: 'https://etherpad.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/etherpad'
-  },
-  'HedgeDoc': {
-    uiUrl: 'https://hedgedoc.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/hedgedoc'
-  },
-  'Jitsi': {
-    uiUrl: 'https://meet.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/jitsi'
-  },
-  'Draw.io': {
-    uiUrl: 'https://drawio.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/drawio'
+    docUrl: '/documentation/userdocs/development/gitlab'
   },
   'Nextcloud': {
-    uiUrl: 'https://cloud.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/nextcloud'
-  },
-  'BentoPDF': {
-    uiUrl: 'https://bentopdf.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/bentopdf'
-  },
-  'Yopass': {
-    uiUrl: 'https://yopass.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/yopass'
-  },
-  'NetBox': {
-    uiUrl: 'https://netbox.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/netbox'
+    uiUrl: 'https://nextcloud.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/storage/nextcloud'
   },
   'PerfSONAR': {
-    uiUrl: 'https://perfsonar.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/perfsonar'
-  },
-  'WebODM': {
-    uiUrl: 'https://webodm.nrp-nautilus.io',
-    docUrl: '/documentation/userdocs/services/webodm'
+    uiUrl: 'https://perfsonar.nrp-nautilus.io/maddash-webui/',
   },
 };
 ---
