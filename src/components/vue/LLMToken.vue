@@ -151,7 +151,7 @@ var chatboxConfigTemplate = {
 				modelId: "olmo",
 				capabilities: ["tool_use"],
 				contextWindow: 65536
-			}
+			},
 			{
 				modelId: "qwen3-27b",
 				capabilities: ["reasoning", "vision", "tool_use"],
