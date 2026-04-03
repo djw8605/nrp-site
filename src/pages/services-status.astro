@@ -259,10 +259,18 @@ function showError(msg) {
   healthText.textContent = 'Status unavailable';
 }
 
+const LOGIN_URL = `${API_BASE}/login`;
+
 async function fetchStatus() {
   try {
     const resp = await fetch(`${API_BASE}/api/system/status/overview`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) {
+      if (resp.status === 401 || resp.status === 403) {
+        showLoginRequired();
+        return;
+      }
+      throw new Error(`HTTP ${resp.status}`);
+    }
     const data = await resp.json();
     render(data);
   } catch (err) {
@@ -270,8 +278,31 @@ async function fetchStatus() {
   }
 }
 
-document.getElementById('retry-btn').addEventListener('click', fetchStatus);
+function showLoginRequired() {
+  document.getElementById('loading-skeleton').classList.add('hidden');
+  document.getElementById('summary-footer').classList.add('hidden');
+  document.getElementById('health-indicator').classList.add('hidden');
 
-fetchStatus();
-setInterval(fetchStatus, POLL_MS);
+  const container = document.getElementById('services-container');
+  container.innerHTML = `
+    <div class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800 dark:shadow-none">
+      <p class="text-gray-600 dark:text-gray-400">Please <a href="${LOGIN_URL}" class="text-blue-600 hover:underline">log in</a> to view service status.</p>
+    </div>
+  `;
+  container.classList.remove('hidden');
+}
+
+
+
+// Wait for DOM to be ready before initializing
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+function init() {
+  fetchStatus();
+  setInterval(fetchStatus, POLL_MS);
+}
 </script>
