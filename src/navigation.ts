@@ -60,6 +60,10 @@ export const headerData = {
           href: getPermalink('/llm-status'),
         },
         {
+          text: 'Services Status',
+          href: getPermalink('/services-status'),
+        },
+        {
           text: 'Observable notebooks (external)',
           href: "https://observablehq.com/@nrp-nautilus?type=collections",
         },
