@@ -5,6 +5,40 @@ const metadata = {
   title: 'Services Status',
   ignoreTitleTemplate: true,
 };
+
+// Service metadata: UI links and documentation (only verified URLs/docs)
+const serviceInfo: Record<string, { uiUrl?: string; docUrl?: string }> = {
+  'JupyterHub': {
+    uiUrl: 'https://jupyterhub-west.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/jupyter/jupyterhub'
+  },
+  'Coder': {
+    uiUrl: 'https://coder.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/coder/coder'
+  },
+  'Open WebUI': {
+    uiUrl: 'https://nrp-openwebui.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/ai/llm-managed'
+  },
+  'AnythingLLM': {
+    docUrl: '/documentation/userdocs/ai/llm-managed'
+  },
+  'LibreChat': {
+    uiUrl: 'https://librechat.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/ai/llm-managed'
+  },
+  'GitLab': {
+    uiUrl: 'https://gitlab.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/development/gitlab'
+  },
+  'Nextcloud': {
+    uiUrl: 'https://nextcloud.nrp-nautilus.io',
+    docUrl: '/documentation/userdocs/storage/nextcloud'
+  },
+  'PerfSONAR': {
+    uiUrl: 'https://perfsonar.nrp-nautilus.io/maddash-webui/',
+  },
+};
 ---
 
 <Layout metadata={metadata}>
@@ -96,8 +130,9 @@ const metadata = {
   @keyframes svc-pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
 </style>
 
-<script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '' }}>
+<script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '', serviceInfo: JSON.stringify(serviceInfo) }}>
 const API_BASE = portalUrl || '';
+const serviceInfo = JSON.parse(serviceInfo);
 const POLL_MS = 30000;
 
 function timeAgo(isoStr) {
@@ -121,9 +156,11 @@ function statusTextColor(status) {
 function buildCard(svc) {
   const label = statusLabel(svc.status);
   const textColor = statusTextColor(svc.status);
+  const info = serviceInfo[svc.name] || {};
+  const hasLinks = info.uiUrl || info.docUrl;
 
   return `
-    <div class="svc-card rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5">
+    <div class="svc-card rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-5 flex flex-col">
       <div class="flex items-start justify-between gap-2 mb-2">
         <div class="flex items-center gap-2 min-w-0">
           <span class="svc-dot ${svc.status}"></span>
@@ -134,8 +171,34 @@ function buildCard(svc) {
       ${svc.description
         ? `<p class="text-sm text-gray-500 dark:text-gray-400 mt-1 leading-snug">${svc.description}</p>`
         : ''}
-      <div class="mt-3 text-xs text-gray-400 dark:text-gray-600">
-        Checked ${timeAgo(svc.last_scrape)}
+      <div class="mt-auto pt-3 flex items-center justify-between">
+        <span class="text-xs text-gray-400 dark:text-gray-600">
+          Checked ${timeAgo(svc.last_scrape)}
+        </span>
+        ${hasLinks ? `
+          <div class="flex items-center gap-2">
+            ${info.uiUrl ? `
+              <a href="${info.uiUrl}" target="_blank" rel="noopener"
+                 class="text-xs inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                 title="Open ${svc.name} UI">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+                UI
+              </a>
+            ` : ''}
+            ${info.docUrl ? `
+              <a href="${info.docUrl}" target="_blank" rel="noopener"
+                 class="text-xs inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                 title="View ${svc.name} documentation">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Docs
+              </a>
+            ` : ''}
+          </div>
+        ` : ''}
       </div>
     </div>`;
 }
@@ -196,10 +259,18 @@ function showError(msg) {
   healthText.textContent = 'Status unavailable';
 }
 
+const LOGIN_URL = `${API_BASE}/login`;
+
 async function fetchStatus() {
   try {
     const resp = await fetch(`${API_BASE}/api/system/status/overview`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) {
+      if (resp.status === 401 || resp.status === 403) {
+        showLoginRequired();
+        return;
+      }
+      throw new Error(`HTTP ${resp.status}`);
+    }
     const data = await resp.json();
     render(data);
   } catch (err) {
@@ -207,8 +278,31 @@ async function fetchStatus() {
   }
 }
 
-document.getElementById('retry-btn').addEventListener('click', fetchStatus);
+function showLoginRequired() {
+  document.getElementById('loading-skeleton').classList.add('hidden');
+  document.getElementById('summary-footer').classList.add('hidden');
+  document.getElementById('health-indicator').classList.add('hidden');
 
-fetchStatus();
-setInterval(fetchStatus, POLL_MS);
+  const container = document.getElementById('services-container');
+  container.innerHTML = `
+    <div class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg dark:bg-slate-800 dark:shadow-none">
+      <p class="text-gray-600 dark:text-gray-400">Please <a href="${LOGIN_URL}" class="text-blue-600 hover:underline">log in</a> to view service status.</p>
+    </div>
+  `;
+  container.classList.remove('hidden');
+}
+
+
+
+// Wait for DOM to be ready before initializing
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+function init() {
+  fetchStatus();
+  setInterval(fetchStatus, POLL_MS);
+}
 </script>
