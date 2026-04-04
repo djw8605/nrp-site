@@ -317,18 +317,17 @@ The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed infe
 
 <Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed if there are no major group or user usage, or switched to a deprecated state. This is to provide our users with the best models within our limited allocation of GPUs. Moreover, models may be upgraded to a newer variant without prior notice.
 
-<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under heavy load. **For batching, code your script so that the chat request will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). It is possible that models may go down and come back up at various times.**
+<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under moderately heavy load. **For batching, code your script so that the chat request will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). It is possible that models may go down and come back up at various times.**
 
-<Badge text="tool" variant="success" /> - The LLM has tools calling enabled.
+<Badge text="tool" variant="success" /> - The LLM has tool calling (function calling) enabled.
 
-<Badge text="multimodal" variant="success" /> - The LLM is multimodal.
+<Badge text="multimodal" variant="success" /> - The LLM is multimodal (accepted media are written into the model card).
 
-<Badge text="research" variant="success" /> - The LLM model is used for active research purposes. Removal or deprecation will be communicated to research users.
+<Badge text="research" variant="success" /> - The LLM model is used for active research purposes. Removal or deprecation will be communicated to research users. **Please inform an admin if your group would like to declare research usage for certain models.**
 
 <Badge text="evaluating" variant="tip" /> - The LLM is added **for testing** and we're evaluating it's capabilities. The model may be unavailable sometimes, and configurations may be changed without notification.
 
-<Badge text="deprecated" variant="caution" /> - LLM is **deprecated** and is likely to go away soon. Please do not start using this model; this is only for existing user groups who have specific purposes of this model.
-
+<Badge text="deprecated" variant="caution" /> - LLM is **deprecated** and is likely to go away soon. Please do not start using this model; this is only for existing user groups who have specific purposes for this model.
 
 You can follow all updates and participate in the discussions within our [Matrix](https://nrp.ai/contact/#matrix) [Nautilus Artificial Intelligence/Machine Learning](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) ([NRP Matrix.to](https://matrix-to.nrp-nautilus.io/#/#ml:matrix.nrp-nautilus.io), [Matrix.to](https://matrix.to/#/#ml:matrix.nrp-nautilus.io)) channel. Suggestions and decisions for new models are also made here.
 
