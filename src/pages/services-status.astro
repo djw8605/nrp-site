@@ -132,7 +132,7 @@ const serviceInfo: Record<string, { uiUrl?: string; docUrl?: string }> = {
 
 <script define:vars={{ portalUrl: import.meta.env.PUBLIC_SVC_URL || '', serviceInfo: JSON.stringify(serviceInfo) }}>
 const API_BASE = portalUrl || '';
-const serviceInfo = JSON.parse(serviceInfo);
+const svcInfo = JSON.parse(serviceInfo);
 const POLL_MS = 30000;
 
 function timeAgo(isoStr) {
@@ -156,7 +156,7 @@ function statusTextColor(status) {
 function buildCard(svc) {
   const label = statusLabel(svc.status);
   const textColor = statusTextColor(svc.status);
-  const info = serviceInfo[svc.name] || {};
+  const info = svcInfo[svc.name] || {};
   const hasLinks = info.uiUrl || info.docUrl;
 
   return `
