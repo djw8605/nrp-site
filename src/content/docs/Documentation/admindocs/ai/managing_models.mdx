@@ -174,6 +174,24 @@ spec:
         - mountPath: /workspace/.cache
           name: minimax-inference-volume
           subPath: cache
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 90
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 10
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 30
+          failureThreshold: 8
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -337,6 +355,24 @@ spec:
           subPath: cache
         - mountPath: /dev/shm
           name: shm
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 90
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 10
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 30
+          failureThreshold: 8
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -497,6 +533,24 @@ spec:
         - mountPath: /workspace/.cache
           name: minimax-inference-volume
           subPath: cache
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 90
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 10
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 30
+          failureThreshold: 8
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -643,6 +697,63 @@ Example for [Qwen/Qwen3.5-397B-A17B-FP8](set `VLLM_ALLOW_LONG_MAX_MODEL_LEN` to 
 - Read the **Pipeline Parallelism** section when using more than `--pipeline-parallel-size 1`.
 - For deploying very new models with new architectures where configurations cannot be inherited from a previous model generation, administrators would likely have to hunt through issues and pull request commits through GitHub, or in some cases, contribute changes themselves.
 - The real-life experiences of agentic LLM models depend extremely heavily on tool calling and reasoning parser implementations. What was advertised to work in the provider's own API may not work or lead to disappointing outcomes in the model engines (vLLM/SGLang) because of tool calling and reasoning parsers. Problems in tool calling and reasoning parsers are easily over 75% of all previously experienced issues required to be troubleshooted, and the remaining under 25% are mostly issues in model parallelism or backend kernels.
+
+### Health, Readiness, and Startup Probes
+
+vLLM and SGLang expose a `/health` endpoint (no authentication required) on the same port as the API server (default `5000`). Adding Kubernetes probes to every StatefulSet or Deployment is strongly recommended — without them, Kubernetes sends traffic to pods that are still loading model weights, and crashed pods are never restarted automatically.
+
+**Why each probe matters:**
+
+- **`startupProbe`**: Gives the pod time to load model weights before liveness/readiness checks begin. Large models (30B+) can take 2–10 minutes to initialize. Without this, a liveness probe will kill the pod before it ever finishes loading.
+- **`readinessProbe`**: Removes the pod from the Service's endpoint pool while it is loading or unhealthy. With multiple replicas, this ensures traffic only reaches pods that are actually ready — critical for rolling restarts with ReadWriteOnce PVCs.
+- **`livenessProbe`**: Restarts the pod if the inference server hangs (e.g., NCCL deadlock across tensor-parallel workers, OOM in a non-crashing state).
+
+**Recommended probe configuration (tune `failureThreshold` to your model size):**
+
+```yaml
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 90
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 10
+          failureThreshold: 6
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 30
+          failureThreshold: 8
+```
+
+**Startup time guidance by model size:**
+
+| Model size | Typical load time | Recommended `failureThreshold` (at `periodSeconds: 10`) |
+|---|---|---|
+| < 10B | 1–3 min | 20–30 |
+| 10B–40B | 3–10 min | 30–90 |
+| 40B–100B | 5–15 min | 60–120 |
+| 100B+ / multi-node | 10–30 min | 90–180 |
+
+**Important — Deployment update strategy with ReadWriteOnce PVCs:**
+
+If the model weights are stored on a ReadWriteOnce (RWO) PVC, set the Deployment's update strategy to `Recreate` instead of the default `RollingUpdate`. Otherwise Kubernetes will try to attach the volume to a new pod while the old pod still holds it, producing a `Multi-Attach error`.
+
+```yaml
+  strategy:
+    type: Recreate
+```
+
+StatefulSets with `podManagementPolicy: OrderedReady` are not affected — they terminate the old pod before creating the new one.
+
+**Note:** The `/health` endpoint returns `200 OK` only after vLLM has completed model weight loading and CUDA graph capture. During loading it either refuses connections or returns non-200 responses, which is expected and handled by the `startupProbe` window.
 
 ### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
