@@ -311,7 +311,7 @@ We would really like to have the above configuration applied automatically by de
 
 ## Live inference status
 
-The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma3`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
+The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma`, `gemma-4-e4b`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
 
 ## Available Models
 
@@ -367,6 +367,17 @@ You can follow all updates and participate in the discussions within our [Matrix
   **[google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it)**
   
   Multimodal (image, video, audio), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
+</Card>
+
+<Card title="gemma-4-e4b" icon="star">
+
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+
+  **[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)**
+
+  Multimodal (text, image, **audio**), 65,536 context tokens on the current NRP deployment (model family supports up to 128K), ~4.5B effective parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking when supported by the template
+
+  Hosted in the **`nrp-llm`** pool (API model id **`gemma-4-e4b`**; upstream served name `gemma-4-e4b-it`).
 </Card>
 
 <Card title="kimi" icon="star">
@@ -448,6 +459,8 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 - `gemma3` has been renamed to `gemma` and changed from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it), and the context size has been changed.
 
 - `qwen3-small` has been changed from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8), and the context size has been changed.
+
+- `gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added; API model id **`gemma-4-e4b`**.
 
 #### **March 2026:**
 
