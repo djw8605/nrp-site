@@ -375,9 +375,8 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)**
 
-  Multimodal (text, image, **audio**), 65,536 context tokens on the current NRP deployment (model family supports up to 128K), ~4.5B effective parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking when supported by the template
+  Multimodal (text, image, **audio**), 131,072 context tokens on the current deployment, ~4.5B effective parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking when supported by the template
 
-  Hosted in the **`nrp-llm`** pool (API model id **`gemma-4-e4b`**; upstream served name `gemma-4-e4b-it`).
 </Card>
 
 <Card title="kimi" icon="star">
