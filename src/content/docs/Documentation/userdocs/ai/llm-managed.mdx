@@ -366,7 +366,7 @@ You can follow all updates and participate in the discussions within our [Matrix
   
   **[google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it)**
   
-  Multimodal (image, video, audio), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
+  Multimodal (image, video), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
 </Card>
 
 <Card title="gemma-4-e4b" icon="star">
@@ -375,7 +375,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)**
 
-  Multimodal (text, image, **audio**), 131,072 context tokens on the current deployment, ~4.5B effective parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking when supported by the template
+  Multimodal (image, video, **audio**), 131,072 context tokens, ~8B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
 
 </Card>
 
@@ -401,7 +401,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   <Badge text="main" variant="success" /><Badge text="tool" variant="success" />
 
-  **[MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5)**
+  **[MiniMaxAI/MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7)**
   
   196,608 context tokens, 230B parameters, Native FP8 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html), frontier agentic coding performance
 </Card>
@@ -457,9 +457,11 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 - `gemma3` has been renamed to `gemma` and changed from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it), and the context size has been changed.
 
-- `qwen3-small` has been changed from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8), and the context size has been changed.
+- `qwen3-small` has been changed from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8), and the context size has been changed. `qwen3-27b` ([Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)) is available as preemptible deployments on idle GPUs.
 
 - `gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added; API model id **`gemma-4-e4b`**.
+
+- `minimax-m2` was changed from [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5) to [MiniMaxAI/MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7).
 
 #### **March 2026:**
 
