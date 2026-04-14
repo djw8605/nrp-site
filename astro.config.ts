@@ -325,7 +325,7 @@ export default defineConfig({
                 { label: 'Etcd', link: 'documentation/admindocs/cluster/etcd' },
                 { label: 'JupyterLab', link: 'documentation/admindocs/cluster/jupyterlab-admin' },
                 { label: 'KubeVirt', link: 'documentation/admindocs/cluster/kubevirt-gpu' },
-                { label: 'GitLab Runers', link: 'documentation/admindocs/cluster/gitlab' },
+                { label: 'GitLab Runners', link: 'documentation/admindocs/cluster/gitlab' },
                 { label: 'FPGA Flashing', link: 'documentation/admindocs/cluster/fpga' },
                 { label: 'Services topology', link: 'documentation/admindocs/cluster/cdn-svc' },
                 { label: 'KubeRay operator', link: 'documentation/admindocs/cluster/ray-operator' },
