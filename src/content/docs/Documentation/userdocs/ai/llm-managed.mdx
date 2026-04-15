@@ -344,11 +344,11 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="qwen3-small" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
 
-  **[Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8)**
+  **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen/Qwen3.5-27B)**
   
-  Multimodal (image, video), 262,144 context tokens, 35B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
 </Card>
 
 <Card title="gpt-oss" icon="star">
@@ -415,15 +415,6 @@ You can follow all updates and participate in the discussions within our [Matrix
   65,536 context tokens, 32B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/en/latest/features/tool_calling/#olmo-3-models-olmo3)
 </Card>
 
-<Card title="qwen3-27b" icon="star">
-
-  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
-
-  **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen/Qwen3.5-27B)**
-  
-  **Not guaranteed to be always online.** Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
-</Card>
-
 <Card title="qwen3-embedding" icon="star">
 
   <Badge text="main" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
@@ -455,11 +446,11 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 #### **April 2026:**
 
-- `gemma3` has been renamed to `gemma` and changed from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it), and the context size has been changed.
+- `gemma3` has been renamed to `gemma` and changed from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to `gemma` [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it), and the context size has been changed.
 
-- `qwen3-small` has been changed from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen3.5-35B-A3B-FP8](https://huggingface.co/Qwen/Qwen3.5-35B-A3B-FP8), and the context size has been changed. `qwen3-27b` ([Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)) is available as preemptible deployments on idle GPUs.
+- `qwen3-small` has changed its context size. `qwen3-27b` ([Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)) is added as an alias to the same resource.
 
-- `gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added; API model id **`gemma-4-e4b`**.
+- `gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added with audio capabilitie.
 
 - `minimax-m2` was changed from [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5) to [MiniMaxAI/MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7).
 
