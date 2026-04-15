@@ -51,9 +51,27 @@ If you are looking to chat with an LLM model similar to the interface provided b
 
 On MacOS and Safari you can make it always available in Dock for quick access: having LibreChat open in Safari, click **File → Add to Dock**.
 
+### Cherry Studio
+
+You can install the standalone Cherry Studio desktop application.
+
+<LinkButton
+  href="https://www.cherry-ai.com/download"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the Cherry studio application website
+</LinkButton>
+
+Go to _Settings_ → _Model Provider_ → press the _Add_ button (_Provider Name_ to `NRP` or anything else you want, and _Provider Type_ to `OpenAI`) → add _API Key_ and _API Host_ (`https://ellm.nrp-nautilus.io/v1`) → press _Fetch model list_ → press the _Add models to the list_ button at the right of the search box to add all models.
+
+For setting the `extra_body` JSON parameter, go to _Assistants_ → select an assistant (such as _Default Assistant_) → click `⋮` and _Edit Assistant → _Model Settings_ → _Custom Parameters_ → _Add Parameter_ → Set _Parameter_ to `extra_body`, select `JSON`, and input the JSON contents in the textarea right below (such as `{"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==", "chat_template_kwargs": {"enable_thinking": true, "thinking": true, "reasoning": {"enabled": true}}}`).
+
+**Please do not set `Max Tokens` (unless you know what you are doing; read the _API Access to LLMs via Envoy gateway_ section).**
+
 ### Chatbox
 
-You can install the standalone chatbox app or use the web interface version.
+You can install the standalone Chatbox desktop application or use the web interface version.
 
 <LinkButton
   href="https://chatboxai.app"
@@ -63,13 +81,9 @@ You can install the standalone chatbox app or use the web interface version.
     Visit the Chatbox app web site
 </LinkButton>
 
-Generate the config for it in the [LLM token generation page](/llmtoken). Copy the generated config to clipboard - it will already have your personal token. **Please leave `Max Output Tokens` empty (unless you know what you are doing; read the next section) and only fill in `Context Window`.**
+Generate the config for it in the [LLM token generation page](/llmtoken). Copy the generated config to clipboard - it will already have your personal token. **Please leave `Max Output Tokens` empty (unless you know what you are doing; only fill in `Context Window` and read the _API Access to LLMs via Envoy gateway_ section).**
 
-In chatbox app go to _Settings_ → _Model Provider_, scroll down to the end of providers list, and click _Import from clipboard_.
-
-## Deploying Your Own Models
-
-Please refer to [Managing AI Models](/documentation/admindocs/ai/managing_models/).
+In Chatbox, go to _Settings_ → _Model Provider_, scroll down to the end of providers list, and click _Import from clipboard_.
 
 ## API Access to LLMs via Envoy gateway
 
@@ -424,6 +438,10 @@ You can follow all updates and participate in the discussions within our [Matrix
   Multimodal (image, video), embedding model, NOT for chat usage
 </Card>
 
+## Deploying Your Own Models
+
+Please refer to [Managing AI Models](/documentation/admindocs/ai/managing_models/).
+
 ## How Models are Added and Removed
 
 **Added**: New NRP-managed models are added by feedback and also assessments of various benchmarks and community response to the models by the administrator. We try to take into account quantitative benchmarks (such as https://artificialanalysis.ai), but the ultimate decision is based on other qualitative evidence (such as https://www.reddit.com/r/LocalLLaMA/) and discussions between administrators and users.
@@ -460,7 +478,7 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 
 - `embed-mistral` ([intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)) was decommissioned and replaced with `qwen3-embedding` due to incompatibilities with Jupyter AI.
 
-- `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) was **removed from the Envoy AI Gateway** after a long deprecation. It no longer appears in `/v1/models` or Chatbox; do not select it in new configs. (If it still appeared briefly on [LLM Status](/llm-status) as “down,” that was stale Prometheus series until the workload fully disappeared from metrics.)
+- `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) was **removed from the Envoy AI Gateway** after a long deprecation. It no longer appears in `/v1/models`; do not select it in new configs. If it still appeared briefly on [LLM Status](/llm-status) as “down,” that was stale Prometheus series until the workload fully disappeared from metrics.
 
 - `glm-v` (**GLM-4.6V** multimodal route) was **removed from the Envoy AI Gateway**; use `glm-4.7` for text and other multimodal options as documented above.
 
