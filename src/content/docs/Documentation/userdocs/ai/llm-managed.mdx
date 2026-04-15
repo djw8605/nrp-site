@@ -337,7 +337,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8)**
   
-  Multimodal (image, video), 262,144 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
 
   Capacity may be split across **multiple GPU pools** (for example A100 and H200); see [LLM Status](/llm-status) for per-workload allocation.
 </Card>
@@ -348,7 +348,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)**
   
-  Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
 </Card>
 
 <Card title="gpt-oss" icon="star">
@@ -366,7 +366,7 @@ You can follow all updates and participate in the discussions within our [Matrix
   
   **[google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it)**
   
-  Multimodal (image, video), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
+  Multimodal (image, video), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable thinking
 </Card>
 
 <Card title="gemma-small" icon="star">
@@ -375,7 +375,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)**
 
-  Multimodal (image, video, **audio**), 131,072 context tokens, ~8B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": True}}` to enable thinking
+  Multimodal (image, video, **audio**), 131,072 context tokens, ~8B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable thinking
 
 </Card>
 
@@ -385,7 +385,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[moonshotai/Kimi-K2.5](https://huggingface.co/moonshotai/Kimi-K2.5)**
   
-  Multimodal (image, video), 262,144 context tokens, 1T parameters, Native MXFP4 model weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": False}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 1T parameters, Native MXFP4 model weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": false}}` to disable thinking
 </Card>
 
 <Card title="glm-4.7" icon="star">
@@ -394,7 +394,7 @@ You can follow all updates and participate in the discussions within our [Matrix
 
   **[zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8)**
   
-  202,752 context tokens, 358B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` to disable thinking
+  202,752 context tokens, 358B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
 </Card>
 
 <Card title="minimax-m2" icon="star">
