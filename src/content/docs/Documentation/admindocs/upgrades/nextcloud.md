@@ -42,7 +42,6 @@ proxy_buffering off;
 proxy_request_buffering off;
 client_max_body_size 0;
 client_body_timeout 86400s;
-client_header_timeout 86400s;
 fastcgi_read_timeout 86400s;
 fastcgi_send_timeout 86400s;
 fastcgi_connect_timeout 86400s;
