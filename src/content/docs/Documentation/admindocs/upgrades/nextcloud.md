@@ -49,13 +49,6 @@ fastcgi_read_timeout 86400s;
 fastcgi_send_timeout 86400s;
 fastcgi_connect_timeout 86400s;
 fastcgi_buffers 64 4K;
-add_header X-Accel-Buffering "no";
-```
-
-**Find and comment out any occurrences of `fastcgi_request_buffering on;` with `#`:**
-
-```conf
-#fastcgi_request_buffering on;
 ```
 
 ##### Deployment upgrade
