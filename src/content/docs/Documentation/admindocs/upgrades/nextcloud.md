@@ -52,10 +52,10 @@ fastcgi_buffers 64 4K;
 add_header X-Accel-Buffering "no";
 ```
 
-**Find and comment out any occurrences of:**
+**Find and comment out any occurrences of `fastcgi_request_buffering on;` with `#`:**
 
 ```conf
-fastcgi_request_buffering on;
+#fastcgi_request_buffering on;
 ```
 
 ##### Deployment upgrade
