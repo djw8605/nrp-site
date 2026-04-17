@@ -38,10 +38,8 @@ upstream php-handler {
 ```conf
 # set max upload size and increase upload timeout:
 proxy_max_temp_file_size 0;
-fastcgi_max_temp_file_size 0;
 proxy_buffering off;
 proxy_request_buffering off;
-fastcgi_request_buffering off;
 client_max_body_size 0;
 client_body_timeout 86400s;
 client_header_timeout 86400s;
