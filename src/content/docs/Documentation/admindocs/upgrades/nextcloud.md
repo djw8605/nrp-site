@@ -68,7 +68,7 @@ To upgrade, change all `nextcloud` images to the latest revision of the minor ve
 
 Because of database initialization, the startup for Nextcloud may take some time. Read the upgrade logs inside the pod container to conclude, and use `php occ upgrade` if instructed.
 
-After the upgrade, you need to go to [Settings Overview](https://nextcloud.nrp-nautilus.io/settings/admin/overview) page and run the specified [long running steps](https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html#long-running-migration-steps) manually (include `php occ db:convert-mysql-charset`, `php occ db:convert-filecache-bigint`, `php occ db:add-missing-columns`, `php occ db:add-missing-indices`, `php occ db:add-missing-primary-keys`), and finally run `php occ maintenance:repair --include-expensive` (regardless of whether this is required or not).
+After the upgrade, you need to go to [Settings Overview](https://nextcloud.nrp-nautilus.io/settings/admin/overview) page and run the specified [long running steps](https://docs.nextcloud.com/server/latest/admin_manual/maintenance/upgrade.html#long-running-migration-steps) manually (for example, `php occ db:convert-mysql-charset`, `php occ db:convert-filecache-bigint`, `php occ db:add-missing-columns`, `php occ db:add-missing-indices`, `php occ db:add-missing-primary-keys`), and finally run `php occ maintenance:repair --include-expensive` in all cases.
 
 #### Upgrading Collabora and LanguageTool
 
