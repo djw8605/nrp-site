@@ -46,7 +46,7 @@ fastcgi_connect_timeout 86400s;
 fastcgi_buffers 64 4K;
 ```
 
-**Change all occurrences of `fastcgi_request_buffering on;` to `fastcgi_request_buffering off;` (but no not add anywhere else):**
+**Change all occurrences of `fastcgi_request_buffering on;` to `fastcgi_request_buffering off;` (but do not add anywhere else):**
 
 ```conf
 fastcgi_request_buffering off;
