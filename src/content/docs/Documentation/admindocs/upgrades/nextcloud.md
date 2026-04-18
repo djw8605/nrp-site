@@ -21,7 +21,7 @@ Make sure no database version upgrade is required, and if so, perform the MariaD
 
 Moreover, update the `nginx` ConfigMap to the newest [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf).
 
-Change the following sections in [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf) to customize to the cluster):
+Change the following sections in [`nginx.conf`](https://github.com/nextcloud/docker/blob/master/.examples/docker-compose/insecure/mariadb/fpm/web/nginx.conf) to customize to the cluster:
 
 **Change `app:9000` to `127.0.0.1:9000`:**
 
@@ -44,12 +44,6 @@ fastcgi_read_timeout 86400s;
 fastcgi_send_timeout 86400s;
 fastcgi_connect_timeout 86400s;
 fastcgi_buffers 64 4K;
-```
-
-**Change all occurrences of `fastcgi_request_buffering on;` to `fastcgi_request_buffering off;` (but do not add anywhere else):**
-
-```conf
-fastcgi_request_buffering off;
 ```
 
 ##### Deployment upgrade
