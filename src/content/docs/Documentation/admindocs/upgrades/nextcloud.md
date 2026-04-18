@@ -38,7 +38,7 @@ upstream php-handler {
 ```conf
 # set max upload size and increase upload timeout:
 client_max_body_size 0;
-client_body_temp_path /var/cache/nginx;
+client_body_temp_path /var/cache;
 client_body_timeout 86400s;
 send_timeout 86400s;
 fastcgi_read_timeout 86400s;
