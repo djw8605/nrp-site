@@ -37,9 +37,7 @@ Pool | Inside endpoint | Outside endpoint
 *HaoSu pool*|http://rook-ceph-rgw-haosu.rook-haosu|https://s3-haosu.nrp-nautilus.io
 *Tide pool*|http://rook-ceph-rgw-tide.rook-tide|https://s3-tide.nrp-nautilus.io
 
-Note that the inside endpoint is **http** (without SSL) and the outside endpoint is **https** (with SSL). You can use the 
-outside endpoint within the kubernetes cluster but it will end up going through a load balancer. By using the 
-inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate storage servers (called Object Storage Devices (OSD) in ceph) and therefore achieve very large training set bandwith.
+Note that the inside endpoint is **http** (without SSL) and the outside endpoint is **https** (with SSL). You can use the outside endpoint within the kubernetes cluster but it will end up going through a load balancer. By using the inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate storage servers (called Object Storage Devices (OSD) in ceph) and therefore achieve very large training set bandwidth.
 
 ## Using Rclone
 

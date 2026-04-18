@@ -6,15 +6,17 @@ description: Nextcloud
 We provide access to the [Nextcloud][1] [instance][2] running in our cluster and using our CephFS storage.
 It's similar to other file sharing systems ([Dropbox](https://www.dropbox.com), [Google Drive](https://www.google.com/drive/), etc.) and can be used to get data in the cluster, temporarily stage the results, share data and so on.
 
+**Please prioritize using Ceph S3 when working with many or large files through scripts, programs such as rclone, or command line workloads. It is very likely that using Ceph S3 will perform much better with minimal bottlenecks.**
+
+**If you're planning to use Nextcloud for large datasets, please contact us first with the usage plan.**
+
 **After registration, account will be initially in disabled state.** You must request account activation to the [Matrix](/contact) Support chat, including your email associated with Nextcloud.
 
-**For working with large or many files through scripts, programs including rclone, or command lines, it is likely that using Ceph S3 directly will perform better with minimal bottlenecks. If you're planning to use Nextcloud for large datasets, please contact us first with the usage plan.**
-
-Note that large files may take a long time to show up after the upload because the uploaded files are chunked and then reassembled. This is similar to our Ceph S3 storage.
+Note that large files may take a long time to show up after the upload because the uploaded files are chunked and then reassembled. **Ceph S3 storage has similar behavior but handles this better, so you are encouraged to use Ceph S3.**
 
 ## Using Nextcloud from shell
 
-To access your Nextcloud storage from shell (or Jupyter), you can use the [rclone](https://rclone.org/) tool. It's already installed in our [Jupyterlab](https://jupyterhub-west.nrp-nautilus.io) service. While the web interface is also possible to use, rclone with WebDAV may be more reliable for many or large files.
+To access your Nextcloud storage from shell (or Jupyter), you can use the [rclone](https://rclone.org/) tool. It's already installed in our [Jupyterlab](https://jupyterhub-west.nrp-nautilus.io) service. While the web interface is also possible to use, rclone with WebDAV may be more reliable.
 
 For updated information about accessing NextCloud with WebDAV, always refer to [Nextcloud's official documentation](https://docs.nextcloud.com/server/latest/user_manual/en/files/access_webdav.html).
 
