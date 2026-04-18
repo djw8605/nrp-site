@@ -8,7 +8,7 @@ It's similar to other file sharing systems ([Dropbox](https://www.dropbox.com), 
 
 **Please prioritize using Ceph S3 when working with many or large files through scripts, programs such as rclone, or command line workloads. It is very likely that using Ceph S3 will perform much better with minimal bottlenecks.**
 
-**If you're planning to use Nextcloud for large datasets, please contact us first with the usage plan.**
+**If you're planning to use Nextcloud for large datasets, please contact us first with the usage plan. Normally, please refrain from highly concurrent or large-scale usage cases and instead utilize Ceph S3.**
 
 **After registration, account will be initially in disabled state.** You must request account activation to the [Matrix](/contact) Support chat, including your email associated with Nextcloud.
 
