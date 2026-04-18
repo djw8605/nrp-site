@@ -46,6 +46,12 @@ fastcgi_connect_timeout 86400s;
 fastcgi_buffers 64 4K;
 ```
 
+**Change all occurrences of `fastcgi_request_buffering on;` to `fastcgi_request_buffering off;` (but no not add anywhere else):**
+
+```conf
+fastcgi_request_buffering off;
+```
+
 ##### Deployment upgrade
 
 > NOTE: In order to run `occ`: use the `bash` shell started by `su -s /bin/bash www-data` or run `su -s /bin/sh -c 'php occ [command]' www-data` inside the `nextcloud` container of the `nextcloud-fpm` pod.
