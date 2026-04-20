@@ -161,7 +161,7 @@ Modify `"output"` as adequate, but never set it to a too large value that become
 <details>
 <summary>Open Configuration</summary>
 
-Contents of `~/.config/opencode/opencode.json`:
+Contents of `~/.config/opencode/opencode.jsonc`:
 
 ```json
 {
@@ -467,27 +467,20 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 #### **April 2026:**
 
 - `gemma3` has been renamed to `gemma` and changed from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to `gemma` [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it), and the context size has been changed.
-
 - `qwen3-small` has changed its context size. `qwen3-27b` ([Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)) is added as an alias to the same resource.
-
 - `gemma-small`/`gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added with audio capabilitie.
-
 - `minimax-m2` was changed from [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5) to [MiniMaxAI/MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7).
 
 #### **March 2026:**
 
 - `qwen3-embedding` ([Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)) was added as an available model on the AI Gateway.
-
 - `embed-mistral` ([intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)) was decommissioned and replaced with `qwen3-embedding` due to incompatibilities with Jupyter AI.
-
 - `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) was **removed from the Envoy AI Gateway** after a long deprecation. It no longer appears in `/v1/models`; do not select it in new configs. If it still appeared briefly on [LLM Status](/llm-status) as “down,” that was stale Prometheus series until the workload fully disappeared from metrics.
-
 - `glm-v` (**GLM-4.6V** multimodal route) was **removed from the Envoy AI Gateway**; use `glm-4.7` for text and other multimodal options as documented above.
 
 #### **February 2026:**
 
 - `minimax-m2` was changed from [MiniMaxAI/MiniMax-M2.1](https://huggingface.co/MiniMaxAI/MiniMax-M2.1) to [MiniMaxAI/MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5).
-
 - `qwen3` was changed from [Qwen/Qwen3-VL-235B-A22B-Thinking-FP8](https://huggingface.co/Qwen/Qwen3-VL-235B-A22B-Thinking-FP8) to [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8).
 
 #### **January 2026:**
@@ -495,7 +488,6 @@ Such discussion is done in the [Nautilus Artificial Intelligence/Machine Learnin
 Added/Changed:
 
 - `glm-4.7` was switched to the official [zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8) with more GPUs diverted due to its unique position at this time.
-
 - `kimi` is switched to the multimodal [moonshotai/Kimi-K2.5](https://huggingface.co/moonshotai/Kimi-K2.5).
 
 Removed:
@@ -507,9 +499,7 @@ Removed:
 Added/Changed:
 
 - `glm-v` was changed to [zai-org/GLM-4.6V-FP8](https://huggingface.co/zai-org/GLM-4.6V-FP8), an upgraded model with larger context size.
-
 - `glm-4.6` was renamed to `glm-4.7` and uses the [QuantTrio/GLM-4.7-GPTQ-Int4-Int8Mix](https://huggingface.co/QuantTrio/GLM-4.7-GPTQ-Int4-Int8Mix) model.
-
 - The `minimax-m2` model changed from [MiniMaxAI/MiniMax-M2](https://huggingface.co/MiniMaxAI/MiniMax-M2) to [MiniMaxAI/MiniMax-M2.1](https://huggingface.co/MiniMaxAI/MiniMax-M2.1).
 
 #### **November 2025:**
