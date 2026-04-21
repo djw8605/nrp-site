@@ -23,7 +23,7 @@ new Runtime().module(define, name => {
 
 ## Access
 
-You can get your **credentials** (key and secret) in the [user portal](/s3token/), `User->S3 Tokens` page for public Ceph pools. To get credentials for private ones, contact the admin managing the particular S3 storage.
+You can get your **credentials** (key and secret) in the [User Portal](/s3token/), specifically the User → S3 Tokens page for public Ceph pools. To get credentials for private ones, contact the admin managing the particular S3 storage.
 
 ## S3 regions settings
 
@@ -49,7 +49,7 @@ Use these options:
 
 *S3 provider*: Ceph Object Storage
 
-*AWS Access Key ID, AWS Secret Access Key*: [ask in Matrix chat](#access)
+*AWS Access Key ID, AWS Secret Access Key*: [Get S3 keys](#access)
 
 *Endpoint*: [use the regions section](#s3-regions-settings)
 
