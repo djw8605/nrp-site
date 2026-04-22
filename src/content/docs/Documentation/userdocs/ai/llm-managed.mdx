@@ -327,19 +327,46 @@ We would really like to have the above configuration applied automatically by de
 
 ## Live inference status
 
-The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma`, `gemma-4-e4b`, `gpt-oss`, …), which is different from the Hugging Face id shown on LLM Status.
+The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma`, `gemma-4-e4b`, `gpt-oss`, …).
+
+## Fair Use Policy
+
+The restrictions below are current fair usage limitations for each of the managed LLM models available, in order to make the LLM usage experience stable for everyone.
+
+If you need to go beyond this limit in exceptional circumstances (such as deadlines or other special requirements for high volume), you must contact the administrators to make arrangements in advance, and you are otherwise recommended to deploy and run your own LLM models if you need higher concurrency.
+
+The below limits are currently not automatically enforced, but we will soon enforce automatic rate limiting in the LLM gateway. Please report to the [Nautilus Artificial Intelligence/Machine Learning](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) ([NRP Matrix.to](https://matrix-to.nrp-nautilus.io/#/#ml:matrix.nrp-nautilus.io), [Matrix.to](https://matrix.to/#/#ml:matrix.nrp-nautilus.io)) channel if you observe lagging requests and high request volume in [**Grafana**](https://grafana.nrp-nautilus.io/d/ad8bzhl/envoy-llms).
+
+**NOTE: All requests that utilize at least 35% of the context length of the model are limited to only `1` concurrent request per user. The table below is limited to shorter requests, and all concurrent requests combined should not exceed 35% of the model's context length in total.**
+
+| Maximum Per-User Concurrency | Models |
+| -------- | ------- |
+| `2` | `kimi` |
+| `4` | `glm-4.7`, `minimax-m2` |
+| `8` | `qwen3-small`, `gemma`, `gemma-small`, `olmo` |
+| `16` | `qwen3`, `gpt-oss`, `qwen3-embedding` |
+
+San Diego Supercomputer Center (SDSC) and Internet2 have contributed their GPU nodes for managed LLM inference. Therefore, users affiliated with the organizations are granted twice the limits and separately arrangeable higher-volume sessions.
+
+**NOTE: In automated scripts, configure the scripts so that the chat requests will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). It is possible that models may go down and come back up at various times for maintenance. Moreover, the scripts are highly recommended to dynamically decrease the concurrency automatically if the latency of the model increases.**
+
+The National Research Platform is non-profit and non-commercial. All usage of the cluster, including LLMs, is subject to the [AUP](https://nrp.ai/NRP-AUP.pdf).
+
+## Deploying Your Own Models
+
+Please refer to [Managing AI Models](/documentation/admindocs/ai/managing_models/).
 
 ## Available Models
 
-<Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed if there are no major group or user usage, or switched to a deprecated state. This is to provide our users with the best models within our limited allocation of GPUs. Moreover, models may be upgraded to a newer variant without prior notice.
+<Badge text="main" variant="success" /> - Model is **generally supported**. You can report issues with the service. However, if the model is outdated with no apparent usage purpose, it may be removed or deprecated if there are no major group or user usage. This is to provide our users with the best models within our limited allocation of GPUs. Moreover, models may be upgraded to a newer variant without prior notice.
 
-<Badge text="batch" variant="success" /> - The LLM is recommended for batch querying and will provide enough performance for most types of queries under moderately heavy load. **For batching, code your script so that the chat request will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). It is possible that models may go down and come back up at various times.**
+<Badge text="tool" variant="success" /> - The LLM has tool calling (function calling) available.
 
-<Badge text="tool" variant="success" /> - The LLM has tool calling (function calling) enabled.
+<Badge text="reasoning" variant="success" /> - The LLM has reasoning (thinking) available.
 
 <Badge text="multimodal" variant="success" /> - The LLM is multimodal (accepted media are written into the model card).
 
-<Badge text="research" variant="success" /> - The LLM model is used for active research purposes. Removal or deprecation will be communicated to research users. **Please inform an admin if your group would like to declare research usage for certain models.**
+<Badge text="research" variant="tip" /> - The LLM model is used for active research purposes. Removal or deprecation will be communicated to research users. **Please inform an administrator if your group would like to declare research usage for certain models.**
 
 <Badge text="evaluating" variant="tip" /> - The LLM is added **for testing** and we're evaluating it's capabilities. The model may be unavailable sometimes, and configurations may be changed without notification.
 
@@ -349,27 +376,27 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="qwen3" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="tip" />
 
   **[Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8)**
   
-  Multimodal (image, video), 262,144 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 397B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), Claude/Gemini-level frontier multimodal performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable reasoning
 
   Capacity may be split across **multiple GPU pools** (for example A100 and H200); see [LLM Status](/llm-status) for per-workload allocation.
 </Card>
 
 <Card title="qwen3-small" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="tip" />
 
   **[Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B)**
   
-  Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 27B parameters, bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html), efficient multimodal and agentic performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable reasoning
 </Card>
 
 <Card title="gpt-oss" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="batch" variant="success" /><Badge text="tool" variant="success" /><Badge text="research" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="research" variant="tip" />
 
   **[openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b)**
   
@@ -378,44 +405,44 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="gemma" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="tip" />
   
   **[google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it)**
   
-  Multimodal (image, video), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable thinking
+  Multimodal (image, video), 262,144 context tokens, 31B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), efficient multimodal and audio capabilities, use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable reasoning
 </Card>
 
 <Card title="gemma-small" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="multimodal" variant="success" />
 
   **[google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)**
 
-  Multimodal (image, video, **audio**), 131,072 context tokens, ~8B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable thinking
+  Multimodal (image, video, **audio**), 131,072 context tokens, ~8B parameters, Native bf16 weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html), ASR and speech-to-text translation on the small Gemma 4 line; use `extra_body={"chat_template_kwargs": {"enable_thinking": true}}` to enable reasoning
 
 </Card>
 
 <Card title="kimi" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="multimodal" variant="success" />
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" /><Badge text="multimodal" variant="success" />
 
   **[moonshotai/Kimi-K2.6](https://huggingface.co/moonshotai/Kimi-K2.6)**
   
-  Multimodal (image, video), 262,144 context tokens, 1T parameters, Native MXFP4 model weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": false}}` to disable thinking
+  Multimodal (image, video), 262,144 context tokens, 1T parameters, Native MXFP4 model weights, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"thinking": false}}` to disable reasoning
 </Card>
 
 <Card title="glm-4.7" icon="star">
 
-  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" />
+  <Badge text="evaluating" variant="tip" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" />
 
   **[zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8)**
   
-  202,752 context tokens, 358B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable thinking
+  202,752 context tokens, 358B parameters, Official FP8 quantization, [tool calling](https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html), frontier agentic coding performance, use `extra_body={"chat_template_kwargs": {"enable_thinking": false}}` to disable reasoning
 </Card>
 
 <Card title="minimax-m2" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="tool" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="tool" variant="success" /><Badge text="reasoning" variant="success" />
 
   **[MiniMaxAI/MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7)**
   
@@ -433,26 +460,22 @@ You can follow all updates and participate in the discussions within our [Matrix
 
 <Card title="qwen3-embedding" icon="star">
 
-  <Badge text="main" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="success" />
+  <Badge text="main" variant="success" /><Badge text="multimodal" variant="success" /><Badge text="research" variant="tip" />
 
   **[Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)**
   
   Multimodal (image, video), embedding model, NOT for chat usage
 </Card>
 
-## Deploying Your Own Models
-
-Please refer to [Managing AI Models](/documentation/admindocs/ai/managing_models/).
-
 ## How Models are Added and Removed
 
 **Added**: New NRP-managed models are added by feedback and also assessments of various benchmarks and community response to the models by the administrator. We try to take into account quantitative benchmarks (such as https://artificialanalysis.ai), but the ultimate decision is based on other qualitative evidence (such as https://www.reddit.com/r/LocalLLaMA/) and discussions between administrators and users.
 
-**Removed**: Moreover, we would also like to remove certain models that are deemed sufficiently obsolete, where for instance, smaller models may perform all-round better, or another model completely cleared the usage case in a better way compared to the obsolete model.
+**Removed**: Moreover, we would also like to remove certain models that are deemed sufficiently obsolete, where, for instance, smaller models may perform all-around better, or another model completely replaced the usage case in a better way compared to the obsolete model.
 
 **Deprecated**: An exception is when research groups need these models for model reproducibility in various types of research. In that case, we **deprecate** these models first, and keep them up until such research concludes. If a model has been deprecated or pulled down, please reach out through the below **Nautilus Artificial Intelligence/Machine Learning** channel for us to track.
 
-However, we still want to remove deprecated models as soon as possible, due to having limited GPU allocations specialized for deployed LLMs, and these GPUs should be diverted to more recent and better-performing models for the benefit of the whole NRP community. Administrators and researchers use these models for AI-assisted code development, and such models need to be rotated frequently as new and better models are released, vastly increasing individual productivity as newer models are incorporated.
+However, we still want to remove deprecated models as soon as possible, given limited GPU allocations dedicated to deployed LLMs, and these GPUs should be diverted to more recent and better-performing models for the benefit of the whole NRP community. Administrators and researchers use these models for AI-assisted code development, and such models need to be rotated frequently as new and better models are released, vastly increasing individual productivity as newer models are incorporated.
 
 Larger models that require a lot of GPUs are likely to be removed earlier in a more strict way if relative performance falls behind, but smaller, more efficient models or quantized models that do not require as many GPUs may be slightly more lenient in this criterion.
 
