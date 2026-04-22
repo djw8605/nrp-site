@@ -282,7 +282,7 @@ https://github.com/anthropics/claude-code
 
 Environment Variables needed for Claude Code:
 
-```json
+```bash
 ANTHROPIC_BASE_URL="https://ellm.nrp-nautilus.io/anthropic"
 ANTHROPIC_API_KEY="<llm-token>"
 ANTHROPIC_DEFAULT_OPUS_MODEL="<name-of-nrp-model>"
@@ -297,11 +297,32 @@ DISABLE_TELEMETRY="1"
 
 </details>
 
+### Copilot CLI
+
+https://github.com/github/copilot-cli
+
+<details>
+<summary>Open Configuration</summary>
+
+**Configure `COPILOT_PROVIDER_MAX_PROMPT_TOKENS` to the context length of the model, and `COPILOT_PROVIDER_MAX_OUTPUT_TOKENS` to a lower value (around 1/16 to 1/4 of the context length depending on the task).**
+
+Environment Variables needed for Copilot CLI:
+
+```bash
+COPILOT_PROVIDER_BASE_URL="https://ellm.nrp-nautilus.io/v1"
+COPILOT_PROVIDER_KEY="<llm-token>"
+COPILOT_MODEL="<name-of-nrp-model>"
+COPILOT_PROVIDER_MAX_PROMPT_TOKENS="<context-length>"
+COPILOT_PROVIDER_MAX_OUTPUT_TOKENS="<max-output>"
+```
+
+</details>
+
 Note that the `Web Search Tool` is an Anthropic-specific tool that only Claude models can generate. Claude Code users can use other tools (MCP Servers, custom commands) to perform web search successfully.
 
 Note that not all NRP models support Anthropic-compatible endpoints or tools like Claude Code. Please consult the model documentation and the vLLM integration guide: https://docs.vllm.ai/en/stable/serving/integrations/claude_code/.
 
-## Isolating cached responses
+## Isolating Cached Responses
 
 :::caution
 API users are recommended to set the below configuration if their prompts or responses should only be cached for yourself and not for others. However, this will slightly decrease performance.
@@ -325,7 +346,7 @@ response = client.chat.completions.create(
 
 We would really like to have the above configuration applied automatically by default for each API key or in the web interfaces, but has several hurdles right now. ([Envoy AI Gateway Issue](https://github.com/envoyproxy/ai-gateway/issues/1985), [LibreChat Issue](https://github.com/danny-avila/LibreChat/issues/12388), [Open WebUI Issue](https://github.com/open-webui/open-webui/issues/23012))
 
-## Live inference status
+## Live Inference Status
 
 The NRP site hosts **[LLM Status](/llm-status)** — a live view of managed inference workloads (from Prometheus/vLLM metrics). Each card is one Kubernetes container; the title is the **vLLM / Hugging Face Model ID**. If the same logical gateway model (for example `qwen3` in API requests) runs on more than one deployment, you will see **more than one card** with the same model name. Usage in Grafana or Thanos often uses OpenTelemetry labels such as `gen_ai_original_model` with the **gateway short name** (`qwen3`, `gemma`, `gemma-4-e4b`, `gpt-oss`, …).
 
