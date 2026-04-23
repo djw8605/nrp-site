@@ -179,6 +179,7 @@ export default defineConfig({
               collapsed: true,
               items: [
                 { label: 'NRP Managed LLM', link: 'documentation/userdocs/ai/llm-managed' },
+                { label: 'Accounting MCP Server', link: 'documentation/userdocs/ai/accounting-mcp' },
                 { label: 'LLM in JupyterHub', link: 'documentation/userdocs/ai/llm-jupyterhub' },
                 { label: 'Cloud AI 100 Cards', link: 'documentation/userdocs/ai/qaic' },
                 { label: 'Vector database', link: 'documentation/userdocs/ai/vector-database' },
