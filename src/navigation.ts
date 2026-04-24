@@ -53,7 +53,7 @@ export const headerData = {
         },
         {
           text: 'Cluster Usage',
-          href: getPermalink('/viz/clusterusage'),
+          href: 'https://grafana.nrp-nautilus.io/d/nrp-user-explorer/nrp-accounting',
         },
         {
           text: 'LLM Status',
