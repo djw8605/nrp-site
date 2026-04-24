@@ -190,6 +190,50 @@ Contents of `~/.config/opencode/opencode.jsonc`:
 
 </details>
 
+### [pi](https://pi.dev)
+
+After applying the configuration below, press Ctrl-L to switch models and search for `NRP` (or type `/model modelname`).
+
+Remember to set `apiKey` appropriately: it can either contain the api key value itself, the name of the environment variable that holds it (e.g., `OPENAI_API_KEY`), or a command to run to get the key (e.g., `!decrypt_key NRP`).
+
+<details>
+<summary>Open Configuration</summary>
+
+Contents of `~/.pi/agent/models.json`:
+
+```json
+{
+  "providers": {
+    "nrp": {
+      "baseUrl": "https://ellm.nrp-nautilus.io/v1",
+      "api": "openai-completions",
+      "apiKey": "<YOUR_API_KEY>",
+      "models": [
+        {
+          "id": "kimi",
+          "name": "Kimi 2.6",
+          "input": ["text", "image"],
+          "contextWindow": 262144,
+          "reasoning": true
+        },
+        {
+          "id": "qwen3-small",
+          "name": "Qwen3 27B",
+          "input": ["text", "image"],
+          "contextWindow": 262144,
+          "reasoning": true,
+          "compat": {
+            "supportsDeveloperRole": false
+          }
+        },
+      ]
+    }
+  }
+}
+```
+
+</details>
+
 ### Crush
 
 https://github.com/charmbracelet/crush
