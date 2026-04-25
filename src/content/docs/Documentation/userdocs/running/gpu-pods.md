@@ -55,6 +55,7 @@ The current list is:
 | NVIDIA RTX A6000            | nvidia.com/rtxa6000       |
 | NVIDIA Quadro RTX 8000      | nvidia.com/rtx8000        |
 | NVIDIA H200                 | nvidia.com/h200           |
+| NVIDIA RTX PRO 6000 Blackwell | nvidia.com/rtx6000bw   |
 | NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 
@@ -86,6 +87,16 @@ tolerations:
 - key: "nautilus.io/arm64"
   operator: "Exists"
   effect: "NoSchedule"
+```
+
+For RTX PRO 6000 Blackwell nodes, request the dedicated resource:
+
+```yaml
+resources:
+  limits:
+    nvidia.com/rtx6000bw: 1
+  requests:
+    nvidia.com/rtx6000bw: 1
 ```
 
 ## Requesting many GPUs
