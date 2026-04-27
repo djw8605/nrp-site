@@ -5,6 +5,10 @@ description: How to deploy vLLM/SGLang models and manage the Envoy AI Gateway
 
 ## vLLM/SGLang Instructions
 
+:::caution
+You are not supposed to use any tolerations to taints, unless you have been approved by administrators for one or are an administrator yourself. Please refer to the [Special Use](/documentation/userdocs/running/special/) on this matter.
+:::
+
 **Note that the below contents are meant to be read by both people and AI. Feel free to feed the [Markdown File](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main/src/content/docs/Documentation/admindocs/ai/managing_models.mdx) to LLMs.**
 
 ### Obtaining VRAM Requirements
@@ -113,12 +117,12 @@ spec:
                 operator: Gt
                 values:
                 - "80000"
-              # At least GTX 1000 Series Pascal GPUs (CUDA Capability 6.x) for CUDA 12, Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.0` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/gpu.compute.major
                 operator: Gt
                 values:
                 - "7"
-              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9 (use the `cu129-` image prefix), Greater Than 575 (>=580) for CUDA 13.0; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/cuda.driver.major
                 operator: Gt
                 values:
@@ -139,8 +143,8 @@ spec:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
-        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>
+        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling (defaults to CUDA 13, use `cu129-` images for CUDA 12)
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         name: minimax-vllm-inference
         ports:
@@ -298,12 +302,12 @@ spec:
                 operator: Gt
                 values:
                 - "20000"
-              # At least GTX 1000 Series Pascal GPUs (CUDA Capability 6.x) for CUDA 12, Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.0` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/gpu.compute.major
                 operator: Gt
                 values:
                 - "6"
-              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9, Greater Than 575 (>=580) for CUDA 13.0 (set `image: vllm/vllm-openai:<v0.xx.xx-cu130_or_cu130-nightly-commit_hash>`); https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # E.g., Greater Than 565 (>=570) for CUDA 12.8 or 12.9 (use the `cu129-` image prefix), Greater Than 575 (>=580) for CUDA 13.0; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/cuda.driver.major
                 operator: Gt
                 values:
@@ -320,8 +324,8 @@ spec:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
-        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling
-        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
+        # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling (defaults to CUDA 13, use `cu129-` images for CUDA 12)
+        image: vllm/vllm-openai:v0.19.0
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
         ports:
@@ -682,11 +686,304 @@ External load balancing using expert parallelism load balancers (EPLB) through a
 
 Model parallelism can work in multiple dimensions. For example, a production deployment can use all of the above model parallelism methods.
 
-Example ([zai-org/GLM-5-FP8](https://huggingface.co/zai-org/GLM-5-FP8)):
+Example ([moonshotai/Kimi-K2.6](https://huggingface.co/moonshotai/Kimi-K2.6)):
 
-GLM-5 (`GlmMoeDsaForCausalLM`) is a Multi-Latent Attention (MLA) model (like DeepSeek-V3.2) and does not fit in 8x A100/H100 GPUs. It would require at around 12x A100/H100 GPUs.
+Kimi-K2.6 (`KimiK25ForConditionalGeneration` and `DeepseekV3ForCausalLM`) is a Multi-Latent Attention (MLA) model (like DeepSeek-V3.1).
 
-In this case, we can use something similar to `--tensor-parallel-size 4 --decode-context-parallel-size 4 --pipeline-parallel-size 3` to make three instances (Pods) of vLLM and deploy three 4x A100/H100 GPU instances, while properly sharding the KV cache. This is the default configuration for a instance of the model, without duplication through data parallelism.
+To use two nodes for this model, we can use something similar to `--tensor-parallel-size 4 --decode-context-parallel-size 4 --pipeline-parallel-size 2` to make two instances (Pods) of vLLM and deploy two 4x RTX PRO 6000 Blackwell GPU Pods, while properly sharding the KV cache. This is the default configuration for an instance of the model, without duplication through data parallelism.
+
+Example Configuration:
+
+<details>
+<summary>Open</summary>
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kimi-bw-vllm-master
+  namespace: nrp-llm
+  labels:
+    app: kimi-bw-vllm-inference
+spec:
+  # Headless service for internal StatefulSet pod DNS resolution
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app: kimi-bw-vllm-inference
+  ports:
+  - name: http
+    port: 29501
+    targetPort: 29501
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kimi-bw-vllm-inference
+  namespace: nrp-llm
+  labels:
+    app: kimi-bw-vllm-inference
+spec:
+  # Standard service to expose the API strictly pointing to the Head Node
+  type: ClusterIP
+  selector:
+    app: kimi-bw-vllm-inference
+    statefulset.kubernetes.io/pod-name: kimi-bw-vllm-inference-0
+  ports:
+  - name: http
+    port: 5000
+    targetPort: 5000
+    protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kimi-bw-vllm-inference
+  namespace: nrp-llm
+spec:
+  podSelector:
+    matchLabels:
+      app: kimi-bw-vllm-inference
+  policyTypes:
+  - Ingress
+  ingress:
+  # Allow all traffic, but only if it comes from other inference pods
+  - from:
+    - podSelector:
+        matchLabels:
+          app: kimi-bw-vllm-inference
+  # Allow API access (Port 5000) from anywhere
+  - ports:
+    - protocol: TCP
+      port: 5000
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: kimi-bw-vllm-inference
+    component: llm
+  name: kimi-bw-vllm-inference
+  namespace: nrp-llm
+spec:
+  serviceName: kimi-bw-vllm-master
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  # Required for deploying all instances at the same time
+  podManagementPolicy: Parallel
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kimi-bw-vllm-inference
+  template:
+    metadata:
+      labels:
+        app: kimi-bw-vllm-inference
+        component: llm
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/cuda.driver.major
+                operator: Gt
+                values:
+                - "575"
+              - key: nvidia.com/gpu.memory
+                operator: Gt
+                values:
+                - "80000"
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-RTX-PRO-6000-Blackwell-Max-Q-Workstation-Edition
+        # 2. Prefer pods to be scheduled close together (on the same node)
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - kimi-bw-vllm-inference
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - args:
+        - |
+          # Extract the StatefulSet ordinal index from the hostname to use as the node rank
+          RANK=${HOSTNAME##*-}
+          
+          # Address of the head node (Pod 0). 
+          MASTER_ADDR="kimi-bw-vllm-inference-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
+          
+          HEADLESS_FLAG=""
+          API_SERVER_COUNT_FLAG=""
+          
+          if [ "$RANK" != "0" ]; then
+            HEADLESS_FLAG="--headless"
+          else
+            API_SERVER_COUNT_FLAG="--api-server-count 8"
+          fi
+          
+          python3 -m vllm.entrypoints.openai.api_server \
+            --port 5000 \
+            --host 0.0.0.0 \
+            --download-dir /workspace/.cache/huggingface/hub \
+            --model moonshotai/Kimi-K2.6 \
+            --tensor-parallel-size 4 \
+            --decode-context-parallel-size 4 \
+            --pipeline-parallel-size 2 \
+            --nnodes 2 \
+            --node-rank $RANK \
+            --master-addr $MASTER_ADDR \
+            $HEADLESS_FLAG \
+            $API_SERVER_COUNT_FLAG \
+            --trust-remote-code \
+            --enable-chunked-prefill \
+            --enable-prefix-caching \
+            --max-num-seqs 64 \
+            --gpu-memory-utilization 0.95 \
+            --max-model-len 262144 \
+            --enable-auto-tool-choice \
+            --tool-call-parser kimi_k2 \
+            --reasoning-parser kimi_k2 \
+            --mm-processor-cache-gb 8 \
+            --mm-encoder-tp-mode data \
+            --mm-processor-cache-type shm
+        command:
+        - bash
+        - -c
+        env:
+        - name: VLLM_RPC_TIMEOUT
+          value: "1200000"
+        - name: VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS
+          value: "1200"
+        - name: VLLM_ENGINE_ITERATION_TIMEOUT_S
+          value: "1200"
+        - name: NCCL_DEBUG
+          value: "INFO"
+        - name: NCCL_SOCKET_IFNAME
+          value: "eth0"
+        - name: GLOO_SOCKET_IFNAME
+          value: "eth0"
+        - name: TP_SOCKET_IFNAME
+          value: "eth0"
+        - name: NCCL_IB_DISABLE
+          value: "1"
+        envFrom:
+        - configMapRef:
+            name: qwen-vllm-inference-config
+        image: vllm/vllm-openai:nightly-7b1bc0a3eb01a6bc2650eda9970049f7825240d7
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: kimi-bw-vllm-inference
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "28"
+            memory: 400Gi
+            nvidia.com/rtx6000bw: "4"
+          requests:
+            cpu: "14"
+            memory: 200Gi
+            nvidia.com/rtx6000bw: "4"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: false
+        startupProbe:
+          failureThreshold: 900
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+        - mountPath: /workspace/.cache
+          name: kimi-bw-inference-cache
+          subPath: cache
+      priorityClassName: owner
+      securityContext:
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      tolerations:
+      - effect: NoSchedule
+        key: nautilus.io/reservation
+        operator: Equal
+        value: nrp-llm
+      - effect: NoSchedule
+        key: nautilus.io/reservation
+        operator: Equal
+        value: nrp-testing
+      - effect: NoSchedule
+        key: nautilus.io/testing
+        operator: Equal
+        value: "true"
+      - effect: PreferNoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      - effect: NoSchedule
+        key: nautilus.io/hardware
+        operator: Equal
+        value: large-gpu
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 10995116277760m
+        name: shm
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app: kimi-bw-vllm-inference
+      name: kimi-bw-inference-cache
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 640Gi
+      storageClassName: linstor-igrok
+```
+
+</details>
 
 But, in case user demand increases, higher concurrency and token throughput are desired. We can add `--enable-expert-parallel` and `--data-parallel-size`, where expert layers are distributed across multiple data parallelism instances and GPUs without duplication, and tensor parallelism within GPUs of each instance shards the dense attention layers duplicated across data parallelism instances. This way, all five types of parallelism can work together and also scale up, opening up higher KV cache capacity and concurrency.
 
