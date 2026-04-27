@@ -41,6 +41,20 @@ export default defineConfig({
       disable404Route: true,
       favicon: '/favicon.ico',
       title: 'NRP Nautilus',
+      head: [
+        {
+          tag: 'script',
+          attrs: {
+            defer: true,
+            'data-domain': 'nrp.ai',
+            src: 'https://nrp-site-analytics.nrp-nautilus.io/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js',
+          },
+        },
+        {
+          tag: 'script',
+          content: 'window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }',
+        },
+      ],
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       components: {
         Footer: './src/components/DocsFooter.astro',
