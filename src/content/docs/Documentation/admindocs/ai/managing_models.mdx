@@ -701,41 +701,43 @@ Example Configuration:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kimi-bw-vllm-master
-  namespace: nrp-llm
-  labels:
-    app: kimi-bw-vllm-inference
-spec:
-  # Headless service for internal StatefulSet pod DNS resolution
-  clusterIP: None
-  publishNotReadyAddresses: true
-  selector:
-    app: kimi-bw-vllm-inference
-  ports:
-  - name: http
-    port: 29501
-    targetPort: 29501
-    protocol: TCP
----
-apiVersion: v1
-kind: Service
-metadata:
   name: kimi-bw-vllm-inference
   namespace: nrp-llm
   labels:
-    app: kimi-bw-vllm-inference
+    app: kimi-bw-vllm-head
 spec:
   # Standard service to expose the API strictly pointing to the Head Node
   type: ClusterIP
   selector:
-    app: kimi-bw-vllm-inference
-    statefulset.kubernetes.io/pod-name: kimi-bw-vllm-inference-0
+    # Explicitly only targets the head node
+    app: kimi-bw-vllm-head
   ports:
   - name: http
     port: 5000
     targetPort: 5000
     protocol: TCP
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kimi-bw-vllm-master
+  namespace: nrp-llm
+  labels:
+    group: kimi-bw-vllm
+spec:
+  # Headless service for internal StatefulSet pod DNS resolution
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    # Selects both head and worker pods for internal communication
+    group: kimi-bw-vllm
+  ports:
+  - name: tcp
+    port: 29501
+    targetPort: 29501
+    protocol: TCP
+---
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -744,7 +746,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: kimi-bw-vllm-inference
+      group: kimi-bw-vllm
   policyTypes:
   - Ingress
   ingress:
@@ -752,7 +754,7 @@ spec:
   - from:
     - podSelector:
         matchLabels:
-          app: kimi-bw-vllm-inference
+          group: kimi-bw-vllm
   # Allow API access (Port 5000) from anywhere
   - ports:
     - protocol: TCP
@@ -762,25 +764,25 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: kimi-bw-vllm-inference
+    app: kimi-bw-vllm-head
+    group: kimi-bw-vllm
     component: llm
-  name: kimi-bw-vllm-inference
+  name: kimi-bw-vllm-head
   namespace: nrp-llm
 spec:
   serviceName: kimi-bw-vllm-master
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
-  # Required for deploying all instances at the same time
-  podManagementPolicy: Parallel
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: kimi-bw-vllm-inference
+      app: kimi-bw-vllm-head
   template:
     metadata:
       labels:
-        app: kimi-bw-vllm-inference
+        app: kimi-bw-vllm-head
+        group: kimi-bw-vllm
         component: llm
     spec:
       affinity:
@@ -800,35 +802,22 @@ spec:
                 operator: In
                 values:
                 - NVIDIA-RTX-PRO-6000-Blackwell-Max-Q-Workstation-Edition
-        # 2. Prefer pods to be scheduled close together (on the same node)
         podAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
             podAffinityTerm:
               labelSelector:
                 matchExpressions:
-                - key: app
+                - key: group
                   operator: In
                   values:
-                  - kimi-bw-vllm-inference
+                  - kimi-bw-vllm
               topologyKey: kubernetes.io/hostname
       containers:
       - args:
         - |
-          # Extract the StatefulSet ordinal index from the hostname to use as the node rank
-          RANK=${HOSTNAME##*-}
-          
-          # Address of the head node (Pod 0). 
-          MASTER_ADDR="kimi-bw-vllm-inference-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
-          
-          HEADLESS_FLAG=""
-          API_SERVER_COUNT_FLAG=""
-          
-          if [ "$RANK" != "0" ]; then
-            HEADLESS_FLAG="--headless"
-          else
-            API_SERVER_COUNT_FLAG="--api-server-count 8"
-          fi
+          RANK=0
+          MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
           
           python3 -m vllm.entrypoints.openai.api_server \
             --port 5000 \
@@ -841,8 +830,8 @@ spec:
             --nnodes 2 \
             --node-rank $RANK \
             --master-addr $MASTER_ADDR \
-            $HEADLESS_FLAG \
-            $API_SERVER_COUNT_FLAG \
+            --master-port 29501 \
+            --api-server-count 8 \
             --trust-remote-code \
             --enable-chunked-prefill \
             --enable-prefix-caching \
@@ -889,10 +878,13 @@ spec:
           periodSeconds: 30
           successThreshold: 1
           timeoutSeconds: 1
-        name: kimi-bw-vllm-inference
+        name: kimi-bw-vllm-head
         ports:
         - containerPort: 5000
           name: http
+          protocol: TCP
+        - containerPort: 29501
+          name: tcp
           protocol: TCP
         readinessProbe:
           failureThreshold: 6
@@ -972,7 +964,218 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       labels:
-        app: kimi-bw-vllm-inference
+        app: kimi-bw-vllm-head
+      name: kimi-bw-inference-cache
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 640Gi
+      storageClassName: linstor-igrok
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: kimi-bw-vllm-worker
+    group: kimi-bw-vllm
+    component: llm
+  name: kimi-bw-vllm-worker
+  namespace: nrp-llm
+spec:
+  serviceName: kimi-bw-vllm-master
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kimi-bw-vllm-worker
+  template:
+    metadata:
+      labels:
+        app: kimi-bw-vllm-worker
+        group: kimi-bw-vllm
+        component: llm
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/cuda.driver.major
+                operator: Gt
+                values:
+                - "575"
+              - key: nvidia.com/gpu.memory
+                operator: Gt
+                values:
+                - "80000"
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-RTX-PRO-6000-Blackwell-Max-Q-Workstation-Edition
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: group
+                  operator: In
+                  values:
+                  - kimi-bw-vllm
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - args:
+        - |
+          # Offset worker rank by 1 since Head is Rank 0
+          INDEX=${HOSTNAME##*-}
+          RANK=$((INDEX + 1))
+          
+          MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
+          
+          python3 -m vllm.entrypoints.openai.api_server \
+            --port 5000 \
+            --host 0.0.0.0 \
+            --download-dir /workspace/.cache/huggingface/hub \
+            --model moonshotai/Kimi-K2.6 \
+            --tensor-parallel-size 4 \
+            --decode-context-parallel-size 4 \
+            --pipeline-parallel-size 2 \
+            --nnodes 2 \
+            --node-rank $RANK \
+            --master-addr $MASTER_ADDR \
+            --master-port 29501 \
+            --headless \
+            --trust-remote-code \
+            --enable-chunked-prefill \
+            --enable-prefix-caching \
+            --max-num-seqs 64 \
+            --gpu-memory-utilization 0.95 \
+            --max-model-len 262144 \
+            --enable-auto-tool-choice \
+            --tool-call-parser kimi_k2 \
+            --reasoning-parser kimi_k2 \
+            --mm-processor-cache-gb 8 \
+            --mm-encoder-tp-mode data \
+            --mm-processor-cache-type shm
+        command:
+        - bash
+        - -c
+        env:
+        - name: VLLM_RPC_TIMEOUT
+          value: "1200000"
+        - name: VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS
+          value: "1200"
+        - name: VLLM_ENGINE_ITERATION_TIMEOUT_S
+          value: "1200"
+        - name: NCCL_DEBUG
+          value: "INFO"
+        - name: NCCL_SOCKET_IFNAME
+          value: "eth0"
+        - name: GLOO_SOCKET_IFNAME
+          value: "eth0"
+        - name: TP_SOCKET_IFNAME
+          value: "eth0"
+        - name: NCCL_IB_DISABLE
+          value: "1"
+        envFrom:
+        - configMapRef:
+            name: qwen-vllm-inference-config
+        image: vllm/vllm-openai:nightly-7b1bc0a3eb01a6bc2650eda9970049f7825240d7
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - "pgrep -f 'python3 -m vllm.entrypoints.openai.api_server'"
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - "pgrep -f 'python3 -m vllm.entrypoints.openai.api_server'"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        startupProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - "pgrep -f 'python3 -m vllm.entrypoints.openai.api_server'"
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          failureThreshold: 450
+        name: kimi-bw-vllm-worker
+        resources:
+          limits:
+            cpu: "28"
+            memory: 400Gi
+            nvidia.com/rtx6000bw: "4"
+          requests:
+            cpu: "14"
+            memory: 200Gi
+            nvidia.com/rtx6000bw: "4"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: false
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+        - mountPath: /workspace/.cache
+          name: kimi-bw-inference-cache
+          subPath: cache
+      priorityClassName: owner
+      securityContext:
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      tolerations:
+      - effect: NoSchedule
+        key: nautilus.io/reservation
+        operator: Equal
+        value: nrp-llm
+      - effect: NoSchedule
+        key: nautilus.io/reservation
+        operator: Equal
+        value: nrp-testing
+      - effect: NoSchedule
+        key: nautilus.io/testing
+        operator: Equal
+        value: "true"
+      - effect: PreferNoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      - effect: NoSchedule
+        key: nautilus.io/hardware
+        operator: Equal
+        value: large-gpu
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 10995116277760m
+        name: shm
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app: kimi-bw-vllm-worker
       name: kimi-bw-inference-cache
     spec:
       accessModes:
