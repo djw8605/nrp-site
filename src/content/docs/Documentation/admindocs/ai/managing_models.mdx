@@ -136,6 +136,9 @@ spec:
         - bash
         - -c
         env:
+        # Required to allow the engine to initialize large models
+        - name: VLLM_ENGINE_READY_TIMEOUT_S
+          value: "86400"
         # Add environment variables when the Hugging Face or vLLM documentation specifies as beneficial
         #- name: SAFETENSORS_FAST_GPU
         #  value: "1"
@@ -320,6 +323,10 @@ spec:
         command:
         - bash
         - -c
+        env:
+        # Required to allow the engine to initialize large models
+        - name: VLLM_ENGINE_READY_TIMEOUT_S
+          value: "86400"
         envFrom:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
@@ -848,6 +855,9 @@ spec:
         - bash
         - -c
         env:
+        # Required to allow the engine to initialize large models
+        - name: VLLM_ENGINE_READY_TIMEOUT_S
+          value: "86400"
         - name: VLLM_RPC_TIMEOUT
           value: "1200000"
         - name: VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS
@@ -1066,6 +1076,9 @@ spec:
         - bash
         - -c
         env:
+        # Required to allow the engine to initialize large models
+        - name: VLLM_ENGINE_READY_TIMEOUT_S
+          value: "86400"
         - name: VLLM_RPC_TIMEOUT
           value: "1200000"
         - name: VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS
