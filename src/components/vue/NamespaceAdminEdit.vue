@@ -387,6 +387,8 @@ const saveLoading = ref(false);
 const isFormLoading = ref(true);
 const isUsersLoading = ref(true);
 
+const currentUserIsClusterAdmin = ref(false);
+
 const assignTenantObj = ref({});
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
@@ -574,6 +576,15 @@ onMounted(async () => {
     readNSUsers(nsName);
     readAllTenants();
     readTenants(nsName);
+
+    client.request({
+        method: "user.GetUserInfo",
+        params: { UserID: "" }
+    }).then((response) => {
+        if (response && response.IsAdmin) {
+            currentUserIsClusterAdmin.value = true;
+        }
+    }).catch(() => {});
 });
 
 const readAllTenants = () => {
@@ -1112,6 +1123,15 @@ const emailAllUsers = () => {
 };
 
 const validateNamespaceName = (name, parentNamespace) => {
+    if (!name || name.trim() === '') {
+        return { valid: false, message: '' };
+    }
+
+    // Cluster admins (members of the nrp group) bypass typo guardrails.
+    if (currentUserIsClusterAdmin.value) {
+        return { valid: true, message: '' };
+    }
+
     // Always forbidden: system (complete block)
     const alwaysForbidden = ['system'];
 
@@ -1120,10 +1140,6 @@ const validateNamespaceName = (name, parentNamespace) => {
 
     // Forbidden prefixes (must be followed by dash at START of name)
     const forbiddenPrefixes = ['sys-', 'kube-'];
-
-    if (!name || name.trim() === '') {
-        return { valid: false, message: '' };
-    }
 
     let issues = [];
 
@@ -1217,7 +1233,7 @@ const onNamespaceBlur = () => {
 
 const onNamespaceKeyup = () => {
     // Auto-format: add dash before capital letters (e.g., "physicsGroup" -> "physics-group")
-    if (newNamespace.value && /[A-Z]/.test(newNamespace.value)) {
+    if (!currentUserIsClusterAdmin.value && newNamespace.value && /[A-Z]/.test(newNamespace.value)) {
         const formatted = newNamespace.value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
         if (formatted !== newNamespace.value) {
             newNamespace.value = formatted;
