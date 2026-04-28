@@ -4,7 +4,7 @@ description: Hosted open-weights LLMs on the National Research Platform
 ---
 import { LinkCard, CardGrid } from '@astrojs/starlight/components';
 
-The NRP hosts a rotating catalog of open-weights LLMs, accessible either through hosted **chat interfaces** in the browser or programmatically via an **OpenAI-compatible API**. Models are added and retired as the open-weights frontier moves — see the [feature matrix](/documentation/userdocs/ai/llm-managed/models) for the current lineup and the [changelog](/documentation/userdocs/ai/llm-managed/lifecycle) for what changed and when.
+The NRP hosts a rotating catalog of open-weights LLMs, accessible either through hosted **chat interfaces** in the browser or programmatically via an **OpenAI-compatible API**. Models are added and retired as the open-weights frontier moves.
 
 <CardGrid>
   <LinkCard
@@ -17,17 +17,9 @@ The NRP hosts a rotating catalog of open-weights LLMs, accessible either through
     description="Programmatic access via OpenAI-compatible endpoint" />
 </CardGrid>
 
-## How to use the LLMs
+## Pick a model
 
-If you want to **chat in a browser**, [Open WebUI](/documentation/userdocs/ai/llm-managed/chat-interfaces#open-webui) is the most full-featured option. We also host LibreChat, and the same API works with desktop apps like Cherry Studio and Chatbox. See [Chat Interfaces](/documentation/userdocs/ai/llm-managed/chat-interfaces).
-
-If you want to **call the API** from Python, curl, or any OpenAI-compatible tool, see [API Access](/documentation/userdocs/ai/llm-managed/api-access). That page also covers cache isolation (`cache_salt`), which API users sharing a tenant should enable.
-
-If you're setting up a **coding CLI** like Claude Code, OpenCode, Crush, Kimi CLI, pi, or Copilot CLI, jump to [Client Configurations](/documentation/userdocs/ai/llm-managed/client-configs) for ready-to-paste configs.
-
-## Choose a model
-
-The [feature matrix](/documentation/userdocs/ai/llm-managed/models) compares every active model side-by-side — context window, multimodal kinds, tool calling, reasoning, and what each one is best at. A few quick recommendations:
+Every active model is compared side-by-side in the feature matrix, and each has a card with strengths, trade-offs, and recommended uses. A few quick recommendations:
 
 - **Frontier reasoning, longest context, multimodal** — `qwen3`
 - **Agentic coding** — `kimi`, `glm-4.7`, or `minimax-m2`
@@ -35,14 +27,55 @@ The [feature matrix](/documentation/userdocs/ai/llm-managed/models) compares eve
 - **Reproducible research / general-purpose LTS** — `gpt-oss`
 - **Embeddings for vector search** — `qwen3-embedding`
 
-Each model card links to its HuggingFace page and lists strengths, weaknesses, and recommended uses.
+<CardGrid>
+  <LinkCard
+    title="Available models & feature matrix"
+    href="/documentation/userdocs/ai/llm-managed/models"
+    description="Compare every model side-by-side; jump to any model card" />
+  <LinkCard
+    title="Model lifecycle & changelog"
+    href="/documentation/userdocs/ai/llm-managed/lifecycle"
+    description="What's been added, deprecated, or removed — and why" />
+</CardGrid>
 
-## Before you scale up
+## Use the LLMs
 
-The NRP applies a [Fair Use Policy](/documentation/userdocs/ai/llm-managed/fair-use) with per-model concurrency limits — please review it before sending high-volume traffic. SDSC and Internet2 affiliates get higher limits.
+For browser chat, the **NRP Open WebUI** is the most full-featured option. We also host LibreChat, and the same OpenAI-compatible API works with desktop apps like Cherry Studio and Chatbox.
 
-For live capacity and health, see the **[LLM Status](/llm-status)** page (Prometheus / vLLM metrics, one card per Kubernetes container).
+For programmatic access, the OpenAI-compatible endpoint at `https://ellm.nrp-nautilus.io/v1` works with the OpenAI Python client, `curl`, or any compatible library. The same page also covers `cache_salt` — recommended for any tenant where prompts shouldn't be cached across users.
 
-## Deploying your own model
+For coding CLIs, ready-to-paste configs are provided for **Claude Code**, **OpenCode**, **Crush**, **Kimi CLI**, **pi**, and **Copilot CLI**.
 
-If the managed catalog doesn't fit your need, the NRP supports running your own LLM via vLLM or SGLang — see [Managing AI Models](/documentation/admindocs/ai/managing_models/).
+<CardGrid>
+  <LinkCard
+    title="Chat interfaces"
+    href="/documentation/userdocs/ai/llm-managed/chat-interfaces"
+    description="Open WebUI, LibreChat, Cherry Studio, and Chatbox" />
+  <LinkCard
+    title="API access"
+    href="/documentation/userdocs/ai/llm-managed/api-access"
+    description="Endpoint, examples, and cache_salt isolation" />
+  <LinkCard
+    title="Client configurations"
+    href="/documentation/userdocs/ai/llm-managed/client-configs"
+    description="Configs for the major coding CLIs" />
+</CardGrid>
+
+## Operate responsibly
+
+The NRP applies a **Fair Use Policy** with per-model concurrency limits — please review it before sending high-volume traffic. SDSC and Internet2 affiliates get higher limits. For real-time capacity and health, the **LLM Status** page surfaces live Prometheus / vLLM metrics, with one card per Kubernetes container.
+
+<CardGrid>
+  <LinkCard
+    title="Fair use policy"
+    href="/documentation/userdocs/ai/llm-managed/fair-use"
+    description="Per-model concurrency limits and retry guidance" />
+  <LinkCard
+    title="Live LLM status"
+    href="/llm-status"
+    description="Live deployment health from Prometheus / vLLM" />
+</CardGrid>
+
+## Deploy your own model
+
+If the managed catalog doesn't fit your need, the NRP supports running your own LLM via vLLM or SGLang. See [Managing AI Models](/documentation/admindocs/ai/managing_models/) for the deployment path.

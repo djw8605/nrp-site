@@ -109,11 +109,19 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
 
 <style>
   .model-card {
-    border: 1px solid var(--sl-color-gray-5);
+    /* Dark-theme default: lift the card slightly above the page bg. */
+    background: var(--sl-color-gray-5);
+    border: 1px solid var(--sl-color-gray-4);
     border-radius: 0.5rem;
     padding: 1.25rem 1.5rem;
     margin-block: 1.25rem;
-    background: var(--sl-color-gray-7, var(--sl-color-bg-nav));
+    color: var(--sl-color-white);
+  }
+  /* In light mode the gray scale runs the other way (gray-5 is mid-gray),
+     so use gray-7 for a subtle off-white card and a softer border. */
+  :root[data-theme='light'] .model-card {
+    background: var(--sl-color-gray-7);
+    border-color: var(--sl-color-gray-5);
   }
   .model-card-head {
     display: flex;
@@ -148,7 +156,7 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
   }
   .model-card-summary {
     margin: 0 0 1rem;
-    color: var(--sl-color-gray-2);
+    color: var(--sl-color-gray-1);
   }
   .model-card-stats {
     display: grid;
@@ -161,7 +169,7 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
     line-height: 1.5;
   }
   .model-card-stats dt {
-    color: var(--sl-color-gray-3);
+    color: var(--sl-color-gray-2);
     font-weight: 600;
     margin: 0;
     padding: 0;
@@ -184,6 +192,7 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
     border-left: 3px solid var(--sl-color-text-accent);
     border-radius: 0.25rem;
     font-size: 0.9rem;
+    color: var(--sl-color-gray-1);
   }
   .model-card-pros-cons {
     display: grid;
@@ -205,7 +214,7 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--sl-color-gray-3);
+    color: var(--sl-color-gray-2);
   }
   .model-card-pros ul,
   .model-card-cons ul {

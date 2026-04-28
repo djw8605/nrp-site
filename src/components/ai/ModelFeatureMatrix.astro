@@ -70,12 +70,16 @@ const mm = (m: typeof models[0]) => {
     border-collapse: collapse;
     font-size: 0.9rem;
   }
-  .model-matrix th,
-  .model-matrix td {
+  .matrix-wrap .model-matrix th,
+  .matrix-wrap .model-matrix td {
     border: 1px solid var(--sl-color-gray-5);
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem 0.75rem;
     text-align: left;
     vertical-align: middle;
+  }
+  .matrix-wrap .model-matrix th:first-child,
+  .matrix-wrap .model-matrix td:first-child {
+    padding-inline-start: 0.75rem;
   }
   .model-matrix th {
     background: var(--sl-color-gray-6);
