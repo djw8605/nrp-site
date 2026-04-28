@@ -150,7 +150,7 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "minimax-m2",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 196608
+				contextWindow: 204800
 			},
 			{
 				modelId: "olmo",
