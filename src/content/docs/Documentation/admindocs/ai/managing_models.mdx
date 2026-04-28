@@ -117,7 +117,7 @@ spec:
                 operator: Gt
                 values:
                 - "80000"
-              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.0` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.1` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/gpu.compute.major
                 operator: Gt
                 values:
@@ -131,7 +131,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup
         - |
-          vllm serve MiniMaxAI/MiniMax-M2.5 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 196608 --max-num-batched-tokens 16384 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2
+          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 16384 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
         command:
         - bash
         - -c
@@ -305,7 +305,7 @@ spec:
                 operator: Gt
                 values:
                 - "20000"
-              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.0` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+              # At least GTX 2000 Series Turing GPUs (CUDA Capability 6.x) for CUDA 12 (use the `cu129-` image prefix; `v0.19.1` is the last version supporting GTX 1000 Series Pascal and Volta), Newer than Volta GPUs (CUDA Capability 7.0) for CUDA 13; https://en.wikipedia.org/wiki/CUDA#GPUs_supported
               - key: nvidia.com/gpu.compute.major
                 operator: Gt
                 values:
@@ -319,7 +319,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup
         - |
-          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.975
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
         command:
         - bash
         - -c
@@ -332,7 +332,7 @@ spec:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
             name: qwen-vllm-inference-config
         # Select the latest release version (https://hub.docker.com/u/vllm), or use nightly container commits if recent commit fixes model or tool calling (defaults to CUDA 13, use `cu129-` images for CUDA 12)
-        image: vllm/vllm-openai:v0.19.0
+        image: vllm/vllm-openai:v0.19.1
         imagePullPolicy: Always
         name: qwen3-embedding-8b-vllm-inference
         ports:
@@ -858,7 +858,7 @@ spec:
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
-        image: vllm/vllm-openai:nightly-7b1bc0a3eb01a6bc2650eda9970049f7825240d7
+        image: vllm/vllm-openai:nightly-7a1eb8ac2ec4ea69338c51dc7afd4b15010abfa8
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 8
