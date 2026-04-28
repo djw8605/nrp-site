@@ -1,0 +1,33 @@
+id: gemma
+displayName: gemma
+huggingfaceId: google/gemma-4-31B-it
+huggingfaceUrl: https://huggingface.co/google/gemma-4-31B-it
+status: main
+badges:
+  tool: true
+  reasoning: true
+  multimodal: true
+  research: true
+contextTokens: 262144
+parameters: 31B
+quantization: bf16 (native)
+multimodalKinds:
+  - image
+  - video
+enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html
+sortOrder: 40
+summary: Google's Gemma 4 — multimodal, reasoning optional, efficient frontier performance.
+strengths:
+  - Multimodal (image + video) at a compact 31B size
+  - Reasoning is opt-in (off by default) — low latency unless you need it
+  - Solid tool calling support
+  - Google-quality instruction following
+weaknesses:
+  - Lower throughput compared to the model size (dense model)
+  - Reasoning must be explicitly enabled (unlike most catalogued models where it's the default)
+bestFor:
+  - Multimodal tasks (image/video QA, visual analysis)
+  - Efficient general-purpose assistant
+  - Workflows where reasoning is occasional, not constant
+  - Reproducible research (pinnable model)

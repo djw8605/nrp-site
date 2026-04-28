@@ -1,0 +1,29 @@
+---
+title: Fair Use Policy
+description: Fair use limits for NRP-managed LLM models
+---
+
+The restrictions below are current fair usage limitations for each of the managed LLM models, in order to make the LLM usage experience stable for everyone.
+
+If you need to go beyond this limit in exceptional circumstances (such as deadlines or other special requirements for high volume), you must contact the administrators to make arrangements in advance. Otherwise, you are recommended to deploy and run your own LLM models if you need higher concurrency — see [Managing AI Models](/documentation/admindocs/ai/managing_models/).
+
+The below limits are currently not automatically enforced, but automatic rate limiting in the LLM gateway is coming soon. Please report to the [Nautilus Artificial Intelligence/Machine Learning](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io) channel if you observe lagging requests and high request volume in [**Grafana**](https://grafana.nrp-nautilus.io/d/ad8bzhl/envoy-llms).
+
+:::caution
+All requests that utilize at least **35% of the context length** of the model are limited to only `1` concurrent request per user. The table below applies to shorter requests, and all concurrent requests combined should not exceed 35% of the model's context length in total.
+:::
+
+| Maximum Per-User Concurrency | Models |
+| --- | --- |
+| `2` | `kimi` |
+| `4` | `glm-4.7`, `minimax-m2` |
+| `8` | `qwen3-small`, `gemma`, `gemma-small`, `olmo` |
+| `16` | `qwen3`, `gpt-oss`, `qwen3-embedding` |
+
+San Diego Supercomputer Center (SDSC) and Internet2 have contributed their GPU nodes for managed LLM inference. Therefore, users affiliated with these organizations are granted twice the limits and separately arrangeable higher-volume sessions.
+
+:::note
+In automated scripts, configure the scripts so that chat requests will indefinitely retry (preferably with a larger incremental retry interval as the retry count increases). Models may go down and come back up at various times for maintenance. Scripts are highly recommended to dynamically decrease concurrency automatically if model latency increases.
+:::
+
+The National Research Platform is non-profit and non-commercial. All usage of the cluster, including LLMs, is subject to the [AUP](https://nrp.ai/NRP-AUP.pdf).

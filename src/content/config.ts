@@ -64,7 +64,38 @@ const postCollection = defineCollection({
   }),
 });
 
+const modelsCollection = defineCollection({
+  type: 'data',
+  schema: z.object({
+    id: z.string(),
+    displayName: z.string(),
+    huggingfaceId: z.string(),
+    huggingfaceUrl: z.string().url(),
+    status: z.enum(['main', 'evaluating', 'deprecated']),
+    badges: z.object({
+      tool: z.boolean().default(false),
+      reasoning: z.boolean().default(false),
+      multimodal: z.boolean().default(false),
+      research: z.boolean().default(false),
+    }),
+    contextTokens: z.number().optional(),
+    parameters: z.string().optional(),
+    quantization: z.string().optional(),
+    multimodalKinds: z.array(z.enum(['image', 'video', 'audio'])).optional(),
+    disableReasoningSnippet: z.string().optional(),
+    enableReasoningSnippet: z.string().optional(),
+    toolCallingDocsUrl: z.string().url().optional(),
+    isEmbedding: z.boolean().default(false),
+    sortOrder: z.number(),
+    summary: z.string(),
+    strengths: z.array(z.string()),
+    weaknesses: z.array(z.string()),
+    bestFor: z.array(z.string()),
+  }),
+});
+
 export const collections = {
   post: postCollection,
   docs: defineCollection({ schema: docsSchema() }),
+  models: modelsCollection,
 };

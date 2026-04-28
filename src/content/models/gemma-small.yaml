@@ -1,0 +1,33 @@
+id: gemma-small
+displayName: gemma-small
+huggingfaceId: google/gemma-4-E4B-it
+huggingfaceUrl: https://huggingface.co/google/gemma-4-E4B-it
+status: evaluating
+badges:
+  tool: true
+  reasoning: true
+  multimodal: true
+  research: false
+contextTokens: 131072
+parameters: ~8B
+quantization: bf16 (native)
+multimodalKinds:
+  - image
+  - video
+  - audio
+enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html
+sortOrder: 50
+summary: Tiny Gemma 4 with unique audio input — ASR and speech-to-text on an ~8B model.
+strengths:
+  - Only catalogued model that accepts audio input (ASR, speech-to-text translation)
+  - Very small ~8B footprint — extremely low latency
+  - Also handles image and video input
+weaknesses:
+  - Evaluating — availability and config may change
+  - Lower reasoning and instruction-following ceiling than larger models
+  - Reasoning must be explicitly enabled
+bestFor:
+  - Audio transcription and speech-to-text workflows
+  - Lightweight multimodal tasks
+  - Fast, low-cost inference for simple queries

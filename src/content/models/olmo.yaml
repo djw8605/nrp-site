@@ -1,0 +1,29 @@
+id: olmo
+displayName: olmo
+huggingfaceId: allenai/Olmo-3.1-32B-Instruct
+huggingfaceUrl: https://huggingface.co/allenai/Olmo-3.1-32B-Instruct
+status: evaluating
+badges:
+  tool: true
+  reasoning: false
+  multimodal: false
+  research: false
+contextTokens: 65536
+parameters: 32B
+quantization: bf16 (native)
+toolCallingDocsUrl: https://docs.vllm.ai/en/latest/features/tool_calling/#olmo-3-models-olmo3
+sortOrder: 90
+summary: Allen AI's fully open-source 32B instruction model — transparent training data.
+strengths:
+  - Fully open training data and weights — good for research reproducibility
+  - Supports tool calling
+  - 32B size balances capability and speed
+weaknesses:
+  - Evaluating — availability may change
+  - Lower throughput compared to the model size (dense model)
+  - Smaller 64K context window
+  - No multimodal or reasoning mode
+bestFor:
+  - Requirements for open and auditable models
+  - Tool-using workflows on a smaller budget
+  - NLP research baselines

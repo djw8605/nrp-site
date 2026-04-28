@@ -1,0 +1,111 @@
+---
+import { getCollection } from 'astro:content';
+import { Badge } from '@astrojs/starlight/components';
+
+interface Props {
+  includeDeprecated?: boolean;
+}
+
+const { includeDeprecated = false } = Astro.props;
+
+const all = await getCollection('models');
+const models = all
+  .filter((m) => includeDeprecated || m.data.status !== 'deprecated')
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+const statusVariant: Record<string, 'success' | 'tip' | 'caution'> = {
+  main: 'success',
+  evaluating: 'tip',
+  deprecated: 'caution',
+};
+
+const fmt = (n?: number | null) => (n == null ? '—' : n.toLocaleString('en-US'));
+const yn = (b: boolean) => (b ? '✓' : '—');
+const mm = (m: typeof models[0]) => {
+  if (!m.data.badges.multimodal) return '—';
+  const k = m.data.multimodalKinds;
+  return k && k.length > 0 ? k.join(', ') : '✓';
+};
+---
+
+<div class="matrix-wrap">
+  <table class="model-matrix">
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Status</th>
+        <th>Params</th>
+        <th>Context</th>
+        <th>Tools</th>
+        <th>Reason</th>
+        <th>Inputs</th>
+      </tr>
+    </thead>
+    <tbody>
+      {models.map((m) => (
+        <tr class={m.data.status === 'deprecated' ? 'deprecated-row' : ''}>
+          <td class="model-cell">
+            <a href={`#${m.data.id}`}><code>{m.data.displayName}</code></a>
+          </td>
+          <td><Badge text={m.data.status} variant={statusVariant[m.data.status]} /></td>
+          <td class="nowrap">{m.data.parameters ?? '—'}</td>
+          <td class="nowrap num">{fmt(m.data.contextTokens)}</td>
+          <td class="center">{yn(m.data.badges.tool)}</td>
+          <td class="center">{yn(m.data.badges.reasoning)}</td>
+          <td class="nowrap">{mm(m)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .matrix-wrap {
+    overflow-x: auto;
+    margin-block: 1rem;
+  }
+  .model-matrix {
+    min-width: 100%;
+    width: max-content;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .matrix-wrap .model-matrix th,
+  .matrix-wrap .model-matrix td {
+    border: 1px solid var(--sl-color-gray-5);
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .matrix-wrap .model-matrix th:first-child,
+  .matrix-wrap .model-matrix td:first-child {
+    padding-inline-start: 0.75rem;
+  }
+  .model-matrix th {
+    background: var(--sl-color-gray-6);
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .model-matrix .nowrap {
+    white-space: nowrap;
+  }
+  .model-matrix .center {
+    text-align: center;
+  }
+  .model-matrix .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .model-matrix .model-cell {
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .model-matrix tbody tr:hover {
+    background: var(--sl-color-gray-6);
+  }
+  .deprecated-row td {
+    opacity: 0.6;
+  }
+</style>

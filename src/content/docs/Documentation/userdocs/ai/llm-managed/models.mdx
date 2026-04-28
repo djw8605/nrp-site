@@ -1,0 +1,49 @@
+---
+title: Available Models
+description: NRP-managed LLM model catalog and feature matrix
+tableOfContents: true
+---
+import { Badge } from '@astrojs/starlight/components';
+import { getCollection } from 'astro:content';
+import ModelCard from '~/components/ai/ModelCard.astro';
+import ModelFeatureMatrix from '~/components/ai/ModelFeatureMatrix.astro';
+
+export const allModels = (await getCollection('models')).sort(
+  (a, b) => a.data.sortOrder - b.data.sortOrder
+);
+export const main = allModels.filter((m) => m.data.status === 'main');
+export const evaluating = allModels.filter((m) => m.data.status === 'evaluating');
+
+A side-by-side comparison of every active NRP-managed LLM, followed by a card per model with strengths, trade-offs, and recommended uses. Click any model name in the matrix to jump to its card; click the HuggingFace link on any card to open the upstream model page.
+
+## Feature Matrix
+
+<ModelFeatureMatrix />
+
+<div class="badge-legend">
+  <div class="badge-legend-row"><strong>Status:</strong> <Badge text="main" variant="success" /> generally supported · <Badge text="evaluating" variant="tip" /> testing, may change · <Badge text="deprecated" variant="caution" /> being retired</div>
+  <div class="badge-legend-row"><strong>Capabilities:</strong> <Badge text="tool" variant="success" /> function calling · <Badge text="reasoning" variant="success" /> thinking mode · <Badge text="multimodal" variant="success" /> image / video / audio inputs · <Badge text="research" variant="tip" /> active research workload (slower removal)</div>
+</div>
+
+<style>{`
+  .badge-legend {
+    margin-block: 1rem 2rem;
+    padding: 0.75rem 1rem;
+    background: var(--sl-color-gray-6);
+    border-radius: 0.4rem;
+    font-size: 0.875rem;
+  }
+  .badge-legend-row {
+    margin: 0.35rem 0;
+  }
+`}</style>
+
+If your group needs a model marked for active research (so removal is communicated rather than automatic), please reach out via the [Matrix Nautilus AI/ML channel](https://element.nrp-nautilus.io/#/room/#ml:matrix.nrp-nautilus.io). New-model suggestions are also discussed there.
+
+## Generally supported
+
+{main.map((m) => <ModelCard model={m} />)}
+
+## Evaluating
+
+{evaluating.map((m) => <ModelCard model={m} />)}

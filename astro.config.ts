@@ -192,7 +192,19 @@ export default defineConfig({
               label: 'AI/LLMs',
               collapsed: true,
               items: [
-                { label: 'NRP Managed LLM', link: 'documentation/userdocs/ai/llm-managed' },
+                {
+                  label: 'NRP Managed LLM',
+                  collapsed: true,
+                  items: [
+                    { label: 'Overview', link: 'documentation/userdocs/ai/llm-managed' },
+                    { label: 'Available models', link: 'documentation/userdocs/ai/llm-managed/models' },
+                    { label: 'Chat interfaces', link: 'documentation/userdocs/ai/llm-managed/chat-interfaces' },
+                    { label: 'API access', link: 'documentation/userdocs/ai/llm-managed/api-access' },
+                    { label: 'Client configurations', link: 'documentation/userdocs/ai/llm-managed/client-configs' },
+                    { label: 'Fair use policy', link: 'documentation/userdocs/ai/llm-managed/fair-use' },
+                    { label: 'Lifecycle & changelog', link: 'documentation/userdocs/ai/llm-managed/lifecycle' },
+                  ],
+                },
                 { label: 'Accounting MCP Server', link: 'documentation/userdocs/ai/accounting-mcp' },
                 { label: 'LLM in JupyterHub', link: 'documentation/userdocs/ai/llm-jupyterhub' },
                 { label: 'Cloud AI 100 Cards', link: 'documentation/userdocs/ai/qaic' },

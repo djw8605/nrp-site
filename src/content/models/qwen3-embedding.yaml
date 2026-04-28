@@ -1,0 +1,27 @@
+id: qwen3-embedding
+displayName: qwen3-embedding
+huggingfaceId: Qwen/Qwen3-VL-Embedding-8B
+huggingfaceUrl: https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B
+status: main
+badges:
+  tool: false
+  reasoning: false
+  multimodal: true
+  research: true
+parameters: 8B
+isEmbedding: true
+multimodalKinds:
+  - image
+  - video
+sortOrder: 100
+summary: Multimodal embedding model for retrieval and vector search — not a chat model.
+strengths:
+  - Embeddings for text, image, and video inputs
+  - Compatible with Jupyter AI and OpenAI embedding clients
+  - Compact 8B footprint
+weaknesses:
+  - Not a chat model — DO NOT use for chat or completions
+bestFor:
+  - Vector databases and semantic search
+  - RAG pipelines
+  - Multimodal retrieval
