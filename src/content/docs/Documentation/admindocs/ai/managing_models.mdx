@@ -699,7 +699,7 @@ Kimi-K2.6 (`KimiK25ForConditionalGeneration` and `DeepseekV3ForCausalLM`) is a M
 
 To use two nodes for this model, we can use something similar to `--tensor-parallel-size 4 --decode-context-parallel-size 4 --pipeline-parallel-size 2` to make two instances (Pods) of vLLM and deploy two 4x RTX PRO 6000 Blackwell GPU Pods, while properly sharding the KV cache. This is the default configuration for an instance of the model, without duplication through data parallelism.
 
-Example Configuration:
+Example Configuration (do not use `--mm-processor-cache-type shm` in multi-node):
 
 <details>
 <summary>Open</summary>
@@ -849,8 +849,7 @@ spec:
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
             --mm-processor-cache-gb 8 \
-            --mm-encoder-tp-mode data \
-            --mm-processor-cache-type shm
+            --mm-encoder-tp-mode data
         command:
         - bash
         - -c
@@ -1070,8 +1069,7 @@ spec:
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
             --mm-processor-cache-gb 8 \
-            --mm-encoder-tp-mode data \
-            --mm-processor-cache-type shm
+            --mm-encoder-tp-mode data
         command:
         - bash
         - -c
