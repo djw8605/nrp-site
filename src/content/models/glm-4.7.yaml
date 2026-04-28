@@ -1,0 +1,29 @@
+id: glm-4.7
+displayName: glm-4.7
+huggingfaceId: zai-org/GLM-4.7-FP8
+huggingfaceUrl: https://huggingface.co/zai-org/GLM-4.7-FP8
+status: evaluating
+badges:
+  tool: true
+  reasoning: true
+  multimodal: false
+  research: false
+contextTokens: 202752
+parameters: 358B
+quantization: FP8 (official)
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/GLM/GLM.html
+sortOrder: 70
+summary: Zhipu's 358B frontier coding model with official FP8 weights.
+strengths:
+  - Strong agentic coding — competitive with commercial frontier models
+  - Official FP8 quantization preserves quality
+  - ~200K context covers large codebases
+weaknesses:
+  - Text-only — no multimodal input
+  - Evaluating — configuration may shift
+  - Reasoning on by default; adds latency for simple tasks
+bestFor:
+  - Agentic coding workflows
+  - Long-form reasoning and text tasks
+  - Tool-using agents

@@ -1,0 +1,71 @@
+---
+title: Chat Interfaces
+description: Web and desktop chat interfaces for NRP-managed LLMs
+---
+import { LinkButton } from '@astrojs/starlight/components';
+
+The NRP hosts several chat interfaces you can use to interact with the managed LLMs without writing any code.
+
+## Open WebUI
+
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com), we provide the [NRP Open WebUI](https://nrp-openwebui.nrp-nautilus.io), based on the [Open WebUI](https://openwebui.com) project. This is a feature-filled chat interface for all of the NRP-hosted models. You can use it to chat with or test out the models.
+
+<LinkButton
+  href="https://nrp-openwebui.nrp-nautilus.io"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the NRP Open WebUI interface
+</LinkButton>
+
+On MacOS and Safari you can make it always available in Dock for quick access: having Open WebUI open in Safari, click **File → Add to Dock**.
+
+## LibreChat
+
+If you are looking to chat with an LLM model similar to the interface provided by [ChatGPT](https://chatgpt.com), we provide [LibreChat](https://librechat.nrp-nautilus.io), based on the [LibreChat](https://www.librechat.ai) project. This is a simple chat interface for all of the NRP-hosted models. You can use it to chat with or test out the models.
+
+<LinkButton
+  href="https://librechat.nrp-nautilus.io"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the LibreChat interface
+</LinkButton>
+
+On MacOS and Safari you can make it always available in Dock for quick access: having LibreChat open in Safari, click **File → Add to Dock**.
+
+## Cherry Studio
+
+You can install the standalone Cherry Studio desktop application.
+
+<LinkButton
+  href="https://www.cherry-ai.com/download"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the Cherry Studio application website
+</LinkButton>
+
+Go to _Settings_ → _Model Provider_ → press the _Add_ button (set _Provider Name_ to `NRP` or anything else you want, and _Provider Type_ to `OpenAI`) → add _API Key_ and _API Host_ (`https://ellm.nrp-nautilus.io/v1`) → press _Fetch model list_ → press the _Add models to the list_ button at the right of the search box to add all models.
+
+For setting the `extra_body` JSON parameter, go to _Assistants_ → select an assistant (such as _Default Assistant_) → click `⋮` and _Edit Assistant_ → _Model Settings_ → _Custom Parameters_ → _Add Parameter_ → Set _Parameter_ to `extra_body`, select `JSON`, and input the JSON contents in the textarea right below (such as `{"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==", "chat_template_kwargs": {"enable_thinking": true, "thinking": true, "reasoning": {"enabled": true}}}`).
+
+**Please do not set `Max Tokens` (unless you know what you are doing; read the [API Access](/documentation/userdocs/ai/llm-managed/api-access) section).**
+
+## Chatbox
+
+You can install the standalone Chatbox desktop application or use the web interface version.
+
+<LinkButton
+  href="https://chatboxai.app"
+  icon="external"
+  iconPlacement="start"
+>
+    Visit the Chatbox application website
+</LinkButton>
+
+Generate the Chatbox configuration in the [LLM token generation page](/llmtoken). Copy the generated configuration to clipboard — it will already have your personal token.
+
+In Chatbox, go to _Settings_ → _Model Provider_, scroll down to the end of providers list, and click _Import from clipboard_.
+
+**Please leave `Max Output Tokens` empty (fill in only `Context Window` unless you know what you are doing; read the [API Access](/documentation/userdocs/ai/llm-managed/api-access) section).**

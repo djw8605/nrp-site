@@ -1,0 +1,32 @@
+id: qwen3-small
+displayName: qwen3-small
+huggingfaceId: Qwen/Qwen3.6-27B
+huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.6-27B
+status: main
+badges:
+  tool: true
+  reasoning: true
+  multimodal: true
+  research: true
+contextTokens: 262144
+parameters: 27B
+quantization: bf16 (native)
+multimodalKinds:
+  - image
+  - video
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html
+sortOrder: 20
+summary: Compact Qwen3.6 — multimodal, agentic, low-latency. Also accessible as qwen3-27b.
+strengths:
+  - Multimodal (image + video) at a fraction of qwen3's GPU cost
+  - 262K context window for whole-repo or long-doc work
+  - Strong agentic and tool-calling behavior
+  - Lower latency than larger models — good for interactive use
+weaknesses:
+  - Lower reasoning ceiling than the 397B qwen3 on the hardest tasks
+  - Native bf16 weights use more memory than FP8 alternatives
+bestFor:
+  - Latency-sensitive multimodal tasks
+  - Agentic coding and tool use
+  - Long-context tasks where qwen3 is overkill

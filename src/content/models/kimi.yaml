@@ -1,0 +1,33 @@
+id: kimi
+displayName: kimi
+huggingfaceId: moonshotai/Kimi-K2.6
+huggingfaceUrl: https://huggingface.co/moonshotai/Kimi-K2.6
+status: evaluating
+badges:
+  tool: true
+  reasoning: true
+  multimodal: true
+  research: false
+contextTokens: 262144
+parameters: 1T (MoE)
+quantization: MXFP4 (native)
+multimodalKinds:
+  - image
+  - video
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": false}}'
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html
+sortOrder: 60
+summary: Moonshot's 1T-parameter frontier coding model with multimodal inputs.
+strengths:
+  - Frontier-class agentic coding — close to commercial top models on coding benchmarks
+  - 262K context suits whole-repo analysis
+  - Multimodal (image + video) for screenshot debugging and design-to-code
+  - Native MXFP4 keeps memory cost manageable at 1T params
+weaknesses:
+  - Evaluating — availability and config may shift
+  - Largest active-parameter MoE in the catalog; GPU-intensive
+  - Reasoning on by default — disable for faster simple queries
+bestFor:
+  - Agentic coding (Claude Code, Kimi CLI, Crush)
+  - Large-repo code understanding
+  - Multimodal coding tasks (UI screenshots, diagrams)

@@ -1,0 +1,226 @@
+---
+import { Badge } from '@astrojs/starlight/components';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  model: CollectionEntry<'models'>;
+}
+
+const { model } = Astro.props;
+const d = model.data;
+
+const statusVariant: Record<string, 'success' | 'tip' | 'caution'> = {
+  main: 'success',
+  evaluating: 'tip',
+  deprecated: 'caution',
+};
+
+const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US'));
+---
+
+<article class="model-card" id={d.id}>
+  <header class="model-card-head">
+    <h3 class="model-card-title">
+      <code>{d.displayName}</code>
+    </h3>
+    <div class="model-card-badges">
+      <Badge text={d.status} variant={statusVariant[d.status]} />
+      {d.badges.tool && <Badge text="tool" variant="success" />}
+      {d.badges.reasoning && <Badge text="reasoning" variant="success" />}
+      {d.badges.multimodal && <Badge text="multimodal" variant="success" />}
+      {d.badges.research && <Badge text="research" variant="tip" />}
+    </div>
+  </header>
+
+  <p class="model-card-hf">
+    <a href={d.huggingfaceUrl} class="model-card-hflink">{d.huggingfaceId} ↗</a>
+  </p>
+
+  <p class="model-card-summary">{d.summary}</p>
+
+  <dl class="model-card-stats">
+    {d.parameters && (
+      <>
+        <dt>Parameters</dt>
+        <dd>{d.parameters}</dd>
+      </>
+    )}
+    {fmt(d.contextTokens) && (
+      <>
+        <dt>Context</dt>
+        <dd>{fmt(d.contextTokens)} tokens</dd>
+      </>
+    )}
+    {d.quantization && (
+      <>
+        <dt>Quantization</dt>
+        <dd>{d.quantization}</dd>
+      </>
+    )}
+    {d.multimodalKinds && d.multimodalKinds.length > 0 && (
+      <>
+        <dt>Multimodal</dt>
+        <dd>{d.multimodalKinds.join(', ')}</dd>
+      </>
+    )}
+    {d.toolCallingDocsUrl && (
+      <>
+        <dt>Tool calling</dt>
+        <dd><a href={d.toolCallingDocsUrl}>vLLM recipe</a></dd>
+      </>
+    )}
+    {d.disableReasoningSnippet && (
+      <>
+        <dt>Disable reasoning</dt>
+        <dd><code>{d.disableReasoningSnippet}</code></dd>
+      </>
+    )}
+    {d.enableReasoningSnippet && (
+      <>
+        <dt>Enable reasoning</dt>
+        <dd><code>{d.enableReasoningSnippet}</code></dd>
+      </>
+    )}
+  </dl>
+
+  {d.bestFor.length > 0 && (
+    <p class="model-card-bestfor">
+      <strong>Best for:</strong> {d.bestFor.join(' · ')}
+    </p>
+  )}
+
+  {(d.strengths.length > 0 || d.weaknesses.length > 0) && (
+    <div class="model-card-pros-cons">
+      {d.strengths.length > 0 && (
+        <div class="model-card-pros">
+          <h4>Strengths</h4>
+          <ul>{d.strengths.map((s) => <li>{s}</li>)}</ul>
+        </div>
+      )}
+      {d.weaknesses.length > 0 && (
+        <div class="model-card-cons">
+          <h4>Trade-offs</h4>
+          <ul>{d.weaknesses.map((w) => <li>{w}</li>)}</ul>
+        </div>
+      )}
+    </div>
+  )}
+</article>
+
+<style>
+  .model-card {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    margin-block: 1.25rem;
+    background: var(--sl-color-gray-7, var(--sl-color-bg-nav));
+  }
+  .model-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+  .model-card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .model-card-title code {
+    background: none;
+    padding: 0;
+    border: none;
+    font-size: inherit;
+  }
+  .model-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .model-card-hf {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+  }
+  .model-card-hflink {
+    color: var(--sl-color-text-accent);
+    font-family: var(--__sl-font-mono, monospace);
+  }
+  .model-card-summary {
+    margin: 0 0 1rem;
+    color: var(--sl-color-gray-2);
+  }
+  .model-card-stats {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 1rem;
+    row-gap: 0.4rem;
+    align-items: baseline;
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .model-card-stats dt {
+    color: var(--sl-color-gray-3);
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+  }
+  .model-card-stats dd {
+    margin: 0;
+    padding: 0;
+  }
+  .model-card-stats dd a {
+    /* keep links sitting on the same baseline as the dt */
+    text-decoration-thickness: 1px;
+  }
+  .model-card-stats code {
+    font-size: 0.85em;
+  }
+  .model-card-bestfor {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--sl-color-gray-6);
+    border-left: 3px solid var(--sl-color-text-accent);
+    border-radius: 0.25rem;
+    font-size: 0.9rem;
+  }
+  .model-card-pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1rem;
+    align-items: start;
+    margin-top: 1rem;
+  }
+  .model-card-pros-cons > .model-card-pros,
+  .model-card-pros-cons > .model-card-cons {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .model-card-pros h4,
+  .model-card-cons h4 {
+    margin: 0 0 0.4rem;
+    padding: 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sl-color-gray-3);
+  }
+  .model-card-pros ul,
+  .model-card-cons ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .model-card-pros ul li,
+  .model-card-cons ul li {
+    margin-block: 0.2rem;
+  }
+  @media (max-width: 50rem) {
+    .model-card-pros-cons {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

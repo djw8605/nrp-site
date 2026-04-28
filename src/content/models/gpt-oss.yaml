@@ -1,0 +1,28 @@
+id: gpt-oss
+displayName: gpt-oss
+huggingfaceId: openai/gpt-oss-120b
+huggingfaceUrl: https://huggingface.co/openai/gpt-oss-120b
+status: main
+badges:
+  tool: true
+  reasoning: true
+  multimodal: false
+  research: true
+contextTokens: 131072
+parameters: 120B
+quantization: MXFP4 (native)
+toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html
+sortOrder: 30
+summary: OpenAI's open-weights agentic model — tiny GPU footprint, strong tools, LTS candidate.
+strengths:
+  - Runs on a single A100 or two RTX A6000 at full context (MXFP4 + sliding-window attention)
+  - Strong agentic and tool-calling behavior
+  - Stable "LTS" target for reproducible research pipelines
+  - Low per-token cost makes it good for high-concurrency batch use
+weaknesses:
+  - Text-only — no vision or video input
+  - Smaller 128K context compared to Qwen and Kimi models
+bestFor:
+  - General-purpose chat and assistants
+  - Agentic tool-using workflows
+  - Reproducible research (pinnable model)
