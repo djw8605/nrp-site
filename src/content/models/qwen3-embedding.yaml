@@ -20,8 +20,7 @@ strengths:
   - Compatible with Jupyter AI and OpenAI embedding clients
   - Compact 8B footprint
 weaknesses:
-  - Not a chat model — do not use for completions
-  - No tool calling or reasoning
+  - Not a chat model — DO NOT use for chat or completions
 bestFor:
   - Vector databases and semantic search
   - RAG pipelines

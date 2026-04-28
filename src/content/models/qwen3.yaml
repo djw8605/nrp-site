@@ -21,14 +21,14 @@ summary: Flagship frontier multimodal MoE — Claude/Gemini-level performance, a
 strengths:
   - Frontier-class reasoning and instruction following
   - Multimodal (image + video) alongside text
+  - High-throughput despite large model size
   - Sparse MoE keeps per-token compute low despite 397B total parameters
   - Official FP8 quantization preserves model quality
   - Capacity may be split across multiple GPU pools (A100 + H200) for throughput
 weaknesses:
-  - Largest GPU footprint in the catalog
   - Reasoning mode on by default — adds latency for simple queries
-  - 262K context is smaller than previous Qwen3 generation (was 1M)
+  - One of the higher GPU footprint in the catalog
 bestFor:
   - Frontier-quality text and multimodal reasoning
-  - Long-context document and repo analysis
+  - Long-context document and repository analysis
   - Research workflows requiring reproducibility

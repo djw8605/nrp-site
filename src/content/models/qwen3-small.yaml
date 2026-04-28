@@ -24,8 +24,9 @@ strengths:
   - Strong agentic and tool-calling behavior
   - Lower latency than larger models — good for interactive use
 weaknesses:
+  - Lower throughput compared to the model size (dense model)
   - Lower reasoning ceiling than the 397B qwen3 on the hardest tasks
-  - Native bf16 weights use more memory than FP8 alternatives
+  - Native bf16 weights use more memory than FP8 (also available officially)
 bestFor:
   - Latency-sensitive multimodal tasks
   - Agentic coding and tool use

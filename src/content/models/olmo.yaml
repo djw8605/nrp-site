@@ -20,9 +20,10 @@ strengths:
   - 32B size balances capability and speed
 weaknesses:
   - Evaluating — availability may change
+  - Lower throughput compared to the model size (dense model)
   - Smaller 64K context window
   - No multimodal or reasoning mode
 bestFor:
-  - Research requiring open and auditable models
+  - Requirements for open and auditable models
   - Tool-using workflows on a smaller budget
   - NLP research baselines

@@ -25,7 +25,7 @@ strengths:
   - Native MXFP4 keeps memory cost manageable at 1T params
 weaknesses:
   - Evaluating — availability and config may shift
-  - Largest active-parameter MoE in the catalog; GPU-intensive
+  - Largest active-parameter and total-parameter MoE in the catalog; GPU-intensive and slower
   - Reasoning on by default — disable for faster simple queries
 bestFor:
   - Agentic coding (Claude Code, Kimi CLI, Crush)

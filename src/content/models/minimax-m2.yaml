@@ -17,11 +17,12 @@ summary: Efficient frontier coding model — 230B in native FP8, fits comfortabl
 strengths:
   - Frontier-level agentic coding at modest GPU cost
   - Native FP8 weights — no quantization quality degradation
+  - High throughput compared to model size
   - ~200K context window for large codebase work
   - Generally supported (main) — stable for production use
 weaknesses:
   - Text-only — no vision or audio
-  - No reasoning toggle (reasoning may be implicit in the model behavior)
+  - No reasoning toggle (reasoning is implicit in the model behavior)
 bestFor:
   - Cost-efficient agentic coding
   - Long-context code review and refactoring

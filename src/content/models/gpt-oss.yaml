@@ -17,8 +17,8 @@ summary: OpenAI's open-weights agentic model — tiny GPU footprint, strong tool
 strengths:
   - Runs on a single A100 or two RTX A6000 at full context (MXFP4 + sliding-window attention)
   - Strong agentic and tool-calling behavior
-  - Stable "LTS" target for reproducible research pipelines
-  - Low per-token cost makes it good for high-concurrency batch use
+  - Stable for reproducible research pipelines
+  - High throughput and low per-token cost optimizes high-concurrency batch use
 weaknesses:
   - Text-only — no vision or video input
   - Smaller 128K context compared to Qwen and Kimi models

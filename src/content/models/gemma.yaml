@@ -24,9 +24,10 @@ strengths:
   - Solid tool calling support
   - Google-quality instruction following
 weaknesses:
-  - Reasoning must be explicitly enabled (unlike most catalog models where it's the default)
-  - bf16 weights; no FP8 variant at this size
+  - Lower throughput compared to the model size (dense model)
+  - Reasoning must be explicitly enabled (unlike most catalogued models where it's the default)
 bestFor:
   - Multimodal tasks (image/video QA, visual analysis)
   - Efficient general-purpose assistant
   - Workflows where reasoning is occasional, not constant
+  - Reproducible research (pinnable model)

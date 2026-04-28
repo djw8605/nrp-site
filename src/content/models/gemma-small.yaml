@@ -20,7 +20,7 @@ toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma
 sortOrder: 50
 summary: Tiny Gemma 4 with unique audio input — ASR and speech-to-text on an ~8B model.
 strengths:
-  - Only catalog model that accepts audio input (ASR, speech-to-text translation)
+  - Only catalogued model that accepts audio input (ASR, speech-to-text translation)
   - Very small ~8B footprint — extremely low latency
   - Also handles image and video input
 weaknesses:
