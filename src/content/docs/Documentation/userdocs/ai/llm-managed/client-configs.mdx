@@ -17,6 +17,8 @@ Run `curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/mod
 
 ## OpenCode
 
+[anomalyco/opencode](https://github.com/anomalyco/opencode).
+
 After applying the configuration below, search for `NRP` in the list of models (`Ctrl+P` → _Switch models_).
 
 Either set the `OPENAI_API_KEY` environment variable or replace `{env:OPENAI_API_KEY}` with the actual API key. Adjust `"output"` as needed, but never set it close to or larger than `"context"`.
@@ -132,28 +134,23 @@ Contents of `~/.config/crush/crush.json`:
 
 [MoonshotAI/kimi-cli](https://github.com/MoonshotAI/kimi-cli).
 
-Contents of `~/.kimi/config.json`:
+Contents of `~/.kimi/config.toml`:
 
-```json
-{
-  "default_model": "kimi",
-  "models": {
-    "kimi": {
-      "provider": "nrp",
-      "model": "kimi",
-      "max_context_size": 262144,
-      "capabilities": ["thinking", "image_in", "video_in"]
-    }
-  },
-  "providers": {
-    "nrp": {
-      "type": "openai_legacy",
-      "base_url": "https://ellm.nrp-nautilus.io/v1",
-      "api_key": "<YOUR_API_KEY>"
-    }
-  },
-  "services": {}
-}
+```toml
+default_model = "kimi"
+
+[providers.nrp]
+type = "openai_legacy"
+base_url = "https://ellm.nrp-nautilus.io/v1"
+api_key = "<YOUR_API_KEY>"
+
+[models.kimi]
+provider = "nrp"
+model = "kimi"
+max_context_size = 262144
+capabilities = ["thinking", "image_in", "video_in"]
+
+[services]
 ```
 
 ## Claude Code
