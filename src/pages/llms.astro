@@ -1,0 +1,197 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Image from '~/components/common/Image.astro';
+import Button from '~/components/ui/Button.astro';
+
+const metadata = {
+  title: 'Hosted LLMs',
+};
+
+const featuredModels = [
+  {
+    name: 'qwen3',
+    src: (await import('~/assets/images/models/qwen.png')).default,
+    description:
+      'Flagship frontier multimodal MoE — Claude/Gemini-level performance. Best for general reasoning, long-context work, and multimodal tasks.',
+  },
+  {
+    name: 'kimi',
+    src: (await import('~/assets/images/models/kimi.png')).default,
+    description:
+      "Moonshot's 1T-parameter frontier coding model with multimodal inputs. Best for agentic coding workflows.",
+  },
+  {
+    name: 'gemma',
+    src: (await import('~/assets/images/models/gemma.png')).default,
+    description:
+      "Google's Gemma 4 — multimodal, optional reasoning, efficient frontier performance. A lighter-weight model that still handles images.",
+  },
+  {
+    name: 'glm-4.7',
+    src: (await import('~/assets/images/models/glm.png')).default,
+    description:
+      "Zhipu's 358B frontier coding model with official FP8 weights. Strong on code and reasoning tasks.",
+  },
+  {
+    name: 'minimax-m2',
+    src: (await import('~/assets/images/models/minimax.png')).default,
+    description:
+      'Efficient frontier coding model — 230B in native FP8, fits comfortably on four A100s.',
+  },
+  {
+    name: 'olmo',
+    src: (await import('~/assets/images/models/olmo.png')).default,
+    description:
+      "Allen AI's fully open-source 32B instruction model with transparent training data — pick when reproducibility matters.",
+  },
+  {
+    name: 'gpt-oss',
+    src: (await import('~/assets/images/models/gpt-oss.png')).default,
+    description:
+      "OpenAI's open-weights agentic model — tiny GPU footprint, strong tool use, LTS candidate.",
+  },
+];
+
+const featuredClients = [
+  { name: 'Open WebUI', src: (await import('~/assets/images/docs/openwebui-logo.png')).default },
+  { name: 'Chatbox', src: (await import('~/assets/images/docs/chatbox-logo.png')).default },
+  { name: 'Cherry Studio', src: (await import('~/assets/images/clients/cherry-studio.png')).default },
+  { name: 'Claude Code', src: (await import('~/assets/images/clients/claude-code.png')).default },
+  { name: 'OpenCode', src: (await import('~/assets/images/clients/opencode.png')).default },
+  { name: 'Crush', src: (await import('~/assets/images/clients/crush.png')).default },
+  { name: 'Kimi CLI', src: (await import('~/assets/images/clients/kimi-cli.png')).default },
+  { name: 'Copilot CLI', src: (await import('~/assets/images/clients/copilot-cli.png')).default },
+];
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    tagline="Hosted LLMs"
+    title="Frontier open-weight LLMs, hosted on the NRP"
+    subtitle="Free access for researchers and educators to a rotating catalog of frontier open-weight models — through a hosted chat interface, an OpenAI-compatible API, and ready-made configs for the major coding CLIs."
+    actions={[
+      { variant: 'primary', text: 'Get started', href: '/contact' },
+      { text: 'Try Open WebUI', href: 'https://nrp-openwebui.nrp-nautilus.io', target: '_blank' },
+    ]}
+    image={{
+      src: '~/assets/images/openwebui-hero.png',
+      alt: 'Open WebUI chat running on the NRP',
+    }}
+  />
+
+  <Steps
+    title="How to get access"
+    tagline="Three steps"
+    items={[
+      {
+        title: 'Step 1: <span class="font-medium">Get an NRP account</span>',
+        description:
+          'Sign in once with your institutional or research identity to register a Nautilus account.',
+        icon: 'tabler:user-plus',
+      },
+      {
+        title: 'Step 2: <span class="font-medium">Request an LLM-enabled namespace</span>',
+        description:
+          '<a class="text-primary underline" href="/contact">Reach out</a> and we will enable LLM access on your namespace so its members can mint tokens.',
+        icon: 'tabler:folder-plus',
+      },
+      {
+        title: 'Step 3: <span class="font-medium">Generate your LLM token</span>',
+        description:
+          'Use the token page to create a personal API token, then plug it into Open WebUI, Chatbox, or any OpenAI-compatible client.',
+        icon: 'tabler:key',
+      },
+    ]}
+    callToAction={{
+      text: 'Read the full Getting Started guide',
+      href: '/documentation/userdocs/start/getting-started/',
+      icon: 'tabler:chevron-right',
+    }}
+    image={{
+      src: '~/assets/images/NRP_globe.jpg',
+      alt: 'NRP globe',
+    }}
+  />
+
+  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+    <Headline
+      title="Models we host"
+      subtitle="Frontier open-weight models with strong reasoning, coding, and multimodal capabilities. Pick the one that fits your task."
+    />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {
+        featuredModels.map((m) => (
+          <div class="flex flex-col gap-4 p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-4">
+              <div class="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-md bg-gray-100 dark:bg-gray-200 p-2">
+                <Image src={m.src} alt={`${m.name} logo`} width={56} height={56} class="max-h-full w-auto object-contain" />
+              </div>
+              <h3 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">{m.name}</h3>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{m.description}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="flex justify-center mt-8">
+      <Button variant="link" href="/documentation/userdocs/ai/llm-managed/models">
+        See all models &amp; feature matrix &rarr;
+      </Button>
+    </div>
+  </WidgetWrapper>
+
+  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+    <Headline
+      title="Use the client you already love"
+      subtitle="Hosted chat interfaces, desktop apps, and coding CLIs all work with NRP-hosted LLMs through the OpenAI-compatible endpoint."
+    />
+    <div class="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
+      {
+        featuredClients.map((c) => (
+          <div class="flex flex-col items-center gap-2">
+            <div class="flex items-center justify-center h-16 w-16 rounded-md bg-gray-100 dark:bg-gray-200 p-2">
+              <Image src={c.src} alt={`${c.name} logo`} width={64} height={64} class="max-h-full w-auto object-contain" />
+            </div>
+            <span class="text-xs text-gray-600 dark:text-gray-400 text-center">{c.name}</span>
+          </div>
+        ))
+      }
+    </div>
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
+      <Button variant="link" href="/documentation/userdocs/ai/llm-managed/chat-interfaces">
+        Chat interface guides &rarr;
+      </Button>
+      <Button variant="link" href="/documentation/userdocs/ai/llm-managed/client-configs">
+        Coding CLI configs &rarr;
+      </Button>
+    </div>
+  </WidgetWrapper>
+
+  <style is:global>
+    img[alt="Open WebUI chat running on the NRP"] {
+      width: 100% !important;
+      height: auto !important;
+      margin-bottom: -8% !important;
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 80%);
+      mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 80%);
+    }
+  </style>
+
+  <CallToAction
+    title="Ready to get started?"
+    subtitle="We will get you onto NRP-hosted LLMs and answer any questions about access, namespaces, and tokens."
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Contact us',
+        href: '/contact',
+        icon: 'tabler:mail',
+      },
+    ]}
+  />
+</Layout>

@@ -136,6 +136,10 @@ export const headerData = {
       ]
   },
     {
+      text: 'Hosted LLMs',
+      href: getPermalink('/llms'),
+    },
+    {
       text: 'Docs',
       href: getPermalink('/documentation'),
     },
