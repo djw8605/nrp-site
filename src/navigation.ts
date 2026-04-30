@@ -136,7 +136,7 @@ export const headerData = {
       ]
   },
     {
-      text: 'Hosted LLMs',
+      text: 'LLMs',
       href: getPermalink('/llms'),
     },
     {
