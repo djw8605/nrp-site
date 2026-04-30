@@ -25,16 +25,19 @@
 
         <div>
           <label for="namespace-filter" class="mb-1 block text-sm font-medium">Namespace filter</label>
-          <select
+          <Select
             id="namespace-filter"
             v-model="selectedNamespaceFilter"
-            class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900"
+            :options="namespaceFilterOptions"
+            optionLabel="label"
+            optionValue="apiName"
+            filter
+            filterPlaceholder="Search namespaces"
+            placeholder="All namespaces"
+            class="w-full text-sm"
             :disabled="isLoadingNamespaces || isLoadingPods"
             @change="onNamespaceFilterChanged"
-          >
-            <option :value="ALL_NAMESPACES">All namespaces</option>
-            <option v-for="ns in namespaces" :key="ns.label" :value="ns.apiName">{{ ns.label }}</option>
-          </select>
+          />
         </div>
       </div>
 
@@ -190,22 +193,35 @@
               </div>
 
               <div class="overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
-                <div class="flex items-center justify-between border-b border-slate-200 px-3 py-2 dark:border-slate-700">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-3 py-2 dark:border-slate-700">
                   <span class="text-xs font-semibold">Diagnosis</span>
-                  <span v-if="streamError" class="text-xs text-red-700 dark:text-red-300">{{ streamError }}</span>
-                  <span v-else-if="doneMessage" class="text-xs text-green-700 dark:text-green-300">{{ doneMessage }}</span>
+                  <div class="flex items-center gap-2">
+                    <span v-if="streamError" class="text-xs text-red-700 dark:text-red-300">{{ streamError }}</span>
+                    <span v-else-if="doneMessage" class="text-xs text-green-700 dark:text-green-300">{{ doneMessage }}</span>
+                    <button
+                      class="inline-flex items-center gap-1 rounded-md border border-slate-300 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600"
+                      type="button"
+                      :disabled="markdownBody.length === 0"
+                      title="Copy full diagnosis"
+                      @click="copyDiagnosis"
+                    >
+                      <i class="pi pi-copy"></i>
+                      Copy
+                    </button>
+                  </div>
                 </div>
                 <div
                   ref="markdownScrollEl"
-                  class="h-[16rem] overflow-y-auto p-3"
+                  class="diagnosis-scroll h-[16rem] overflow-auto p-3"
                   @scroll="onMarkdownScroll"
+                  @wheel.passive="onMarkdownWheel"
                 >
                   <div v-if="markdownBody.length === 0" class="text-xs text-slate-600 dark:text-slate-300">
                     The diagnosis will stream here as the AI reaches its conclusion.
                   </div>
                   <div
                     v-else
-                    class="prose prose-sm max-w-none dark:prose-invert prose-pre:text-xs prose-code:text-xs"
+                    class="diagnosis-markdown prose prose-sm max-w-none dark:prose-invert prose-pre:text-xs prose-code:text-xs"
                     v-html="renderedMarkdown"
                   ></div>
                 </div>
@@ -228,6 +244,7 @@ import { marked } from 'marked';
 import Toast from 'primevue/toast';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Select from 'primevue/select';
 import { useToast } from 'primevue/usetoast';
 
 import { userStore } from '../../auth.ts';
@@ -325,6 +342,16 @@ const podsInScope = computed(() => {
     return pods.value;
   }
   return pods.value.filter((pod) => pod.namespace === selectedNamespaceFilter.value);
+});
+
+const namespaceFilterOptions = computed<NamespaceOption[]>(() => {
+  return [
+    {
+      label: 'All namespaces',
+      apiName: ALL_NAMESPACES,
+    },
+    ...namespaces.value,
+  ];
 });
 
 const filteredPods = computed(() => {
@@ -580,6 +607,55 @@ const isNearBottom = (el: HTMLElement): boolean => {
 const onMarkdownScroll = () => {
   if (!markdownScrollEl.value) return;
   isMarkdownPinnedToBottom.value = isNearBottom(markdownScrollEl.value);
+};
+
+const onMarkdownWheel = (event: WheelEvent) => {
+  if (event.deltaY < 0) {
+    isMarkdownPinnedToBottom.value = false;
+  }
+};
+
+const copyWithFallback = (text: string): boolean => {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    return document.execCommand('copy');
+  } finally {
+    document.body.removeChild(textarea);
+  }
+};
+
+const copyDiagnosis = async () => {
+  const diagnosisText = markdownBody.value.trim();
+  if (!diagnosisText) return;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(diagnosisText);
+    } else if (!copyWithFallback(diagnosisText)) {
+      throw new Error('Clipboard copy failed');
+    }
+
+    toast.add({
+      severity: 'success',
+      summary: 'Diagnosis copied',
+      detail: 'The full diagnosis was copied to the clipboard.',
+      life: 2500,
+    });
+  } catch (error: any) {
+    toast.add({
+      severity: 'error',
+      summary: 'Copy failed',
+      detail: error?.message || 'Unable to copy the diagnosis.',
+      life: 3500,
+    });
+  }
 };
 
 const queueAutoScroll = async () => {
@@ -968,3 +1044,73 @@ onUnmounted(() => {
   closeStream();
 });
 </script>
+
+<style scoped>
+.diagnosis-scroll {
+  overflow-anchor: none;
+}
+
+.diagnosis-markdown {
+  overflow-anchor: none;
+}
+
+.diagnosis-markdown :deep(table) {
+  display: table;
+  width: 100%;
+  min-width: 32rem;
+  margin: 0.75rem 0 1rem;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid rgb(203 213 225);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.diagnosis-markdown :deep(thead) {
+  background-color: rgb(241 245 249);
+}
+
+.diagnosis-markdown :deep(th),
+.diagnosis-markdown :deep(td) {
+  border: 1px solid rgb(203 213 225);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.diagnosis-markdown :deep(th) {
+  color: rgb(30 41 59);
+  font-weight: 700;
+}
+
+.diagnosis-markdown :deep(tbody tr:nth-child(even)) {
+  background-color: rgb(248 250 252);
+}
+
+.diagnosis-markdown :deep(td code),
+.diagnosis-markdown :deep(th code) {
+  white-space: nowrap;
+}
+
+:global(.dark) .diagnosis-markdown :deep(table) {
+  border-color: rgb(51 65 85);
+}
+
+:global(.dark) .diagnosis-markdown :deep(thead) {
+  background-color: rgb(30 41 59);
+}
+
+:global(.dark) .diagnosis-markdown :deep(th),
+:global(.dark) .diagnosis-markdown :deep(td) {
+  border-color: rgb(51 65 85);
+}
+
+:global(.dark) .diagnosis-markdown :deep(th) {
+  color: rgb(226 232 240);
+}
+
+:global(.dark) .diagnosis-markdown :deep(tbody tr:nth-child(even)) {
+  background-color: rgb(15 23 42);
+}
+</style>
