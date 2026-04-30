@@ -1,0 +1,19 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import RunningPods from '~/components/vue/RunningPods.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Pod Diagnosis',
+};
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper
+    containerClass="py-2 md:py-4 lg:py-6"
+    title="Pod Diagnosis"
+    description="View pods in your namespaces and launch AI diagnosis for a specific pod."
+  >
+    <RunningPods client:only="vue" />
+  </WidgetWrapper>
+</Layout>

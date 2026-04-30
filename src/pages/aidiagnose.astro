@@ -1,0 +1,19 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import AIDiagnose from '~/components/vue/AIDiagnose.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'AI Diagnose',
+};
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper
+    containerClass="py-2 md:py-4 lg:py-6"
+    title="AI Diagnose"
+    description="Run AI diagnostics for a pod and stream live events from the backend."
+  >
+    <AIDiagnose client:only="vue" />
+  </WidgetWrapper>
+</Layout>
