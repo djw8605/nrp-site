@@ -17,7 +17,7 @@
             id="pod-search"
             v-model="searchQuery"
             type="text"
-            placeholder="Search pod, namespace, container, node, phase..."
+            placeholder="Search pod, namespace, node, phase..."
             class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900"
             :disabled="isLoadingNamespaces || isLoadingPods"
           />
@@ -86,7 +86,9 @@
       class="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800"
     >
       <DataTable
+        v-model:expandedRows="expandedRows"
         :value="filteredPods"
+        dataKey="key"
         paginator
         :rows="rowsPerPage"
         :first="firstRow"
@@ -95,6 +97,17 @@
         removableSort
         @page="onPage"
       >
+        <Column header="Diagnose" frozen>
+          <template #body="slotProps">
+            <button
+              class="btn-primary whitespace-nowrap px-3 py-1 text-xs"
+              :disabled="isDiagnosing"
+              @click="startDiagnose(slotProps.data)"
+            >
+              {{ diagnoseButtonLabel(slotProps.data) }}
+            </button>
+          </template>
+        </Column>
         <Column field="podName" header="Pod" sortable></Column>
         <Column field="namespace" header="Namespace" sortable></Column>
         <Column field="phase" header="Phase" sortable>
@@ -109,61 +122,113 @@
         </Column>
         <Column field="ready" header="Ready" sortable></Column>
         <Column field="restarts" header="Restarts" sortable></Column>
-        <Column field="cpu" header="CPU" sortable></Column>
-        <Column field="memory" header="Memory" sortable></Column>
         <Column field="node" header="Node" sortable></Column>
         <Column field="age" header="Age" sortable></Column>
-        <Column header="Container">
-          <template #body="slotProps">
-            <select
-              v-if="slotProps.data.containers.length > 0"
-              v-model="selectedContainerByPod[slotProps.data.key]"
-              class="w-44 rounded-md border border-slate-300 px-2 py-1 text-xs dark:border-slate-600 dark:bg-slate-900"
-            >
-              <option value="">All containers</option>
-              <option
-                v-for="container in slotProps.data.containers"
-                :key="`${slotProps.data.key}/${container}`"
-                :value="container"
-              >
-                {{ container }}
-              </option>
-            </select>
-            <span v-else class="text-xs text-slate-500 dark:text-slate-400">-</span>
-          </template>
-        </Column>
-        <Column header="Action">
-          <template #body="slotProps">
-            <button class="btn-primary px-3 py-1 text-xs" @click="openDiagnose(slotProps.data)">
-              AI Diagnose
-            </button>
-          </template>
-        </Column>
+
+        <template #expansion="slotProps">
+          <div class="h-96 overflow-hidden border-y border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950">
+            <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-semibold">
+                  AI Diagnosis: {{ slotProps.data.namespace }}/{{ slotProps.data.podName }}
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  Live query, tool activity, and final diagnosis
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="rounded px-2 py-1 text-xs font-semibold"
+                  :class="diagnoseStatusClass"
+                >
+                  {{ diagnoseStatusLabel }}
+                </span>
+                <button
+                  class="rounded-md border border-slate-300 px-2 py-1 text-xs dark:border-slate-600"
+                  type="button"
+                  @click="closeInlineDiagnosis"
+                >
+                  {{ isDiagnosing ? 'Stop' : 'Close' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="grid h-[18.5rem] grid-cols-1 gap-3 lg:grid-cols-[18rem_1fr]">
+              <div class="overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+                <div class="border-b border-slate-200 px-3 py-2 text-xs font-semibold dark:border-slate-700">
+                  Diagnostic Activity
+                </div>
+                <div ref="timelineScrollEl" class="h-[16rem] overflow-y-auto p-3">
+                  <div v-if="timelineEvents.length === 0" class="text-xs text-slate-600 dark:text-slate-300">
+                    Waiting for diagnostic activity.
+                  </div>
+                  <ol v-else class="space-y-3">
+                    <li
+                      v-for="event in timelineEvents"
+                      :key="event.localId"
+                      class="flex gap-2 text-xs"
+                    >
+                      <span class="mt-0.5" :class="eventTypeClass(event.type)">
+                        <i :class="eventTypeIcon(event.type)"></i>
+                      </span>
+                      <span>
+                        <span class="block font-medium" :class="eventTypeClass(event.type)">
+                          {{ event.message }}
+                        </span>
+                        <span class="block text-[11px] text-slate-500 dark:text-slate-400">
+                          {{ event.timestamp }}
+                        </span>
+                      </span>
+                    </li>
+                  </ol>
+
+                  <div v-if="isThinking" class="mt-3 flex items-center gap-2 text-xs text-blue-700 dark:text-blue-300">
+                    <i class="pi pi-spin pi-spinner"></i>
+                    <span>AI is thinking...</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+                <div class="flex items-center justify-between border-b border-slate-200 px-3 py-2 dark:border-slate-700">
+                  <span class="text-xs font-semibold">Diagnosis</span>
+                  <span v-if="streamError" class="text-xs text-red-700 dark:text-red-300">{{ streamError }}</span>
+                  <span v-else-if="doneMessage" class="text-xs text-green-700 dark:text-green-300">{{ doneMessage }}</span>
+                </div>
+                <div
+                  ref="markdownScrollEl"
+                  class="h-[16rem] overflow-y-auto p-3"
+                  @scroll="onMarkdownScroll"
+                >
+                  <div v-if="markdownBody.length === 0" class="text-xs text-slate-600 dark:text-slate-300">
+                    The diagnosis will stream here as the AI reaches its conclusion.
+                  </div>
+                  <div
+                    v-else
+                    class="prose prose-sm max-w-none dark:prose-invert prose-pre:text-xs prose-code:text-xs"
+                    v-html="renderedMarkdown"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </DataTable>
     </div>
-
-    <PodAIDiagnosePanel
-      v-if="isDiagnosePanelOpen"
-      :visible="isDiagnosePanelOpen"
-      :namespace="diagnoseNamespace"
-      :pod-name="diagnosePodName"
-      :container="diagnoseContainer"
-      @close="closeDiagnosePanel"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from '@nanostores/vue';
 import { RequestManager, HTTPTransport, Client } from '@open-rpc/client-js';
 import { VueSpinnerPie } from 'vue3-spinners';
+import { marked } from 'marked';
 
 import Toast from 'primevue/toast';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { useToast } from 'primevue/usetoast';
-import PodAIDiagnosePanel from './PodAIDiagnosePanel.vue';
 
 import { userStore } from '../../auth.ts';
 
@@ -175,17 +240,23 @@ interface PodRow {
   phase: string;
   ready: string;
   restarts: number;
-  cpu: string;
-  memory: string;
   node: string;
   age: string;
-  containers: string[];
 }
 
 interface NamespaceOption {
   label: string;
   apiName: string;
 }
+
+interface StreamEventRow {
+  localId: string;
+  timestamp: string;
+  type: string;
+  message: string;
+}
+
+type DiagnoseState = 'idle' | 'connecting' | 'streaming' | 'completed' | 'failed';
 
 const ALL_NAMESPACES = '__all__';
 
@@ -199,11 +270,27 @@ const showRunningOnly = ref(false);
 const searchQuery = ref('');
 const rowsPerPage = ref(25);
 const firstRow = ref(0);
-const selectedContainerByPod = ref<Record<string, string>>({});
-const isDiagnosePanelOpen = ref(false);
-const diagnoseNamespace = ref('');
-const diagnosePodName = ref('');
-const diagnoseContainer = ref('');
+const expandedRows = ref<Record<string, boolean>>({});
+
+const activeDiagnosePodKey = ref('');
+const activeDiagnoseNamespace = ref('');
+const activeDiagnosePodName = ref('');
+const diagnoseState = ref<DiagnoseState>('idle');
+const timelineEvents = ref<StreamEventRow[]>([]);
+const markdownBody = ref('');
+const doneMessage = ref('');
+const streamError = ref('');
+const eventSource = ref<EventSource | null>(null);
+const markdownScrollEl = ref<HTMLElement | null>(null);
+const timelineScrollEl = ref<HTMLElement | null>(null);
+const isMarkdownPinnedToBottom = ref(true);
+const lastTokenAtMs = ref(0);
+const lastStatusAtMs = ref(0);
+const lastToolCallAtMs = ref(0);
+const nowMs = ref(Date.now());
+let localEventCounter = 0;
+let activeTokenEventId: string | null = null;
+let thinkingTimer: ReturnType<typeof setInterval> | null = null;
 
 const isLoadingNamespaces = ref(false);
 const isLoadingPods = ref(false);
@@ -219,6 +306,19 @@ const transport = new HTTPTransport(rpcUrl, {
   credentials: 'include',
 });
 const client = new Client(new RequestManager([transport]));
+
+const TOOL_ACTIVITY_LABELS: Record<string, string> = {
+  get_pod_logs: 'Reading current pod logs',
+  get_previous_container_logs: 'Checking previous container logs',
+  describe_pod: 'Inspecting pod status and events',
+  get_pod_yaml: 'Reviewing the pod spec',
+  get_namespace_events: 'Looking at recent namespace events',
+  get_namespace_resource_quotas: 'Checking namespace quotas',
+  get_pvc_status: 'Checking attached storage',
+  get_node_conditions: 'Checking node health',
+  get_node_events: 'Reviewing node events',
+  get_nodes_capacity: 'Comparing pending pod requests with cluster capacity',
+};
 
 const podsInScope = computed(() => {
   if (selectedNamespaceFilter.value === ALL_NAMESPACES) {
@@ -244,11 +344,8 @@ const filteredPods = computed(() => {
       pod.phase,
       pod.ready,
       String(pod.restarts),
-      pod.cpu,
-      pod.memory,
       pod.node,
       pod.age,
-      pod.containers.join(' '),
       pod.isRunning ? 'yes running' : 'no not running',
     ]
       .join(' ')
@@ -261,6 +358,41 @@ const pendingPodCount = computed(() => {
   return podsInScope.value.filter((pod) => pod.phase.toLowerCase() === 'pending').length;
 });
 
+const isDiagnosing = computed(() => {
+  return diagnoseState.value === 'connecting' || diagnoseState.value === 'streaming';
+});
+
+const isReceivingTokens = computed(() => {
+  return nowMs.value - lastTokenAtMs.value <= 800;
+});
+
+const hasActiveStatusOrTool = computed(() => {
+  return nowMs.value - lastStatusAtMs.value <= 1200 || nowMs.value - lastToolCallAtMs.value <= 1200;
+});
+
+const isThinking = computed(() => {
+  return isDiagnosing.value && !isReceivingTokens.value && !hasActiveStatusOrTool.value;
+});
+
+const diagnoseStatusLabel = computed(() => {
+  if (diagnoseState.value === 'connecting') return 'Connecting';
+  if (diagnoseState.value === 'streaming') return 'Diagnosing';
+  if (diagnoseState.value === 'completed') return 'Done';
+  if (diagnoseState.value === 'failed') return 'Failed';
+  return 'Ready';
+});
+
+const diagnoseStatusClass = computed(() => {
+  if (isDiagnosing.value) return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
+  if (diagnoseState.value === 'completed') return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200';
+  if (diagnoseState.value === 'failed') return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200';
+  return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200';
+});
+
+const renderedMarkdown = computed(() => {
+  return renderMarkdown(markdownBody.value);
+});
+
 const phaseClass = (phase: string): string => {
   const normalizedPhase = phase.toLowerCase();
   if (normalizedPhase === 'running') return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200';
@@ -268,6 +400,32 @@ const phaseClass = (phase: string): string => {
   if (normalizedPhase === 'failed') return 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200';
   if (normalizedPhase === 'succeeded') return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200';
   return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200';
+};
+
+const eventTypeIcon = (eventType: string): string => {
+  if (eventType === 'status') return 'pi pi-spin pi-spinner';
+  if (eventType === 'tool_call') return 'pi pi-search';
+  if (eventType === 'token') return 'pi pi-file-edit';
+  if (eventType === 'done') return 'pi pi-check-circle';
+  if (eventType === 'error') return 'pi pi-exclamation-triangle';
+  return 'pi pi-info-circle';
+};
+
+const eventTypeClass = (eventType: string): string => {
+  if (eventType === 'status') return 'text-blue-700 dark:text-blue-300';
+  if (eventType === 'tool_call') return 'text-purple-700 dark:text-purple-300';
+  if (eventType === 'done') return 'text-green-700 dark:text-green-300';
+  if (eventType === 'error') return 'text-red-700 dark:text-red-300';
+  if (eventType === 'token') return 'text-slate-700 dark:text-slate-200';
+  return 'text-slate-700 dark:text-slate-200';
+};
+
+const diagnoseButtonLabel = (pod: PodRow): string => {
+  if (activeDiagnosePodKey.value !== pod.key) return 'AI Diagnose';
+  if (isDiagnosing.value) return 'Diagnosing...';
+  if (diagnoseState.value === 'completed') return 'Diagnose Again';
+  if (diagnoseState.value === 'failed') return 'Retry Diagnosis';
+  return 'AI Diagnose';
 };
 
 const stringOrDash = (value: unknown): string => {
@@ -340,37 +498,6 @@ const deriveAge = (pod: Record<string, any>): string => {
   return `${days}d`;
 };
 
-const deriveContainers = (pod: Record<string, any>): string[] => {
-  const direct = pod.Containers ?? pod.containers;
-  if (Array.isArray(direct)) {
-    return Array.from(new Set(direct.map((item: unknown) => String(item)).filter((name) => name.length > 0)));
-  }
-
-  const fromSpec = pod.Spec?.Containers ?? pod.spec?.containers;
-  if (Array.isArray(fromSpec)) {
-    return Array.from(
-      new Set(
-        fromSpec
-          .map((container: Record<string, any>) => String(container?.Name ?? container?.name ?? ''))
-          .filter((name) => name.length > 0)
-      )
-    );
-  }
-
-  const fromStatus = pod.ContainerStatuses ?? pod.containerStatuses;
-  if (Array.isArray(fromStatus)) {
-    return Array.from(
-      new Set(
-        fromStatus
-          .map((container: Record<string, any>) => String(container?.Name ?? container?.name ?? ''))
-          .filter((name) => name.length > 0)
-      )
-    );
-  }
-
-  return [];
-};
-
 const normalizePods = (response: Record<string, any>, namespaceHint = ''): PodRow[] => {
   const payload = (response?.result as Record<string, any>) ?? response;
   const rawPods = payload?.Pods ?? payload?.pods ?? payload?.Items ?? payload?.items ?? [];
@@ -392,15 +519,241 @@ const normalizePods = (response: Record<string, any>, namespaceHint = ''): PodRo
       phase,
       ready: deriveReady(rawPod),
       restarts: deriveRestarts(rawPod),
-      cpu: stringOrDash(rawPod.CPUUsage ?? rawPod.CPU ?? rawPod.Cpu ?? rawPod.Metrics?.CPU ?? rawPod.metrics?.cpu),
-      memory: stringOrDash(
-        rawPod.MemoryUsage ?? rawPod.Memory ?? rawPod.memory ?? rawPod.Metrics?.Memory ?? rawPod.metrics?.memory
-      ),
       node: stringOrDash(rawPod.Node ?? rawPod.NodeName ?? rawPod.node ?? rawPod.spec?.nodeName),
       age: deriveAge(rawPod),
-      containers: deriveContainers(rawPod),
     };
   });
+};
+
+const renderMarkdown = (source: string): string => {
+  if (!source) return '';
+  const escaped = source
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+  return marked.parse(escaped, { gfm: true, breaks: true, async: false }) as string;
+};
+
+const safeJsonParse = (value: string): unknown => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+};
+
+const compactStatusMessage = (payload: unknown): string => {
+  if (typeof payload === 'string') return payload || 'Checking pod';
+  const payloadObject = (payload ?? {}) as Record<string, any>;
+  if (typeof payloadObject.message === 'string' && payloadObject.message.length > 0) {
+    return payloadObject.message;
+  }
+  if (typeof payloadObject.step === 'string' && payloadObject.step.length > 0) {
+    return payloadObject.step;
+  }
+  return 'Checking pod';
+};
+
+const compactToolMessage = (payload: unknown): string => {
+  if (payload === null || typeof payload !== 'object') return 'Gathering pod context';
+  const toolName = String((payload as Record<string, any>).tool ?? '');
+  return TOOL_ACTIVITY_LABELS[toolName] ?? 'Gathering pod context';
+};
+
+const pushTimelineEvent = (type: string, message: string) => {
+  localEventCounter += 1;
+  const localId = `${localEventCounter}`;
+  timelineEvents.value.push({
+    localId,
+    timestamp: new Date().toLocaleTimeString(),
+    type,
+    message,
+  });
+  void queueAutoScroll();
+  return localId;
+};
+
+const isNearBottom = (el: HTMLElement): boolean => {
+  return el.scrollHeight - el.scrollTop - el.clientHeight <= 40;
+};
+
+const onMarkdownScroll = () => {
+  if (!markdownScrollEl.value) return;
+  isMarkdownPinnedToBottom.value = isNearBottom(markdownScrollEl.value);
+};
+
+const queueAutoScroll = async () => {
+  await nextTick();
+  if (isMarkdownPinnedToBottom.value && markdownScrollEl.value) {
+    markdownScrollEl.value.scrollTop = markdownScrollEl.value.scrollHeight;
+  }
+  if (timelineScrollEl.value) {
+    timelineScrollEl.value.scrollTop = timelineScrollEl.value.scrollHeight;
+  }
+};
+
+const closeStream = () => {
+  if (eventSource.value) {
+    eventSource.value.close();
+    eventSource.value = null;
+  }
+};
+
+const resetDiagnosis = () => {
+  closeStream();
+  timelineEvents.value = [];
+  markdownBody.value = '';
+  doneMessage.value = '';
+  streamError.value = '';
+  diagnoseState.value = 'idle';
+  localEventCounter = 0;
+  activeTokenEventId = null;
+  lastTokenAtMs.value = 0;
+  lastStatusAtMs.value = 0;
+  lastToolCallAtMs.value = 0;
+  isMarkdownPinnedToBottom.value = true;
+};
+
+const buildDiagnoseStreamUrl = (): string => {
+  const endpoint = baseUrl ? `${baseUrl}/api/user/ai/diagnose-pod` : '/api/user/ai/diagnose-pod';
+  const url = endpoint.startsWith('http://') || endpoint.startsWith('https://')
+    ? new URL(endpoint)
+    : new URL(endpoint, window.location.origin);
+
+  url.searchParams.set('namespace', activeDiagnoseNamespace.value);
+  url.searchParams.set('pod', activeDiagnosePodName.value);
+  return url.toString();
+};
+
+const handleSSEEvent = (eventType: string, event: MessageEvent) => {
+  const parsed = safeJsonParse(event.data);
+
+  if (eventType === 'token') {
+    lastTokenAtMs.value = Date.now();
+    const tokenPayload = (parsed ?? {}) as Record<string, any>;
+    const token = typeof tokenPayload.token === 'string' ? tokenPayload.token : '';
+    if (token) {
+      markdownBody.value += token;
+      if (!activeTokenEventId) {
+        activeTokenEventId = pushTimelineEvent('token', 'Writing diagnosis');
+      }
+      void queueAutoScroll();
+    }
+    if (diagnoseState.value === 'connecting') {
+      diagnoseState.value = 'streaming';
+    }
+    return;
+  }
+
+  activeTokenEventId = null;
+
+  if (eventType === 'status') {
+    lastStatusAtMs.value = Date.now();
+    if (diagnoseState.value === 'connecting') {
+      diagnoseState.value = 'streaming';
+    }
+    pushTimelineEvent('status', compactStatusMessage(parsed));
+    return;
+  }
+
+  if (eventType === 'tool_call') {
+    lastToolCallAtMs.value = Date.now();
+    if (diagnoseState.value === 'connecting') {
+      diagnoseState.value = 'streaming';
+    }
+    pushTimelineEvent('tool_call', compactToolMessage(parsed));
+    return;
+  }
+
+  if (eventType === 'done') {
+    diagnoseState.value = 'completed';
+    const payloadObject = (parsed ?? {}) as Record<string, any>;
+    doneMessage.value = String(payloadObject.message ?? 'Diagnosis complete');
+    pushTimelineEvent('done', 'Diagnosis complete');
+    closeStream();
+    return;
+  }
+
+  if (eventType === 'error') {
+    diagnoseState.value = 'failed';
+    const payloadObject = (parsed ?? {}) as Record<string, any>;
+    const code = payloadObject.code ? `[${String(payloadObject.code)}] ` : '';
+    const message = String(payloadObject.error ?? payloadObject.message ?? 'Diagnosis failed');
+    streamError.value = `${code}${message}`;
+    pushTimelineEvent('error', streamError.value);
+    toast.add({
+      severity: 'error',
+      summary: 'AI Diagnose failed',
+      detail: streamError.value,
+      life: 5000,
+    });
+    closeStream();
+  }
+};
+
+const openSSE = (url: string) => {
+  closeStream();
+  diagnoseState.value = 'connecting';
+  pushTimelineEvent('status', `Querying ${activeDiagnoseNamespace.value}/${activeDiagnosePodName.value}`);
+
+  const source = new EventSource(url, { withCredentials: true });
+  eventSource.value = source;
+
+  source.onopen = () => {
+    lastStatusAtMs.value = Date.now();
+    if (diagnoseState.value === 'connecting') {
+      diagnoseState.value = 'streaming';
+    }
+    pushTimelineEvent('status', 'Connected to diagnose stream');
+  };
+
+  source.onmessage = (event) => {
+    const payload = safeJsonParse(event.data);
+    if (typeof payload === 'object' && payload !== null) {
+      const payloadObject = payload as Record<string, any>;
+      if (typeof payloadObject.token === 'string') {
+        handleSSEEvent('token', event);
+        return;
+      }
+    }
+    activeTokenEventId = null;
+    pushTimelineEvent('status', compactStatusMessage(payload));
+  };
+
+  source.addEventListener('status', (event) => handleSSEEvent('status', event as MessageEvent));
+  source.addEventListener('tool_call', (event) => handleSSEEvent('tool_call', event as MessageEvent));
+  source.addEventListener('token', (event) => handleSSEEvent('token', event as MessageEvent));
+  source.addEventListener('done', (event) => handleSSEEvent('done', event as MessageEvent));
+  source.addEventListener('error', (event) => {
+    const typedEvent = event as MessageEvent;
+    if (typeof typedEvent.data === 'string' && typedEvent.data.length > 0) {
+      handleSSEEvent('error', typedEvent);
+    }
+  });
+
+  source.onerror = (event) => {
+    if (diagnoseState.value === 'completed' || diagnoseState.value === 'failed') {
+      return;
+    }
+
+    const typedEvent = event as MessageEvent;
+    if (typeof typedEvent.data === 'string' && typedEvent.data.length > 0) {
+      handleSSEEvent('error', typedEvent);
+      return;
+    }
+
+    diagnoseState.value = 'failed';
+    streamError.value =
+      'SSE stream closed before completion. Verify namespace/pod access and backend diagnose availability.';
+    pushTimelineEvent('error', streamError.value);
+    toast.add({
+      severity: 'error',
+      summary: 'AI Diagnose stream error',
+      detail: streamError.value,
+      life: 5000,
+    });
+    closeStream();
+  };
 };
 
 const loadNamespaces = async () => {
@@ -495,14 +848,10 @@ const loadPods = async () => {
     });
 
     pods.value = mergedPods;
-    const nextSelected: Record<string, string> = {};
-    for (const pod of mergedPods) {
-      const previouslySelected = selectedContainerByPod.value[pod.key];
-      if (previouslySelected && pod.containers.includes(previouslySelected)) {
-        nextSelected[pod.key] = previouslySelected;
-      }
+
+    if (activeDiagnosePodKey.value && !mergedPods.some((pod) => pod.key === activeDiagnosePodKey.value)) {
+      closeInlineDiagnosis();
     }
-    selectedContainerByPod.value = nextSelected;
 
     if (failedNamespaces.length > 0) {
       const isSelectedNamespace = selectedNamespaceFilter.value !== ALL_NAMESPACES;
@@ -542,22 +891,35 @@ const clearFilters = () => {
   void loadPods();
 };
 
-const getSelectedContainer = (pod: PodRow): string => {
-  return selectedContainerByPod.value[pod.key] ?? '';
+const startDiagnose = (pod: PodRow) => {
+  activeDiagnosePodKey.value = pod.key;
+  activeDiagnoseNamespace.value = pod.namespace;
+  activeDiagnosePodName.value = pod.podName;
+  expandedRows.value = { [pod.key]: true };
+  resetDiagnosis();
+
+  try {
+    openSSE(buildDiagnoseStreamUrl());
+  } catch (error: any) {
+    diagnoseState.value = 'failed';
+    streamError.value = error?.message || 'Unable to start AI diagnose';
+    pushTimelineEvent('error', streamError.value);
+    toast.add({
+      severity: 'error',
+      summary: 'Unable to start AI diagnose',
+      detail: streamError.value,
+      life: 4500,
+    });
+  }
 };
 
-const openDiagnose = (pod: PodRow) => {
-  diagnoseNamespace.value = pod.namespace;
-  diagnosePodName.value = pod.podName;
-  diagnoseContainer.value = getSelectedContainer(pod);
-  isDiagnosePanelOpen.value = true;
-};
-
-const closeDiagnosePanel = () => {
-  isDiagnosePanelOpen.value = false;
-  diagnoseNamespace.value = '';
-  diagnosePodName.value = '';
-  diagnoseContainer.value = '';
+const closeInlineDiagnosis = () => {
+  closeStream();
+  expandedRows.value = {};
+  activeDiagnosePodKey.value = '';
+  activeDiagnoseNamespace.value = '';
+  activeDiagnosePodName.value = '';
+  resetDiagnosis();
 };
 
 const onNamespaceFilterChanged = () => {
@@ -580,5 +942,29 @@ onMounted(async () => {
 
 watch([showRunningOnly, searchQuery, selectedNamespaceFilter, rowsPerPage], () => {
   firstRow.value = 0;
+});
+
+watch(isDiagnosing, (diagnosing) => {
+  if (diagnosing) {
+    if (!thinkingTimer) {
+      thinkingTimer = setInterval(() => {
+        nowMs.value = Date.now();
+      }, 200);
+    }
+    return;
+  }
+
+  if (thinkingTimer) {
+    clearInterval(thinkingTimer);
+    thinkingTimer = null;
+  }
+});
+
+onUnmounted(() => {
+  if (thinkingTimer) {
+    clearInterval(thinkingTimer);
+    thinkingTimer = null;
+  }
+  closeStream();
 });
 </script>
