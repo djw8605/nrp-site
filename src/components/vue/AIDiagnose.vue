@@ -151,7 +151,7 @@
               @change="onNamespaceChanged"
             >
               <option value="" disabled>Select namespace</option>
-              <option v-for="ns in namespaces" :key="ns" :value="ns">{{ ns }}</option>
+              <option v-for="ns in namespaces" :key="ns.label" :value="ns.apiName">{{ ns.label }}</option>
             </select>
           </div>
 
@@ -263,6 +263,11 @@ interface PodOption {
   containers: string[];
 }
 
+interface NamespaceOption {
+  label: string;
+  apiName: string;
+}
+
 interface StreamEventRow {
   localId: string;
   timestamp: string;
@@ -276,7 +281,7 @@ type DiagnoseState = 'idle' | 'connecting' | 'streaming' | 'completed' | 'failed
 const user = useStore(userStore);
 const toast = useToast();
 
-const namespaces = ref<string[]>([]);
+const namespaces = ref<NamespaceOption[]>([]);
 const selectedNamespace = ref('');
 const pods = ref<PodOption[]>([]);
 const selectedPod = ref('');
@@ -312,6 +317,11 @@ const transport = new HTTPTransport(rpcUrl, {
   credentials: 'include',
 });
 const client = new Client(new RequestManager([transport]));
+
+const toK8sNamespace = (namespaceName: string): string => {
+  const parts = String(namespaceName).split('/').filter(Boolean);
+  return parts.length > 0 ? parts[parts.length - 1] : String(namespaceName);
+};
 
 const isDiagnosing = computed(() => {
   return diagnoseState.value === 'connecting' || diagnoseState.value === 'streaming';
@@ -738,15 +748,15 @@ const deriveContainers = (pod: Record<string, any>): string[] => {
   return [];
 };
 
-const normalizePods = (response: Record<string, any>): PodOption[] => {
+const normalizePods = (response: Record<string, any>, namespaceHint = ''): PodOption[] => {
   const payload = (response?.result as Record<string, any>) ?? response;
   const rawPods = payload?.Pods ?? payload?.pods ?? payload?.Items ?? payload?.items ?? [];
   if (!Array.isArray(rawPods)) return [];
 
   return rawPods.map((rawPod: Record<string, any>, index: number) => {
     const podName = String(rawPod.PodName ?? rawPod.Name ?? rawPod.podName ?? rawPod.metadata?.name ?? `pod-${index}`);
-    const namespace = String(
-      rawPod.Namespace ?? rawPod.namespace ?? rawPod.metadata?.namespace ?? selectedNamespace.value ?? ''
+    const namespace = toK8sNamespace(
+      String(rawPod.Namespace ?? rawPod.namespace ?? rawPod.metadata?.namespace ?? namespaceHint ?? '')
     );
     const phase = String(rawPod.Phase ?? rawPod.phase ?? rawPod.Status?.Phase ?? rawPod.status?.phase ?? '-');
     return {
@@ -774,10 +784,23 @@ const loadNamespaces = async () => {
     const raw = Array.isArray(payload.Namespaces) ? payload.Namespaces : [];
     namespaces.value = raw
       .filter((ns: Record<string, any>) => (ns.IsMember ?? true) && (ns.IsK8sNamespace ?? true))
-      .map((ns: Record<string, any>) => String(ns.Name));
+      .map((ns: Record<string, any>) => {
+        const label = String(ns.Name);
+        return {
+          label,
+          apiName: toK8sNamespace(label),
+        };
+      });
+
+    if (
+      selectedNamespace.value &&
+      !namespaces.value.some((namespace) => namespace.apiName === selectedNamespace.value)
+    ) {
+      selectedNamespace.value = '';
+    }
 
     if (!selectedNamespace.value && namespaces.value.length > 0) {
-      selectedNamespace.value = namespaces.value[0];
+      selectedNamespace.value = namespaces.value[0].apiName;
     }
   } catch (error: any) {
     toast.add({
@@ -812,7 +835,7 @@ const loadPods = async () => {
       throw new Error(response.error.message || 'Failed to load pods');
     }
 
-    pods.value = normalizePods(response);
+    pods.value = normalizePods(response, selectedNamespace.value);
 
     if (!pods.value.some((pod) => pod.podName === selectedPod.value)) {
       selectedPod.value = pods.value.length > 0 ? pods.value[0].podName : '';
@@ -907,7 +930,7 @@ onMounted(async () => {
   const podFromQuery = query.get('pod');
   const containerFromQuery = query.get('container');
 
-  if (namespaceFromQuery) selectedNamespace.value = namespaceFromQuery;
+  if (namespaceFromQuery) selectedNamespace.value = toK8sNamespace(namespaceFromQuery);
   if (podFromQuery) selectedPod.value = podFromQuery;
   if (containerFromQuery) selectedContainer.value = containerFromQuery;
 
