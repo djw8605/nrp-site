@@ -3,13 +3,17 @@ import type { HTMLTag } from 'astro/types';
 import type { Widget } from '~/types';
 import { twMerge } from 'tailwind-merge';
 import Background from './Background.astro';
+import Headline from './Headline.astro';
 
 export interface Props extends Widget {
   containerClass?: string;
+  title?: string;
+  description?: string;
+  tagline?: string;
   ['as']?: HTMLTag;
 }
 
-const { id, isDark = false, containerClass = '', bg, as = 'section' } = Astro.props;
+const { id, isDark = false, containerClass = '', title, description, tagline, bg, as = 'section' } = Astro.props;
 
 const WrapperTag = as;
 ---
@@ -29,6 +33,9 @@ const WrapperTag = as;
       { dark: isDark },
     ]}
   >
+    {(title || description || tagline) && (
+      <Headline title={title} subtitle={description} tagline={tagline} classes={{ container: 'max-w-4xl' }} />
+    )}
     <slot />
   </div>
 </WrapperTag>

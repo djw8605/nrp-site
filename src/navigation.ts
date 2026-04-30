@@ -130,6 +130,10 @@ export const headerData = {
           href: getPermalink('/namespaces'),
         },
         {
+          text: 'Pod Diagnosis',
+          href: getPermalink('/runningpods'),
+        },
+        {
           text: 'Resources',
           href: getPermalink('/viz/resources'),
         },
