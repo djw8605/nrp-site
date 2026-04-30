@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Steps from '~/components/widgets/Steps.astro';
+import Features2 from '~/components/widgets/Features2.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
@@ -171,6 +172,51 @@ const featuredClients = [
       </Button>
     </div>
   </WidgetWrapper>
+
+  <Features2
+    title="How LLMs are being used on the NRP"
+    subtitle="Researchers, educators, and NRP operators are using hosted LLMs to analyze documents, build software, diagnose workloads, and understand platform usage."
+    items={[
+      {
+        title: 'Diagnosing failed nodes',
+        description:
+          'NRP infrastructure is connected to LLM-based tooling so operators can query and diagnose failing nodes using cluster context.',
+        icon: 'tabler:server-bolt',
+      },
+      {
+        title: 'Diagnosing user pods',
+        description:
+          'Users can diagnose problematic pods by inspecting logs, events, and related pod details through NRP-assisted workflows.',
+        icon: 'tabler:container',
+        callToAction: {
+          text: 'Diagnose running pods',
+          href: 'https://nrp.ai/runningpods/',
+        },
+      },
+      {
+        title: 'Document understanding and sentiment',
+        description:
+          'Researchers can parse and summarize large document collections, then extract signals such as sentiment from sources like securities filings.',
+        icon: 'tabler:file-analytics',
+      },
+      {
+        title: 'Agentic coding for classrooms and research groups',
+        description:
+          'Classrooms and research groups can use coding agents with NRP-hosted models to develop, review, and iterate on software projects.',
+        icon: 'tabler:school',
+      },
+      {
+        title: 'Building MCP servers for accounting insights',
+        description:
+          'NRP develops MCP servers that plug into the NRP accounting system to help teams understand platform usage and surface operational insights.',
+        icon: 'tabler:database-search',
+        callToAction: {
+          text: 'View NRP accounting',
+          href: 'https://grafana.nrp-nautilus.io/d/nrp-user-explorer/nrp-accounting',
+        },
+      },
+    ]}
+  />
 
   <style is:global>
     img[alt="Open WebUI chat running on the NRP"] {
