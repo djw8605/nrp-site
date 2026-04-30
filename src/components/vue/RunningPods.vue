@@ -30,9 +30,10 @@
             v-model="selectedNamespaceFilter"
             class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900"
             :disabled="isLoadingNamespaces || isLoadingPods"
+            @change="onNamespaceFilterChanged"
           >
             <option :value="ALL_NAMESPACES">All namespaces</option>
-            <option v-for="ns in namespaces" :key="ns" :value="ns">{{ ns }}</option>
+            <option v-for="ns in namespaces" :key="ns.label" :value="ns.apiName">{{ ns.label }}</option>
           </select>
         </div>
       </div>
@@ -142,6 +143,7 @@
     </div>
 
     <PodAIDiagnosePanel
+      v-if="isDiagnosePanelOpen"
       :visible="isDiagnosePanelOpen"
       :namespace="diagnoseNamespace"
       :pod-name="diagnosePodName"
@@ -180,12 +182,17 @@ interface PodRow {
   containers: string[];
 }
 
+interface NamespaceOption {
+  label: string;
+  apiName: string;
+}
+
 const ALL_NAMESPACES = '__all__';
 
 const user = useStore(userStore);
 const toast = useToast();
 
-const namespaces = ref<string[]>([]);
+const namespaces = ref<NamespaceOption[]>([]);
 const selectedNamespaceFilter = ref<string>(ALL_NAMESPACES);
 const pods = ref<PodRow[]>([]);
 const showRunningOnly = ref(false);
@@ -200,6 +207,11 @@ const diagnoseContainer = ref('');
 
 const isLoadingNamespaces = ref(false);
 const isLoadingPods = ref(false);
+
+const toK8sNamespace = (namespaceName: string): string => {
+  const parts = String(namespaceName).split('/').filter(Boolean);
+  return parts.length > 0 ? parts[parts.length - 1] : String(namespaceName);
+};
 
 const baseUrl = String(import.meta.env.PUBLIC_SVC_URL ?? '').trim().replace(/\/$/, '');
 const rpcUrl = baseUrl ? `${baseUrl}/rpc` : '/rpc';
@@ -366,8 +378,8 @@ const normalizePods = (response: Record<string, any>, namespaceHint = ''): PodRo
 
   return rawPods.map((rawPod: Record<string, any>, index: number) => {
     const podName = String(rawPod.PodName ?? rawPod.Name ?? rawPod.podName ?? rawPod.metadata?.name ?? `pod-${index}`);
-    const namespace = String(
-      rawPod.Namespace ?? rawPod.namespace ?? rawPod.metadata?.namespace ?? namespaceHint ?? ''
+    const namespace = toK8sNamespace(
+      String(rawPod.Namespace ?? rawPod.namespace ?? rawPod.metadata?.namespace ?? namespaceHint ?? '')
     );
     const phase = String(rawPod.Phase ?? rawPod.phase ?? rawPod.Status?.Phase ?? rawPod.status?.phase ?? '-');
     const running = rawPod.Running !== undefined ? boolFromValue(rawPod.Running) : phase.toLowerCase() === 'running';
@@ -406,10 +418,19 @@ const loadNamespaces = async () => {
     const raw = Array.isArray(payload.Namespaces) ? payload.Namespaces : [];
     const userNamespaces = raw
       .filter((ns: Record<string, any>) => (ns.IsMember ?? true) && (ns.IsK8sNamespace ?? true))
-      .map((ns: Record<string, any>) => String(ns.Name));
+      .map((ns: Record<string, any>) => {
+        const label = String(ns.Name);
+        return {
+          label,
+          apiName: toK8sNamespace(label),
+        };
+      });
 
     namespaces.value = userNamespaces;
-    if (selectedNamespaceFilter.value !== ALL_NAMESPACES && !namespaces.value.includes(selectedNamespaceFilter.value)) {
+    if (
+      selectedNamespaceFilter.value !== ALL_NAMESPACES &&
+      !namespaces.value.some((namespace) => namespace.apiName === selectedNamespaceFilter.value)
+    ) {
       selectedNamespaceFilter.value = ALL_NAMESPACES;
     }
   } catch (error: any) {
@@ -425,18 +446,23 @@ const loadNamespaces = async () => {
 };
 
 const loadPods = async () => {
-  if (namespaces.value.length === 0) {
+  const namespacesToQuery =
+    selectedNamespaceFilter.value === ALL_NAMESPACES
+      ? namespaces.value
+      : namespaces.value.filter((namespace) => namespace.apiName === selectedNamespaceFilter.value);
+
+  if (namespacesToQuery.length === 0) {
     pods.value = [];
     return;
   }
 
   isLoadingPods.value = true;
   try {
-    const requests = namespaces.value.map((namespace) =>
+    const requests = namespacesToQuery.map((namespace) =>
       client.request({
         method: 'user.ListNamespacePods',
         params: {
-          Namespace: namespace,
+          Namespace: namespace.apiName,
         },
       })
     );
@@ -447,20 +473,20 @@ const loadPods = async () => {
 
     for (let idx = 0; idx < results.length; idx += 1) {
       const result = results[idx];
-      const namespace = namespaces.value[idx];
+      const namespace = namespacesToQuery[idx];
 
       if (result.status === 'rejected') {
-        failedNamespaces.push(namespace);
+        failedNamespaces.push(namespace.label);
         continue;
       }
 
       const response = result.value as Record<string, any>;
       if (response.error) {
-        failedNamespaces.push(namespace);
+        failedNamespaces.push(namespace.label);
         continue;
       }
 
-      mergedPods.push(...normalizePods(response, namespace));
+      mergedPods.push(...normalizePods(response, namespace.apiName));
     }
 
     mergedPods.sort((a, b) => {
@@ -479,10 +505,13 @@ const loadPods = async () => {
     selectedContainerByPod.value = nextSelected;
 
     if (failedNamespaces.length > 0) {
+      const isSelectedNamespace = selectedNamespaceFilter.value !== ALL_NAMESPACES;
       toast.add({
-        severity: 'warn',
-        summary: 'Partial pod list',
-        detail: `Failed to load pods for ${failedNamespaces.length} namespace(s).`,
+        severity: isSelectedNamespace ? 'error' : 'warn',
+        summary: isSelectedNamespace ? 'Unable to load selected namespace' : 'Partial pod list',
+        detail: isSelectedNamespace
+          ? `Failed to load pods for ${failedNamespaces[0]}.`
+          : `Failed to load pods for ${failedNamespaces.length} namespace(s).`,
         life: 5000,
       });
     }
@@ -510,6 +539,7 @@ const clearFilters = () => {
   showRunningOnly.value = false;
   rowsPerPage.value = 25;
   firstRow.value = 0;
+  void loadPods();
 };
 
 const getSelectedContainer = (pod: PodRow): string => {
@@ -525,6 +555,14 @@ const openDiagnose = (pod: PodRow) => {
 
 const closeDiagnosePanel = () => {
   isDiagnosePanelOpen.value = false;
+  diagnoseNamespace.value = '';
+  diagnosePodName.value = '';
+  diagnoseContainer.value = '';
+};
+
+const onNamespaceFilterChanged = () => {
+  firstRow.value = 0;
+  void loadPods();
 };
 
 onMounted(async () => {
@@ -533,7 +571,7 @@ onMounted(async () => {
   const query = new URLSearchParams(window.location.search);
   const namespaceFromQuery = query.get('namespace');
   if (namespaceFromQuery && namespaceFromQuery.trim().length > 0) {
-    selectedNamespaceFilter.value = namespaceFromQuery;
+    selectedNamespaceFilter.value = toK8sNamespace(namespaceFromQuery);
   }
 
   await loadNamespaces();
