@@ -211,10 +211,7 @@
                   </div>
                 </div>
                 <div
-                  ref="markdownScrollEl"
                   class="diagnosis-scroll h-[16rem] overflow-auto p-3"
-                  @scroll="onMarkdownScroll"
-                  @wheel.passive="onMarkdownWheel"
                 >
                   <div v-if="markdownBody.length === 0" class="text-xs text-slate-600 dark:text-slate-300">
                     The diagnosis will stream here as the AI reaches its conclusion.
@@ -298,9 +295,7 @@ const markdownBody = ref('');
 const doneMessage = ref('');
 const streamError = ref('');
 const eventSource = ref<EventSource | null>(null);
-const markdownScrollEl = ref<HTMLElement | null>(null);
 const timelineScrollEl = ref<HTMLElement | null>(null);
-const isMarkdownPinnedToBottom = ref(true);
 const lastTokenAtMs = ref(0);
 const lastStatusAtMs = ref(0);
 const lastToolCallAtMs = ref(0);
@@ -596,23 +591,8 @@ const pushTimelineEvent = (type: string, message: string) => {
     type,
     message,
   });
-  void queueAutoScroll();
+  void queueTimelineAutoScroll();
   return localId;
-};
-
-const isNearBottom = (el: HTMLElement): boolean => {
-  return el.scrollHeight - el.scrollTop - el.clientHeight <= 40;
-};
-
-const onMarkdownScroll = () => {
-  if (!markdownScrollEl.value) return;
-  isMarkdownPinnedToBottom.value = isNearBottom(markdownScrollEl.value);
-};
-
-const onMarkdownWheel = (event: WheelEvent) => {
-  if (event.deltaY < 0) {
-    isMarkdownPinnedToBottom.value = false;
-  }
 };
 
 const copyWithFallback = (text: string): boolean => {
@@ -658,11 +638,8 @@ const copyDiagnosis = async () => {
   }
 };
 
-const queueAutoScroll = async () => {
+const queueTimelineAutoScroll = async () => {
   await nextTick();
-  if (isMarkdownPinnedToBottom.value && markdownScrollEl.value) {
-    markdownScrollEl.value.scrollTop = markdownScrollEl.value.scrollHeight;
-  }
   if (timelineScrollEl.value) {
     timelineScrollEl.value.scrollTop = timelineScrollEl.value.scrollHeight;
   }
@@ -687,7 +664,6 @@ const resetDiagnosis = () => {
   lastTokenAtMs.value = 0;
   lastStatusAtMs.value = 0;
   lastToolCallAtMs.value = 0;
-  isMarkdownPinnedToBottom.value = true;
 };
 
 const buildDiagnoseStreamUrl = (): string => {
@@ -713,7 +689,6 @@ const handleSSEEvent = (eventType: string, event: MessageEvent) => {
       if (!activeTokenEventId) {
         activeTokenEventId = pushTimelineEvent('token', 'Writing diagnosis');
       }
-      void queueAutoScroll();
     }
     if (diagnoseState.value === 'connecting') {
       diagnoseState.value = 'streaming';
@@ -1052,13 +1027,150 @@ onUnmounted(() => {
 
 .diagnosis-markdown {
   overflow-anchor: none;
+  color: rgb(51 65 85);
+  font-size: 0.925rem;
+  line-height: 1.65;
+}
+
+.diagnosis-markdown :deep(*) {
+  overflow-wrap: anywhere;
+}
+
+.diagnosis-markdown :deep(h1),
+.diagnosis-markdown :deep(h2),
+.diagnosis-markdown :deep(h3),
+.diagnosis-markdown :deep(h4) {
+  color: rgb(15 23 42);
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.diagnosis-markdown :deep(h1) {
+  margin: 0 0 0.875rem;
+  font-size: 1.625rem;
+  line-height: 2rem;
+}
+
+.diagnosis-markdown :deep(h2) {
+  margin: 0 0 0.75rem;
+  font-size: 1.375rem;
+  line-height: 1.85rem;
+}
+
+.diagnosis-markdown :deep(h3) {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.55rem;
+}
+
+.diagnosis-markdown :deep(h4) {
+  margin: 1rem 0 0.375rem;
+  font-size: 1rem;
+  line-height: 1.45rem;
+}
+
+.diagnosis-markdown :deep(h1:first-child),
+.diagnosis-markdown :deep(h2:first-child),
+.diagnosis-markdown :deep(h3:first-child),
+.diagnosis-markdown :deep(h4:first-child) {
+  margin-top: 0;
+}
+
+.diagnosis-markdown :deep(p) {
+  margin: 0.625rem 0;
+}
+
+.diagnosis-markdown :deep(strong) {
+  color: rgb(15 23 42);
+  font-weight: 700;
+}
+
+.diagnosis-markdown :deep(a) {
+  color: rgb(37 99 235);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.diagnosis-markdown :deep(ul),
+.diagnosis-markdown :deep(ol) {
+  margin: 0.625rem 0 0.875rem;
+  padding-left: 1.35rem;
+}
+
+.diagnosis-markdown :deep(ul) {
+  list-style: disc;
+}
+
+.diagnosis-markdown :deep(ol) {
+  list-style: decimal;
+}
+
+.diagnosis-markdown :deep(li) {
+  margin: 0.4rem 0;
+  padding-left: 0.15rem;
+}
+
+.diagnosis-markdown :deep(li > p) {
+  margin: 0.35rem 0;
+}
+
+.diagnosis-markdown :deep(blockquote) {
+  margin: 0.875rem 0;
+  border-left: 3px solid rgb(147 197 253);
+  border-radius: 0 0.375rem 0.375rem 0;
+  background-color: rgb(239 246 255);
+  padding: 0.65rem 0.85rem;
+  color: rgb(30 58 138);
+}
+
+.diagnosis-markdown :deep(hr) {
+  margin: 1.25rem 0;
+  border: 0;
+  border-top: 1px solid rgb(226 232 240);
+}
+
+.diagnosis-markdown :deep(:not(pre) > code) {
+  border: 1px solid rgb(226 232 240);
+  border-radius: 0.35rem;
+  background-color: rgb(248 250 252);
+  padding: 0.1rem 0.3rem;
+  color: rgb(51 65 85);
+  font-size: 0.84em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.diagnosis-markdown :deep(pre) {
+  margin: 0.75rem 0 1rem;
+  overflow-x: auto;
+  border: 1px solid rgb(30 41 59);
+  border-radius: 0.55rem;
+  background-color: rgb(15 23 42);
+  padding: 0.875rem 1rem;
+  color: rgb(226 232 240);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+
+.diagnosis-markdown :deep(pre code) {
+  display: block;
+  min-width: max-content;
+  background: transparent;
+  color: inherit;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: pre;
 }
 
 .diagnosis-markdown :deep(table) {
   display: table;
   width: 100%;
   min-width: 32rem;
-  margin: 0.75rem 0 1rem;
+  margin: 0.875rem 0 1.125rem;
   border-collapse: collapse;
   overflow: hidden;
   border: 1px solid rgb(203 213 225);
@@ -1095,6 +1207,44 @@ onUnmounted(() => {
 
 :global(.dark) .diagnosis-markdown :deep(table) {
   border-color: rgb(51 65 85);
+}
+
+:global(.dark) .diagnosis-markdown {
+  color: rgb(203 213 225);
+}
+
+:global(.dark) .diagnosis-markdown :deep(h1),
+:global(.dark) .diagnosis-markdown :deep(h2),
+:global(.dark) .diagnosis-markdown :deep(h3),
+:global(.dark) .diagnosis-markdown :deep(h4),
+:global(.dark) .diagnosis-markdown :deep(strong) {
+  color: rgb(248 250 252);
+}
+
+:global(.dark) .diagnosis-markdown :deep(a) {
+  color: rgb(147 197 253);
+}
+
+:global(.dark) .diagnosis-markdown :deep(blockquote) {
+  border-left-color: rgb(59 130 246);
+  background-color: rgb(30 41 59 / 0.8);
+  color: rgb(191 219 254);
+}
+
+:global(.dark) .diagnosis-markdown :deep(hr) {
+  border-top-color: rgb(51 65 85);
+}
+
+:global(.dark) .diagnosis-markdown :deep(:not(pre) > code) {
+  border-color: rgb(51 65 85);
+  background-color: rgb(15 23 42);
+  color: rgb(226 232 240);
+}
+
+:global(.dark) .diagnosis-markdown :deep(pre) {
+  border-color: rgb(51 65 85);
+  background-color: rgb(2 6 23);
+  color: rgb(226 232 240);
 }
 
 :global(.dark) .diagnosis-markdown :deep(thead) {
