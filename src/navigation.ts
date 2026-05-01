@@ -131,7 +131,7 @@ export const headerData = {
         },
         {
           text: 'Pod Diagnosis',
-          href: getPermalink('/runningpods'),
+          href: getPermalink('/diagnose'),
         },
         {
           text: 'Resources',
