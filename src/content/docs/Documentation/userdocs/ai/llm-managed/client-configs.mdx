@@ -45,13 +45,15 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
           },
           "options": {
             "chat_template_kwargs": {
-              "thinking": true
+              "thinking": true,
+              "preserve_thinking": true
             }
           },
           "variants": {
             "instruct": {
               "chat_template_kwargs": {
-                "thinking": false
+                "thinking": false,
+                "preserve_thinking": false
               }
             }
           }
@@ -94,6 +96,7 @@ Contents of `~/.pi/agent/models.json`:
           "contextWindow": 262144,
           "reasoning": true,
           "compat": {
+            "thinkingFormat": "qwen-chat-template",
             "supportsDeveloperRole": false
           }
         }
