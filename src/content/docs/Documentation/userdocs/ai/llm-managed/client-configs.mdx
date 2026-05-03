@@ -19,13 +19,13 @@ Run `curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/mod
 
 [anomalyco/opencode](https://github.com/anomalyco/opencode).
 
-After applying the configuration below, search for `NRP` in the list of models (`Ctrl+P` → _Switch models_).
+After applying the configuration below, search for `NRP` in the list of models (`Ctrl+P` → _Switch models_, and to select a variant, use `Ctrl+P` → _Switch model variant_).
 
 Either set the `OPENAI_API_KEY` environment variable or replace `{env:OPENAI_API_KEY}` with the actual API key. Adjust `"output"` as needed, but never set it close to or larger than `"context"`.
 
-Contents of `~/.config/opencode/opencode.json`:
+Contents of `~/.config/opencode/opencode.jsonc`:
 
-```json
+```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
@@ -37,11 +37,23 @@ Contents of `~/.config/opencode/opencode.json`:
         "apiKey": "{env:OPENAI_API_KEY}"
       },
       "models": {
-        "gpt-oss": {
-          "name": "gpt-oss",
+        "kimi": {
+          "name": "kimi",
           "limit": {
-            "context": 131072,
+            "context": 262144,
             "output": 32768
+          },
+          "options": {
+            "chat_template_kwargs": {
+              "thinking": true
+            }
+          },
+          "variants": {
+            "instruct": {
+              "chat_template_kwargs": {
+                "thinking": false
+              }
+            }
           }
         }
       }
