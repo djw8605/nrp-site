@@ -84,6 +84,7 @@ const modelsCollection = defineCollection({
     multimodalKinds: z.array(z.enum(['image', 'video', 'audio'])).optional(),
     disableReasoningSnippet: z.string().optional(),
     enableReasoningSnippet: z.string().optional(),
+    preserveReasoningSnippet: z.string().optional(),
     toolCallingDocsUrl: z.string().url().optional(),
     isEmbedding: z.boolean().default(false),
     sortOrder: z.number(),

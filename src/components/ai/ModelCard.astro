@@ -81,6 +81,12 @@ const fmt = (n?: number | null) => (n == null ? null : n.toLocaleString('en-US')
         <dd><code>{d.enableReasoningSnippet}</code></dd>
       </>
     )}
+    {d.preserveReasoningSnippet && (
+      <>
+        <dt>Preserve reasoning (for agentic coding)</dt>
+        <dd><code>{d.preserveReasoningSnippet}</code></dd>
+      </>
+    )}
   </dl>
 
   {d.bestFor.length > 0 && (

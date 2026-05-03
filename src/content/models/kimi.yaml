@@ -15,6 +15,7 @@ multimodalKinds:
   - image
   - video
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": false}}'
+preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": true, "preserve_thinking": true}}'
 toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/moonshotai/Kimi-K2.5.html
 sortOrder: 60
 summary: Moonshot's 1T-parameter frontier coding model with multimodal inputs.
