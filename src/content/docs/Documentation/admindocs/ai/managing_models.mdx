@@ -129,9 +129,9 @@ spec:
                 - "575"
       containers:
       - args:
-        # Refer to the documentation for detailed setup
+        # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 16384 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
+          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --enable-expert-parallel --enable-ep-weight-filter --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 8192 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
         command:
         - bash
         - -c
@@ -317,9 +317,9 @@ spec:
                 - "565"
       containers:
       - args:
-        # Refer to the documentation for detailed setup
+        # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --max-num-batched-tokens 8192 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
         command:
         - bash
         - -c
@@ -509,7 +509,7 @@ spec:
 4. Do not use `--enforce-eager` unless absolutely necessary, as this cuts the token throughput into 1/4 to 1/6 in many cases. CUDA graphs lead to a substantial performance benefit. Using this should only happen if other efforts below have failed to achieve the designed context length of the model. An alternative is to use `--compilation-config "{\"cudagraph_mode\": \"PIECEWISE\"}"`, as this argument retains some level of CUDA graph capability while conserving VRAM, but the conservation is likely about half to one GB, and has visible token throughput sacrifices.
 5. Tune `--max-num-seqs` first, before modifying the maximum context length (`--max-model-len`) anywhere below the full context. The initial priority is always to achieve the designed full context length of the model, so tune other parameters before changing `--max-model-len`. The `--mm-encoder-tp-mode`, `--mm-processor-cache-type` (typically set to `shm` in more than one GPU), and `--mm-processor-cache-gb` arguments (only set to `0` when the CPU RAM is insufficient; a very rare situation, and multimodal inputs are mostly unique and non-repeating) may also be relevant for some multimodal models.
 6. Test that the model works when a large part of the KV cache has been filled through the prompts. Some models may have volatile VRAM consumption during runtime and may get out-of-memory errors even after successful initialization.
-7. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including Context Parallelism (`--decode-context-parallel-size`), or Data Parallelism Attention + Expert Parallelism (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
+7. Check if there are methods which improve throughput or increase KV cache capacity, including multi-token prediction (also called speculative decoding), including Context Parallelism (`--decode-context-parallel-size`), or Data Parallelism Attention + Expert Parallelism (`--enable-expert-parallel --enable-ep-weight-filter` with `--data-parallel-size` in vLLM or `--expert-parallel-size` and `--enable-dp-attention` in SGLang). More explanations are below.
 8. Consider using `--kv-offloading-backend native --kv-offloading-size <size_in_GB>`, where more information is available in [KV Offloading Connector](https://blog.vllm.ai/2026/01/08/kv-offloading-connector.html). However, this is **not a solution for when 1x full context does not fit** within the KV cache of the GPU, and 1x full context should still fit inside the GPU KV cache regardless.
 
 ### Improving LLM Engine Performance 
@@ -523,7 +523,7 @@ The equation for CPU thread consumption for `requests:` is `Minimum Threads = 1 
 1. Increase internal API server count (`--api-server-count`) to a value larger than `1` (perhaps `4` for smaller models or `8` for larger models); this allows multithreaded processing for tokenization and input processing.
 2. For multimodal models, set `--mm-processor-cache-gb` (in GB, frequently paired with `--mm-processor-cache-type shm` in more than 1 GPU) to a higher value than the default of `4` (perhaps `8`). Increase request and limit CPU RAM with `--mm-processor-cache-gb` multiplied by `--api-server-count`.
 3. For models that incorporate Mamba or Mamba-hybrid architectures, you must add `--mamba-cache-mode align` to enable prefix caching.
-4. (**Decreases available KV cache by potentially a large amount, so only when VRAM is surplus in large-context models.**) Increase `--max-num-batched-tokens` to around `16384` but below `--max-model-len`. The default is currently `8192`.
+4. (**Decreases available KV cache by potentially a significant amount, so increase when the VRAM for KV cache is more than enough for 1x context size.**) Increase `--max-num-batched-tokens` to `8192`, as this is the sweet spot for balancing latency with performance and VRAM consumption. Decrease if VRAM is insufficient, and the default when the argument is unspecified is currently `2048` (but may vary for different model architectures).
 
 ### CPU Offloading
 
@@ -607,7 +607,7 @@ StatefulSets with `podManagementPolicy: OrderedReady` are not affected — they 
 
 ### GPU Count Issue: Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config'
 
-Note: When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
+When there is an error about layer count divisibility or invalid configurations, this does not necessarily mean that the GPU is not compatible. Rather, it may be about the count of GPUs (because tensor parallelism needs a perfect division of the number of hidden/intermediate/block/... size).
 
 This may be caused by all sorts of model architectural reasons, when the **count of GPUs are too large (like 8), too small (like 2), or unconventional (like 6), while using tensor parallelism**. This all depends on the model architecture, and may be resolved by the below instructions on model parallelism.
 
@@ -621,21 +621,21 @@ Model parallelism determines whether a model fits in the set of hardware we have
 
 **Abstract:** Default within a single-node (in multi-node, the default is to combine tensor parallelism within a single-node to pipeline parallelism between different nodes). `--tensor-parallel-size` shards model weights equally to each GPUs, but will duplicate KV cache across GPUs if `--tensor-parallel-size` is larger than `num_key_value_heads` or always duplicate KV cache across GPUs in multi-had latent attention (MLA) models. KV cache duplication is solved by decode context parallelism or pipeline parallelism.
 
-Tensor parallelism (`--tensor-parallel-size`) is the default method to use to load models into multiple GPUs within a single node with high-performance GPU interconnect or P2P (e.g., NVLink/XGMI). Some issues may be solved by specifying expert parallelism (`--enable-expert-parallel`) in addition to `--tensor-parallel-size`, where whole expert layers are allocated to different nodes. Refer to the next parts for details.
+Tensor parallelism (`--tensor-parallel-size`) is the default method to use to load models into multiple GPUs within a single node with high-performance GPU interconnect or P2P (e.g., NVLink/XGMI). Some issues may be solved by specifying expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter`) in addition to `--tensor-parallel-size`, where whole expert layers are allocated one-by-one to each GPU. Refer to the next parts for details.
 
 An issue with tensor parallelism is that the KV cache is duplicated to each GPU device with tensor parallelism when the number of `num_key_value_heads` in `config.json` is smaller than `--tensor-parallel-size` or when multi-head latent attention (MLA) is used, leading to decreased KV cache capacity and wasting VRAM space, unless context parallelism or pipeline parallelism is used to deduplicate the KV cache. Descriptions are in relevant sections.
 
 #### Expert Parallelism
 
-**Abstract:** When tensor parallelism (`--tensor-parallel-size`) is combined with expert parallelism (`--enable-expert-parallel` in vLLM, or the same `--expert-parallel-size` size as `--tensor-parallel-size` in SGLang) in an Mixture of Experts (MoE) model, the LLM engine (vLLM/SGLang) only shards dense attention layers within the model, and allocates whole expert layers into each GPU instead of sharding them.
+**Abstract:** When tensor parallelism (`--tensor-parallel-size`) is combined with expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter` in vLLM, or the same `--expert-parallel-size` size as `--tensor-parallel-size` in SGLang) in an Mixture of Experts (MoE) model, the LLM engine (vLLM/SGLang) only shards dense attention layers within the model, and allocates whole expert layers into each GPU instead of sharding them, improving maximum total throughput.
 
 For Mixture of Experts (MoE) models, tensor parallelism without expert parallelism shards all expert layers equally in each GPU, while tensor parallelism with expert parallelism loads different individual expert layers onto each GPU.
 
 For instance, if each expert layer is considered a cube, all cubes are equally cut with a knife into the number of GPUs, and each cut piece of the cube is loaded to each GPU. Therefore, each GPU has one split of all expert layers of the model. The same happens and is the default for Dense models as well. But if expert parallelism is utilized, instead of cutting each cube with a knife, different individual whole cubes are loaded into each GPU. Dense attention layers are sharded like normal tensor parallelism either way, but this can be changed so that dense attention layers use data parallelism. Relevant descriptions are available in the section for data parallelism.
 
-Tensor parallelism without expert parallelism ensures equal load to all GPUs, and tensor parallelism with expert parallelism may lead to GPU load imbalance when only specific expert layers are used, but may respond better to GPU interconnect bottlenecks. Token performance may be worse or better depending on the model or environment, so it may be preferable to omit this argument if the throughput is worse when enabled. However, expert parallelism may possibly improve the time to first token (TTFT), lead to improved performance when the model is loaded across multiple nodes, combined with data parallelism, or when the interconnect between GPUs is bottlenecked.
+Tensor parallelism without expert parallelism ensures equal load to all GPUs, but may limit maximum total throughput due to interconnect bottlenecks. Tensor parallelism with expert parallelism tends to provide better maximum total throughput, but may potentially lead to GPU load imbalance when many concurrent requests are routed to only some of the expert layers. Expert parallelism can improve the time to first token (TTFT), lead to improved performance when the model is loaded across multiple nodes, combining expert parallelism with data parallelism, or when the interconnects between GPUs are bottlenecked. However, expert parallelism combined with tensor parallelism may lead to better or worse results in various situations, so case-by-case consideration is required.
 
-Expert parallelism load balancer (EPLB) is a technique to balance the load of expert parallelism within GPUs.
+Expert parallelism load balancer (EPLB) is a load balancing technique to balance the load of expert parallelism within GPUs.
 
 #### Context Parallelism
 
@@ -665,19 +665,19 @@ Moreover, pipeline parallelism is an acceptable method for deduplicating KV cach
 
 However, pipeline parallelism has some non-negligible VRAM overhead and may lead to suboptimal performance. But on contrary, pipeline parallelism using GPUs inside a single node **that lacks** high-performance interconnects (e.g., NVLink/XGMI) or utilizing consumer GPUs **without** P2P communication may lead to better performance than on tensor parallelism. This may be the case especially in consumer GPUs without HBM memory, but not necessarily professional (e.g., Quadro, RTX Pro) GPUs, and most likely not in datacenter (e.g., A100, H200, B100) GPUs.
 
-Similar to tensor parallelism, expert parallelism (`--enable-expert-parallel`) may be added as adequate if the configuration without the argument does not work, but first trying without expert parallelism enabled is recommended.
+Similar to tensor parallelism, expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter`) may be added as adequate if the configuration without the argument does not work, but first trying without expert parallelism enabled is recommended.
 
 Pipeline parallelism is the recommended and default way to shard models across multiple nodes when the model weights and KV cache do not fit in a single node, but unless specified in conditions above, people should prefer tensor parallelism within single nodes with a high-performance interconnect.
 
 #### Data Parallelism
 
-**Abstract**: Data parallelism (`--data-parallel-size`), in its original design, duplicates model weights across GPUs to increase token throughput and instance capacity. However, it is useful in Mixture of Experts (MoE) models combining expert parallelism (`--enable-expert-parallel` in vLLM, or `--expert-parallel-size` in SGLang), where each whole expert layer can be placed in different GPUs, and only duplicates dense attention layers.
+**Abstract**: Data parallelism (`--data-parallel-size`), in its original design, duplicates model weights across GPUs to increase token throughput and instance capacity. However, it is useful in Mixture of Experts (MoE) models combining expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter` in vLLM, or `--expert-parallel-size` in SGLang), where each whole expert layer can be placed in different GPUs, and only duplicates dense attention layers.
 
 Data parallelism (`--data-parallel-size`), in its original design, has the most VRAM overhead, due to copying all of the same weights and layers redundantly across different GPUs, instead of sharding and dispersing weights across multiple GPUs. Data parallelism typically leads to an improvement in throughput when there are GPUs or nodes to spare, and is also able to combine with tensor parallelism or pipeline parallelism. But in essence, data parallelism does not assist in reducing VRAM consumption by sharding model weights, only increasing throughput by investing more computational resources.
 
-**Expert Parallelism with Data Parallelism Attention**: However, expert parallelism (`--enable-expert-parallel`) makes data parallelism relevant for distributing models across multiple GPUs. As explained in the expert parallelism section, expert parallelism allows different GPUs to load different whole expert layers instead of all GPUs loading the same layers. This is also the case when combined with data parallelism attention, where expert layers can be dispersed to multiple nodes and multiple GPUs without duplication.
+**Expert Parallelism with Data Parallelism Attention**: However, expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter`) makes data parallelism relevant for distributing models across multiple GPUs. As explained in the expert parallelism section, expert parallelism allows different GPUs to load different whole expert layers instead of all GPUs loading the same layers. This is also the case when combined with data parallelism attention, where expert layers can be dispersed to multiple nodes and multiple GPUs without duplication.
 
-Mixture of Experts (MoE) models with data parallelism attention may reduce KV cache consumption (`--enable-expert-parallel` with `--data-parallel-size` in vLLM or `--enable-dp-attention` with `--expert-parallel-size` in SGLang), possibly utilizing KV cache more efficiently compared to other parallelism options while likely providing higher concurrent token throughput. 
+Mixture of Experts (MoE) models with data parallelism attention may reduce KV cache consumption (`--enable-expert-parallel --enable-ep-weight-filter` with `--data-parallel-size` in vLLM or `--enable-dp-attention` with `--expert-parallel-size` in SGLang), possibly utilizing KV cache more efficiently compared to other parallelism options while likely providing higher concurrent token throughput. 
 
 In such cases, only the dense attention layers are duplicated across GPUs, reducing the redundancy of weights in an Mixture of Experts (MoE) model. However, because dense attention layers are still duplicated redundantly across multiple GPUs due to data parallelism, more VRAM is likely consumed, possibly defeating the goal of reducing KV cache consumption unless VRAM is sufficient. To solve this issue, people may also use tensor parallelism within single nodes to shard the duplicate dense attention layers, with minimal implications on throughput or latency. **This way, different expert layers are distributed to multiple nodes while more users can be accommodated using expert parallelism with data parallelism attention, and the duplicated dense attention layers can be sharded with tensor parallelism per each node**.
 
@@ -819,13 +819,15 @@ spec:
         - |
           RANK=0
           MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
-          
+
           vllm serve \
             moonshotai/Kimi-K2.6 \
             --port 5000 \
             --host 0.0.0.0 \
             --download-dir /workspace/.cache/huggingface/hub \
             --tensor-parallel-size 4 \
+            --enable-expert-parallel \
+            --enable-ep-weight-filter \
             --decode-context-parallel-size 4 \
             --pipeline-parallel-size 2 \
             --nnodes 2 \
@@ -837,8 +839,9 @@ spec:
             --enable-chunked-prefill \
             --enable-prefix-caching \
             --max-num-seqs 64 \
-            --gpu-memory-utilization 0.95 \
+            --gpu-memory-utilization 0.9 \
             --max-model-len 262144 \
+            --max-num-batched-tokens 8192 \
             --enable-auto-tool-choice \
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
@@ -858,7 +861,7 @@ spec:
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
-        image: vllm/vllm-openai:nightly-7a1eb8ac2ec4ea69338c51dc7afd4b15010abfa8
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 8
@@ -1025,15 +1028,17 @@ spec:
           # Offset worker rank by 1 since Head is Rank 0
           INDEX=${HOSTNAME##*-}
           RANK=$((INDEX + 1))
-          
+
           MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
-          
+
           vllm serve \
             moonshotai/Kimi-K2.6 \
             --port 5000 \
             --host 0.0.0.0 \
             --download-dir /workspace/.cache/huggingface/hub \
             --tensor-parallel-size 4 \
+            --enable-expert-parallel \
+            --enable-ep-weight-filter \
             --decode-context-parallel-size 4 \
             --pipeline-parallel-size 2 \
             --nnodes 2 \
@@ -1045,8 +1050,9 @@ spec:
             --enable-chunked-prefill \
             --enable-prefix-caching \
             --max-num-seqs 64 \
-            --gpu-memory-utilization 0.95 \
+            --gpu-memory-utilization 0.9 \
             --max-model-len 262144 \
+            --max-num-batched-tokens 8192 \
             --enable-auto-tool-choice \
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
@@ -1066,7 +1072,7 @@ spec:
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
-        image: vllm/vllm-openai:nightly-7b1bc0a3eb01a6bc2650eda9970049f7825240d7
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
         livenessProbe:
           exec:
@@ -1169,7 +1175,7 @@ spec:
 
 </details>
 
-But, in case user demand increases, higher concurrency and token throughput are desired. We can add `--enable-expert-parallel` and `--data-parallel-size`, where expert layers are distributed across multiple data parallelism instances and GPUs without duplication, and tensor parallelism within GPUs of each instance shards the dense attention layers duplicated across data parallelism instances. This way, all five types of parallelism can work together and also scale up, opening up higher KV cache capacity and concurrency.
+But, in case user demand increases, higher concurrency and token throughput are desired. We can add `--enable-expert-parallel --enable-ep-weight-filter` and `--data-parallel-size`, where expert layers are distributed across multiple data parallelism instances and GPUs without duplication, and tensor parallelism within GPUs of each instance shards the dense attention layers duplicated across data parallelism instances. This way, all five types of parallelism can work together and also scale up, opening up higher KV cache capacity and concurrency.
 
 #### Further Reading
 
