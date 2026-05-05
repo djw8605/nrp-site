@@ -64,48 +64,6 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
 }
 ```
 
-## pi
-
-https://pi.dev
-
-Press `Ctrl-L` to switch models and search for `NRP` (or type `/model modelname`).
-
-`apiKey` accepts the literal key, an environment variable name (`OPENAI_API_KEY`), or a shell command (`!decrypt_key NRP`).
-
-Contents of `~/.pi/agent/models.json`:
-
-```json
-{
-  "providers": {
-    "nrp": {
-      "baseUrl": "https://ellm.nrp-nautilus.io/v1",
-      "api": "openai-completions",
-      "apiKey": "<YOUR_API_KEY>",
-      "models": [
-        {
-          "id": "kimi",
-          "name": "kimi",
-          "input": ["text", "image"],
-          "contextWindow": 262144,
-          "reasoning": true
-        },
-        {
-          "id": "qwen3-small",
-          "name": "qwen3-small",
-          "input": ["text", "image"],
-          "contextWindow": 262144,
-          "reasoning": true,
-          "compat": {
-            "thinkingFormat": "qwen-chat-template",
-            "supportsDeveloperRole": false
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
 ## Crush
 
 https://github.com/charmbracelet/crush 
@@ -150,6 +108,48 @@ Contents of `~/.config/crush/crush.json`:
           "preserve_thinking": true
         }
       }
+    }
+  }
+}
+```
+
+## pi
+
+https://pi.dev
+
+Press `Ctrl-L` to switch models and search for `NRP` (or type `/model modelname`).
+
+`apiKey` accepts the literal key, an environment variable name (`OPENAI_API_KEY`), or a shell command (`!decrypt_key NRP`).
+
+Contents of `~/.pi/agent/models.json`:
+
+```json
+{
+  "providers": {
+    "nrp": {
+      "baseUrl": "https://ellm.nrp-nautilus.io/v1",
+      "api": "openai-completions",
+      "apiKey": "<YOUR_API_KEY>",
+      "models": [
+        {
+          "id": "kimi",
+          "name": "kimi",
+          "input": ["text", "image"],
+          "contextWindow": 262144,
+          "reasoning": true
+        },
+        {
+          "id": "qwen3-small",
+          "name": "qwen3-small",
+          "input": ["text", "image"],
+          "contextWindow": 262144,
+          "reasoning": true,
+          "compat": {
+            "thinkingFormat": "qwen-chat-template",
+            "supportsDeveloperRole": false
+          }
+        }
+      ]
     }
   }
 }
