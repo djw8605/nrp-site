@@ -185,7 +185,7 @@ spec:
           httpGet:
             path: /health
             port: 5000
-          failureThreshold: 90
+          failureThreshold: 900
           periodSeconds: 10
         readinessProbe:
           httpGet:
@@ -370,7 +370,7 @@ spec:
           httpGet:
             path: /health
             port: 5000
-          failureThreshold: 90
+          failureThreshold: 900
           periodSeconds: 10
         readinessProbe:
           httpGet:
@@ -1077,27 +1077,42 @@ spec:
         livenessProbe:
           exec:
             command:
-            - bash
+            - python3
             - -c
-            - "pgrep -f 'vllm serve'"
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
           initialDelaySeconds: 30
           periodSeconds: 20
           failureThreshold: 3
         readinessProbe:
           exec:
             command:
-            - bash
+            - python3
             - -c
-            - "pgrep -f 'vllm serve'"
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
           initialDelaySeconds: 30
           periodSeconds: 10
           failureThreshold: 3
         startupProbe:
           exec:
             command:
-            - bash
+            - python3
             - -c
-            - "pgrep -f 'vllm serve'"
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
           initialDelaySeconds: 30
           periodSeconds: 20
           failureThreshold: 450
