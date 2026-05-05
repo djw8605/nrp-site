@@ -138,12 +138,18 @@ Contents of `~/.config/crush/crush.json`:
       "api_key": "<LLM_API_KEY>",
       "models": [
         {
-          "id": "gpt-oss",
-          "name": "gpt-oss",
-          "context_window": 131072,
+          "id": "kimi",
+          "name": "kimi",
+          "context_window": 262144,
           "default_max_tokens": 32768
         }
       ]
+      "extra_body": {
+        "chat_template_kwargs": {
+          "thinking": true,
+          "preserve_thinking": true
+        }
+      }
     }
   }
 }
@@ -157,6 +163,10 @@ Contents of `~/.kimi/config.toml`:
 
 ```toml
 default_model = "kimi"
+default_thinking = true
+default_yolo = false
+default_plan_mode = true
+show_thinking_stream = true
 
 [providers.nrp]
 type = "openai_legacy"
