@@ -81,7 +81,13 @@ response = client.chat.completions.create(
     messages=messages,
     extra_body={
         "cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==",
-    },
+        "chat_template_kwargs": {
+          "enable_thinking": True,
+          "thinking": True,
+          "preserve_thinking": True,
+          "clear_thinking": False
+        }
+    }
 )
 ```
 
