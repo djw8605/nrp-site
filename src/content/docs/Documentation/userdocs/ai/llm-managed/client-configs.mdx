@@ -10,7 +10,7 @@ Use the right-hand "On this page" navigation to jump to your client. Every confi
 
 - **Endpoint:** `https://ellm.nrp-nautilus.io/v1` (Anthropic-compatible at `/anthropic`)
 - **Token:** the value from the [LLM token page](/llmtoken), passed in `Authorization: Bearer …` or whatever the client's API-key field expects.
-- For `cache_salt`, this needs to be on the same level as `chat_template_kwargs`, but not inside. Example: `{"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==", "chat_template_kwargs": {"thinking": true, "preserve_thinking": true}}`
+- For `cache_salt`, this needs to be on the same level as `chat_template_kwargs`, but not inside. Example: `{"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==", "chat_template_kwargs": {"enable_thinking": true, "thinking": true, "preserve_thinking": true}}`
 
 <Aside type="tip" title="Picking a model">
 Run `curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/models` to list active model IDs, or browse the [Available Models](/documentation/userdocs/ai/llm-managed/models) feature matrix to pick one.
