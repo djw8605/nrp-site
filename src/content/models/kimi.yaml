@@ -9,7 +9,7 @@ badges:
   multimodal: true
   research: false
 contextTokens: 262144
-parameters: 1T (MoE)
+parameters: 1T
 quantization: MXFP4 (native)
 multimodalKinds:
   - image

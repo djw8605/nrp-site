@@ -9,7 +9,7 @@ badges:
   multimodal: true
   research: true
 contextTokens: 262144
-parameters: 397B (A17B active)
+parameters: 397B
 quantization: FP8 (official)
 multimodalKinds:
   - image
