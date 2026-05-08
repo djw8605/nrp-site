@@ -12,7 +12,7 @@ contextTokens: 65536
 parameters: 32B
 quantization: bf16 (native)
 toolCallingDocsUrl: https://docs.vllm.ai/en/latest/features/tool_calling/#olmo-3-models-olmo3
-sortOrder: 90
+sortOrder: 100
 summary: Allen AI's fully open-source 32B instruction model — transparent training data.
 strengths:
   - Fully open training data and weights — good for research reproducibility

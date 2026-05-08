@@ -11,8 +11,8 @@ badges:
 contextTokens: 204800
 parameters: 230B
 quantization: FP8 (native)
-toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/MiniMax/MiniMax-M2.html
-sortOrder: 80
+toolCallingDocsUrl: https://recipes.vllm.ai/MiniMaxAI/MiniMax-M2.7
+sortOrder: 90
 summary: Efficient frontier coding model — 230B in native FP8, fits comfortably on four A100s.
 strengths:
   - Frontier-level agentic coding at modest GPU cost

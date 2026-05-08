@@ -13,7 +13,7 @@ isEmbedding: true
 multimodalKinds:
   - image
   - video
-sortOrder: 100
+sortOrder: 110
 summary: Multimodal embedding model for retrieval and vector search — not a chat model.
 strengths:
   - Embeddings for text, image, and video inputs

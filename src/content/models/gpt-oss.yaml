@@ -11,7 +11,7 @@ badges:
 contextTokens: 131072
 parameters: 120B
 quantization: MXFP4 (native)
-toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/OpenAI/GPT-OSS.html
+toolCallingDocsUrl: https://recipes.vllm.ai/openai/gpt-oss-120b
 sortOrder: 30
 summary: OpenAI's open-weights agentic model — tiny GPU footprint, strong tools, LTS candidate.
 strengths:

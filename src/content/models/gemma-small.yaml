@@ -16,7 +16,7 @@ multimodalKinds:
   - video
   - audio
 enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
-toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html
+toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-E4B-it
 sortOrder: 50
 summary: Tiny Gemma 4 with unique audio input — ASR and speech-to-text on an ~8B model.
 strengths:

@@ -1,7 +1,7 @@
-id: glm-4.7
-displayName: glm-4.7
-huggingfaceId: zai-org/GLM-4.7-FP8
-huggingfaceUrl: https://huggingface.co/zai-org/GLM-4.7-FP8
+id: glm-5
+displayName: glm-5
+huggingfaceId: lukealonso/GLM-5.1-NVFP4
+huggingfaceUrl: https://huggingface.co/lukealonso/GLM-5.1-NVFP4
 status: evaluating
 badges:
   tool: true
@@ -9,16 +9,16 @@ badges:
   multimodal: false
   research: false
 contextTokens: 202752
-parameters: 358B
-quantization: FP8 (official)
+parameters: 744B
+quantization: NVFP4 (community)
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
 preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true, "clear_thinking": false}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-4.7
+toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.1
 sortOrder: 70
-summary: Zhipu's 358B frontier coding model with official FP8 weights.
+summary: Zhipu's 744B frontier coding model with community NVFP4 weights.
 strengths:
   - Strong agentic coding — competitive with commercial frontier models
-  - Official FP8 quantization preserves quality
+  - NVFP4 quantization preserves quality within limited VRAM
   - ~200K context covers large codebases
 weaknesses:
   - Text-only — no multimodal input

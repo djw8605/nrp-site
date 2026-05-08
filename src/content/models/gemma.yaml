@@ -15,7 +15,7 @@ multimodalKinds:
   - image
   - video
 enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
-toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Google/Gemma4.html
+toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-31B-it
 sortOrder: 40
 summary: Google's Gemma 4 — multimodal, reasoning optional, efficient frontier performance.
 strengths:

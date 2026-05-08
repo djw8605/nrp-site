@@ -15,7 +15,7 @@ multimodalKinds:
   - image
   - video
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
-toolCallingDocsUrl: https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html
+toolCallingDocsUrl: https://recipes.vllm.ai/Qwen/Qwen3.5-397B-A17B
 sortOrder: 10
 summary: Flagship frontier multimodal MoE — Claude/Gemini-level performance, active research model.
 strengths:
