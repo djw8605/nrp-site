@@ -54,12 +54,13 @@ The current list is:
 | NVIDIA A100                 | nvidia.com/a100           |
 | NVIDIA RTX A6000            | nvidia.com/rtxa6000       |
 | NVIDIA Quadro RTX 8000      | nvidia.com/rtx8000        |
+| NVIDIA H100                 | nvidia.com/h100           |
 | NVIDIA H200                 | nvidia.com/h200           |
 | NVIDIA RTX PRO 6000 Blackwell | nvidia.com/rtx6000bw   |
 | NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 
-Using NVIDIA A100 or NVIDIA H200 also requires [a reservation](/reservations).
+Using NVIDIA A100, NVIDIA H100, or NVIDIA H200 also requires [a reservation](/reservations).
 
 For example, modifying the above example for one of these GPUs, the new yaml would be:
 
