@@ -659,6 +659,8 @@ Prefill context parallelism (`--prefill-context-parallel-size`) deduplicates KV 
           value: "1200000"
 ```
 
+**Moreover, if a chat request stops in the middle of responses when pipeline parallelism is enabled, reducing `--gpu-memory-utilization` (typically to `0.925` or `0.9`) is very likely to solve the problem.**
+
 Combining pipeline parallelism (`--pipeline-parallel-size`) with tensor parallelism (`--tensor-parallel-size`) is an acceptable solution that works with unconventional GPU counts (not in powers of two), or when errors such as `Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config', etc.` occur. An example is using 6 GPUs through `--tensor-parallel-size 2 --pipeline-parallel-size 3`, 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4`, or `--tensor-parallel-size 4 --pipeline-parallel-size 2`, due to pipeline parallelism tolerating uneven splits of layers.
 
 Moreover, pipeline parallelism is an acceptable method for deduplicating KV cache when specific models do not have decode context parallelism implemented, where `--tensor-parallel-size` is only set until the `num_key_value_heads` in `config.json`, and using `--pipeline-parallel-size` to shard both the model weights and KV cache further within a single node. For example, in [Qwen/Qwen3.5-397B-A17B-FP8](https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8), `num_key_value_heads` is `2` within `config.json` and the model is not multi-head latent attention (MLA). In this case, we can use `--tensor-parallel-size 2` so that `--tensor-parallel-size` is not larger than `num_key_value_heads`, and use `--pipeline-parallel-size 2` to load the model weights and shard the KV cache without duplication into a multiplied total of four GPUs.
@@ -667,7 +669,7 @@ However, pipeline parallelism has some non-negligible VRAM overhead and may lead
 
 Similar to tensor parallelism, expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter`) may be added as adequate if the configuration without the argument does not work, but first trying without expert parallelism enabled is recommended.
 
-Pipeline parallelism is the recommended and default way to shard models across multiple nodes when the model weights and KV cache do not fit in a single node, but unless specified in conditions above, people should prefer tensor parallelism within single nodes with a high-performance interconnect.
+Pipeline parallelism is the recommended and default way to shard models across multiple nodes when the model weights and KV cache do not fit in a single node, and do not have dedicated high-performance interconnects betwen nodes, but unless specified in conditions above, people should prefer tensor parallelism within single nodes with a high-performance interconnect.
 
 #### Data Parallelism
 
