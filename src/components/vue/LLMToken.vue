@@ -115,12 +115,12 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "qwen3",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 262144
+				contextWindow: 1010000
 			},
 			{
 				modelId: "qwen3-small",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 262144
+				contextWindow: 1010000
 			},
 			{
 				modelId: "gpt-oss",
@@ -144,6 +144,11 @@ var chatboxConfigTemplate = {
 			},
 			{
 				modelId: "glm-4.7",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 202752
+			},
+			{
+				modelId: "glm-5",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 202752
 			},

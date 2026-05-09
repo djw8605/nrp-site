@@ -8,7 +8,7 @@ badges:
   reasoning: true
   multimodal: true
   research: true
-contextTokens: 262144
+contextTokens: 1010000
 parameters: 27B
 quantization: bf16 (native)
 multimodalKinds:
