@@ -100,7 +100,11 @@ Contents of `~/.config/crush/crush.json` (use `"enable_thinking"` or `"thinking"
           "id": "kimi",
           "name": "kimi",
           "context_window": 262144,
-          "default_max_tokens": 32768
+          "default_max_tokens": 32768,
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          }
         }
       ],
       "extra_body": {
