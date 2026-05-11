@@ -5,7 +5,7 @@ description: ClickHouse Cluster on Kubernetes via the Altinity ClickHouse Operat
 
 ### Using the Altinity ClickHouse Operator in Kubernetes
 
-This guide explains how to deploy a [ClickHouse](https://clickhouse.com) cluster on NRP using the [Altinity ClickHouse Operator](https://github.com/Altinity/clickhouse-operator). The operator is installed cluster-wide and watches a list of namespaces; you do not need to deploy your own operator.
+This guide explains how to deploy a [ClickHouse](https://clickhouse.com) cluster on NRP using the [Altinity ClickHouse Operator](https://github.com/Altinity/clickhouse-operator). A single cluster-wide operator reconciles `ClickHouseInstallation` resources in every namespace — you don't deploy your own.
 
 :::tip[ClickHouse vs Postgres]
 Use **ClickHouse** for append-heavy analytic workloads: time-series, event logs, observability, columnar aggregates over large tables. Use **[Postgres](/documentation/userdocs/running/postgres/)** for transactional / relational workloads where you need rows, foreign keys, and OLTP guarantees.
@@ -55,9 +55,9 @@ Apply it:
 kubectl apply -n default -f clickhouse-cluster.yaml
 ```
 
-**Replace `default` with your namespace.** Your namespace must be on the operator's watch list — ask the admins on [Matrix](https://nrp.ai/contact) if it is not (currently `clickhouse`, `syndb`, `monitoring`; the `signoz` namespace runs its own pinned operator).
+**Replace `default` with your namespace.** Any namespace works — the operator watches the whole cluster.
 
-The operator creates a StatefulSet, ConfigMaps, Services, and a PersistentVolumeClaim. The CHI status field will move from `InProgress` to `Completed`:
+The operator creates a StatefulSet, ConfigMaps, Services, and a PersistentVolumeClaim. The CHI status field moves from `InProgress` to `Completed`:
 
 ```bash
 kubectl get chi
@@ -160,9 +160,19 @@ Use a Job that runs `clickhouse-client --query 'SELECT * FROM <db>.<table> FORMA
 
 ### 6. Monitoring
 
-Operator-generated metrics are exposed via the cluster-wide `clickhouse-operator-altinity-clickhouse-operator-metrics` Service on ports `8888` (operator) and `9999` (CH instance). The shared NRP Prometheus scrapes these automatically; add panels referencing the `chi_clickhouse_*` series.
+Operator-aggregated metrics (`chi_clickhouse_*` series, per-CHI) are scraped automatically by the shared NRP Prometheus and visible in Grafana under the **ClickHouse Operator** and **ClickHouse Server** dashboards. No tenant-side ServiceMonitor needed.
 
-The CHI status:
+If you want CH-server-internal metrics (`ClickHouseAsyncMetrics_*`, `ClickHouseMetrics_*`), enable the Prometheus endpoint in your CHI spec:
+
+```yaml
+spec:
+  configuration:
+    settings:
+      prometheus/endpoint: "/metrics"
+      prometheus/port: 9363
+```
+
+CHI status:
 
 ```bash
 kubectl get chi my-clickhouse -o jsonpath='{.status.status}'
