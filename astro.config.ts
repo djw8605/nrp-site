@@ -140,6 +140,7 @@ export default defineConfig({
                     { label: 'GUI Desktop', link: 'documentation/userdocs/running/gui-desktop' },
                     { label: 'Scientific images', link: 'documentation/userdocs/running/sci-img' },
                     { label: 'Postgres cluster', link: 'documentation/userdocs/running/postgres' },
+                    { label: 'ClickHouse cluster', link: 'documentation/userdocs/running/clickhouse' },
                   ],
                 },
                 {
@@ -376,6 +377,7 @@ export default defineConfig({
                     { label: 'nodes', link: 'documentation/admindocs/upgrades/nodes' },
                     { label: 'prometheus', link: 'documentation/admindocs/upgrades/prometheus' },
                     { label: 'postgres', link: 'documentation/admindocs/upgrades/postgres-operator' },
+                    { label: 'clickhouse', link: 'documentation/admindocs/upgrades/clickhouse-operator' },
                     {
                       label: 'Storage',
                       collapsed: true,

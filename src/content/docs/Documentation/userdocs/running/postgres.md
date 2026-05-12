@@ -7,6 +7,10 @@ description: Postgres Cluster
 
 This guide provides instructions for end users on how to deploy a PostgreSQL cluster using the [Zalando Postgres Operator](https://postgres-operator.readthedocs.io/en/latest/) in a Kubernetes environment.
 
+:::tip[Picking the right database]
+Postgres is the right pick for transactional and relational workloads (rows, foreign keys, OLTP). For append-heavy analytic workloads — time-series, event logs, observability data, columnar aggregates over large tables — see [ClickHouse cluster](/documentation/userdocs/running/clickhouse/) instead.
+:::
+
 ### 1. Deploying a PostgreSQL Cluster
 
 You can deploy your PostgreSQL cluster by creating a `Postgresql` custom resource (CR).
