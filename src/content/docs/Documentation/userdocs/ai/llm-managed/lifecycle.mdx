@@ -17,22 +17,35 @@ GPU allocation is the limiting factor: larger models that require many GPUs are 
 
 ## Recent changes
 
-### April 2026
+<details>
+  <summary>May 2026</summary>
+
+- `glm-4.7` ([zai-org/GLM-4.7-FP8](https://huggingface.co/zai-org/GLM-4.7-FP8)) was updated to `glm-5` ([lukealonso/GLM-5.1-NVFP4](https://huggingface.co/lukealonso/GLM-5.1-NVFP4))
+
+</details>
+
+<details>
+  <summary>April 2026</summary>
 
 - `gemma3` was renamed to `gemma` and switched from [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) to [google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it). Context size changed.
-- `qwen3-small` switched from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen/Qwen3.6-27B](https://huggingface.co/Qwen/Qwen3.6-27B); context size changed; `qwen3-27b` added as an alias.
-- `gemma-small` / `gemma-4-e4b` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added with **audio input** support.
+- `qwen3-small` switched from [Qwen/Qwen3.5-27B](https://huggingface.co/Qwen/Qwen3.5-27B) to [Qwen/Qwen3.6-27B](https://huggingface.co/Qwen/Qwen3.6-27B); context size changed.
+- `gemma-small` ([google/gemma-4-E4B-it](https://huggingface.co/google/gemma-4-E4B-it)) was added with **audio input** support.
 - `minimax-m2` upgraded from [MiniMax-M2.5](https://huggingface.co/MiniMaxAI/MiniMax-M2.5) to [MiniMax-M2.7](https://huggingface.co/MiniMaxAI/MiniMax-M2.7).
 - `kimi` upgraded from [Kimi-K2.5](https://huggingface.co/moonshotai/Kimi-K2.5) to [Kimi-K2.6](https://huggingface.co/moonshotai/Kimi-K2.6).
 
-### March 2026
+</details>
+
+## Older changes
+
+<details>
+  <summary>March 2026</summary>
 
 - `qwen3-embedding` ([Qwen/Qwen3-VL-Embedding-8B](https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B)) added on the AI Gateway.
 - `embed-mistral` ([intfloat/e5-mistral-7b-instruct](https://huggingface.co/intfloat/e5-mistral-7b-instruct)) decommissioned and replaced with `qwen3-embedding` due to incompatibilities with Jupyter AI.
 - `llama3-sdsc` ([Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct)) **removed** from the Envoy AI Gateway after a long deprecation.
 - `glm-v` (GLM-4.6V multimodal route) **removed** from the Envoy AI Gateway. Use `glm-4.7` for text and other multimodal options for vision/video.
 
-## Older changes
+</details>
 
 <details>
   <summary>February 2026</summary>
