@@ -12,8 +12,6 @@ Choose the hardware specs to spawn your instance.  Once authenticated you can ru
 
 
 Your persistent home folder initially will be limited to 5GB. If you need more, you can request it to be extended.
-You can also request for [CephFS storage](/documentation/userdocs/storage/ceph)  that is mounted to a shared disk space.
-Please use this to store all the data, code and results that you would need for long experiments.
 
 :::note[Idle Jupyter Notebooks]
 Your Jupyter container will shut down 1hr after your browser disconnects from it. If you need your job to keep running, don't close the browser window.
