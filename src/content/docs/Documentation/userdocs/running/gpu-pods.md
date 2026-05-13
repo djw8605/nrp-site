@@ -60,7 +60,18 @@ The current list is:
 | NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 
-Using NVIDIA A100, NVIDIA H100, or NVIDIA H200 also requires [a reservation](/reservations).
+:::danger[Access policy for A100 / H100 / H200 / GH200]
+These four GPU types are gated by a per-namespace ResourceQuota. By default every namespace has a quota of **zero**
+for each of them. To run a pod on one of them you have one of these paths:
+
+- **NVIDIA A100** — user-requestable. Submit the [A100 access request](/reservations) and an admin will raise your
+  namespace's a100 quota.
+- **NVIDIA H100, H200, and GH200** — **not user-requestable.** These are reserved for the groups that contributed
+  the hardware, plus LLM workloads consuming spare cycles. There is no access form.
+- **Any user, any of the four GPUs, no reservation** — set `priorityClassName: opportunistic` (or `opportunistic2`)
+  on your pod. The quota does not apply to opportunistic-tier pods, but they can be preempted by any other pod at any
+  time. See [Priority Classes](/documentation/userdocs/running/priority-classes/) for details and a full example.
+:::
 
 For example, modifying the above example for one of these GPUs, the new yaml would be:
 

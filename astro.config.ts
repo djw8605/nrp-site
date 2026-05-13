@@ -129,6 +129,7 @@ export default defineConfig({
                   collapsed: true,
                   items: [
                     { label: 'Scheduling', link: 'documentation/userdocs/running/scheduling' },
+                    { label: 'Priority Classes', link: 'documentation/userdocs/running/priority-classes' },
                     { label: 'Client scripts', link: 'documentation/userdocs/running/scripts' },
                     { label: 'Exposing HTTP', link: 'documentation/userdocs/running/ingress' },
                     { label: 'GatewayAPI', link: 'documentation/userdocs/running/gateway' },

@@ -17,7 +17,19 @@ const metadata = {
             Reservations
           </h1>
           <p class="text-gray-600 dark:text-gray-400">
-            Request access to A100/H200 GPUs or reserve dedicated nodes
+            Request access to A100 GPUs or reserve dedicated nodes
+          </p>
+        </div>
+
+        <div class="advisory">
+          <strong>Please be patient with submitted requests.</strong>
+          <p>
+            Admins review reservation requests in batches as time allows. <strong>Pinging in
+            <a href="/contact">Matrix</a> immediately after submitting will not get you a faster
+            response</strong> — it only adds noise to a queue we already see. Check this page
+            regularly for status updates. A request marked <strong>"In progress" means it has
+            already been granted and is in effect</strong> — you can start using the resource;
+            there is no further step.
           </p>
         </div>
 
@@ -27,8 +39,8 @@ const metadata = {
               <div class="header-left">
                 <span class="header-badge">GPU</span>
                 <div class="header-text">
-                  <h3>A100/H200 GPU Access</h3>
-                  <p>Request high-performance GPU access for research workloads</p>
+                  <h3>A100 GPU Access</h3>
+                  <p>Request access to A100 GPUs for research workloads</p>
                 </div>
               </div>
               <svg class="header-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,22 +51,55 @@ const metadata = {
 
           <div class="reservation-body">
             <p class="body-description">
-              We've noticed that many A100/H200 resources are being used for jobs that don't require their capabilities.
-              To ensure fair and efficient utilization, we are implementing limits on A100 usage across all namespaces.
-              If your work requires access to A100/H200 GPUs, please reach out to us, and we'll gladly adjust the limits for your namespace.
-              Groups that contributed A100/H200 GPUs to the cluster will continue to have unrestricted access.
+              We've noticed that many A100 resources are being used for jobs that don't require their capabilities.
+              To ensure fair and efficient utilization, we enforce per-namespace limits on A100 usage.
+              If your work requires access to A100 GPUs, submit the form below and we'll adjust the limit for your namespace.
+              Groups that contributed A100 hardware to the cluster have unrestricted access by default.
             </p>
 
             <a href="https://airtable.com/appfVVZLgTvG04pKe/pagrZFgrh3fNqbV4c/form" class="action-button">
-              Submit A100/H200 Access Request
+              Submit A100 Access Request
             </a>
 
             <div class="embed-note">
               <strong>Track your request status:</strong>
-              <p>View and monitor your submitted requests below.</p>
+              <p>View and monitor your submitted requests below. <strong>"In progress" = granted and in effect</strong>; no further action needed.</p>
             </div>
 
             <iframe class="airtable-embed" src="https://airtable.com/embed/appfVVZLgTvG04pKe/shruKqqBIYZG0yiqx?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc; border-radius: 12px;"></iframe>
+          </div>
+        </details>
+
+        <details class="reservation-dropdown">
+          <summary class="list-none cursor-pointer">
+            <div class="reservation-header h100-header">
+              <div class="header-left">
+                <span class="header-badge violet">Info</span>
+                <div class="header-text">
+                  <h3>H100 / H200 / GH200 — not user-requestable</h3>
+                  <p>Reserved for hardware contributors and LLM spare-cycle workloads</p>
+                </div>
+              </div>
+              <svg class="header-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </summary>
+
+          <div class="reservation-body">
+            <p class="body-description">
+              <strong>There is no access form for H100, H200, or GH200 GPUs.</strong> These resources are reserved
+              for the groups that contributed the hardware to the cluster, and for LLM workloads consuming spare cycles
+              between the owners' jobs. Sending an access request will not grant access to these GPU types.
+            </p>
+            <p class="body-description">
+              <strong>If you want to use an H100, H200, or GH200 anyway,</strong> you can run your pod at
+              <code>priorityClassName: opportunistic</code> (or <code>opportunistic2</code>). The per-namespace GPU
+              quota does not apply to opportunistic-tier pods, so any user can consume these GPUs in spare cycles —
+              with the understanding that your pod can be preempted at any time by an owner's workload. See the
+              <a href="/documentation/userdocs/running/priority-classes/">Priority Classes</a> doc and the
+              <a href="/documentation/userdocs/running/gpu-pods/">GPU Pods</a> doc for the YAML.
+            </p>
           </div>
         </details>
 
@@ -131,6 +176,50 @@ const metadata = {
   background: linear-gradient(135deg, rgba(30, 64, 100, 0.92) 0%, rgba(30, 58, 138, 0.92) 100%);
 }
 
+.h100-header {
+  background: linear-gradient(135deg, rgba(76, 29, 149, 0.92) 0%, rgba(91, 33, 182, 0.92) 100%);
+}
+
+/* Top-of-page advisory callout */
+.advisory {
+  margin: 0 0 24px 0;
+  padding: 16px 20px;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-left: 4px solid #ea580c;
+  border-radius: 8px;
+  color: #7c2d12;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.advisory strong {
+  color: #7c2d12;
+}
+
+.advisory p {
+  margin: 6px 0 0 0;
+}
+
+.advisory a {
+  color: #c2410c;
+  text-decoration: underline;
+}
+
+:global(.dark) .advisory {
+  background: rgba(124, 45, 18, 0.25);
+  border-color: rgba(234, 88, 12, 0.6);
+  color: #fed7aa;
+}
+
+:global(.dark) .advisory strong {
+  color: #fed7aa;
+}
+
+:global(.dark) .advisory a {
+  color: #fdba74;
+}
+
 .header-left {
   display: flex;
   align-items: center;
@@ -150,6 +239,10 @@ const metadata = {
 
 .header-badge.amber {
   background: rgba(251, 191, 36, 0.3);
+}
+
+.header-badge.violet {
+  background: rgba(196, 181, 253, 0.3);
 }
 
 .header-text h3 {
