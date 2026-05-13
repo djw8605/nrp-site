@@ -1,5 +1,5 @@
 ---
-title: Priority Classes
+title: Opportunistic Use
 description: When to set priorityClassName on your pods, and the only one you usually want — opportunistic
 ---
 
