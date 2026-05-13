@@ -6,7 +6,7 @@ description: How to deploy vLLM/SGLang models and manage the Envoy AI Gateway
 ## vLLM/SGLang Instructions
 
 :::caution
-You are not supposed to use any tolerations to taints, unless you have been approved by administrators for one or are an administrator yourself. Please refer to the [Special Use](/documentation/userdocs/running/special/) on this matter.
+**Please remove all tolerations and priority classes before applying the configurations.** You are not supposed to use any tolerations to taints or priority classes, unless you have been approved by administrators for one or are an administrator yourself. Please refer to the [Special Use](/documentation/userdocs/running/special/) on this matter.
 :::
 
 **Note that the below contents are meant to be read by both people and AI. Feel free to feed the [Markdown File](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main/src/content/docs/Documentation/admindocs/ai/managing_models.mdx) to LLMs.**
