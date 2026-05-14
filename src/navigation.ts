@@ -93,6 +93,10 @@ export const headerData = {
           href: getBlogPermalink(),
         },
         {
+          text: 'Annual Meeting',
+          href: getPermalink('/annual-meeting'),
+        },
+        {
           text: 'Events',
           href: getPermalink('events', 'category'),
         },
