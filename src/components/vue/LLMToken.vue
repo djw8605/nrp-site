@@ -152,11 +152,6 @@ var chatboxConfigTemplate = {
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 204800
 			},
-			{
-				modelId: "olmo",
-				capabilities: ["tool_use"],
-				contextWindow: 65536
-			},
 		]
 	}
 };
