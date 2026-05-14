@@ -1,6 +1,5 @@
 ---
 publishDate: 2026-05-14T00:00:00Z
-draft: true
 title: DOE American Science Cloud on NRP — ESnet tutorial at 7NRP
 excerpt: A recap of the DOE American Science Cloud (AmSC) tutorial that ESnet ran at the 7NRP workshop, covering the Genesis Mission, the AmSC platform, and hands-on IRI Facility API work on NRP.
 image: ~/assets/images/posts/amsc-7nrp-thumb.png
