@@ -1,7 +1,7 @@
 ---
 publishDate: 2026-05-14T00:00:00Z
-title: DOE American Science Cloud on NRP — ESnet tutorial at 7NRP
-excerpt: A recap of the DOE American Science Cloud (AmSC) tutorial that ESnet ran at the 7NRP workshop, covering the Genesis Mission, the AmSC platform, and hands-on IRI Facility API work on NRP.
+title: DOE American Science Cloud experiments with NRP — ESnet tutorial at 7NRP
+excerpt: A recap of the DOE American Science Cloud (AmSC) tutorial that ESnet ran at the 7NRP workshop, covering the Genesis Mission context, the AmSC platform, and hands-on IRI Facility API work using NRP's training JupyterHub.
 image: ~/assets/images/posts/amsc-7nrp-thumb.png
 category: Events
 tags:
@@ -12,7 +12,7 @@ tags:
   - ESnet
 ---
 
-On **Tuesday, May 5, 2026**, the final Track A session of [7NRP](https://na.eventscloud.com/website/91919/) Tutorial Day was *"DoE American Science Cloud Experiments with NRP,"* presented by **Justas Balcas** and **Xi Yang** (Berkeley Lab / ESnet Pilots & Prototypes group) in the SDSC Auditorium from 3:30 – 5:00 PM. The session walked the room through how the U.S. Department of Energy's emerging **American Science Cloud (AmSC)** plugs into NRP, then put attendees on a JupyterHub to drive the DOE **Integrated Research Infrastructure (IRI)** facility APIs directly.
+On **Tuesday, May 5, 2026**, the final Track A session of [7NRP](https://na.eventscloud.com/website/91919/) Tutorial Day was *"DoE American Science Cloud Experiments with NRP,"* presented by **Justas Balcas** and **Xi Yang** (Pilots & Prototypes group, Energy Sciences Network / Berkeley Lab) in the SDSC Auditorium from 3:30 – 5:00 PM. The session walked the room through the design of the U.S. Department of Energy's emerging **American Science Cloud (AmSC)** and explored what it would take to extend the AmSC stack to a heterogeneous, mixed-mode (partially dual-stack), multi-tenant Kubernetes cluster like NRP, then put attendees on a JupyterHub to exercise the DOE **Integrated Research Infrastructure (IRI)** facility APIs directly.
 
 ![Justas Balcas and Xi Yang opening the AmSC tutorial in the SDSC Auditorium](~/assets/images/posts/amsc-7nrp-pic2.jpg)
 
@@ -24,15 +24,15 @@ On **Tuesday, May 5, 2026**, the final Track A session of [7NRP](https://na.even
 
 ---
 
-## Why AmSC, and why on NRP
+## Why AmSC, and why explore extending it to clusters like NRP
 
-The talk opened with the policy context. On **November 24, 2025**, a White House Executive Order launched the **Genesis Mission** — *"a national initiative to build the world's most powerful scientific platform through AI"* — with the explicit goal of doubling the productivity and impact of American research within a decade. DOE budgets and initial appropriations come in at $320M (with $40M earmarked for AmSC), and Congress is starting to fund individual pieces; the Genesis Mission Challenges RFA adds another $293M.
+The talk opened with the policy context. On **November 24, 2025**, a White House Executive Order launched the **Genesis Mission** — *"a national initiative to build the world's most powerful scientific platform through AI"* — with the explicit goal of doubling the productivity and impact of American research within a decade.
 
 **The American Science Cloud is the key building block of the Genesis Mission platform.** Its charter is to deliver a seamless integration of DOE science instruments, computing, experimental facilities, and networking — together with AI, data, modeling, and simulation software — through a single advanced programming interface, **the AmSC API**. The pitch to scientists is concrete: unified APIs for data/model/workflow access, a federated VO-style identity model, interoperability between DOE facilities and commercial cloud service providers, and an explicit target of cutting *time to insight* from months to days through composable, AI-driven workflows.
 
 AmSC's **Minimum Viable Product** is scheduled for delivery in 12 months (by **9/30/2026**), with a clean four-quarter ramp: Federated Access Foundation (VO + IRI integration) at 3 months, Science Team Onboarding (API Gateway + Data Catalog + Workflow) at 6 months, Intelligent Workflow (agentic workflow + AmSC API v1 + IRI orchestration) at 9 months, and the full MVP release (ASCR/CSP link, unified discovery) at 12 months.
 
-The connection to NRP is direct. AmSC's Infrastructure Partners (IPs) include ASCR HPC (OLCF/Frontier, NERSC/Perlmutter, ALCF/Aurora, HPDF), ASCR Networking (ESnet), Office of Science labs, applied energy labs, and commercial CSPs — and **NRP**, which plugs into AmSC as an IP through the same common abstraction layer everything else uses: the **IRI-API** (DOE Integrated Research Infrastructure API).
+NRP could directly connect to AmSC. AmSC's Infrastructure Partners (IPs) include ASCR HPC (OLCF/Frontier, NERSC/Perlmutter, ALCF/Aurora, HPDF), ASCR Networking (ESnet), PNNL, Office of Science labs, applied energy labs, and commercial CSPs — and potentially the NRP, which could plug into AmSC as an IP through the same common abstraction layer everything else uses: the IRI-API (DOE Integrated Research Infrastructure API).
 
 ## AmSC architecture in one paragraph
 
