@@ -375,6 +375,7 @@ export default defineConfig({
                     { label: 'k8s', link: 'documentation/admindocs/upgrades/k8s' },
                     { label: 'kubevirt', link: 'documentation/admindocs/upgrades/kubevirt' },
                     { label: 'nextcloud', link: 'documentation/admindocs/upgrades/nextcloud' },
+                    { label: 'overleaf', link: 'documentation/admindocs/upgrades/overleaf' },
                     { label: 'nodes', link: 'documentation/admindocs/upgrades/nodes' },
                     { label: 'prometheus', link: 'documentation/admindocs/upgrades/prometheus' },
                     { label: 'postgres', link: 'documentation/admindocs/upgrades/postgres-operator' },

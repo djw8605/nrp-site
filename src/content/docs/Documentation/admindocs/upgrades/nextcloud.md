@@ -58,4 +58,4 @@ After the upgrade, you need to go to [Settings Overview](https://nextcloud.nrp-n
 
 #### Upgrading Collabora and LanguageTool
 
-Collabora and LanguageTool should only require a restart to upgrade to the latest tag. Read https://hub.docker.com/r/collabora/code and https://hub.docker.com/r/meyay/languagetool to see if there are breaking changes if the container suddenly does not work.
+Collabora and LanguageTool should only require a restart to upgrade to the latest tag. Read https://hub.docker.com/r/collabora/code and https://hub.docker.com/r/meyay/languagetool to see if there are breaking changes in case the container suddenly does not work.
