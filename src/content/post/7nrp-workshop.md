@@ -32,7 +32,7 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 1:00 PM | [**Using AI and LLM Inference on NRP**](https://github.com/nrp-nautilus/7nrp/tree/main/2_ai_llm_inference_on_nrp) — Mohammad Firas Sada (UCSD/SDSC) | [**Tutorial on Drone Usage and IoT**](https://media.nrp.ai/7nrp-slides/JGraham.pdf) — John Graham (UCSD/SDSC) |
 | 2:00 PM | [**Setting Up Custom JupyterHubs for Classroom and Research**](https://github.com/nrp-nautilus/7nrp/tree/main/3_custom_jupyterhubs_classroom_research) — Mohammad Firas Sada, Daniel Diaz (UCSD/SDSC) | [**Tutorial Using ICICLE Digital Agriculture Pipeline**](#) — Hari Subramoni (Ohio State University) |
 | 3:00 PM | _Break_ | |
-| 3:30 PM | [**DoE American Science Cloud Experiments with NRP**](https://media.nrp.ai/7nrp-slides/JBalcas_XYang.pdf) — Justas Balcas, Xi Yang (ESnet) | [**AgTech for the Curriculum Discussion**](#) — Frank Wuerthwein (UCSD/SDSC) |
+| 3:30 PM | [**DoE American Science Cloud Experiments with NRP**](https://media.nrp.ai/7nrp-slides/JBalcas_XYang.pdf) — Justas Balcas, Xi Yang (ESnet) | **AgTech for the Curriculum Discussion** — Frank Wuerthwein (UCSD/SDSC) |
 
 ---
 
@@ -48,7 +48,7 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 11:00 AM | Frank Wuerthwein (UCSD/SDSC) | [The State of NRP](https://media.nrp.ai/7nrp-slides/FWuerthwein.pdf) |
 | 11:40 AM | Sesh Murthy (UCSD), Portia Restuccia (Vocareum) | [ASPIRE Math Tutor](https://media.nrp.ai/7nrp-slides/SMurthy.pdf) |
 | 12:15 PM | | _Lunch_ |
-| 1:30 PM | Akbar Kara (Ciena) | [Ciena Presentation](https://media.nrp.ai/7nrp-slides/AKara.pdf) |
+| 1:30 PM | Akbar Kara (Ciena) | [Ciena Presentation](#) |
 | 1:35 PM | Kyle Krick (SDSU), Dung Vu (CSU San Bernardino), Dhusdee Chandswang (CSU Fullerton) | [NRP and the CSUs: Case Studies and Lessons Learned](https://media.nrp.ai/7nrp-slides/KKrick_DVu_DChandswang.pdf) |
 | 1:50 PM | Sam Lau (UCSD) | [Use of Digital Assets in Undergraduate Education at UCSD](https://media.nrp.ai/7nrp-slides/SLau.pdf) |
 | 2:10 PM | Robert Malouf, Valeria Barra (SDSU); Martin Kim (CSU San Bernardino); Rosanna Overholser (Cal Poly Humboldt); Rakesh Mahto (CSU Fullerton); Kyle Krick (SDSU) | Panel on Education on NRP |
@@ -79,8 +79,8 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 3:00 PM | | _Break_ |
 | 3:30 PM | Larry Smarr (UCSD) | [Whirlwind Tour of Science on NRP](#) |
 | 4:00 PM | Duncan Watson-Parris (UCSD) | [Climate on NRP](https://media.nrp.ai/7nrp-slides/DWatson-Parris.pdf) |
-| 4:30 PM | Frank Lee (IBM), Frank Wuerthwein (UCSD/SDSC) | [AI for Health](https://media.nrp.ai/7nrp-slides/FLee.pdf) |
-| 5:00 PM | | _Adjourn_ |
+| 4:30 PM | Frank Lee (IBM) | [Data Platform & Engines for AI](https://media.nrp.ai/7nrp-slides/FLee.pdf) |
+| 5:00 PM | Frank Wuerthwein (UCSD/SDSC)| _Adjourn_ |
 
 ---
 
