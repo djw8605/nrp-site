@@ -79,8 +79,8 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 3:00 PM | | _Break_ |
 | 3:30 PM | Larry Smarr (UCSD) | [Whirlwind Tour of Science on NRP](#) |
 | 4:00 PM | Duncan Watson-Parris (UCSD) | [Climate on NRP](https://media.nrp.ai/7nrp-slides/DWatson-Parris.pdf) |
-| 4:30 PM | Frank Lee (IBM), Frank Wuerthwein (UCSD/SDSC) | [AI for Health](https://media.nrp.ai/7nrp-slides/FLee.pdf) |
-| 5:00 PM | | _Adjourn_ |
+| 4:30 PM | Frank Lee (IBM) | [Data Platform & Engines for AI](https://media.nrp.ai/7nrp-slides/FLee.pdf) |
+| 5:00 PM | Frank Wuerthwein (UCSD/SDSC)| _Adjourn_ |
 
 ---
 
