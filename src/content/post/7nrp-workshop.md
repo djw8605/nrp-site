@@ -48,7 +48,7 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 11:00 AM | Frank Wuerthwein (UCSD/SDSC) | [The State of NRP](https://media.nrp.ai/7nrp-slides/FWuerthwein.pdf) |
 | 11:40 AM | Sesh Murthy (UCSD), Portia Restuccia (Vocareum) | [ASPIRE Math Tutor](https://media.nrp.ai/7nrp-slides/SMurthy.pdf) |
 | 12:15 PM | | _Lunch_ |
-| 1:30 PM | Akbar Kara (Ciena) | [Ciena Presentation](#) |
+| 1:30 PM | Akbar Kara (Ciena) | Ciena Presentation |
 | 1:35 PM | Kyle Krick (SDSU), Dung Vu (CSU San Bernardino), Dhusdee Chandswang (CSU Fullerton) | [NRP and the CSUs: Case Studies and Lessons Learned](https://media.nrp.ai/7nrp-slides/KKrick_DVu_DChandswang.pdf) |
 | 1:50 PM | Sam Lau (UCSD) | [Use of Digital Assets in Undergraduate Education at UCSD](https://media.nrp.ai/7nrp-slides/SLau.pdf) |
 | 2:10 PM | Robert Malouf, Valeria Barra (SDSU); Martin Kim (CSU San Bernardino); Rosanna Overholser (Cal Poly Humboldt); Rakesh Mahto (CSU Fullerton); Kyle Krick (SDSU) | Panel on Education on NRP |
