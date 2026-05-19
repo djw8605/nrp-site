@@ -14,6 +14,8 @@ May 5 - 7, 2026
 
 [Agenda](https://na.eventscloud.com/website/91919/agenda/) · [Tutorial Day materials (GitHub)](https://github.com/nrp-nautilus/7nrp) · [Tutorial JupyterHub](https://training.nrp-nautilus.io/)
 
+*Presentation slides and recorded materials will continue to be added as they become available.*
+
 Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditorium** (afternoon Track B in Room 279). Wednesday and Thursday plenary sessions ran at the **Qualcomm Institute (QI) Auditorium**. All Tuesday Track A tutorials used the same workshop JupyterHub at [training.nrp-nautilus.io](https://training.nrp-nautilus.io/).
 
 ## Schedule
