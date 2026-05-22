@@ -57,7 +57,7 @@ Tuesday's Tutorial Day was held at the **San Diego Supercomputer Center Auditori
 | 3:00 PM | | _Break_ |
 | 3:30 PM | Ryan Dinubilo (F3 Innovate) | [AI in Agriculture](#) |
 | 3:50 PM | Hari Subramoni (Ohio State) | [AI Institute](#) |
-| 4:10 PM | Konstantin Karydis (UC Riverside) | [Agricultural Mobile Robots for Automated Field Data Collection and Analysis](#) |
+| 4:10 PM | Konstantin Karydis (UC Riverside) | [Agricultural Mobile Robots for Automated Field Data Collection and Analysis](https://media.nrp.ai/7nrp-slides/KKarydis.pptx) |
 | 4:30 PM | Ryan Dinubilo, Hari Subramoni, Konstantin Karydis | Panel Discussion |
 | 5:00 PM | | _Reception_ |
 
