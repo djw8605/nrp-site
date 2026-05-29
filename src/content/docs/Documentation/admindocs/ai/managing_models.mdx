@@ -56,7 +56,7 @@ Normally, in models without sliding window attention (SWA) capabilities, the KV 
 (EngineCore pid=432) INFO 00-00 00:00:00 [kv_cache_utils.py:1321] Maximum concurrency for 202,752 tokens per request: 1.01x
 ```
 
-But when models use **sliding window attention (SWA)**, a much lower KV cache size than the context size of the model can accommodate the full context size.
+But when models use **sliding window attention (SWA)**, a much lower KV cache size can accommodate the full context.
 
 ```
 (EngineCore pid=679) INFO 00-00 00:00:00 [kv_cache_utils.py:1733] GPU KV cache size: 4,919,610 tokens
