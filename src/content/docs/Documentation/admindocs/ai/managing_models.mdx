@@ -63,7 +63,9 @@ But when models use **sliding window attention (SWA)**, a much lower KV cache si
 (EngineCore pid=147) INFO 00-00 00:00:00 [kv_cache_utils.py:1324] Maximum concurrency for 262,144 tokens per request: 1.26x
 ```
 
-Because of the above reasons, assume that the KV cache is `bfloat16` to be conservative, but **do not give up fitting the model into available VRAM due to the reported KV cache in `hf-mem`, as long as at least the model weights fit in the total VRAM** (or CPU RAM when CPU offload is used). Moreover, vLLM/SGLang may use `fp8` KV cache automatically when the training of the model itself was performed quantized (like DeepSeek), and `hf-mem` cannot automatically detect this situation.
+Because of the above reasons, set the KV cache to `bfloat16` (`--kv-cache-dtype bfloat16`) to be conservative, but **do not give up fitting the model into available VRAM due to the reported KV cache in `hf-mem`, as long as at least the model weights fit in the total VRAM** (or CPU RAM when CPU offload is used). Set the same `--kv-cache-dtype` in vLLM/SGLang as well. Using `--kv-cache-dtype bfloat16` (or `--kv-cache-dtype auto` if explicitly setting `bfloat16` fails) is desirable for agentic coding workloads.
+
+When `--kv-cache-dtype` is not set or set to `--kv-cache-dtype auto`, vLLM/SGLang may use `fp8` or `fp4` KV cache automatically when the training of the model itself was performed with quantization (like DeepSeek), and `hf-mem` cannot automatically detect this situation.
 
 Based on the above information, **identify the adequate number and type of GPUs**, and edit the configuration files below to deploy the model.
 
@@ -131,7 +133,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --enable-expert-parallel --enable-ep-weight-filter --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 8192 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
+          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --enable-expert-parallel --enable-ep-weight-filter --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 8192 --kv-cache-dtype bfloat16 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
         command:
         - bash
         - -c
@@ -319,7 +321,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --max-num-batched-tokens 8192 --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --max-num-batched-tokens 8192 --kv-cache-dtype auto --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
         command:
         - bash
         - -c
@@ -844,6 +846,7 @@ spec:
             --gpu-memory-utilization 0.9 \
             --max-model-len 262144 \
             --max-num-batched-tokens 8192 \
+            --kv-cache-dtype bfloat16 \
             --enable-auto-tool-choice \
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
@@ -1055,6 +1058,7 @@ spec:
             --gpu-memory-utilization 0.9 \
             --max-model-len 262144 \
             --max-num-batched-tokens 8192 \
+            --kv-cache-dtype bfloat16 \
             --enable-auto-tool-choice \
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
