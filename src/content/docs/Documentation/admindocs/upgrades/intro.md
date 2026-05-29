@@ -7,9 +7,11 @@ description: Introduction to cluster upgrades
 This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
 :::
 
-**List of services that can be upgraded just by changing the container image version (parentheses contain the namespaces):** Synapse/Matrix (matrix-synapse, requires manual DB update), Element (matrix-synapse)
+**Make sure to update `src\pages\services-status.astro` and the `nautilus-config` ConfigMap in the `kube-system` namespace as well for [Services Status](/services-status/), if applicable.**
 
-**List of services that are automatically upgraded in restarts (parentheses contain the namespaces):** SuperSplat (supersplat), WebODM (webodm), EtherPad (etherpad, requires manual PostgreSQL update), BentoPDF (bentopdf), Jitsi (jitsi), Draw.io (drawio), Yopass (yopass), HedgeDoc (hedgedoc), LanguageTool (nextcloud), Collabora (nextcloud)
+**List of services that can be upgraded just by changing the container image version (namespaces within parentheses):** Synapse (matrix-synapse, requires manual DB update), Element (matrix-synapse), Plausible Analytics (monitoring)
+
+**List of services that are automatically upgraded in restarts (namespaces within parentheses):** SuperSplat (supersplat), WebODM (webodm), EtherPad (etherpad, requires manual PostgreSQL update), BentoPDF (bentopdf), Jitsi (jitsi), Draw.io (drawio), Yopass (yopass), HedgeDoc (hedgedoc), LanguageTool (nextcloud), Collabora (nextcloud)
 
 Instructions for other cluster or service upgrades can be found in relevant individual pages.
 
