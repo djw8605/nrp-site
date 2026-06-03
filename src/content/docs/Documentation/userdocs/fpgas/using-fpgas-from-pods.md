@@ -286,7 +286,7 @@ XRT is installed on the **host OS** of every FPGA node (the device plugin won't 
 
 ### Recommended pod image
 
-The cluster's Coder FPGA template image has XRT, Vivado 2023.1, and Vitis 2023.1 already installed and known to work. You can use it directly in a regular Pod or Job:
+The cluster's Coder FPGA template image (`gitlab-registry.nrp-nautilus.io/nrp/coder-images/vivado-vitis`) has XRT 2.15.225 (2023.1) baked in, and the `xilinx-tools` PVC mounted at `/tools/Xilinx/` provides Vivado **2021.2 / 2023.1 / 2023.2** and Vitis **2021.2 / 2023.2** (no Vitis 2023.1). You can use this image directly in a regular Pod or Job:
 
 ```yaml
 spec:
@@ -367,17 +367,32 @@ NRP runs a shared **Xilinx FlexLM license server** in-cluster so any pod (in any
 2100@xilinxd.xilinx-dev
 ```
 
-### The minimum incantation
+### If you're using the **`u55c-xilinx` Coder template**
 
-In any pod that has Vivado/Vitis installed (the Coder templates do; so does any image you build that bundles them):
+The template's pod spec already exports `XILINXD_LICENSE_FILE=2100@xilinxd.xilinx-dev` as a container env, and the startup script writes a managed block into `~/.bashrc` and `~/.zshrc` that sources `/opt/xilinx/xrt/setup.sh` plus the chosen Vivado/Vitis `settings64.sh` and sets the `LD_LIBRARY_PATH` realloc workaround. So in any terminal opened inside the workspace (XFCE terminal via NoVNC, code-server terminal, `kubectl exec -it ... bash`), you can just type:
+
+```bash
+vivado         # launches Vivado
+vitis          # launches Vitis (if your chosen version has it)
+vlm            # Vivado License Manager — confirms which features are served
+xbutil examine # confirms what FPGA(s) you got
+```
+
+No `export`, no `source` — the env is in place. If you want a *different* Vivado/Vitis version than the one selected when you created the workspace, rebuild the workspace and pick a new value in the "Vivado / Vitis version" parameter, or manually source `/tools/Xilinx/Vivado/<ver>/settings64.sh` in your shell to override.
+
+### If you're on a **custom pod** (or an older Coder workspace)
+
+The export + source dance is what you'd run by hand:
 
 ```bash
 export XILINXD_LICENSE_FILE=2100@xilinxd.xilinx-dev
-source /tools/Xilinx/Vivado/2023.1/settings.sh
-vlm           # launches the Vivado License Manager GUI
-# or:
-vivado        # launches Vivado itself
+source /opt/xilinx/xrt/setup.sh
+source /tools/Xilinx/Vivado/2023.1/settings64.sh    # or 2021.2 / 2023.2
+vlm                                                   # confirms license served
+vivado                                                # or vitis
 ```
+
+If you do this often, add the same block to your image's `/etc/bash.bashrc` or your container's entrypoint so subshells inherit it.
 
 `vlm` will connect to the server, list every feature available, and show its expiry date. If `vlm` lists your feature, you're done — Vivado/Vitis will pick it up automatically from the same `XILINXD_LICENSE_FILE` env var.
 
@@ -404,10 +419,10 @@ The cluster license is sized for the AMD/Xilinx feature set most NRP users actua
 
 NRP uses [Coder](https://coder-dev.nrp-nautilus.io/) to mount the AMD toolchain into your pod **read-only** from a shared volume at `/tools/Xilinx/`. The Coder FPGA templates wire this up automatically; if you build your own pod and want the same thing, ask `nrp-help` for the PVC name and mount it `readOnly: true`.
 
-Default versions available today:
+Versions available today (under `/tools/Xilinx/`):
 
-- `/tools/Xilinx/Vivado/2023.1/` (most common)
-- `/tools/Xilinx/Vitis/2023.1/`
+- **Vivado**: `2021.2`, `2023.1` (default in the Coder template), `2023.2`
+- **Vitis**: `2021.2`, `2023.2` (no `2023.1` — if you need Vitis, pick one of the matching pair)
 
 **Want a different Vivado/Vitis version?** Two options:
 
@@ -422,11 +437,11 @@ The standard workaround is the `LD_LIBRARY_PATH` trick documented by AMD on thei
 
 > [LD_LIBRARY_PATH or other new shared libraries for 2021.2 missing](https://adaptivesupport.amd.com/s/question/0D52E00006uWMiPSAW/ldlibrarypath-or-other-new-shared-libraries-for-20212-missing?language=en_US)
 
-Concretely, before launching Vivado:
+Concretely, before launching Vivado (the `u55c-xilinx` Coder template already does this in `.bashrc` using whichever Vivado version you picked):
 
 ```bash
-export LD_LIBRARY_PATH=/tools/Xilinx/Vivado/2023.1/lib/lnx64.o:$LD_LIBRARY_PATH
-# then:
+export LD_LIBRARY_PATH=/tools/Xilinx/Vivado/$XILINX_VIVADO_VERSION/lib/lnx64.o:$LD_LIBRARY_PATH
+# (replace $XILINX_VIVADO_VERSION with 2021.2 / 2023.1 / 2023.2 if not set)
 vivado
 ```
 
@@ -444,13 +459,14 @@ getent hosts xilinxd.xilinx-dev || nslookup xilinxd.xilinx-dev
 nc -vz xilinxd.xilinx-dev 2100
 
 # 2. license features visible?
+#    (Skip the export/source if you're on the u55c-xilinx Coder template — already done in .bashrc.)
 export XILINXD_LICENSE_FILE=2100@xilinxd.xilinx-dev
-source /tools/Xilinx/Vivado/2023.1/settings.sh
+source /tools/Xilinx/Vivado/2023.1/settings64.sh
 vlm    # GUI; or use lmutil:
 /tools/Xilinx/Vivado/2023.1/tps/lnx64/lmutil/lmutil lmstat -a -c "$XILINXD_LICENSE_FILE"
 ```
 
-If `lmstat -a` lists the features and you've sourced `settings.sh`, both Vivado and Vitis will pick up the license automatically — no per-tool configuration needed.
+If `lmstat -a` lists the features and you've sourced `settings64.sh`, both Vivado and Vitis will pick up the license automatically — no per-tool configuration needed.
 
 ## Flashing a card's base shell from a pod
 
