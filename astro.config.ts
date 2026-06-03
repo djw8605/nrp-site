@@ -222,6 +222,7 @@ export default defineConfig({
               label: 'FPGA',
               collapsed: true,
               items: [
+                { label: 'Requesting FPGAs from a Pod', link: 'documentation/userdocs/fpgas/using-fpgas-from-pods' },
                 { label: 'Vivado and Vitis', link: 'documentation/userdocs/fpgas/vivado-vitis' },
                 { label: 'ESnet SmartNIC', link: 'documentation/userdocs/fpgas/esnet' },
                 { label: 'SmartNIC: Development', link: 'documentation/userdocs/fpgas/esnet_development' },
