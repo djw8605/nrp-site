@@ -31,11 +31,11 @@ After the 2026-05 hardware migration the FPGAs were consolidated onto fewer host
 
 **Total: 23 paired cards online**, plus the still-offline `k8s-stratix-10-01` accounting for the remainder of the original 32.
 
-## Required services on every FPGA host
+## Services on every FPGA host
 
-For a node to actually act as an FPGA worker — i.e., advertise its cards to the scheduler, accept FPGA-bearing pods, and let those pods do real work — **all four of the following must be present and healthy on the host.** Any one of them missing reduces the host to "has hardware, but k8s can't use it."
+Four cluster-level components together make an FPGA host useful. The first two (**XRT** and **`xilinx-device-plugin-daemonset`**) are **strictly required** — without them the host doesn't advertise cards and no FPGA-bearing pod can run on it. **KubeVirt `virt-handler`** is **required if you want pods or VMs to access JTAG** via `xilinx.com/fpga_jtag`; if your only workloads are `.xclbin` programming via the PCIe-side resource you can technically skip it. **`smarter-device-manager`** is **optional** — strictly speaking the Vivado / `.xclbin` / JTAG flow does not need it, but specific workflows like ESnet SmartNIC `sn-cli` (UART-only access to the satellite controller) and VFIO PCIe passthrough do require it. In practice we run all four on every FPGA host so users don't have to remember per-host capability differences.
 
-### 1. XRT (Xilinx Runtime) installed on the host OS
+### 1. XRT (Xilinx Runtime) installed on the host OS — **required**
 
 XRT is **not** containerised; it must be installed in the host's userland. Two reasons:
 
@@ -44,7 +44,7 @@ XRT is **not** containerised; it must be installed in the host's userland. Two r
 
 Required minimum: a working `/opt/xilinx/xrt/setup.sh`, `lsmod | grep -E "^xocl|^xclmgmt"` showing both modules, and `xbutil examine` reporting `Device Ready: Yes` for each card. Version per host listed in the table above; see [XRT installation](#xrt-installation) below for which deb to use on which Ubuntu release.
 
-### 2. `xilinx-device-plugin-daemonset` (namespace `kube-system`)
+### 2. `xilinx-device-plugin-daemonset` (namespace `kube-system`) — **required**
 
 This DaemonSet is what registers the FPGAs themselves with kubelet. Without it, the host can have XRT and 7 happy cards and `kubectl describe node` still shows zero `amd.com/xilinx_u55c_*` resources, so no pod can ever schedule onto them. Specifically:
 
@@ -54,18 +54,27 @@ This DaemonSet is what registers the FPGAs themselves with kubelet. Without it, 
 
 The DaemonSet has a hardcoded `nodeAffinity` host list **in addition to** the `nodeSelector: fpga=true` — both have to permit the node or the plugin won't run there. See [Kubernetes integration](#kubernetes-integration) for the two-step onboarding ritual.
 
-### 3. `smarter-device-manager` (namespace `kube-system`)
+### 3. `smarter-device-manager` (namespace `kube-system`) — **optional, but install it anyway**
 
-The smarter-device-manager DaemonSet exposes specific `/dev/...` files as schedulable k8s resources via the same device-plugin gRPC protocol. For the FPGA side, two things in particular:
+This one is **not needed for the standard FPGA flow** — loading `.xclbin`s through `xbutil program --user`, flashing via `xilinx.com/fpga_jtag` (KubeVirt), running Vivado, etc. all work without it. It's needed for two specific workflows that share an FPGA host:
 
-- **`smarter-devices/ttyUSB0`, `ttyUSB1`, `ttyUSB5`, `ttyUSB10`, `ttyUSB11`, `ttyUSB15`** — the FT4232H UART channels. Each U55C's onboard FTDI exposes four UARTs as `/dev/ttyUSBN`. Without this DS those tty char devices can't be mounted into pods, so users have no way to talk to the cards' satellite controllers over UART (used by ESnet SmartNIC's `sn-cli`, by `xsdb`'s serial backend, by anything talking to the SC for serial console).
+- **ESnet SmartNIC `sn-cli`** — talks to the on-card satellite controller over UART (`/dev/ttyUSBN`), not raw USB. Without smarter-device-manager, the `esnet` Coder template (and `deploy-esnet` in the templates repo) can't allocate `smarter-devices/ttyUSB*` and ESnet pods fail to schedule.
+- **VFIO PCIe passthrough from regular pods** (DPDK-style). Needs `smarter-devices/vfio` (`/dev/vfio` group device).
+
+It also exposes `smarter-devices/fuse`, which is not FPGA-specific.
+
+Because the cost of running the DaemonSet is tiny and we have ESnet users on these hosts, **install it on every FPGA host**. The fleet-wide install just means labelling: `kubectl label node <fqdn> smarter-device-manager=enabled --overwrite`.
+
+The smarter-device-manager DaemonSet exposes specific `/dev/...` files as schedulable k8s resources via the same device-plugin gRPC protocol. For the FPGA side:
+
+- **`smarter-devices/ttyUSB0`, `ttyUSB1`, `ttyUSB5`, `ttyUSB10`, `ttyUSB11`, `ttyUSB15`** — the FT4232H UART channels. Each U55C's onboard FTDI exposes four UARTs as `/dev/ttyUSBN`. Lets pods talk to the cards' satellite controllers over UART (used by ESnet SmartNIC's `sn-cli`, by `xsdb`'s serial backend, by anything talking to the SC for serial console).
 - **`smarter-devices/vfio`** — the `/dev/vfio` group device. Required for any pod doing VFIO PCIe passthrough.
 
 The configmap is in `kube-system/smarter-device-manager` (a single `conf.yaml` with `devicematch:` regexes; the FPGA regex is `^ttyUSB[0-15]*$`, which is why only the names listed above are advertised — the regex character class is buggy but intentional today).
 
-Without smarter-device-manager, the host has FPGAs **and** JTAG cables, but pods can only get the PCIe side of the card. No UART, no VFIO. For most ESnet-style workflows that's a hard blocker.
+Note: `xilinx.com/fpga_jtag` (KubeVirt) provides raw USB at `/dev/bus/usb/<bus>/<dev>`, which is enough for **any** JTAG operation including reading the SC via libftdi. So a user who needs *both* JTAG TAP **and** SC UART can use the KubeVirt resource alone and bypass `smarter-devices/ttyUSB*` entirely — `smarter-devices/ttyUSB*` is only the right answer when the pod wants the kernel-cooked tty interface (e.g. `picocom /dev/ttyUSB1`) without raw-USB privileges.
 
-### 4. KubeVirt `virt-handler` (namespace `kubevirt`) — for `xilinx.com/fpga_jtag`
+### 4. KubeVirt `virt-handler` (namespace `kubevirt`) — for `xilinx.com/fpga_jtag` — **required if you want JTAG access from pods/VMs**
 
 This one isn't FPGA-specific (it's KubeVirt's normal node agent), but it's the component that actually registers **`xilinx.com/fpga_jtag`** with kubelet, based on the cluster's KubeVirt CR `permittedHostDevices.usb` config:
 
@@ -110,12 +119,12 @@ Tell the user to reference the per-serial resource in their VM's `spec.template.
 
 ### Summary: dependency for what
 
-| Component                        | Without it you lose…                                                                                  |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| XRT (host)                       | `xclmgmt`/`xocl` modules; everything below depends on this                                            |
-| `xilinx-device-plugin-daemonset` | The `amd.com/xilinx_u55c_*` resource → no FPGA pods at all on the node                                |
-| `smarter-device-manager`         | `smarter-devices/ttyUSB*` → no UART/console access from pods; `smarter-devices/vfio` → no VFIO        |
-| KubeVirt `virt-handler` + CR     | `xilinx.com/fpga_jtag` → no JTAG TAP access from pods (Vivado `hw_server`/OpenOCD/`xbmgmt program`)    |
+| Component                        | Status                                                          | Without it you lose…                                                                                  |
+| -------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| XRT (host)                       | **required**                                                    | `xclmgmt`/`xocl` modules; everything below depends on this                                            |
+| `xilinx-device-plugin-daemonset` | **required**                                                    | The `amd.com/xilinx_u55c_*` resource → no FPGA pods at all on the node                                |
+| KubeVirt `virt-handler` + CR     | **required for JTAG access**                                    | `xilinx.com/fpga_jtag` → no JTAG TAP access from pods/VMs (Vivado `hw_server`/OpenOCD/`xbmgmt program`) |
+| `smarter-device-manager`         | **optional** (recommended; needed for ESnet `sn-cli` and VFIO)  | `smarter-devices/ttyUSB*` → no UART-only access from pods; `smarter-devices/vfio` → no VFIO            |
 
 ## Xilinx FlexLM license server (`xilinx-dev` namespace)
 
