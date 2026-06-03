@@ -252,6 +252,7 @@ export interface Person extends Widget {
   img: string,
   name: string,
   title: string,
+  imgClass?: string,
 }
 
 export interface Features extends Omit<Headline, 'classes'>, Widget {

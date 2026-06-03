@@ -1,6 +1,6 @@
 ---
-import { Icon } from 'astro-icon/components';
 import type { People as Props } from '~/types';
+import { twMerge } from 'tailwind-merge';
 
 import Image from '~/components/common/Image.astro';
 import Headline from '~/components/ui/Headline.astro';
@@ -30,7 +30,10 @@ const {
                 <Image
                   src={person.img}
                   alt={person.name}
-                  class="h-28 w-28 object-cover rounded-full shadow-md ring-1 ring-black/5 transition-transform duration-200 hover:scale-105"
+                  class={twMerge(
+                    'h-28 w-28 object-cover object-center rounded-full shadow-md ring-1 ring-black/5 transition-transform duration-200 hover:scale-105',
+                    person.imgClass
+                  )}
                   width={170}
                   height={170}
                   layout="fixed"
