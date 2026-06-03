@@ -17,22 +17,29 @@ const {
 } = Astro.props;
 ---
 
-<Headline title={title} subtitle={subtitle} tagline={tagline} />
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
 
-<div class="flex flex-wrap justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
-  {
-    people &&
-      people.map(
-        (person) =>
-          person && (
-            <WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
-              <div class="max-w-md w-full">
-                <Image src={person.img} alt="" class="h-30 mx-auto object-cover rounded-full w-30" width={170} height={170}  layout="fixed" />
-                <Headline class="flex flex-wrap justify-center" title={person.name}></Headline>
-                <Headline class="flex flex-wrap justify-center" subtitle={person.title}></Headline>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
+    {
+      people &&
+        people.map(
+          (person) =>
+            person && (
+              <div class="flex flex-col items-center text-center">
+                <Image
+                  src={person.img}
+                  alt={person.name}
+                  class="h-28 w-28 object-cover rounded-full shadow-md ring-1 ring-black/5 transition-transform duration-200 hover:scale-105"
+                  width={170}
+                  height={170}
+                  layout="fixed"
+                />
+                <h3 class="mt-4 text-base font-semibold leading-tight">{person.name}</h3>
+                <p class="mt-1 text-sm text-muted leading-snug">{person.title}</p>
               </div>
-            </WidgetWrapper>
-          )
-      )
-  }
-</div>
+            )
+        )
+    }
+  </div>
+</WidgetWrapper>
