@@ -16,7 +16,7 @@ There are three common ways to get an FPGA on NRP. Pick the one that matches wha
 | Load an `.xclbin` onto a card and run a host app against it                 | **Pod in your namespace** requesting `amd.com/xilinx_u55c_*` (no JTAG)  | Doesn't need Vivado; just XRT + your host program. JTAG is **not** needed for this.                            |
 | Read/poke an Alveo's serial console (SC over UART)                          | **Pod with `smarter-devices/ttyUSB*`**                                  | UART-only; doesn't need raw USB or KubeVirt.                                                                   |
 | Attach Vivado `hw_server`/`xsdb`/OpenOCD to the JTAG TAP (debug)            | **Pod with `xilinx.com/fpga_jtag: N`**                                  | Raw USB device is mounted into the pod; you can run any JTAG client.                                           |
-| Reflash a card's base shell                                                 | **Coordinate with `nrp-help` first**, then a pod with `fpga_jtag` + the FPGA resource | Flashing is destructive and needs a chassis power cycle — see the JTAG caution below.                          |
+| Reflash a card's base shell                                                 | **Contact cluster admins first** ([Matrix](https://nrp.ai/contact/)), then a pod with `fpga_jtag` + the FPGA resource | Flashing is destructive and needs a chassis power cycle — see the JTAG caution below.                          |
 | Run Vivado in a Linux VM (when containerised Vivado crashes)                | **KubeVirt VM in your namespace**                                       | Bypasses container/glibc issues; you install Vivado yourself inside the VM. See [Virtualization — Ubuntu](/documentation/userdocs/running/virtualization-ubuntu/). |
 
 **Rule of thumb on Coder vs. your own pod:**
@@ -25,6 +25,37 @@ There are three common ways to get an FPGA on NRP. Pick the one that matches wha
 - Use **your own pod/Job** when you want to run unattended (CI, overnight synthesis), need a different image or different Vivado/Vitis version, or want full control over the spec (e.g. pinning to a specific card by iSerial).
 
 The two are not exclusive — many users develop in Coder and submit long batch jobs from their namespace using the same image.
+
+## Frequently asked questions
+
+Quick answers to the questions that come up most often. Each one links to the longer treatment further down the page.
+
+**Q: I just want to load my `.xclbin` and run my host app — what's the minimum?**
+A: A pod requesting `amd.com/xilinx_u55c_gen3x16_xdma_base_3-0: 1` and an image that has XRT (e.g. the Coder vivado-vitis image). You do **not** need `xilinx.com/fpga_jtag`. See [XRT in your pod](#xrt-in-your-pod--what-it-is-and-how-to-use-it).
+
+**Q: Do I need to request `xilinx.com/fpga_jtag`?**
+A: Almost certainly no. JTAG is only needed for reflashing the base shell, attaching Vivado `hw_server` / `xsdb` / OpenOCD, or reading the SC over UART. Loading kernels, running Vitis-built designs, and running ESnet SmartNIC pipelines all use the AMD card resource above. See [Before you request JTAG](#before-you-request-jtag-read-this).
+
+**Q: How do I launch Vivado / Vitis in a Coder workspace?**
+A: In the `u55c-xilinx` Coder template, just open the XFCE or code-server terminal and type `vivado` (or `vitis`, `vlm`). The license server env and `settings64.sh` are sourced automatically. See [Using Vivado/Vitis with the cluster license server](#using-vivadovitis-with-the-cluster-license-server).
+
+**Q: How do I tell which physical Alveo card I got allocated?**
+A: Inside the pod, the FTDI iSerial of the JTAG cable equals the card's XMC serial. Read it from sysfs — see [Example 3](#example-3--verify-the-pairing-at-runtime).
+
+**Q: Where is the license server?**
+A: `2100@xilinxd.xilinx-dev` (cluster-internal DNS). Already set as `XILINXD_LICENSE_FILE` in the Coder template; otherwise `export XILINXD_LICENSE_FILE=2100@xilinxd.xilinx-dev`.
+
+**Q: Vivado crashes inside the container with a `realloc()` / `corrupted size` error.**
+A: Known issue. Try the [`LD_LIBRARY_PATH` workaround](#vivado-doesnt-love-being-containerised--known-workarounds). If that doesn't work, run Vivado inside a [KubeVirt VM](/documentation/userdocs/running/virtualization-ubuntu/) instead.
+
+**Q: My pod stays in `Pending` with "Insufficient `amd.com/xilinx_u55c_*`".**
+A: All FPGAs that can satisfy your request are currently allocated to other workloads, or you asked for more cards than any single host has. See [troubleshooting](#troubleshooting).
+
+**Q: Can I just flash a card myself?**
+A: No — flashing requires a chassis power cycle that evicts everybody on the node. Contact cluster admins on [Matrix](https://nrp.ai/contact/) to coordinate a window. See [Flashing a card's base shell from a pod](#flashing-a-cards-base-shell-from-a-pod).
+
+**Q: Which Vivado/Vitis versions are installed?**
+A: Vivado **2021.2, 2023.1, 2023.2**; Vitis **2021.2, 2023.2** (no Vitis 2023.1). All under `/tools/Xilinx/`. Switch versions in the Coder template's `Vivado / Vitis version` parameter, or `source /tools/Xilinx/Vivado/<ver>/settings64.sh` by hand.
 
 ## Before you request JTAG: read this
 
@@ -41,10 +72,10 @@ Why this matters:
 
 1. **Flashing is destructive.** A failed or wrong flash will leave the card in golden/recovery mode and unusable until reflashed; in rare cases it can require the card to be physically pulled.
 2. **Flashing requires a full chassis power cycle.** The newly written flash partition isn't loaded into the FPGA until the host is cold-rebooted (`ipmitool power cycle`). A warm `reboot` is not enough. Cold-rebooting a host evicts **every other tenant's pods on that node**, and on multi-card hosts (`node-2-6/7/8/11`, `k8s-stratix-10-02`, `prp-gpu-2`) that's a lot of other users.
-3. **It has to be coordinated with the cluster admins.** Open a ticket with `nrp-help` *before* you plan a flash session, so the admins can drain the node, taint it (`nautilus.io/issue=fpga-install`), and schedule the reboot in a window that doesn't surprise anybody. The drain + taint + flash + power cycle + uncordon procedure is documented in the [FPGA Administration admindoc](/documentation/admindocs/cluster/fpga) — but you should not do it yourself even if you have the bits to.
+3. **It has to be coordinated with the cluster admins.** Contact them on [Matrix](https://nrp.ai/contact/) *before* you plan a flash session, so they can drain the node, taint it (`nautilus.io/issue=fpga-install`), and schedule the reboot in a window that doesn't surprise anybody. The drain + taint + flash + power cycle + uncordon procedure is documented in the [FPGA Administration admindoc](/documentation/admindocs/cluster/fpga) — but you should not do it yourself even if you have the bits to.
 4. **A non-cooperating flash workflow can also break the node.** Recent admin docs include real recovery stories (a broken `/lib` symlink that killed sshd on `node-2-11`; a `pFR` dpkg state on the U55C platform deb); we want to avoid repeating them.
 
-**Rule of thumb:** if Vivado/Vitis/XRT in your pod doesn't see the card you need, the right next step is to message `#fpga` on Matrix or open `nrp-help`, not to grab `xilinx.com/fpga_jtag` and start flashing.
+**Rule of thumb:** if Vivado/Vitis/XRT in your pod doesn't see the card you need, the right next step is to contact the cluster admins on [Matrix](https://nrp.ai/contact/), not to grab `xilinx.com/fpga_jtag` and start flashing.
 :::
 
 ## The resources you can request
@@ -88,7 +119,6 @@ That makes the practical recipe:
 1. **Take the whole host.** Request every FPGA and every JTAG on the host. Every JTAG is then for one of your FPGAs — no mismatch possible. Use the iSerial match in code to pair them up.
 2. **Pin to a single-card host** (`node-2-9` or `node-2-10`). There's only one FPGA and one JTAG, so the allocation is the matching pair by construction.
 3. **Pin to a specific card by hostname + serial check.** Use `nodeSelector` to land on the host that has the card you want, request `1 + 1`, then check the iSerial inside the pod and exit (or restart) if it isn't your target.
-4. **KubeVirt VMs** can pin by USB serial via `permittedHostDevices` if an admin pre-registers it — useful when you need a specific card from a VM.
 
 ## Example 1 — single FPGA + JTAG on a 1-card host (guaranteed pair)
 
@@ -221,37 +251,7 @@ spec:
 
 You get `/dev/ttyUSB0` and `/dev/ttyUSB1` (host's, not the pod's own — same numbering). `lsusb` will *list* every FTDI on the host (sysfs is visible), but you can only `open()` the two ttyUSBs you requested. You **cannot** run JTAG operations through `/dev/ttyUSB*`; that needs raw USB access (`/dev/bus/usb/...`), which is what `xilinx.com/fpga_jtag` mounts.
 
-Important caveat: the smarter-device-manager regex in production today is `^ttyUSB[0-15]*$`, which only matches the device names `ttyUSB0`, `ttyUSB1`, `ttyUSB5`, `ttyUSB10`, `ttyUSB11`, `ttyUSB15`. Anything outside that set (`ttyUSB2`, `ttyUSB3`, `ttyUSB4`, …) is **not** exposed as a k8s resource even though the device file exists on the host. If you need access to those, open a ticket with `nrp-help`.
-
-## Example 5 — KubeVirt VM with a specific card by serial
-
-This is the only way for a VM to pin to a known card. An admin has to add a per-card entry in the KubeVirt CR with the iSerial in the selector:
-
-```yaml
-# excerpt of the cluster-wide KubeVirt CR (admin-only)
-permittedHostDevices:
-  usb:
-  - resourceName: xilinx.com/fpga_jtag_XFL1GHBRTQ42
-    selectors:
-    - vendor:  "0403"
-      product: "6011"
-      serial:  "XFL1GHBRTQ42"
-```
-
-Once that's in place, your `VirtualMachine` spec would do:
-
-```yaml
-spec:
-  template:
-    spec:
-      domain:
-        devices:
-          hostDevices:
-          - name: jtag
-            deviceName: xilinx.com/fpga_jtag_XFL1GHBRTQ42
-```
-
-The default config only has the generic `xilinx.com/fpga_jtag` selector (matches any FT4232H). Per-card resources can be added on request — file an `nrp-help` ticket.
+Important caveat: the smarter-device-manager regex in production today is `^ttyUSB[0-15]*$`, which only matches the device names `ttyUSB0`, `ttyUSB1`, `ttyUSB5`, `ttyUSB10`, `ttyUSB11`, `ttyUSB15`. Anything outside that set (`ttyUSB2`, `ttyUSB3`, `ttyUSB4`, …) is **not** exposed as a k8s resource even though the device file exists on the host. If you need access to those, contact the cluster admins on [Matrix](https://nrp.ai/contact/).
 
 ## Verifying what you got
 
@@ -291,7 +291,7 @@ The cluster's Coder FPGA template image (`gitlab-registry.nrp-nautilus.io/nrp/co
 ```yaml
 spec:
   imagePullSecrets:
-  - name: gitlab-registry              # ask nrp-help if you don't have it in your ns
+  - name: gitlab-registry              # ask cluster admins if you don't have it in your ns
   containers:
   - name: dev
     image: gitlab-registry.nrp-nautilus.io/nrp/coder-images/vivado-vitis
@@ -417,7 +417,7 @@ The cluster license is sized for the AMD/Xilinx feature set most NRP users actua
 
 ### Where Vivado/Vitis live (and which version you get)
 
-NRP uses [Coder](https://coder-dev.nrp-nautilus.io/) to mount the AMD toolchain into your pod **read-only** from a shared volume at `/tools/Xilinx/`. The Coder FPGA templates wire this up automatically; if you build your own pod and want the same thing, ask `nrp-help` for the PVC name and mount it `readOnly: true`.
+NRP uses [Coder](https://coder.nrp-nautilus.io/) to mount the AMD toolchain into your pod **read-only** from a shared volume at `/tools/Xilinx/`. The Coder FPGA templates wire this up automatically; if you build your own pod and want the same thing, ask the cluster admins on [Matrix](https://nrp.ai/contact/) for the PVC name and mount it `readOnly: true`.
 
 Versions available today (under `/tools/Xilinx/`):
 
@@ -426,7 +426,7 @@ Versions available today (under `/tools/Xilinx/`):
 
 **Want a different Vivado/Vitis version?** Two options:
 
-1. **Ask the admins to add it.** File an `nrp-help` ticket — the toolchain is large but adding a new version is a one-time PVC update. This is the right path if more than one person on NRP will use that version.
+1. **Ask the cluster admins to add it.** Reach them on [Matrix](https://nrp.ai/contact/) — the toolchain is large but adding a new version is a one-time PVC update. This is the right path if more than one person on NRP will use that version.
 2. **Run your own copy inside your namespace.** Download Vivado/Vitis from AMD's site, push it into a PVC under your namespace, and mount it into your pod. Slow first time, but completely self-service.
 
 ### Vivado doesn't love being containerised — known workarounds
@@ -475,7 +475,7 @@ If `lmstat -a` lists the features and you've sourced `settings64.sh`, both Vivad
 
 The procedure here reflashes the **base shell** (`xilinx_u55c_gen3x16_xdma_base_3` or replacements). That's the partition the FPGA loads at power-on, and:
 
-1. **Coordinate with `nrp-help` first.** A new shell only takes effect after a chassis power cycle (`ipmitool power cycle`), which evicts every other tenant on that node. Don't surprise people. Admins will drain the node, taint it with `nautilus.io/issue=fpga-install`, and give you a window.
+1. **Coordinate with cluster admins first.** Reach them on [Matrix](https://nrp.ai/contact/). A new shell only takes effect after a chassis power cycle (`ipmitool power cycle`), which evicts every other tenant on that node. Don't surprise people. Admins will drain the node, taint it with `nautilus.io/issue=fpga-install`, and give you a window.
 2. **Triple-check you're targeting the right card.** If you have multiple FPGAs in your pod and flash the wrong BDF, you've bricked someone else's card.
 3. **A failed flash leaves the card in golden/recovery mode.** Recoverable, but it takes another flash + power cycle.
 4. **Never run `dpkg-deb -x <u55c-base.deb> /`** as root — there's a real incident on `node-2-11` where this destroyed the host's `/lib` symlink and killed sshd. If you need files out of the deb, use a scratch directory.
@@ -513,7 +513,7 @@ for f in /dev/bus/usb/*/* ; do
 done
 ```
 
-The **`serial=`** value from `xclmgmt` and the **`iSerial=`** of the FT4232H **must match the card you intend to flash.** That string (e.g. `XFL1GHBRTQ42`) is your single point of truth — it's printed on the card label, recorded in the [inventory spreadsheet](https://docs.google.com/spreadsheets/d/1EEr47qMKR0YmJZbTusKdmB1bbWZNE3dSQQEgNeJC4_w/edit?usp=sharing), and shows up in both XRT and lsusb. **If the BDF you're about to flash isn't paired with the iSerial you wrote in your `nrp-help` ticket, stop.**
+The **`serial=`** value from `xclmgmt` and the **`iSerial=`** of the FT4232H **must match the card you intend to flash.** That string (e.g. `XFL1GHBRTQ42`) is your single point of truth — it's printed on the card label and shows up in both XRT and `lsusb`. **If the BDF you're about to flash isn't paired with the iSerial you agreed on with the admin, stop.**
 
 ### Step 2 — flash
 
@@ -529,7 +529,7 @@ Each card takes **30–45 minutes**. Don't kill the process. Multiple cards on t
 
 ### Step 3 — tell the admin to power cycle
 
-A warm `reboot` is **not enough** — the flash partition isn't loaded until the chassis power-cycles. Post in your `nrp-help` ticket that the flash is done and the admin can `ipmitool power cycle` the node now. Once they bring it back up they'll verify with `xbutil examine` (`Device Ready: Yes` on the new shell).
+A warm `reboot` is **not enough** — the flash partition isn't loaded until the chassis power-cycles. Tell the admin (on the same [Matrix](https://nrp.ai/contact/) thread you opened the session in) that the flash is done and they can `ipmitool power cycle` the node now. Once it's back up they'll verify with `xbutil examine` (`Device Ready: Yes` on the new shell).
 
 If your flash fails (timeouts, mid-write power loss, wrong image), the card is in `xilinx_u55c_recovery` (golden mode) — also recoverable, but only via a clean reflash. Don't try to fix it yourself; reopen the ticket and the admins have a runbook in the [FPGA admindoc](/documentation/admindocs/cluster/fpga#recovering-a-user-bricked-card).
 
@@ -541,7 +541,7 @@ Things that go wrong, and how to debug them from inside the pod.
 
 Either:
 - The pod didn't actually request `amd.com/xilinx_u55c_gen3x16_xdma_base_3-0` (check `kubectl describe pod`), or
-- The card is in **golden/recovery mode** — the XMC subdev didn't load. Check `xbmgmt examine -d <BDF> --report platform`; if it says `xilinx_u55c_recovery`, the shell needs reflashing. **Do not** try to reflash from a regular pod; open `nrp-help`.
+- The card is in **golden/recovery mode** — the XMC subdev didn't load. Check `xbmgmt examine -d <BDF> --report platform`; if it says `xilinx_u55c_recovery`, the shell needs reflashing. **Do not** try to reflash from a regular pod; contact the cluster admins on [Matrix](https://nrp.ai/contact/).
 - Less commonly, the host's `xclmgmt` kernel module isn't loaded (host-side issue). `ls /sys/bus/pci/drivers/xclmgmt/` from the pod — if it's empty, the host needs admin attention.
 
 ### `lspci -d 10ee:` shows nothing inside my pod
@@ -575,7 +575,7 @@ You asked for `smarter-devices/ttyUSB*` (UART only), not `xilinx.com/fpga_jtag` 
 
 ### `vlm` / Vivado says "Cannot connect to license server"
 
-DNS: `getent hosts xilinxd.xilinx-dev` should resolve. Connectivity: `nc -vz xilinxd.xilinx-dev 2100` should succeed. If either fails, NRP's license server is down — open `nrp-help`. If both succeed and Vivado still rejects the license, check `vlm` for whether your specific feature is in the served list; you may need to fall back to a personal AMD University Program license (see the [license section](#using-vivadovitis-with-the-cluster-license-server) above).
+DNS: `getent hosts xilinxd.xilinx-dev` should resolve. Connectivity: `nc -vz xilinxd.xilinx-dev 2100` should succeed. If either fails, NRP's license server is down — contact the cluster admins on [Matrix](https://nrp.ai/contact/). If both succeed and Vivado still rejects the license, check `vlm` for whether your specific feature is in the served list; you may need to fall back to a personal AMD University Program license (see the [license section](#using-vivadovitis-with-the-cluster-license-server) above).
 
 ### Vivado crashes mid-synthesis with `realloc(): invalid pointer`
 
