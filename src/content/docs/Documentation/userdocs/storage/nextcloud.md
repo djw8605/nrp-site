@@ -14,9 +14,15 @@ It's similar to other file sharing systems ([Dropbox](https://www.dropbox.com), 
 
 Note that large files may take a long time to show up after the upload because the uploaded files are chunked and then reassembled. **Ceph S3 storage has similar behavior but handles this better, so you are encouraged to use Ceph S3.**
 
+## Using Nextcloud from GUI
+
+[**Nextcloud Files Desktop**](https://nextcloud.com/install/) is the recommended way to use Nextcloud from your desktop operating system, which incorporates a virtual filesystem to mount your storage to your desktop.
+
+[**rclone-manager**][https://github.com/Zarestia-Dev/rclone-manager] is also a cross-platform GUI which allows automatic desktop storage mounting at system startup on major operating systems.
+
 ## Using Nextcloud from shell
 
-To access your Nextcloud storage from shell (or Jupyter), you can use the [rclone](https://rclone.org/) tool. It's already installed in our [Jupyterlab](https://jupyterhub-west.nrp-nautilus.io) service. While the web interface is also possible to use, rclone with WebDAV may be more reliable.
+To access your Nextcloud storage from shell (or Jupyter), you can use the [**rclone**](https://rclone.org/) tool. It's already installed in our [Jupyterlab](https://jupyterhub-west.nrp-nautilus.io) service. While the web interface is also possible to use, rclone with WebDAV may be more reliable.
 
 For updated information about accessing NextCloud with WebDAV, always refer to [Nextcloud's official documentation](https://docs.nextcloud.com/server/latest/user_manual/en/files/access_webdav.html).
 

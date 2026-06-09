@@ -41,7 +41,9 @@ Note that the inside endpoint is **http** (without SSL) and the outside endpoint
 
 ## Using Rclone
 
-The easiest way to access S3 is [Rclone][6].
+The easiest way to access S3 is [**rclone**][6].
+
+[**rclone-manager**][11] is also a cross-platform GUI which allows automatic mounting at system startup on major operating systems.
 
 Use these options:
 
@@ -51,7 +53,7 @@ Use these options:
 
 *AWS Access Key ID, AWS Secret Access Key*: [Get S3 keys](#access)
 
-*Endpoint*: [use the regions section](#s3-regions-settings)
+*Endpoint*: [check the regions section](#s3-regions-settings)
 
 
 ## Using s3cmd
@@ -407,5 +409,6 @@ Consult the https://github.com/clyso/chorus project.
 [6]: https://rclone.org/s3/
 [7]: https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/
 [8]: https://pypi.org/project/awscli-plugin-endpoint/
-[9]:https://github.com/s3fs-fuse/s3fs-fuse
-[10]:https://github.com/wbingli/awscli-plugin-endpoint
+[9]: https://github.com/s3fs-fuse/s3fs-fuse
+[10]: https://github.com/wbingli/awscli-plugin-endpoint
+[11]: https://github.com/Zarestia-Dev/rclone-manager
