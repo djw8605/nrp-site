@@ -43,7 +43,7 @@ Note that the inside endpoint is **http** (without SSL) and the outside endpoint
 
 The easiest way to access S3 is [**rclone**][6].
 
-[**rclone-manager**][11] is also a cross-platform GUI which allows automatic mounting at system startup on major operating systems.
+[**rclone-manager**][11] is also a cross-platform GUI that enables automatic mounting at system startup across major operating systems.
 
 Use these options:
 
