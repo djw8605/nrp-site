@@ -18,7 +18,7 @@ Note that large files may take a long time to show up after the upload because t
 
 [**Nextcloud Files Desktop**](https://nextcloud.com/install/) is the recommended way to use Nextcloud from your desktop operating system, which incorporates a virtual filesystem to mount your storage to your desktop.
 
-[**rclone-manager**][https://github.com/Zarestia-Dev/rclone-manager] is also a cross-platform GUI that enables automatic mounting at system startup across major operating systems.
+[**rclone-manager**](https://github.com/Zarestia-Dev/rclone-manager) is also a cross-platform GUI that enables automatic mounting at system startup across major operating systems.
 
 ## Using Nextcloud from shell
 

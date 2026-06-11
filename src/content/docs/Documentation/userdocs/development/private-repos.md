@@ -3,7 +3,7 @@ title: Private Repos
 description: Private Repos
 ---
 
-Follow these steps to provide access to container images stored in the **private** [Nautilus GitLab][https://gitlab.nrp-nautilus.io] repository.
+Follow these steps to provide access to container images stored in the **private** [Nautilus GitLab](https://gitlab.nrp-nautilus.io) repository.
 
 1. Go to your repository  **Settings->Repository->Deploy Tokens**, and [create a deploy token][3] with **read_registry** flag enabled.
 
