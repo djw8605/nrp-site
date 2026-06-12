@@ -6,29 +6,99 @@ layout: '~/layouts/MarkdownLayout.astro'
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import { Icon } from 'astro-icon/components';
 
-<div class="not-prose my-8 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
-  <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"><Icon name="tabler:mail" class="w-7 h-7" /></div>
-  <div class="flex-1">
-    <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-1">Email Support</h2>
-    <div class="text-sm text-gray-600 dark:text-gray-300 mb-3">For questions about accounts, namespaces, hosted LLM access, or anything else, drop us a line.</div>
-    <a class="btn-primary inline-flex items-center gap-2 max-w-full whitespace-normal break-all text-sm" href="mailto:support@nationalresearchplatform.org"><Icon name="tabler:mail" class="w-4 h-4 inline-block flex-shrink-0" /><span>{"support@nationalresearchplatform.org"}</span></a>
+## Main Communication Channel — Nautilus Support Chat
+
+All **Nautilus and NRP users are expected to join the support chat** for user support and real-time updates. The support chat can be accessed through either [NRP Slack Workspace](https://join.slack.com/t/nrp-chat/shared_invite/zt-3xv6t5l9d-kXX5j79CHQrrXMpfSyM5QQ) or [https://matrix.org](https://matrix.org).
+
+<div class="not-prose my-5 flex gap-3 rounded-lg border-l-4 border-primary bg-primary/10 p-4 text-sm text-gray-800 dark:text-gray-100">
+  <Icon name="tabler:id-badge-2" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+  <div>
+    <div class="font-semibold">Use something meaningful so other users and admins can identify you, for example:</div>
+    <div class="mt-1">
+      <span class="mt-2 inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-white px-2.5 py-1 font-mono text-sm font-bold text-primary shadow-sm dark:bg-gray-950">
+        <Icon name="tabler:user-circle" class="h-4 w-4 flex-shrink-0" />
+        Nautilus User (Institution)
+      </span>
+    </div>
   </div>
 </div>
 
-## Main Communication Channel — Matrix
-
-All **Nautilus and NRP users are expected to join Matrix** for user support and real-time updates. We're using the new innovative federated communication system [https://matrix.org](https://matrix.org). You can get an account using any compatible client.
-
-
-
 <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
-  <span class="font-medium">❗</span> Don't try contacting admins in matrix by private messages, those will be rejected. Use public rooms for general support questions.
+  <span class="font-medium">❗</span> Don't try contacting admins in matrix by private messages, those will be rejected.
+  Use public rooms for general support questions.
 </div>
 
-**If you’re not on Matrix yet, please register right away following the instructions below.**
+### Joining via Slack
+
+<div class="not-prose mb-6">
+  <a
+    class="btn-primary inline-flex items-center gap-2 max-w-full whitespace-normal break-all text-sm"
+    href="https://join.slack.com/t/nrp-chat/shared_invite/zt-3xv6t5l9d-kXX5j79CHQrrXMpfSyM5QQ"
+  >
+    <Icon name="tabler:message" class="w-4 h-4 inline-block flex-shrink-0" />
+    <span>{'Click here to join NRP Slack '}</span>
+  </a>
+</div>
+
+### Joining via Matrix
+
+You can get an account using any compatible client.
+
+<div class="not-prose mt-4 mb-8">
+  <a
+    class="btn-primary inline-flex items-center gap-2 max-w-full whitespace-normal text-sm"
+    href="#matrix-registration"
+  >
+    <Icon name="tabler:arrow-down" class="w-4 h-4 inline-block flex-shrink-0" />
+    <span>Go to Matrix registration steps</span>
+  </a>
+</div>
+
+## Email Support
+
+<div class="not-prose my-8 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
+  <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+    <Icon name="tabler:mail" class="w-7 h-7" />
+  </div>
+  <div class="flex-1">
+    <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-1">Email Support</h2>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+      For questions about accounts, namespaces, hosted LLM access, or anything else, drop us a line.
+    </div>
+    <a
+      class="btn-primary inline-flex items-center gap-2 max-w-full whitespace-normal break-all text-sm"
+      href="mailto:support@nationalresearchplatform.org"
+    >
+      <Icon name="tabler:mail" class="w-4 h-4 inline-block flex-shrink-0" />
+      <span>{'support@nationalresearchplatform.org'}</span>
+    </a>
+  </div>
+</div>
 
 
-### Registration
+<CallToAction
+  actions={[
+    {
+      variant: 'primary',
+      text: 'Subscribe',
+      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
+      icon: 'tabler:mail',
+    },
+  ]}
+>
+  <Fragment slot="title">
+    Mailing list
+  </Fragment>
+
+  <Fragment slot="subtitle">
+    We send weekly meeting recordings and other useful info.
+  </Fragment>
+</CallToAction>
+
+<div class="not-prose my-10 border-t border-gray-200 dark:border-gray-700"></div>
+
+### Matrix Registration
+
 #### Joining via web page
 
 1. Navigate to [our web version of Element client](https://element.nrp-nautilus.io) if you want to use the Nautilus homeserver with full support by the Nautilus team. A lot of users also use the default [Matrix.org homeserver](https://app.element.io/) or other custom homeservers, but we might not be able to help with issues that may arise. Nonetheless, other homeservers also work, so if you think you will use Matrix outside Nautilus frequently, you may create an account and login using the [Matrix.org homeserver](https://app.element.io/).
@@ -56,12 +126,10 @@ You can also try a similar web app [Cinny](https://app.cinny.in)
 1. Get a [phone or desktop version of element](https://element.io/get-started) or [any other compatible client](https://matrix.org/clients/)
 
 2. Change the server to the NRP one:
+   - Click the change server button
 
-    * Click the change server button
-
-    ![Matrix](~/assets/images/matrix_server.png)
-    
-    * The NRP matrix homeserver URL is `https://matrix.nrp-nautilus.io`
+   ![Matrix](~/assets/images/matrix_server.png)
+   - The NRP matrix homeserver URL is `https://matrix.nrp-nautilus.io`
 
 3. Follow the [Joining via web page guide](#joining-via-web-page) from step 2
 
@@ -82,23 +150,3 @@ After that click `Share` for each Email address that you want to be discoverable
 ### Possible issues
 
 If you've created the account on matrix.org server (not the NRP one), and have the user ID like `@username:matrix.org`, you should use the standard https://app.element.io web page to log in.
-
-
-<CallToAction
-  actions={[
-    {
-      variant: 'primary',
-      text: 'Subscribe',
-      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
-      icon: 'tabler:mail',
-    },
-  ]}
->
-  <Fragment slot="title">
-    Mailing list
-  </Fragment>
-
-  <Fragment slot="subtitle">
-    We send weekly meeting recordings and other useful info.
-  </Fragment>
-</CallToAction>
