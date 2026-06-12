@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 apt-get update && apt-get install -y jq curl
 
 ACCOUNT_ID="$CLOUDFLARE_ACCOUNT_ID"
@@ -18,12 +21,18 @@ page=$total_pages
 while [ $page -gt 1 ]; do
   echo "Processing page: $page"
   response=$(curl -s -H "Authorization: Bearer $API_TOKEN" "$API_URL?page=$page&per_page=$per_page")
-  echo "$response" | jq -c '.result[] | {id: .id, created_on: .created_on}' | while read -r dep; do
+  echo "$response" | jq -c '.result[] | select(.environment == "preview") | {id: .id, created_on: .created_on, environment: .environment}' | while read -r dep; do
     dep_id=$(echo "$dep" | jq -r '.id')
     dep_date=$(echo "$dep" | jq -r '.created_on')
+    dep_environment=$(echo "$dep" | jq -r '.environment')
     if [[ "$dep_date" < "$cutoff" ]]; then
-      echo "Deleting deployment $dep_id from $dep_date"
-      curl -s -X DELETE -H "Authorization: Bearer $API_TOKEN" "$API_URL/$dep_id"
+      echo "Deleting $dep_environment deployment $dep_id from $dep_date"
+      delete_response=$(curl -s -X DELETE -H "Authorization: Bearer $API_TOKEN" "$API_URL/$dep_id?force=true")
+      echo "$delete_response"
+      if [[ "$(echo "$delete_response" | jq -r '.success')" != "true" ]]; then
+        echo "Failed to delete deployment $dep_id"
+        exit 1
+      fi
     fi
   done
   page=$((page-1))
