@@ -3,7 +3,6 @@ title: 'Contact'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-import CallToAction from '~/components/widgets/CallToAction.astro';
 import { Icon } from 'astro-icon/components';
 
 ## Main Communication Channel — Nautilus Support Chat
@@ -54,7 +53,7 @@ You can get an account using any compatible client.
   </a>
 </div>
 <div class="not-prose my-10 border-t border-gray-200 dark:border-gray-700"></div>
-## Email Support
+## Email
 
 <div class="not-prose my-8 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
   <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
@@ -75,25 +74,26 @@ You can get an account using any compatible client.
   </div>
 </div>
 
-
-<CallToAction
-  actions={[
-    {
-      variant: 'primary',
-      text: 'Subscribe',
-      href: 'https://groups.google.com/a/ucsd.edu/g/prp-l/',
-      icon: 'tabler:mail',
-    },
-  ]}
->
-  <Fragment slot="title">
-    Mailing list
-  </Fragment>
-
-  <Fragment slot="subtitle">
-    We send weekly meeting recordings and other useful info.
-  </Fragment>
-</CallToAction>
+<div class="not-prose my-8 p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 shadow-sm flex flex-col sm:flex-row sm:items-center gap-5">
+  <div class="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+    <Icon name="tabler:mail-check" class="w-7 h-7" />
+  </div>
+  <div class="flex-1">
+    <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-1">
+      Weekly NRP Community Meeting or NRP Community Mailing List
+    </h2>
+    <div class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+      We send weekly meeting recordings and other useful info.
+    </div>
+    <a
+      class="btn-primary inline-flex items-center gap-2 max-w-full whitespace-normal break-all text-sm"
+      href="https://groups.google.com/a/ucsd.edu/g/prp-l/"
+    >
+      <Icon name="tabler:mail" class="w-4 h-4 inline-block flex-shrink-0" />
+      <span>Subscribe</span>
+    </a>
+  </div>
+</div>
 
 <div class="not-prose my-10 border-t border-gray-200 dark:border-gray-700"></div>
 
