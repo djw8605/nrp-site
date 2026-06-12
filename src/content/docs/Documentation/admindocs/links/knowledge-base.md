@@ -21,7 +21,7 @@ This page contains administrative documentation intended for cluster administrat
 1. Engage with [Campus champions][campuschampions], CI facilitator, and/or other campus resources to identify campus scientific research and education drivers 
 1. Participate in broader community  conversations:
    - Weekly NRP technical calls (open to all) every Thursday at 10:00 AM Pacific/1:00 PM Eastern. Sign up at [list info][list].  
-   - check out the [NRP Matrix channel][matrix]
+   - check out the [NRP Support Chat][contact]
    - Campus Cyberinfrastructure Technical community calls. Sign-up for cybinf-engr@es.net mail list hosted by Jason Zurawski at ESnet.
 
 
@@ -32,7 +32,7 @@ This page contains administrative documentation intended for cluster administrat
 - [HPCWire][hpcwire] - BigData Express research team, Fermilab Mar 8, 2019
 
 
-[matrix]: https://nrp.ai/contact/
+[contact]: https://nrp.ai/contact/
 [esnet]: http://fasterdata.es.net
 [prp]: http://prp.ucsd.edu/
 [epoc]: https://epoc.global

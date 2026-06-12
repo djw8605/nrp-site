@@ -101,7 +101,7 @@ If you need some pods to run idle for a long time, you can use the [Deployment c
 <Steps>
 
 1. A periodic process removes workloads (deployments) **older than 2** weeks to free up resources and maintain system efficiency.
-2. If you need to run [some permanent services](/documentation/userdocs/running/ingress/) beyond two weeks, contact admins in [Matrix](/contact) and ask for an exception. 
+2. If you need to run [some permanent services](/documentation/userdocs/running/ingress/) beyond two weeks, contact admins in [Nautilus Support](/contact) and ask for an exception. 
 Please provide an estimated period of service functioning and a brief description of what the service does.
 4. [Long idle pods](/documentation/userdocs/running/long-idle/) can't be added to the exceptions list, since those are considered temporary and we need to be sure those are cleaned when not needed.
 5. You will receive 3 notifications if your workload is not on the exception list. After that, your workload will
@@ -116,7 +116,7 @@ be deleted. Any data in persistent volumes will remain.
 1. When you [request GPUs for your pod](/documentation/userdocs/running/gpu-pods), nobody else can use those until you stop your pod. You should only schedule GPUs that you can actually use. 
 2. Check the [GPU dashboard](https://grafana.nrp-nautilus.io/d/dRG9q0Ymz/k8s-compute-resources-namespace-gpus) for your namespace to make sure the utilization is above 40%, and ideally is close to 100%.
 3. The only reason to request more than a single GPU is when your GPU utilization is close to 100% and you can leverage using more GPUs.
-4. GPUs are a limited resource shared by many users. If you plan on deploying large jobs (>50 GPUs) please present a plan in [Matrix][3].
+4. GPUs are a limited resource shared by many users. If you plan on deploying large jobs (>50 GPUs) please present a plan in [Nautilus Support][3].
 </Steps>
 
 :::caution[Access Request for A100 GPUs] 

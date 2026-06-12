@@ -169,7 +169,7 @@ Please include the following admin users:
 - `d4diaz@ucsd.edu`
 - `dmishin@ucsd.edu`
 
-Granting admin access enables NRP administrators to inspect Coder from within and provide effective assistance via the NRP Matrix support channels.
+Granting admin access enables NRP administrators to inspect Coder from within and provide effective assistance via the NRP support channels.
 :::
 
 

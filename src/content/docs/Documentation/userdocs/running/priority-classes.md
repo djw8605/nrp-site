@@ -25,7 +25,7 @@ In 95% of cases you don't need to set `priorityClassName`. The only common reaso
 
 Everything else (`default`, `owner`, `nice`, `batch-low`, `system-*`, `kubevirt-*`, `*-batch-high`, etc.) is banned in
 user namespaces. If your tooling auto-sets one of these, remove that line — your pod will run at the unset default,
-which is what you want. Exemption requests for legitimate cases go through [Matrix](/contact).
+which is what you want. Exemption requests for legitimate cases go through [Nautilus Support](/contact).
 
 ## Using opportunistic for special GPUs
 

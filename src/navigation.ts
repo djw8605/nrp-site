@@ -85,7 +85,7 @@ export const headerData = {
       text: 'News',
       links: [
         {
-          text: 'Latest Matrix News',
+          text: 'Latest Cluster News',
           href: getPermalink('/live'),
         },
         {

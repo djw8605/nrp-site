@@ -14,7 +14,7 @@ This notebook is **Part 3** of the **ESnet SmartNIC Tutorial on NRP** series. It
 
 This notebook was tested on the **National Research Platform (NRP)** using the **AMD/Xilinx Alveo U55C FPGA** and **Vivado 2023.1**. The Kubernetes pods were provisioned by [Coder](https://coder.nrp-nautilus.io).
 
-If you run into any issues, please refer to the official [NRP Documentation](https://docs.nrp.ai), or reach out to us via [Matrix](https://element.nrp-nautilus.io) or [email](mailto:support@nationalresearchplatform.org).
+If you run into any issues, please refer to the official [NRP Documentation](https://docs.nrp.ai), or reach out to us via [Nautilus Support](https://element.nrp-nautilus.io) or [email](mailto:support@nationalresearchplatform.org).
 
 Before using the ESnet SmartNIC tools, kindly review the official [ESnet SmartNIC Copyright Notice](https://github.com/esnet/esnet-smartnic-hw).
 

@@ -5,7 +5,7 @@ description: Asking Effective Questions in Support Chat
 
 To ensure that our support team can provide you with the most accurate and efficient assistance, we've outlined some guidelines for asking effective questions in our support chat.
 
-To reach out to us please use the [matrix chat registration guide](/contact).
+To reach out to us please use [Nautilus Support](/contact).
 
 ## Before You Ask
 
@@ -17,6 +17,7 @@ When asking a question in support chat, please provide the following essential i
 
 * **Namespace and Pod Name**: If the issue is related to a specific pod in your cluster, please specify the namespace and pod name. This information helps us pinpoint the exact resource that's experiencing the problem.
 * **Minimal Reproducible Example**: If the issue is not specific to a particular pod or namespace, please provide a minimal reproducible example (MRE) that demonstrates the problem. MREs should be a concise, self-contained code snippet that reproduces the issue.
+* **Service**: If you are using a service like JupyterHub or Coder, mention this in chat. Share the url you are using to access this service. Provide the namespace in which this service is running/meant to run. Note that [https://jupyterhub-west.nrp-nautilus.io](https://jupyterhub-west.nrp-nautilus.io) runs in the namespace **jupyterlab**.
 
 ## Gathering Information with kubectl
 

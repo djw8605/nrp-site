@@ -27,7 +27,7 @@ The smartnic-dpdk-docker repository.
 The xilinx-labtools-docker repository.
 ```
 
-If you run into any issues, please refer to the official [NRP Documentation](https://docs.nrp.ai), or reach out to us via [Matrix](https://element.nrp-nautilus.io) or [email](mailto:support@nationalresearchplatform.org).
+If you run into any issues, please refer to the official [NRP Documentation](https://docs.nrp.ai), or reach out to us via [Nautilus Support](https://element.nrp-nautilus.io) or [email](mailto:support@nationalresearchplatform.org).
 
 Before using the ESnet SmartNIC tools, kindly review the official [ESnet SmartNIC Copyright Notice](https://github.com/esnet/esnet-smartnic-hw).
 
@@ -54,7 +54,7 @@ The [FABRIC Testbed Guide](https://learn.fabric-testbed.net/knowledge-base/passi
 
 The ESnet SmartNIC tool stack requires **Vivado** software (with the correct version) for **development purposes only**. This version depends on the commits from the `esnet` repositories. The **National Research Platform** offers centralized Xilinx tools (Vitis, Vivado, Vitis_HLS, etc.) served from a Ceph storage pool, along with a floating license server.
 
-If you prefer not to use Coder, you can request access to the Persistent Volume Claim (PVC) for your namespace by contacting the Operations team (contact via Matrix).
+If you prefer not to use Coder, you can request access to the Persistent Volume Claim (PVC) for your namespace by contacting the Operations team (contact via Nautilus Support).
 
 3. **Licensing Information**
 
