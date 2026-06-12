@@ -63,6 +63,7 @@ export default defineConfig({
       social: {
         gitlab: 'https://gitlab.nrp-nautilus.io/prp/nrp-site',
         matrix: 'https://element.nrp-nautilus.io/',
+        slack: 'https://join.slack.com/t/nrp-chat/shared_invite/zt-3xv6t5l9d-kXX5j79CHQrrXMpfSyM5QQ',
       },
       editLink: {
         baseUrl: 'https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main',

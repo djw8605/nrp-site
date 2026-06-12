@@ -10,7 +10,7 @@ It's similar to other file sharing systems ([Dropbox](https://www.dropbox.com), 
 
 **If you're planning to use Nextcloud for large datasets, please contact us first with the usage plan. Normally, please refrain from highly concurrent or large-scale usage cases and instead utilize Ceph S3.**
 
-**After registration, account will be initially in disabled state.** You must request account activation to the [Matrix](/contact) Support chat, including your email associated with Nextcloud.
+**After registration, account will be initially in disabled state.** You must request account activation to the [Nautilus Support](/contact) chat, including your email associated with Nextcloud.
 
 Note that large files may take a long time to show up after the upload because the uploaded files are chunked and then reassembled. **Ceph S3 storage has similar behavior but handles this better, so you are encouraged to use Ceph S3.**
 

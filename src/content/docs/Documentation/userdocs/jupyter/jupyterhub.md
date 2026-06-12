@@ -97,7 +97,7 @@ Please include the following admin users:
 
 If your deployment uses an **institution / IdP allowlist**, make sure **UCSD is included** so these admins can authenticate successfully.
 
-Granting admin access enables NRP administrators to inspect hub and user pod state, review logs, and provide effective assistance via the NRP Matrix support channels.
+Granting admin access enables NRP administrators to inspect hub and user pod state, review logs, and provide effective assistance via the NRP support channels.
 :::
 
 

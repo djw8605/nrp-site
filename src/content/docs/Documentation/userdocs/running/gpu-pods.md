@@ -161,7 +161,7 @@ If you need more graphical memory, use this table or official specs to choose th
 | NVIDIA H200 NVL                   | 141              |
 
 :::note
-[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Matrix](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
+[Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Nautilus Support](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 :::
 

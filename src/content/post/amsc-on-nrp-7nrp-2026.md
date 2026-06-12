@@ -70,7 +70,7 @@ Three notebooks, in order:
 2. `Compute-jobs.ipynb` — submit a compute job against an IRI-API-backed facility
 3. `Filesystem.ipynb` — local filesystem operations through the API
 
-> ⚠️ **The training JupyterHub is provisioned specifically for 7NRP and was spun down after the workshop concluded on Thursday, May 7, 2026.** The notebooks and the slide deck remain available indefinitely. If you'd like to re-run these examples after the workshop — at your home institution, in a class, or for your own research — [contact us on Matrix](https://nrp.ai/contact/) and we'll help you reproduce the environment on persistent NRP infrastructure, or point you to ESnet's IRI testbed directly.
+> ⚠️ **The training JupyterHub is provisioned specifically for 7NRP and was spun down after the workshop concluded on Thursday, May 7, 2026.** The notebooks and the slide deck remain available indefinitely. If you'd like to re-run these examples after the workshop — at your home institution, in a class, or for your own research — [contact us on Nautilus Support](https://nrp.ai/contact/) and we'll help you reproduce the environment on persistent NRP infrastructure, or point you to ESnet's IRI testbed directly.
 
 ![Justas and Xi closing the session on the AmSC summary slide — links to docs, API reference, examples and spec](~/assets/images/posts/amsc-7nrp-pic1.jpg)
 
