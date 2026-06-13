@@ -1,7 +1,7 @@
 id: gemma
 displayName: gemma
-huggingfaceId: google/gemma-4-31B-it
-huggingfaceUrl: https://huggingface.co/google/gemma-4-31B-it
+huggingfaceId: google/gemma-4-31B-it-qat-w4a16-ct
+huggingfaceUrl: https://huggingface.co/google/gemma-4-31B-it-qat-w4a16-ct
 status: main
 badges:
   tool: true
@@ -10,22 +10,21 @@ badges:
   research: true
 contextTokens: 262144
 parameters: 31B
-quantization: bf16 (native)
+quantization: w4a16 (QAT)
 multimodalKinds:
   - image
   - video
-enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-31B-it
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
+toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-31B-it?variant=w4a16
 sortOrder: 40
-summary: Google's Gemma 4 — multimodal, reasoning optional, efficient frontier performance.
+summary: Google's Gemma 4 — multimodal, efficient frontier performance.
 strengths:
-  - Multimodal (image + video) at a compact 31B size
-  - Reasoning is opt-in (off by default) — low latency unless you need it
+  - Multimodal (image + video) at a compact 31B size with 4-bit quantization-aware training weights
+  - Reasoning on by default — disable for faster simple queries
   - Solid tool calling support
   - Google-quality instruction following
 weaknesses:
   - Lower throughput compared to the model size (dense model)
-  - Reasoning must be explicitly enabled (unlike most catalogued models where it's the default)
 bestFor:
   - Multimodal tasks (image/video QA, visual analysis)
   - Efficient general-purpose assistant

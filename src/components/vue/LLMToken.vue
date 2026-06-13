@@ -135,7 +135,7 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "gemma-small",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 131072
+				contextWindow: 262144
 			},
 			{
 				modelId: "kimi",

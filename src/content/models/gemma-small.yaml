@@ -1,32 +1,32 @@
 id: gemma-small
 displayName: gemma-small
-huggingfaceId: google/gemma-4-E4B-it
-huggingfaceUrl: https://huggingface.co/google/gemma-4-E4B-it
+huggingfaceId: google/gemma-4-12B-it-qat-w4a16-ct
+huggingfaceUrl: https://huggingface.co/google/gemma-4-12B-it-qat-w4a16-ct
 status: evaluating
 badges:
   tool: true
   reasoning: true
   multimodal: true
   research: false
-contextTokens: 131072
-parameters: ~8B
-quantization: bf16 (native)
+contextTokens: 262144
+parameters: 12B
+quantization: w4a16 (QAT)
 multimodalKinds:
   - image
   - video
   - audio
-enableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-E4B-it
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
+toolCallingDocsUrl: https://recipes.vllm.ai/Google/gemma-4-12B-it?variant=w4a16
 sortOrder: 50
-summary: Tiny Gemma 4 with unique audio input — ASR and speech-to-text on an ~8B model.
+summary: Tiny Gemma 4 with unique audio input — ASR and speech-to-text on a 12B model.
 strengths:
   - Only catalogued model that accepts audio input (ASR, speech-to-text translation)
-  - Very small ~8B footprint — extremely low latency
   - Also handles image and video input
+  - Very small 12B footprint with 4-bit quantization-aware training weights — extremely low latency
+  - Reasoning on by default — disable for faster simple queries
 weaknesses:
   - Evaluating — availability and config may change
   - Lower reasoning and instruction-following ceiling than larger models
-  - Reasoning must be explicitly enabled
 bestFor:
   - Audio transcription and speech-to-text workflows
   - Lightweight multimodal tasks
