@@ -55,9 +55,9 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
 }
 ```
 
-For changing the `chat_template_kwargs` configuration or setting additional variants (on allowed models), use the below configuration:
+For changing the `"chat_template_kwargs"` configuration or setting additional variants (on allowed models), use the below configuration within each model (in the same level as `"name"`):
 
-```json
+```jsonc
           "options": {
             "chat_template_kwargs": {
               "thinking": true,
@@ -115,16 +115,21 @@ Contents of `~/.config/crush/crush.json` (use `"enable_thinking"` or `"thinking"
             "output": ["text"]
           }
         }
-      ],
+      ]
+    }
+  }
+}
+```
+
+For changing the `"chat_template_kwargs"` configuration or setting additional `"extra_body"` parameters, use the below configuration within each model (in the same level as `"models"`):
+
+```json
       "extra_body": {
         "chat_template_kwargs": {
           "thinking": true,
           "preserve_thinking": true
         }
-      }
-    }
-  }
-}
+      },
 ```
 
 ## pi
