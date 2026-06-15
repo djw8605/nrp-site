@@ -47,7 +47,17 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
           "modalities": {
             "input": ["text", "image", "video"],
             "output": ["text"]
-          },
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+For changing the `chat_template_kwargs` configuration or setting additional variants (on allowed models), use the below configuration:
+
+```json
           "options": {
             "chat_template_kwargs": {
               "thinking": true,
@@ -61,12 +71,7 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
                 "preserve_thinking": false
               }
             }
-          }
-        }
-      }
-    }
-  }
-}
+          },
 ```
 
 ## Crush

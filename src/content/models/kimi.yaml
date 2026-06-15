@@ -14,8 +14,6 @@ quantization: Int4 (native)
 multimodalKinds:
   - image
   - video
-disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": false}}'
-preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": true, "preserve_thinking": true}}'
 toolCallingDocsUrl: https://recipes.vllm.ai/moonshotai/Kimi-K2.7-Code
 sortOrder: 60
 summary: Moonshot's 1T-parameter frontier coding model with multimodal inputs.
@@ -27,7 +25,7 @@ strengths:
 weaknesses:
   - Evaluating — availability and config may shift
   - Largest active-parameter and total-parameter MoE in the catalog; GPU-intensive and slower
-  - Reasoning on by default — disable for faster simple queries
+  - No reasoning toggle (reasoning is implicit in the model behavior)
 bestFor:
   - Agentic coding (Claude Code, Kimi CLI, Crush)
   - Large-repo code understanding
