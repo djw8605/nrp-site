@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 
 import Hero from '~/components/widgets/Hero.astro'
 import AnnouncementBar from '~/components/common/AnnouncementBar.astro';
+import Image from '~/components/common/Image.astro';
 import Note from '~/components/widgets/Note.astro';
 import MatrixFeed from '~/components/widgets/MatrixFeed.astro';
 import Features from '~/components/widgets/Features.astro';
@@ -97,6 +98,43 @@ const homepageAnnouncements = [
   <!-- Note Widget ******************* -->
 
   <Note />
+
+  <!-- Recent Event Widget *********** -->
+  <section class="not-prose bg-white py-10 dark:bg-slate-900">
+    <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <a href="/7nrp-workshop/" class="block overflow-hidden rounded-md bg-gray-100 shadow-md dark:bg-slate-800">
+        <Image
+          src="~/assets/images/posts/7nrp-overlap.png"
+          alt="Seventh National Research Platform workshop at UC San Diego"
+          class="h-full w-full object-cover"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1023px) 100vw, 520px"
+          width={768}
+          aspectRatio="16:9"
+          layout="cover"
+        />
+      </a>
+      <div>
+        <p class="mb-3 text-sm font-semibold uppercase tracking-wide text-primary dark:text-blue-300">Recent event</p>
+        <h2 class="font-heading text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
+          7NRP workshop media is now available
+        </h2>
+        <p class="mt-4 text-lg text-muted dark:text-slate-300">
+          Browse the agenda, slides, tutorial materials, and session recordings from the Seventh National Research
+          Platform workshop at UC San Diego.
+        </p>
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a class="btn btn-primary w-full sm:w-auto" href="/7nrp-workshop/">View workshop media</a>
+          <a
+            class="btn btn-secondary w-full sm:w-auto"
+            href="https://www.youtube.com/playlist?list=PL3p1Zps9-ohCwhU6Ddapq-V8k68TGFkAA"
+          >
+            Watch playlist
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Live Feed Widget -->
   <section class="py-8 bg-gray-50 dark:bg-gray-800/50">
