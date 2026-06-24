@@ -16,6 +16,21 @@
                 </template>
             </Card>
 
+            <Card v-if="currentUserIsNrpAdmin" class="mt-4">
+                <template #subtitle>
+                    Commercial <Badge severity="warn" size="small" value="NRP Admins only" />
+                </template>
+                <template #content>
+                    <div class="flex items-center gap-3">
+                        <span>
+                            <Checkbox v-model="isCommercial" :binary="true" inputId="is_commercial" name="is_commercial" />
+                            <label class="m-1" for="is_commercial"> Commercial namespace (is_commercial) </label>
+                        </span>
+                        <Button label="Save" size="small" severity="secondary" :loading="commercialSaveLoading" @click="saveCommercial" />
+                    </div>
+                </template>
+            </Card>
+
             <Form v-slot="$form" ref="form" :resolver :initialValues @submit="onFormSubmit" class="flex flex-col gap-4 w-full">
                 <VueSpinnerPie v-if="isFormLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
                 <div class="flex flex-col gap-1">
@@ -388,6 +403,9 @@ const isFormLoading = ref(true);
 const isUsersLoading = ref(true);
 
 const currentUserIsClusterAdmin = ref(false);
+const currentUserIsNrpAdmin = ref(false);
+const isCommercial = ref(false);
+const commercialSaveLoading = ref(false);
 
 const assignTenantObj = ref({});
 
@@ -561,6 +579,7 @@ onMounted(async () => {
         }
     }).then((namespaceInfo) => {
         Object.assign(initialValues, namespaceInfo);
+        isCommercial.value = !!namespaceInfo.is_commercial;
         form.value?.reset();
     }).catch((err) => {
         toast.add({
@@ -584,8 +603,49 @@ onMounted(async () => {
         if (response && response.IsAdmin) {
             currentUserIsClusterAdmin.value = true;
         }
+        if (response && response.IsNrpAdmin) {
+            currentUserIsNrpAdmin.value = true;
+        }
     }).catch(() => {});
 });
+
+const saveCommercial = () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    commercialSaveLoading.value = true;
+    client.request({
+        method: "admin.SetNamespaceCommercial",
+        params: {
+            Namespace: nsName,
+            IsCommercial: isCommercial.value,
+        }
+    }).then((response) => {
+        if (response && response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error saving commercial flag',
+                detail: response.error.message,
+                life: 3000
+            });
+            return;
+        }
+        toast.add({
+            severity: 'success',
+            summary: `Commercial flag ${isCommercial.value ? 'enabled' : 'disabled'}.`,
+            life: 3000
+        });
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error saving commercial flag',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+        commercialSaveLoading.value = false;
+    });
+};
 
 const readAllTenants = () => {
     client.request({
