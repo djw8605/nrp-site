@@ -1,7 +1,7 @@
 ---
 publishDate: 2026-06-24T00:00:00Z
 title: "Inference as a Medium: A UCSD Art Class Runs Its Ethical-Dilemma Final on NRP"
-excerpt: For the final of VIS 145B at UC San Diego, instructor Jon Paden's students built interactive artworks on a single theme — the ethical dilemma — each one wired to NRP's LLM inference gateway and deployed on NRP GitLab Pages.
+excerpt: For the final of VIS 145B at UC San Diego, instructor Jon Paden's students built interactive artworks on a single theme — ethical dilemma — each one wired to NRP's LLM inference gateway and deployed on NRP GitLab Pages.
 image: ~/assets/images/posts/art-class-on-nrp-opt2.png
 category: Research
 author: Jon Paden
@@ -17,7 +17,7 @@ tags:
 
 When people picture the workloads running on the National Research Platform, they tend to picture climate models, genomics pipelines, or particle-physics jobs. They rarely picture a webcam staring back at a gallery visitor, scoring their personality from a single glance, and posting the verdict to Bluesky.
 
-But that is exactly what a room full of undergraduate artworks did this spring. For the final project of **VIS 145B** at UC San Diego — a creative-coding and digital-art course taught by **Jon Paden** — students built interactive, browser-based pieces on a single shared theme: **the ethical dilemma**. Almost every one of them ran its "intelligence" on NRP, calling the platform's large-language-model gateway for live inference and deploying the front end on NRP's GitLab Pages.
+But that is exactly what a room full of undergraduate artworks did this spring. For the final project of **VIS 145B** at UC San Diego — a creative-coding and digital-art course taught by **Jon Paden** — students built interactive, browser-based pieces on a single shared theme: **ethical dilemma**. Almost every one of them ran its "intelligence" on NRP, calling the platform's large-language-model gateway for live inference and deploying the front end on NRP's GitLab Pages.
 
 The class is about the ethics of digital art, and the brief pushed that question straight at the machine: what happens when you put an AI in the position of *judge* — of personality, of loyalty, of belief, of whether you deserve to keep your years of life — and then make a stranger live with the answer?
 
