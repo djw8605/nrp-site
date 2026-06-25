@@ -141,3 +141,16 @@ spec:
             readOnly: true
   backoffLimit: 1
 ```
+
+
+For moving data directly between two PersistentVolumeClaims (PVCs), you can also use tools such as [pv-migrate](https://github.com/utkuozdemir/pv-migrate). `pv-migrate` creates temporary Kubernetes resources to copy data from one PVC to another, which can be useful when you need to migrate volumes without manually creating a copy pod.
+
+Example:
+
+```bash
+pv-migrate migrate \
+  --source-namespace my_namespace \
+  --source my-pvc \
+  --dest-namespace my_namespace \
+  --dest my-other-pvc
+```
