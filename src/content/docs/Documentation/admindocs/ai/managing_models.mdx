@@ -75,6 +75,8 @@ Based on the above information, **identify the adequate number and type of GPUs*
 If you are a namespace administrator reading this manual for your own namespace, use a relatively high `ingress.kubernetes.io/timeout-server` annotation on your **Ingress** resource if you experience any timeouts.
 :::
 
+Note that `--enable-request-id-headers --otlp-traces-endpoint <endpoint>`, `OTEL_EXPORTER_OTLP_TRACES_INSECURE`, and `OTEL_SERVICE_NAME` are optional and used typically only for the NRP-hosted models. For SGLang, use `--log-requests --log-requests-level 1 --enable-metrics --enable-trace --otlp-traces-endpoint <endpoint>` with `OTEL_EXPORTER_OTLP_TRACES_INSECURE` and `OTEL_SERVICE_NAME`.
+
 The below are the set of example resources required to deploy an LLM model on the `nrp-llm` namespace (similar in the `sdsc-llm` namespace, but check the `StatefulSet` or `Deployment` examples within the namespace for differences):
 
 **StatefulSet (Recommended):**
@@ -133,7 +135,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --enable-expert-parallel --enable-ep-weight-filter --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 8192 --kv-cache-dtype bfloat16 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}'
+          vllm serve MiniMaxAI/MiniMax-M2.7 --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 8 --tensor-parallel-size 4 --enable-expert-parallel --enable-ep-weight-filter --trust-remote-code --enable-chunked-prefill --enable-prefix-caching --max-num-seqs 128 --gpu-memory-utilization 0.95 --max-model-len 204800 --max-num-batched-tokens 8192 --kv-cache-dtype bfloat16 --enable-auto-tool-choice --tool-call-parser minimax_m2 --reasoning-parser minimax_m2 --compilation-config '{"mode":3,"pass_config":{"fuse_minimax_qk_norm":true}}' --enable-request-id-headers --otlp-traces-endpoint http://otel-collector.nrp-llm.svc:4317
         command:
         - bash
         - -c
@@ -144,6 +146,10 @@ spec:
         # Add environment variables when the Hugging Face or vLLM documentation specifies as beneficial
         #- name: SAFETENSORS_FAST_GPU
         #  value: "1"
+        - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
+          value: "true"
+        - name: OTEL_SERVICE_NAME
+          value: minimax-vllm-inference
         envFrom:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
@@ -321,7 +327,7 @@ spec:
       - args:
         # Refer to the documentation for detailed setup; add `--enable-expert-parallel --enable-ep-weight-filter` in MoE models for better maximum total throughput
         - |
-          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --max-num-batched-tokens 8192 --kv-cache-dtype auto --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95
+          uv pip install --system 'qwen-vl-utils>=0.0.14' && vllm serve Qwen/Qwen3-VL-Embedding-8B --port 5000 --host 0.0.0.0 --download-dir /workspace/.cache/huggingface/hub --api-server-count 4 --tensor-parallel-size 2 --max-model-len 262144 --max-num-batched-tokens 8192 --kv-cache-dtype auto --runner pooling --convert embed --mm-processor-cache-gb 8 --mm-processor-cache-type shm --trust-remote-code --gpu-memory-utilization 0.95 --enable-request-id-headers --otlp-traces-endpoint http://otel-collector.nrp-llm.svc:4317
         command:
         - bash
         - -c
@@ -329,6 +335,10 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
+        - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
+          value: "true"
+        - name: OTEL_SERVICE_NAME
+          value: qwen3-embedding-8b-vllm-inference
         envFrom:
         - configMapRef:
             # Includes `HF_TOKEN` and `VLLM_API_KEY`; default configMap for nrp-llm; refer to other models in the namespace for sdsc-llm
@@ -851,7 +861,8 @@ spec:
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
             --mm-processor-cache-gb 8 \
-            --mm-encoder-tp-mode data
+            --mm-encoder-tp-mode data \
+            --enable-request-id-headers --otlp-traces-endpoint http://otel-collector.nrp-llm.svc:4317
         command:
         - bash
         - -c
@@ -863,6 +874,10 @@ spec:
           value: "INFO"
         - name: NCCL_IB_DISABLE
           value: "1"
+        - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
+          value: "true"
+        - name: OTEL_SERVICE_NAME
+          value: kimi-bw-vllm-head
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
@@ -1063,7 +1078,8 @@ spec:
             --tool-call-parser kimi_k2 \
             --reasoning-parser kimi_k2 \
             --mm-processor-cache-gb 8 \
-            --mm-encoder-tp-mode data
+            --mm-encoder-tp-mode data \
+            --enable-request-id-headers --otlp-traces-endpoint http://otel-collector.nrp-llm.svc:4317
         command:
         - bash
         - -c
@@ -1075,6 +1091,10 @@ spec:
           value: "INFO"
         - name: NCCL_IB_DISABLE
           value: "1"
+        - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
+          value: "true"
+        - name: OTEL_SERVICE_NAME
+          value: kimi-bw-vllm-worker
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
@@ -1352,9 +1372,10 @@ metadata:
   namespace: nrp-llm
 spec:
   targetRefs:
+    # Same name as your AIGatewayRoute
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: envoy-ai-gateway-nrp  # Same name as your AIGatewayRoute
+      name: envoy-ai-gateway-nrp
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
       name: envoy-ai-gateway-nrp-qwen
@@ -1386,6 +1407,23 @@ spec:
         - refused-stream
         - reset
         - retriable-status-codes
+  healthCheck:
+    active:
+      type: HTTP
+      http:
+        path: /health
+      interval: 10s
+      healthyThreshold: 1
+      unhealthyThreshold: 3
+    panicThreshold: 0
+    passive:
+      baseEjectionTime: 30s
+      interval: 5s
+      maxEjectionPercent: 50
+      consecutive5XxErrors: 2
+      consecutiveGatewayErrors: 2
+      consecutiveLocalOriginFailures: 2
+      splitExternalLocalOriginErrors: true
 ```
 
 ### AIServiceBackend
