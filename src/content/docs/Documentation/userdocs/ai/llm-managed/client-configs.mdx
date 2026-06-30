@@ -16,6 +16,57 @@ Use the right-hand "On this page" navigation to jump to your client. Every confi
 Run `curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/models` to list active model IDs, or browse the [Available Models](/documentation/userdocs/ai/llm-managed/models) feature matrix to pick one.
 </Aside>
 
+## VS Code
+
+https://code.visualstudio.com
+
+VS Code can use NRP-managed LLMs through the **Chat: Manage Language Models** command. This lets you pick NRP models from the model selector in Copilot Chat.
+
+1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **Chat: Manage Language Models**.
+2. Click **Add Models**.
+3. Choose **Custom Endpoint**.
+4. Enter your endpoint URL: `https://ellm.nrp-nautilus.io/v1/chat/completions`
+
+Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${input:...}`](https://code.visualstudio.com/docs/devtools/variables-reference) substitution, so you'll be asked for your LLM token the first time you use the model — the token is then stored securely by VS Code.
+
+```json
+{
+  "name": "NRP",
+  "vendor": "customendpoint",
+  "apiKey": "${input:chat.lm.secret.2630e22e}",
+  "apiType": "chat-completions",
+  "models": [
+    {
+      "id": "glm-5",
+      "name": "glm-5",
+      "url": "https://ellm.nrp-nautilus.io/v1/chat/completions",
+      "toolCalling": true,
+      "vision": false,
+      "maxInputTokens": 524288,
+      "maxOutputTokens": 100000
+    },
+    {
+      "id": "qwen3",
+      "name": "qwen3",
+      "url": "https://ellm.nrp-nautilus.io/v1/chat/completions",
+      "toolCalling": true,
+      "vision": true,
+      "maxInputTokens": 1010000,
+      "maxOutputTokens": 100000
+    },
+    {
+      "id": "kimi",
+      "name": "kimi",
+      "url": "https://ellm.nrp-nautilus.io/v1/chat/completions",
+      "toolCalling": true,
+      "vision": true,
+      "maxInputTokens": 262144,
+      "maxOutputTokens": 100000
+    }
+  ]
+}
+```
+
 ## OpenCode
 
 https://github.com/anomalyco/opencode
