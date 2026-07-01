@@ -217,7 +217,10 @@ export default defineConfig({
             {
               label: 'Networks',
               collapsed: true,
-              items: [{ label: 'FABRIC Integration', link: 'documentation/userdocs/networks/fabric' }],
+              items: [
+                { label: 'LoadBalancer VIPs', link: 'documentation/userdocs/networks/loadbalancer-vips' },
+                { label: 'FABRIC Integration', link: 'documentation/userdocs/networks/fabric' },
+              ],
             },
             {
               label: 'FPGA',
