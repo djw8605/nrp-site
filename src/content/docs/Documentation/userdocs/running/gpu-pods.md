@@ -59,6 +59,7 @@ The current list is:
 | NVIDIA RTX PRO 6000 Blackwell | nvidia.com/rtx6000bw   |
 | NVIDIA GH200 Grace Hopper   | nvidia.com/gh200          |
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
+> **Note:** NVIDIA RTX PRO 6000 Blackwell nodes are reserved for exclusive use and are not generally available at this time.
 
 :::danger[Access policy for A100 / H100 / H200 / GH200]
 These four GPU types are gated by a per-namespace ResourceQuota. By default every namespace has a quota of **zero**
@@ -163,6 +164,10 @@ If you need more graphical memory, use this table or official specs to choose th
 :::note
 [Not all nodes are available to all users](/documentation/userdocs/running/special/). You can consult about your available resources in [Nautilus Support](https://nrp.ai/contact) and on [resources page](https://nrp.ai/viz/resources). 
 Labs connecting their hardware to our cluster have preferential access to all our resources.
+:::
+
+:::note
+
 :::
 
 :::caution
