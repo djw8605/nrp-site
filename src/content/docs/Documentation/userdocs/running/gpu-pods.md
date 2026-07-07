@@ -166,10 +166,6 @@ If you need more graphical memory, use this table or official specs to choose th
 Labs connecting their hardware to our cluster have preferential access to all our resources.
 :::
 
-:::note
-
-:::
-
 :::caution
   For higher memory GPUs, use the [requesting special GPUs syntax](#requesting-special-gpus)! Affinity allows you to further refine the GPU type or choose the GPU type for generic GPUs.
 :::
