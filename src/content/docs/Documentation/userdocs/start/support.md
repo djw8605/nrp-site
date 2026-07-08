@@ -19,6 +19,10 @@ When asking a question in support chat, please provide the following essential i
 * **Minimal Reproducible Example**: If the issue is not specific to a particular pod or namespace, please provide a minimal reproducible example (MRE) that demonstrates the problem. MREs should be a concise, self-contained code snippet that reproduces the issue.
 * **Service**: If you are using a service like JupyterHub or Coder, mention this in chat. Share the url you are using to access this service. Provide the namespace in which this service is running/meant to run. Note that [https://jupyterhub-west.nrp-nautilus.io](https://jupyterhub-west.nrp-nautilus.io) runs in the namespace **jupyterlab**.
 
+:::note
+   [https://jupyterhub-west.nrp-nautilus.io](https://jupyterhub-west.nrp-nautilus.io) runs in the namespace **jupyterlab**. Share either with the admin when assking for help. If you are using a different JupyterHub, please contact the namespace admin where the hub is runnning for assistance. 
+:::
+
 ## Gathering Information with kubectl
 
 To help you gather more information about the issue, we recommend using the `kubectl` command-line tool. Here are some tips on how to use `kubectl` to check pod logs and status:
