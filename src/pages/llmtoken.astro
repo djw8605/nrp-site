@@ -4,13 +4,13 @@ import LLMToken from '~/components/vue/LLMToken.vue';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
-  title: 'LLM Tokens',
+  title: 'LLM API Keys',
 };
 
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="LLM tokens">
+  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="LLM API Keys">
     <LLMToken client:only="vue" />
   </WidgetWrapper>
 </Layout>

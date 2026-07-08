@@ -91,7 +91,16 @@
             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
                 <InputGroup>
                     <FloatLabel variant="on">
-                        <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid />
+                        <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid>
+                        <template #option="slotProps">
+                            <div class="flex flex-col">
+                                <div class="font-medium">{{ slotProps.option.Name }}
+                                    <Badge v-if="slotProps.option.IDP" severity="info" size="small" :value="slotProps.option.IDP"/>
+                                </div>
+                                <div class="text-xs text-surface-500 dark:text-surface-400 break-all">{{ slotProps.option.ID }}</div>
+                            </div>
+                        </template>
+                    </AutoComplete>
                         <label for="newUser">Add New User</label>
                     </FloatLabel>
                     <Button label="Add" :loading="addUserLoading" @click="addUser" />
@@ -122,7 +131,7 @@
                                 <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                                     <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                                         <div>
-                                            <span class="font-medium text-surface-500 dark:text-surface-400 text-sm">{{ item.Email }}</span>
+                                            <span class="font-medium text-surface-500 dark:text-surface-400 text-sm break-all">{{ item.ID }}</span>
                                             <div class="text-lg font-medium mt-2">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/> <Badge severity="info" size="small" :value="item.IDP"/></div>
                                         </div>
                                     </div>
