@@ -114,7 +114,7 @@ export const headerData = {
           href: getPermalink('/userinfo'),
         },
         {
-          text: 'LLM Tokens',
+          text: 'LLM API Keys',
           href: getPermalink('/llmtoken'),
         },
         {
