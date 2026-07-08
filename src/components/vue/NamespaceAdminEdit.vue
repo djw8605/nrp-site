@@ -16,6 +16,27 @@
                 </template>
             </Card>
 
+            <Card class="mt-4">
+                <template #subtitle>Enable features</template>
+                <template #content>
+                    <div v-if="convertibleFeatures.length === 0" class="text-sm text-surface-500 dark:text-surface-400">
+                        All available features are already enabled on this group.
+                    </div>
+                    <div v-else class="flex flex-col gap-3">
+                        <Message severity="info" size="small" variant="simple" class="mt-0">
+                            Turn this group into a Kubernetes namespace, LLM group, and/or Milvus database. This is additive &mdash; features can be enabled here but not removed.
+                        </Message>
+                        <div class="flex gap-2 flex-wrap">
+                            <span v-for="feature of convertibleFeatures" :key="feature.key">
+                                <Checkbox v-model="convertFeatures" :inputId="`convert_${feature.key}`" name="convertFeature" :value="feature.key" />
+                                <label class="m-1" :for="`convert_${feature.key}`"> {{ feature.name }} </label>
+                            </span>
+                        </div>
+                        <Button label="Enable selected features" icon="pi pi-bolt" severity="secondary" size="small" class="self-start" :loading="convertFeaturesLoading" :disabled="convertFeatures.length === 0" @click="convertGroupFeatures" />
+                    </div>
+                </template>
+            </Card>
+
             <Card v-if="currentUserIsNrpAdmin" class="mt-4">
                 <template #subtitle>
                     Commercial <Badge severity="warn" size="small" value="NRP Admins only" />
@@ -88,16 +109,16 @@
         <template #title>Users</template>
         <template #content>
             <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
-            <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4">
+            <div class="flex flex-col p-6 gap-3">
                 <InputGroup>
                     <FloatLabel variant="on">
                         <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid>
                         <template #option="slotProps">
                             <div class="flex flex-col">
-                                <div class="font-medium">{{ slotProps.option.Name }}
+                                <div class="font-medium">{{ slotProps.option.Name || slotProps.option.Title || slotProps.option.Email }}
                                     <Badge v-if="slotProps.option.IDP" severity="info" size="small" :value="slotProps.option.IDP"/>
                                 </div>
-                                <div class="text-xs text-surface-500 dark:text-surface-400 break-all">{{ slotProps.option.ID }}</div>
+                                <div v-if="slotProps.option.ID" class="text-xs text-surface-500 dark:text-surface-400 break-all">{{ slotProps.option.ID }}</div>
                             </div>
                         </template>
                     </AutoComplete>
@@ -105,6 +126,12 @@
                     </FloatLabel>
                     <Button label="Add" :loading="addUserLoading" @click="addUser" />
                 </InputGroup>
+                <Message v-if="showInviteHint" severity="info" size="small" variant="simple" class="mt-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <span><b class="break-all">{{ userQuery }}</b> isn't in Authentik yet. Invite them by email &mdash; they'll be added to this group automatically the first time they log in.</span>
+                        <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="secondary" :loading="inviteUserLoading" @click="inviteTypedUser" />
+                    </div>
+                </Message>
             </div>
             <Inplace class="p-3">
                 <template #display severity="secondary">
@@ -147,11 +174,23 @@
                     </div>
                 </template>
             </DataView>
+            <div v-if="pendingInvites.length > 0" class="px-6 pb-2">
+                <div class="text-sm font-medium text-surface-500 dark:text-surface-400 mb-2">Pending invites (not yet registered in Authentik)</div>
+                <div class="flex flex-col gap-2">
+                    <div v-for="invite in pendingInvites" :key="invite.Email" class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded border border-surface-200 dark:border-surface-700">
+                        <div class="flex flex-col">
+                            <span class="font-medium break-all">{{ invite.Email }}</span>
+                            <span class="text-xs text-surface-500 dark:text-surface-400">invited by {{ invite.InvitedBy }} &middot; expires {{ formatInviteDate(invite.ExpiresAt) }}</span>
+                        </div>
+                        <Button icon="pi pi-times" severity="warn" size="small" :loading="delInviteLoading[invite.Email]" label="Cancel invite" class="whitespace-nowrap" @click="deletePendingInvite(invite.Email)" />
+                    </div>
+                </div>
+            </div>
             <div v-if="users.length > 0" class="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button 
-                    icon="pi pi-users" 
-                    severity="info" 
-                    label="Email All Users" 
+                <Button
+                    icon="pi pi-users"
+                    severity="info"
+                    label="Email All Users"
                     @click="emailAllUsers"
                     class="px-6 py-2"
                 />
@@ -368,11 +407,28 @@ const form = ref();
 const users = ref([]);
 
 const newUser = ref(null);
+const userQuery = ref("");
+
+const pendingInvites = ref([]);
+const delInviteLoading = ref({});
+const inviteUserLoading = ref(false);
+
+const convertFeatures = ref([]);
+const convertFeaturesLoading = ref(false);
 
 const filteredOrganizations = ref([]);
 const filteredUsers = ref([]);
 const alltenants = ref([]);
 const tenants = ref([]);
+
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || "").trim());
+
+const showInviteHint = computed(() => !newUser.value && isValidEmail(userQuery.value));
+
+const convertibleFeatures = computed(() => {
+    const current = initialValues.features || [];
+    return features.value.filter(f => !current.includes(f.key));
+});
 
 const bulkUsers = ref("");
 
@@ -554,7 +610,9 @@ const getOrganizationsFilter = (org) => {
 
 const getUsersFilter = (org) => {
     return new Promise((resolve, reject) => {
+        userQuery.value = org.query.trim();
         if(org.query.trim().length < 3) {
+            filteredUsers.value = [];
             resolve();
             return;
         }
@@ -576,12 +634,9 @@ const getUsersFilter = (org) => {
     });
 };
 
-onMounted(async () => {
-    const nsNameSplit = props["selectedNamespace"].Name.split("/");
-    const nsName = nsNameSplit[nsNameSplit.length - 1];
-
+const readNamespaceInfo = (nsName) => {
     isFormLoading.value = true;
-    client.request({
+    return client.request({
         method: "user.GetNamespaceInfo",
         params: {
             Namespace: nsName
@@ -600,8 +655,15 @@ onMounted(async () => {
     }).finally(() => {
         isFormLoading.value = false;
     });
+};
 
+onMounted(async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    readNamespaceInfo(nsName);
     readNSUsers(nsName);
+    readPendingInvites(nsName);
     readAllTenants();
     readTenants(nsName);
 
@@ -719,6 +781,206 @@ const readNSUsers = (nsName) => {
         hovercards.attach( document.getElementById( 'users' ) );
     });
 }
+
+const readPendingInvites = (nsName) => {
+    client.request({
+        method: "admin.ListPendingNSInvites",
+        params: {
+            Namespace: nsName
+        }
+    }).then((response) => {
+        if (response && response.error) {
+            console.error('Error fetching pending invites:', response.error);
+            return;
+        }
+        pendingInvites.value = (response && response.Invites) ? response.Invites : [];
+    }).catch((err) => {
+        console.error('Error fetching pending invites:', err);
+    });
+};
+
+const formatInviteDate = (value) => {
+    if (!value) {
+        return 'unknown';
+    }
+    const d = new Date(value);
+    if (isNaN(d.getTime())) {
+        return value;
+    }
+    return d.toLocaleDateString();
+};
+
+const inviteTypedUser = async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    const email = userQuery.value.trim();
+    if (!isValidEmail(email)) {
+        toast.add({
+            severity: 'error',
+            summary: 'Invalid email',
+            detail: 'Please enter a valid email address to invite.',
+            life: 3000
+        });
+        return;
+    }
+
+    inviteUserLoading.value = true;
+    client.request({
+        method: "admin.InviteNSUsers",
+        params: {
+            Namespace: nsName,
+            Emails: [email],
+        }
+    }).then((response) => {
+        if (response && response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error inviting user',
+                detail: response.error.message,
+                life: 4000
+            });
+            return;
+        }
+
+        if (response && response.Invalid && response.Invalid.length > 0) {
+            toast.add({
+                severity: 'error',
+                summary: 'Invalid email',
+                detail: response.Invalid.join(', '),
+                life: 4000
+            });
+            return;
+        }
+
+        toast.add({
+            severity: 'success',
+            summary: 'Invite sent',
+            detail: `${email} will be added to this group when they first log in. If they already have an account, they are added now.`,
+            life: 5000
+        });
+        userQuery.value = "";
+        newUser.value = null;
+        readPendingInvites(nsName);
+        readNSUsers(nsName);
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error inviting user',
+            detail: err.message,
+            life: 4000
+        });
+    }).finally(() => {
+        inviteUserLoading.value = false;
+    });
+};
+
+const deletePendingInvite = async (email) => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    delInviteLoading.value[email] = true;
+    client.request({
+        method: "admin.DeletePendingNSInvite",
+        params: {
+            Namespace: nsName,
+            Email: email,
+        }
+    }).then((response) => {
+        if (response && response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error cancelling invite',
+                detail: response.error.message,
+                life: 3000
+            });
+            return;
+        }
+        pendingInvites.value = pendingInvites.value.filter(i => i.Email !== email);
+        toast.add({
+            severity: 'success',
+            summary: 'Invite cancelled',
+            life: 3000
+        });
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error cancelling invite',
+            detail: err.message,
+            life: 3000
+        });
+    }).finally(() => {
+        delInviteLoading.value[email] = false;
+    });
+};
+
+const convertGroupFeatures = async () => {
+    const nsNameSplit = props["selectedNamespace"].Name.split("/");
+    const nsName = nsNameSplit[nsNameSplit.length - 1];
+
+    if (convertFeatures.value.length === 0) {
+        return;
+    }
+
+    convertFeaturesLoading.value = true;
+    client.request({
+        method: "admin.ConvertGroupFeatures",
+        params: {
+            Group: nsName,
+            Features: convertFeatures.value,
+        }
+    }).then((response) => {
+        if (response && response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error enabling features',
+                detail: response.error.message,
+                life: 5000
+            });
+            return;
+        }
+
+        const applied = (response && response.Applied) ? response.Applied : [];
+        const warnings = (response && response.Warnings) ? response.Warnings : [];
+
+        if (applied.length > 0) {
+            toast.add({
+                severity: 'success',
+                summary: 'Features enabled',
+                detail: applied.join(', '),
+                life: 5000
+            });
+        } else if (warnings.length === 0) {
+            toast.add({
+                severity: 'info',
+                summary: 'No changes',
+                detail: 'Selected features were already enabled.',
+                life: 4000
+            });
+        }
+        if (warnings.length > 0) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Notes',
+                detail: warnings.join('; '),
+                life: 6000
+            });
+        }
+
+        convertFeatures.value = [];
+        readNamespaceInfo(nsName);
+        emit('onNSChanged');
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error enabling features',
+            detail: err.message,
+            life: 5000
+        });
+    }).finally(() => {
+        convertFeaturesLoading.value = false;
+    });
+};
 
 const resolver = ({ states, values }) => {
     const errors = {};
