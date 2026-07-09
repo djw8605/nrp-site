@@ -128,10 +128,26 @@
                 </InputGroup>
                 <Message v-if="showInviteHint" severity="info" size="small" variant="simple" class="mt-0">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span>Can't find them in the list? Invite <b class="break-all">{{ userQuery }}</b> by email &mdash; if they already have an account they'll be added right away, otherwise they'll be added the first time they sign in.</span>
-                        <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="secondary" :loading="inviteUserLoading" @click="inviteTypedUser" />
+                        <span>Can't find them in the list? Invite <b class="break-all">{{ userQuery }}</b> by email below &mdash; if they already have an account they'll be added right away, otherwise they'll be added the first time they sign in.</span>
+                        <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="info" :loading="inviteUserLoading" @click="sendInvite(userQuery)" />
                     </div>
                 </Message>
+                <div class="mt-2 pt-3 border-t border-surface-200 dark:border-surface-700">
+                    <div class="text-sm font-medium mb-2 flex items-center gap-2">
+                        <i class="pi pi-envelope text-primary"></i>
+                        Invite a user by email
+                    </div>
+                    <InputGroup>
+                        <FloatLabel variant="on">
+                            <InputText v-model="inviteEmail" id="inviteEmail" type="email" fluid @keyup.enter="sendInvite(inviteEmail)" />
+                            <label for="inviteEmail">Email address to invite</label>
+                        </FloatLabel>
+                        <Button label="Invite" icon="pi pi-envelope" severity="info" :loading="inviteUserLoading" :disabled="!isValidEmail(inviteEmail)" @click="sendInvite(inviteEmail)" />
+                    </InputGroup>
+                    <div class="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                        Existing accounts are added to this group immediately; everyone else is added automatically the first time they sign in. Invites expire after 2 months.
+                    </div>
+                </div>
             </div>
             <Inplace class="p-3">
                 <template #display severity="secondary">
@@ -412,6 +428,7 @@ const userQuery = ref("");
 const pendingInvites = ref([]);
 const delInviteLoading = ref({});
 const inviteUserLoading = ref(false);
+const inviteEmail = ref("");
 
 const convertFeatures = ref([]);
 const convertFeaturesLoading = ref(false);
@@ -825,11 +842,11 @@ const formatInviteDate = (value) => {
     return d.toLocaleDateString();
 };
 
-const inviteTypedUser = async () => {
+const sendInvite = async (rawEmail) => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
-    const email = userQuery.value.trim();
+    const email = (rawEmail || "").trim();
     if (!isValidEmail(email)) {
         toast.add({
             severity: 'error',
@@ -876,6 +893,7 @@ const inviteTypedUser = async () => {
         });
         userQuery.value = "";
         newUser.value = null;
+        inviteEmail.value = "";
         readPendingInvites(nsName);
         readNSUsers(nsName);
     }).catch((err) => {
@@ -957,6 +975,13 @@ const convertGroupFeatures = async () => {
 
         const applied = (response && response.Applied) ? response.Applied : [];
         const warnings = (response && response.Warnings) ? response.Warnings : [];
+
+        // Reflect the change immediately: check the feature boxes and re-color
+        // the tree without waiting for the backend re-fetch to land.
+        if (applied.length > 0) {
+            const current = initialValues.features || [];
+            initialValues.features = [...new Set([...current, ...applied])];
+        }
 
         if (applied.length > 0) {
             toast.add({
