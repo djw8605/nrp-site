@@ -128,7 +128,7 @@
                 </InputGroup>
                 <Message v-if="showInviteHint" severity="info" size="small" variant="simple" class="mt-0">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span><b class="break-all">{{ userQuery }}</b> isn't in Authentik yet. Invite them by email &mdash; they'll be added to this group automatically the first time they log in.</span>
+                        <span>Can't find them in the list? Invite <b class="break-all">{{ userQuery }}</b> by email &mdash; if they already have an account they'll be added right away, otherwise they'll be added the first time they sign in.</span>
                         <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="secondary" :loading="inviteUserLoading" @click="inviteTypedUser" />
                     </div>
                 </Message>
@@ -608,28 +608,43 @@ const getOrganizationsFilter = (org) => {
 };
 
 
+let usersSearchSeq = 0;
 const getUsersFilter = (org) => {
-    return new Promise((resolve, reject) => {
-        userQuery.value = org.query.trim();
-        if(org.query.trim().length < 3) {
+    return new Promise((resolve) => {
+        const term = org.query.trim();
+        userQuery.value = term;
+        if (term.length < 3) {
             filteredUsers.value = [];
             resolve();
             return;
         }
 
+        // Sequence guard: user searches can take several seconds while the
+        // backend cache warms, and typing fires one request per keystroke. Only
+        // let the most recent query update the list so a slow/stale earlier
+        // response can't clobber the results for what the user actually typed.
+        const seq = ++usersSearchSeq;
         client.request({
             method: "admin.ListUsersAC",
-            params: {Term: org.query.trim()},
+            params: { Term: term },
         }).then((response) => {
-            if (response.error) {
-                console.error('Error fetching users:', response.error);
-                reject(response.error);
-                return;
-            } else {
-                filteredUsers.value = response.Users;
+            if (seq !== usersSearchSeq) {
                 resolve();
                 return;
             }
+            if (response && response.error) {
+                console.error('Error fetching users:', response.error);
+                filteredUsers.value = [];
+            } else {
+                filteredUsers.value = (response && response.Users) ? response.Users : [];
+            }
+            resolve();
+        }).catch((err) => {
+            if (seq === usersSearchSeq) {
+                console.error('Error fetching users:', err);
+                filteredUsers.value = [];
+            }
+            resolve();
         });
     });
 };
