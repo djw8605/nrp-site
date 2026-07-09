@@ -128,7 +128,7 @@
                 </InputGroup>
                 <Message v-if="showInviteHint" severity="info" size="small" variant="simple" class="mt-0">
                     <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span><b class="break-all">{{ userQuery }}</b> isn't in Authentik yet. Invite them by email &mdash; they'll be added to this group automatically the first time they log in.</span>
+                        <span>Can't find them in the list? Invite <b class="break-all">{{ userQuery }}</b> by email &mdash; if they already have an account they'll be added right away, otherwise they'll be added the first time they sign in.</span>
                         <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="secondary" :loading="inviteUserLoading" @click="inviteTypedUser" />
                     </div>
                 </Message>
