@@ -109,57 +109,47 @@
         <template #title>Users</template>
         <template #content>
             <VueSpinnerPie v-if="isUsersLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
-            <div class="flex flex-col p-6 gap-3">
+            <div class="flex flex-col p-6 gap-2">
                 <InputGroup>
                     <FloatLabel variant="on">
-                        <AutoComplete name="newUser" v-model="newUser" forceSelection optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid>
+                        <AutoComplete name="newUser" v-model="newUser" optionLabel="Title" id="newUser" type="text" :suggestions="filteredUsers" @complete="getUsersFilter" fluid>
                         <template #option="slotProps">
                             <div class="flex flex-col">
                                 <div class="font-medium">{{ slotProps.option.Name || slotProps.option.Title || slotProps.option.Email }}
                                     <Badge v-if="slotProps.option.IDP" severity="info" size="small" :value="slotProps.option.IDP"/>
                                 </div>
-                                <div v-if="slotProps.option.ID" class="text-xs text-surface-500 dark:text-surface-400 break-all">{{ slotProps.option.ID }}</div>
+                                <div v-if="slotProps.option.Email" class="text-xs text-surface-500 dark:text-surface-400 break-all">{{ slotProps.option.Email }}</div>
+                                <div v-if="slotProps.option.ID" class="text-xs text-surface-400 dark:text-surface-500 break-all">{{ slotProps.option.ID }}</div>
                             </div>
                         </template>
                     </AutoComplete>
-                        <label for="newUser">Add New User</label>
+                        <label for="newUser">Add user by name or email</label>
                     </FloatLabel>
-                    <Button label="Add" :loading="addUserLoading" @click="addUser" />
+                    <Button :label="addButtonLabel" :icon="addButtonIcon" :loading="addUserLoading || inviteUserLoading" :disabled="!canSubmitUser" @click="submitUser" />
                 </InputGroup>
-                <Message v-if="showInviteHint" severity="info" size="small" variant="simple" class="mt-0">
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span>Can't find them in the list? Invite <b class="break-all">{{ userQuery }}</b> by email below &mdash; if they already have an account they'll be added right away, otherwise they'll be added the first time they sign in.</span>
-                        <Button label="Invite by email" icon="pi pi-envelope" size="small" severity="info" :loading="inviteUserLoading" @click="sendInvite(userQuery)" />
-                    </div>
-                </Message>
-                <div class="mt-2 pt-3 border-t border-surface-200 dark:border-surface-700">
-                    <div class="text-sm font-medium mb-2 flex items-center gap-2">
-                        <i class="pi pi-envelope text-primary"></i>
-                        Invite a user by email
-                    </div>
-                    <InputGroup>
-                        <FloatLabel variant="on">
-                            <InputText v-model="inviteEmail" id="inviteEmail" type="email" fluid @keyup.enter="sendInvite(inviteEmail)" />
-                            <label for="inviteEmail">Email address to invite</label>
-                        </FloatLabel>
-                        <Button label="Invite" icon="pi pi-envelope" severity="info" :loading="inviteUserLoading" :disabled="!isValidEmail(inviteEmail)" @click="sendInvite(inviteEmail)" />
-                    </InputGroup>
-                    <div class="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                        Existing accounts are added to this group immediately; everyone else is added automatically the first time they sign in. Invites expire after 2 months.
-                    </div>
+                <div class="text-xs text-surface-500 dark:text-surface-400">
+                    <template v-if="typedEmailReady">
+                        <i class="pi pi-envelope mr-1"></i>Press <b>Invite</b> to add <b class="break-all">{{ typedText }}</b>: existing accounts are added right away, everyone else is added the first time they sign in (invites expire after 2 months).
+                    </template>
+                    <template v-else>
+                        Search existing users by name or email. Can't find someone? Type their full email address to invite them.
+                    </template>
                 </div>
             </div>
             <Inplace class="p-3">
                 <template #display severity="secondary">
-                    <Button>Open bulk users add form</Button>
+                    <Button icon="pi pi-users" label="Add many users at once" />
                 </template>
                 <template #content="{ closeCallback }">
                     <div class="flex flex-col w-full items-center gap-2">
                         <FloatLabel variant="on"  class="w-full">
                             <Textarea v-model="bulkUsers" name="bulkUsers" id="bulkUsers" class="w-full" rows="12" autofocus></Textarea>
-                            <label for="bulkUsers">Users emails, one per line</label>
+                            <label for="bulkUsers">Email addresses, one per line</label>
                         </FloatLabel>
-                        <Button text="Add" class="w-full" :loading="addBulkUserLoading" @click="bulkAddUsers">Bulk add users by email</Button>
+                        <div class="text-xs text-surface-500 dark:text-surface-400 w-full">
+                            Works exactly like the field above: existing accounts are added immediately, everyone else gets an invite that's redeemed when they first sign in.
+                        </div>
+                        <Button class="w-full" icon="pi pi-user-plus" :loading="addBulkUserLoading" @click="bulkAddUsers" label="Add or invite everyone listed" />
                     </div>
                 </template>
             </Inplace>
@@ -174,8 +164,9 @@
                                 <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                                     <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                                         <div>
-                                            <span class="font-medium text-surface-500 dark:text-surface-400 text-sm break-all">{{ item.ID }}</span>
-                                            <div class="text-lg font-medium mt-2">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/> <Badge severity="info" size="small" :value="item.IDP"/></div>
+                                            <div class="text-lg font-medium">{{ item.Name }} <Badge severity="success" size="small" :value="`${ item.IsAdmin ? 'admin' : 'user' }`"/> <Badge severity="info" size="small" :value="item.IDP"/></div>
+                                            <div class="font-medium text-surface-500 dark:text-surface-400 text-sm break-all mt-1">{{ item.Email }}</div>
+                                            <div class="text-xs text-surface-400 dark:text-surface-500 break-all">{{ item.ID }}</div>
                                         </div>
                                     </div>
                                     <div class="flex flex-col md:items-end gap-8">
@@ -428,7 +419,6 @@ const userQuery = ref("");
 const pendingInvites = ref([]);
 const delInviteLoading = ref({});
 const inviteUserLoading = ref(false);
-const inviteEmail = ref("");
 
 const convertFeatures = ref([]);
 const convertFeaturesLoading = ref(false);
@@ -440,7 +430,22 @@ const tenants = ref([]);
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value || "").trim());
 
-const showInviteHint = computed(() => !newUser.value && isValidEmail(userQuery.value));
+// The one Add/Invite control: while typing, v-model holds the raw string; once
+// a suggestion is picked it becomes the user object. The button adapts.
+const selectedUser = computed(() => (newUser.value && typeof newUser.value === 'object') ? newUser.value : null);
+const typedText = computed(() => typeof newUser.value === 'string' ? newUser.value.trim() : '');
+const typedEmailReady = computed(() => !selectedUser.value && isValidEmail(typedText.value));
+const canSubmitUser = computed(() => !!selectedUser.value || typedEmailReady.value);
+const addButtonLabel = computed(() => typedEmailReady.value ? 'Invite' : 'Add');
+const addButtonIcon = computed(() => typedEmailReady.value ? 'pi pi-envelope' : 'pi pi-user-plus');
+
+const submitUser = () => {
+    if (selectedUser.value) {
+        addUser();
+    } else if (typedEmailReady.value) {
+        sendInvite(typedText.value);
+    }
+};
 
 const convertibleFeatures = computed(() => {
     const current = initialValues.features || [];
@@ -885,15 +890,23 @@ const sendInvite = async (rawEmail) => {
             return;
         }
 
-        toast.add({
-            severity: 'success',
-            summary: 'Invite sent',
-            detail: `${email} will be added to this group when they first log in. If they already have an account, they are added now.`,
-            life: 5000
-        });
+        if (response && response.Added && response.Added.includes(email)) {
+            toast.add({
+                severity: 'success',
+                summary: 'User added',
+                detail: `${email} already has an account and was added to this group.`,
+                life: 5000
+            });
+        } else {
+            toast.add({
+                severity: 'success',
+                summary: 'Invite sent',
+                detail: `${email} will be added to this group when they first sign in.`,
+                life: 5000
+            });
+        }
         userQuery.value = "";
         newUser.value = null;
-        inviteEmail.value = "";
         readPendingInvites(nsName);
         readNSUsers(nsName);
     }).catch((err) => {
@@ -1049,7 +1062,7 @@ const addUser = async () => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
     const nsName = nsNameSplit[nsNameSplit.length - 1];
 
-    if (!newUser.value) {
+    if (!selectedUser.value || !selectedUser.value.ID) {
         return;
     }
 
@@ -1058,7 +1071,7 @@ const addUser = async () => {
         method: "admin.AddNSUser",
         params: {
             Namespace: nsName,
-            UserID: newUser.value.ID
+            UserID: selectedUser.value.ID
         }
     }).then((response) => {
         if (response.error) {
@@ -1070,7 +1083,8 @@ const addUser = async () => {
             });
         } else {
             readNSUsers(nsName);
-            
+            newUser.value = null;
+
             toast.add({
                 severity: 'success',
                 summary: 'User added successfully',
@@ -1270,51 +1284,69 @@ const bulkAddUsers = async () => {
     addBulkUserLoading.value = true;
 
     client.request({
-        method: "admin.BulkAddNSUsers",
+        method: "admin.InviteNSUsers",
         params: {
             Namespace: nsName,
-            Users: bulkUsers.value.split("\n").map(user => user.trim()),
+            Emails: bulkUsers.value.split("\n").map(user => user.trim()).filter(Boolean),
         }
     }).then((response) => {
-        if (response.error) {
+        if (response && response.error) {
             toast.add({
                 severity: 'error',
                 summary: 'Error adding users',
                 detail: response.error.message,
-                life: 3000
+                life: 4000
             });
             return;
         }
-        
-        if (response.Success.length === 0) {
-            toast.add({
-                severity: 'error',
-                summary: 'No users added',
-                life: 3000
-            });
-        } else {
+
+        const added = (response && response.Added) ? response.Added : [];
+        const invited = (response && response.Invited) ? response.Invited : [];
+        const invalid = (response && response.Invalid) ? response.Invalid : [];
+
+        if (added.length > 0) {
             toast.add({
                 severity: 'success',
-                summary: 'Successfully added '+response.Success.length+' users',
-                life: 3000
+                summary: `Added ${added.length} existing user${added.length === 1 ? '' : 's'}`,
+                life: 4000
             });
-            users.value.push(...response.Success);
         }
-        if (response.NotFound.length > 0) {
+        if (invited.length > 0) {
+            toast.add({
+                severity: 'info',
+                summary: `Invited ${invited.length} user${invited.length === 1 ? '' : 's'} by email`,
+                detail: 'They will be added when they first sign in.',
+                life: 5000
+            });
+        }
+        if (invalid.length > 0) {
             toast.add({
                 severity: 'error',
-                summary: 'Error adding '+response.NotFound.length+' users',
-                detail: response.NotFound.join(", "),
-                life: 3000
+                summary: `${invalid.length} invalid email${invalid.length === 1 ? '' : 's'}`,
+                detail: invalid.join(', '),
+                life: 6000
             });
         }
-        // readNSUsers();
+        if (added.length === 0 && invited.length === 0 && invalid.length === 0) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Nothing to do',
+                detail: 'No email addresses found in the list.',
+                life: 4000
+            });
+        }
+
+        if (added.length > 0 || invited.length > 0) {
+            bulkUsers.value = "";
+            readNSUsers(nsName);
+            readPendingInvites(nsName);
+        }
     }).catch((err) => {
         toast.add({
             severity: 'error',
             summary: 'Error adding users',
-            detail: err,
-            life: 3000
+            detail: err.message || String(err),
+            life: 4000
         });
     }).finally(() => {
         addBulkUserLoading.value = false;
