@@ -87,7 +87,7 @@
     const vals = [];
     gpu_org_map.forEach((val, key) => {
       if(cpu_org_map.has(key)) {
-        if(gpu_org_map.get(key) > 1000 && cpu_org_map.get(key) > 1000) {
+        if(gpu_org_map.get(key) > 100 && cpu_org_map.get(key) > 100) {
           vals.push({
             org: key,
             gpu: gpu_org_map.get(key),
