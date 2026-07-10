@@ -84,11 +84,13 @@
         Plot.axisX({
           label: "CPU Usage",
           grid: true,
+          tickValues: [100, 1000, 10000, 100000, 1000000],
           // inset: 10,
         }),
         Plot.axisY({
           label: "GPU Usage",
           grid: true,
+          tickValues: [100, 1000, 10000, 100000],
           // inset: 10,
         }),        
         Plot.tip(vals, Plot.pointer({
