@@ -53,7 +53,7 @@
 
     const vals = [];
     gpu_map.forEach((val, key) => {
-      if(key != "gpu-mon" && key != "kube-system" && key != "default") {
+      if(key != "gpu-mon" && key != "kube-system" && key != "default" && key != "gpu-operator") {
         vals.push({
           namespace: key,
           gpu: gpu_map.get(key),
@@ -84,13 +84,15 @@
         Plot.axisX({
           label: "CPU Usage",
           grid: true,
+          ticks: [10, 100, 1000, 10000, 100000, 1000000],
           // inset: 10,
         }),
         Plot.axisY({
           label: "GPU Usage",
           grid: true,
+          ticks: [10, 100, 1000, 10000, 100000],
           // inset: 10,
-        }),        
+        }),
         Plot.tip(vals, Plot.pointer({
           x: "cpu",
           y: "gpu",
@@ -103,12 +105,12 @@
       x: {
         type: "log",
         base: 10,
-        tickValues: [10, 100, 1000, 10000, 100000, 1000000],
+        ticks: [10, 100, 1000, 10000, 100000, 1000000],
       },
       y: {
         type: "log",
         base: 10,
-        tickValues: [10, 100, 1000, 10000, 100000],
+        ticks: [10, 100, 1000, 10000, 100000],
       },
     });
 

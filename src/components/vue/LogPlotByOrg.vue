@@ -69,7 +69,7 @@
     const gpu_org_map = new Map();
     gpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
-      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default") {
+      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default" && namespace != "gpu-operator") {
         var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown: "+namespace;
         gpu_org_map.set(org, (gpu_org_map.get(org) || 0) + parseInt(element.value[1]));
       }
@@ -78,7 +78,7 @@
     const cpu_org_map = new Map();
     cpu.data.result.forEach((element) => {
       const namespace = element.metric.namespace;
-      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default") {
+      if(namespace != "gpu-mon" && namespace != "kube-system" && namespace != "default" && namespace != "gpu-operator") {
         var org = ns_map.has(namespace) ? ns_map.get(namespace).Institution : "Unknown: "+namespace;
         cpu_org_map.set(org, (cpu_org_map.get(org) || 0) + parseInt(element.value[1]));
       }
@@ -122,13 +122,15 @@
         Plot.axisX({
           label: "CPU Usage",
           grid: true,
+          ticks: [10, 100, 1000, 10000, 100000, 1000000],
           // inset: 10,
         }),
         Plot.axisY({
           label: "GPU Usage",
           grid: true,
+          ticks: [10, 100, 1000, 10000, 100000],
           // inset: 10,
-        }),        
+        }),
         Plot.text(vals, {
           x: "cpu",
           y: "gpu",
@@ -141,10 +143,12 @@
       x: {
         type: "log",
         base: 10,
+        ticks: [10, 100, 1000, 10000, 100000, 1000000],
       },
       y: {
         type: "log",
         base: 10,
+        ticks: [10, 100, 1000, 10000, 100000],
       },
     });
 
