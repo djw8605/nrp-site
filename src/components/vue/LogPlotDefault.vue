@@ -62,12 +62,6 @@
       }
     });
 
-    const cpuValues = Array.from(cpu_map.values());
-    const gpuValues = Array.from(gpu_map.values());
-
-    const xTicks = getLogTicks(Math.min(...cpuValues), Math.max(...cpuValues));
-    const yTicks = getLogTicks(Math.min(...gpuValues), Math.max(...gpuValues));
-
     const plot = Plot.plot({
       width: 1200,
       height: 1200,
@@ -109,12 +103,12 @@
       x: {
         type: "log",
         base: 10,
-        ticks: xTicks,
+        tickValues: [10, 100, 1000, 10000, 100000, 1000000],
       },
       y: {
         type: "log",
         base: 10,
-        ticks: yTicks,
+        tickValues: [10, 100, 1000, 10000, 100000],
       },
     });
 
