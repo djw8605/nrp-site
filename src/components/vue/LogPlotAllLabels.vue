@@ -22,11 +22,11 @@
     isLoading.value = true;
 
     const gpu_req = fetch(
-      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_gpu_usage["+props.period+":1h])>1000"
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_gpu_usage["+props.period+":1h])>100"
     );
     
     const cpu_req = fetch(
-      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_cpu_usage["+props.period+":1h])>1000"
+      "https://thanos.nrp-nautilus.io/api/v1/query?query=sum_over_time(namespace_cpu_usage["+props.period+":1h])>100"
     );
     
     const [gpu_resp, cpu_resp] = await Promise.all([
