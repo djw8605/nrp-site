@@ -54,15 +54,15 @@
     <VueSpinnerPie v-if="isLoading" size="40" style="z-index: 10; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
 
     <section class="mt-4">
-      <h2 class="mb-2 text-lg font-semibold">By namespace</h2>
+      <h2 class="mb-2 text-lg font-semibold">By namespace (all labels)</h2>
       <div class="flex flex-col gap-4 rounded-xl border border-slate-200 p-4 md:flex-row dark:border-slate-700">
-        <div id="log-plot-namespace" class="w-full md:w-2/3"></div>
-        <div class="flex w-full flex-col gap-3 md:w-1/3">
+        <div id="log-plot-namespace-labels" class="w-full md:w-3/4"></div>
+        <div class="flex w-full flex-col gap-3 md:w-1/4">
           <button
             type="button"
             class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
-            :disabled="!hasNamespacePlot"
-            @click="downloadPng('log-plot-namespace', 'namespace')"
+            :disabled="!hasNamespaceLabelsPlot"
+            @click="downloadPng('log-plot-namespace-labels', 'namespace-all-labels')"
           >
             Download plot PNG
           </button>
@@ -110,27 +110,10 @@
     </section>
 
     <section class="mt-10">
-      <h2 class="mb-2 text-lg font-semibold">By namespace (all labels)</h2>
-      <div class="flex flex-col gap-4 rounded-xl border border-slate-200 p-4 md:flex-row dark:border-slate-700">
-        <div id="log-plot-namespace-labels" class="w-full md:w-2/3"></div>
-        <div class="flex w-full flex-col gap-3 md:w-1/3">
-          <button
-            type="button"
-            class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
-            :disabled="!hasNamespaceLabelsPlot"
-            @click="downloadPng('log-plot-namespace-labels', 'namespace-all-labels')"
-          >
-            Download plot PNG
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <section class="mt-10">
       <h2 class="mb-2 text-lg font-semibold">By organization</h2>
       <div class="flex flex-col gap-4 rounded-xl border border-slate-200 p-4 md:flex-row dark:border-slate-700">
-        <div id="log-plot-org" class="w-full md:w-2/3"></div>
-        <div class="flex w-full flex-col gap-3 md:w-1/3">
+        <div id="log-plot-org" class="w-full md:w-3/4"></div>
+        <div class="flex w-full flex-col gap-3 md:w-1/4">
           <button
             type="button"
             class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
@@ -181,6 +164,62 @@
       </div>
       <div class="text-center mt-3 mb-3">Total orgs: {{ orgTotal }}, omitted: {{ orgOmitted }}, range: {{ startDate }} to {{ endDate }}</div>
     </section>
+
+    <section class="mt-10">
+      <h2 class="mb-2 text-lg font-semibold">By namespace</h2>
+      <div class="flex flex-col gap-4 rounded-xl border border-slate-200 p-4 md:flex-row dark:border-slate-700">
+        <div id="log-plot-namespace" class="w-full md:w-3/4"></div>
+        <div class="flex w-full flex-col gap-3 md:w-1/4">
+          <button
+            type="button"
+            class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
+            :disabled="!hasNamespacePlot"
+            @click="downloadPng('log-plot-namespace', 'namespace')"
+          >
+            Download plot PNG
+          </button>
+
+          <div v-if="namespaceTop.length" class="overflow-x-auto">
+            <h3 class="mb-2 text-sm font-medium">Top 10 namespaces by GPU hours</h3>
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="border-b border-slate-300 dark:border-slate-600">
+                  <th class="py-1 pr-4 text-left">Namespace</th>
+                  <th class="py-1 pr-4 text-right">GPU hours</th>
+                  <th class="py-1 text-right">CPU hours</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="entry in namespaceTop" :key="entry.namespace" class="border-b border-slate-100 dark:border-slate-800">
+                  <td class="py-1 pr-4">{{ entry.namespace }}</td>
+                  <td class="py-1 pr-4 text-right">{{ formatHours(entry.gpu) }}</td>
+                  <td class="py-1 text-right">{{ formatHours(entry.cpu) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="mt-2 flex gap-2">
+              <button
+                type="button"
+                class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
+                :disabled="!namespaceFullVals.length"
+                @click="downloadCsv(namespaceFullVals, 'namespace', 'Namespace', 'namespace')"
+              >
+                Download CSV
+              </button>
+              <button
+                type="button"
+                class="rounded-md border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-600 dark:hover:bg-slate-800"
+                :disabled="!namespaceFullVals.length"
+                @click="downloadTablePng(namespaceFullVals, 'namespace', 'Namespace', 'namespace')"
+              >
+                Download table PNG
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-3 mb-3">Total namespaces: {{ namespaceTotal }}, omitted: {{ namespaceOmitted }}, range: {{ startDate }} to {{ endDate }}</div>
+    </section>
   </div>
 </template>
 
@@ -190,6 +229,7 @@
   import {VueSpinnerPie} from 'vue3-spinners';
 
   import * as Plot from '@observablehq/plot';
+  import { forceSimulation, forceCollide, forceX, forceY } from 'd3-force';
 
   const isLoading = ref(false);
   const errorMessage = ref("");
@@ -211,6 +251,13 @@
   const EXCLUDED_NAMESPACES = new Set(["gpu-mon", "kube-system", "default", "gpu-operator"]);
   const X_TICKS = [10, 100, 1000, 10000, 100000, 1000000];
   const Y_TICKS = [10, 100, 1000, 10000, 100000];
+
+  const PLOT_WIDTH = 1800;
+  const PLOT_HEIGHT = 1275;
+  const PLOT_MARGIN_TOP = 100;
+  const PLOT_MARGIN_BOTTOM = 75;
+  const PLOT_MARGIN_LEFT = 90;
+  const PLOT_MARGIN_RIGHT = 180;
 
   function toDateInputValue(date) {
     return date.toISOString().slice(0, 10);
@@ -416,6 +463,94 @@
     }, "image/png");
   }
 
+  let measureCtx = null;
+  function measureTextWidth(text, font) {
+    if (!measureCtx) {
+      measureCtx = document.createElement("canvas").getContext("2d");
+    }
+    measureCtx.font = font;
+    return measureCtx.measureText(text).width;
+  }
+
+  const LABEL_FONT = "14px system-ui, sans-serif";
+  const LABEL_SVG_NS = "http://www.w3.org/2000/svg";
+
+  // Places each point's text label using a force simulation: a collision
+  // force pushes overlapping labels apart, while a weak spring pulls each
+  // one back toward its dot. Labels that end up displaced get a thin leader
+  // line back to their dot, matching the common "ggrepel" technique.
+  function addDeoverlappedLabels(svg, vals, labelField, labelSubset) {
+    const circles = [...svg.querySelectorAll("circle")];
+    if (circles.length !== vals.length) return;
+
+    const subset = labelSubset ?? vals;
+    const nodes = subset.map((d) => {
+      const i = vals.indexOf(d);
+      const cx = parseFloat(circles[i].getAttribute("cx"));
+      const cy = parseFloat(circles[i].getAttribute("cy"));
+      const text = String(d[labelField]);
+      const width = measureTextWidth(text, LABEL_FONT);
+      return {
+        text,
+        anchorX: cx,
+        anchorY: cy,
+        x: cx,
+        y: cy - 16,
+        halfWidth: width / 2,
+        radius: Math.sqrt(width * width + 14 * 14) / 2 + 2,
+      };
+    });
+
+    const simulation = forceSimulation(nodes)
+      .force("collide", forceCollide((d) => d.radius).iterations(3))
+      .force("x", forceX((d) => d.anchorX).strength(0.15))
+      .force("y", forceY((d) => d.anchorY - 14).strength(0.15))
+      .stop();
+
+    for (let i = 0; i < 300; i++) simulation.tick();
+
+    // Keep labels from drifting outside the plot's frame even when the
+    // collision force pushes them hard, e.g. for points near an edge.
+    const frameLeft = PLOT_MARGIN_LEFT + 4;
+    const frameRight = PLOT_WIDTH - PLOT_MARGIN_RIGHT - 4;
+    const frameTop = PLOT_MARGIN_TOP + 4;
+    const frameBottom = PLOT_HEIGHT - PLOT_MARGIN_BOTTOM - 4;
+    const labelHalfHeight = 8;
+    nodes.forEach((node) => {
+      node.x = Math.min(Math.max(node.x, frameLeft + node.halfWidth), frameRight - node.halfWidth);
+      node.y = Math.min(Math.max(node.y, frameTop + labelHalfHeight), frameBottom - labelHalfHeight);
+    });
+
+    const labelGroup = document.createElementNS(LABEL_SVG_NS, "g");
+    labelGroup.setAttribute("aria-label", "point-labels");
+
+    nodes.forEach((node) => {
+      if (Math.hypot(node.x - node.anchorX, node.y - node.anchorY) > 18) {
+        const line = document.createElementNS(LABEL_SVG_NS, "line");
+        line.setAttribute("x1", node.anchorX);
+        line.setAttribute("y1", node.anchorY);
+        line.setAttribute("x2", node.x);
+        line.setAttribute("y2", node.y);
+        line.setAttribute("stroke", "currentColor");
+        line.setAttribute("stroke-opacity", "0.35");
+        line.setAttribute("stroke-width", "1");
+        labelGroup.appendChild(line);
+      }
+
+      const text = document.createElementNS(LABEL_SVG_NS, "text");
+      text.setAttribute("x", node.x);
+      text.setAttribute("y", node.y);
+      text.setAttribute("dy", "0.32em");
+      text.setAttribute("font-size", "14");
+      text.setAttribute("fill", "currentColor");
+      text.setAttribute("text-anchor", "middle");
+      text.textContent = node.text;
+      labelGroup.appendChild(text);
+    });
+
+    svg.appendChild(labelGroup);
+  }
+
   function renderPlot({ targetId, vals, titlePrefix, labelField, showTextLabels }) {
     const marks = [
       Plot.dot(vals, {
@@ -457,36 +592,23 @@
       }),
     ];
 
-    if (showTextLabels) {
-      marks.push(
-        Plot.text(vals, {
-          x: "cpu",
-          y: "gpu",
-          text: (d) => d[labelField],
-          dy: -16,
-          fill: "currentColor",
-          fontSize: 14,
-        }),
-      );
-    } else {
-      marks.push(
-        Plot.tip(vals, Plot.pointer({
-          x: "cpu",
-          y: "gpu",
-          title: (d) => d[labelField],
-        })),
-      );
-    }
+    marks.push(
+      Plot.tip(vals, Plot.pointer({
+        x: "cpu",
+        y: "gpu",
+        title: (d) => d[labelField],
+      })),
+    );
 
     const plot = Plot.plot({
-      width: 1800,
-      height: 1275,
+      width: PLOT_WIDTH,
+      height: PLOT_HEIGHT,
       inset: 8,
       grid: true,
-      marginTop: 100,
-      marginBottom: 75,
-      marginLeft: 90,
-      marginRight: 180,
+      marginTop: PLOT_MARGIN_TOP,
+      marginBottom: PLOT_MARGIN_BOTTOM,
+      marginLeft: PLOT_MARGIN_LEFT,
+      marginRight: PLOT_MARGIN_RIGHT,
       style: "font-size: 16px", // governs axis tick labels
       color: {
         legend: false,
@@ -509,6 +631,10 @@
     if (targetDiv) {
       targetDiv.replaceChildren();
       targetDiv.append(plot);
+      if (showTextLabels) {
+        const labelSubset = [...vals].sort((a, b) => b.gpu - a.gpu).slice(0, 30);
+        addDeoverlappedLabels(plot, vals, labelField, labelSubset);
+      }
     }
     return !!targetDiv;
   }
@@ -543,6 +669,11 @@
   let requestToken = 0;
   let activeController = null;
 
+  // In-memory only — cleared on page reload, never persisted. Keyed by date
+  // range since the raw query doesn't depend on the threshold at all (that's
+  // applied client-side), so re-fetching on a threshold-only change is wasted.
+  const rangeQueryCache = new Map();
+
   async function fetchAndRender() {
     const token = ++requestToken;
 
@@ -561,32 +692,41 @@
       await ensureNamespaceInfo();
       if (token !== requestToken) return;
 
-      const start = new Date(`${startDate.value}T00:00:00Z`);
-      const end = new Date(`${endDate.value}T23:59:59Z`);
-      const windowSeconds = Math.round((end - start) / 1000);
-      const endUnix = Math.floor(end.getTime() / 1000);
+      const cacheKey = `${startDate.value}|${endDate.value}`;
+      let gpu, cpu;
 
-      // A single unthresholded fetch per metric supplies data for all three plots below.
-      const [gpu_resp, cpu_resp] = await Promise.all([
-        fetch(buildQueryUrl("namespace_gpu_usage", windowSeconds, endUnix), { signal: controller.signal }),
-        fetch(buildQueryUrl("namespace_cpu_usage", windowSeconds, endUnix), { signal: controller.signal }),
-      ]);
+      if (rangeQueryCache.has(cacheKey)) {
+        ({ gpu, cpu } = rangeQueryCache.get(cacheKey));
+      } else {
+        const start = new Date(`${startDate.value}T00:00:00Z`);
+        const end = new Date(`${endDate.value}T23:59:59Z`);
+        const windowSeconds = Math.round((end - start) / 1000);
+        const endUnix = Math.floor(end.getTime() / 1000);
 
-      const [gpu, cpu] = await Promise.all([
-        gpu_resp.json(),
-        cpu_resp.json(),
-      ]);
+        // A single unthresholded fetch per metric supplies data for all three plots below.
+        const [gpu_resp, cpu_resp] = await Promise.all([
+          fetch(buildQueryUrl("namespace_gpu_usage", windowSeconds, endUnix), { signal: controller.signal }),
+          fetch(buildQueryUrl("namespace_cpu_usage", windowSeconds, endUnix), { signal: controller.signal }),
+        ]);
 
-      if (token !== requestToken) return;
+        [gpu, cpu] = await Promise.all([
+          gpu_resp.json(),
+          cpu_resp.json(),
+        ]);
 
-      if (gpu.status !== "success" || cpu.status !== "success") {
-        errorMessage.value = "Failed to load usage data from Thanos for the selected range.";
-        return;
-      }
+        if (token !== requestToken) return;
 
-      const warnings = [...(gpu.warnings ?? []), ...(cpu.warnings ?? [])];
-      if (warnings.length > 0) {
-        console.warn("Thanos returned warnings for this range (data may be incomplete):", warnings);
+        if (gpu.status !== "success" || cpu.status !== "success") {
+          errorMessage.value = "Failed to load usage data from Thanos for the selected range.";
+          return;
+        }
+
+        const warnings = [...(gpu.warnings ?? []), ...(cpu.warnings ?? [])];
+        if (warnings.length > 0) {
+          console.warn("Thanos returned warnings for this range (data may be incomplete):", warnings);
+        }
+
+        rangeQueryCache.set(cacheKey, { gpu, cpu });
       }
 
       const gpu_map = new Map(
