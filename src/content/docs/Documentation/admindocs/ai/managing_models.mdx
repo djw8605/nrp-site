@@ -663,15 +663,9 @@ Prefill context parallelism (`--prefill-context-parallel-size`) deduplicates KV 
 
 **Abstract:** Pipeline parallelism (`--pipeline-parallel-size`) is the default method when sharding model weights across multiple GPU nodes, where it is combined with tensor parallelism (`--tensor-parallel-size`) within GPUs of single nodes. It is also an alternative to decode context parallelism (`--decode-context-parallel-size`) for deduplicating KV cache when specific models do not have decode context parallelism implemented, only setting `--tensor-parallel-size` up to the `num_key_value_heads` in `config.json` and using `--pipeline-parallel-size` to shard both the model weights and KV cache further within a single node, or when the model fits within an unconventional number of GPUs (not in powers of two).
 
-**Important:** It is entirely possible that **when a high pipeline parallelism count is used, for vLLM to wait a long time after the message `Application startup complete.`, then the requests come in**; this is the LLM engine initializing the pipelines in pipeline parallelism taking longer then tensor parallelism. Moreover, there may be an error `raise TimeoutError(f"RPC call to {method} timed out.")` if this prolongs. If you face the above issues, add the below environment variable(s) to eliminate the timeout error and wait until the responses come in (this may take at least a few minutes to over ten minutes **even after `Application startup complete.` shows and requests come in**):
+**If a chat request stops in the middle of responses (or a CUDA memory allocation error) when pipeline parallelism is enabled, the steps below are very likely to solve the problem:**
 
-```yaml
-        env:
-        - name: VLLM_RPC_TIMEOUT
-          value: "1200000"
-```
-
-**Moreover, if a chat request stops in the middle of responses when pipeline parallelism is enabled, reducing `--gpu-memory-utilization` (typically to `0.925` or `0.9`) is very likely to solve the problem.**
+**How?** If you have sufficient KV cache, reducing `--gpu-memory-utilization` (typically to `0.925` or `0.9`) is a simple solution. **HOWEVER, it is possible to extract more KV cache capacity.** You can use `VLLM_PP_LAYER_PARTITION` (or `SGLANG_PP_LAYER_PARTITION`) to balance out the per-GPU VRAM consumption (it tends to be imbalanced with pipeline parallelism compared to tensor parallelism). By default, the layers are split evenly, but the last PP stage tends to also carry the language modelling (LM) head and the sampler's vocab-sized activations on top of its share of hidden layers. Since the KV cache is sized from the most constrained stage, that one stage caps the KV cache for the entire pipeline — which is why an even split leaves capacity on the table on every other GPU. The fix is to give the last stage fewer layers and push the surplus onto the earlier stages. For example, on `--pipeline-parallel-size 8`: `VLLM_PP_LAYER_PARTITION="11,10,10,10,10,10,10,7"` (the first layer uses less VRAM, so an extra layer is added). The total should be equal to `"num_hidden_layers"` of the model's `config.json`.
 
 Combining pipeline parallelism (`--pipeline-parallel-size`) with tensor parallelism (`--tensor-parallel-size`) is an acceptable solution that works with unconventional GPU counts (not in powers of two), or when errors such as `Error with hidden/intermediate/block/... size division / Worker failed with error 'Invalid thread config', etc.` occur. An example is using 6 GPUs through `--tensor-parallel-size 2 --pipeline-parallel-size 3`, 8 GPUs using `--tensor-parallel-size 2 --pipeline-parallel-size 4`, or `--tensor-parallel-size 4 --pipeline-parallel-size 2`, due to pipeline parallelism tolerating uneven splits of layers.
 
@@ -682,6 +676,14 @@ However, pipeline parallelism has some non-negligible VRAM overhead and may lead
 Similar to tensor parallelism, expert parallelism (`--enable-expert-parallel --enable-ep-weight-filter`) may be added as adequate if the configuration without the argument does not work, but first trying without expert parallelism enabled is recommended.
 
 Pipeline parallelism is the recommended and default way to shard models across multiple nodes when the model weights and KV cache do not fit in a single node, and do not have dedicated high-performance interconnects betwen nodes, but unless specified in conditions above, people should prefer tensor parallelism within single nodes with a high-performance interconnect.
+
+**Important:** It is entirely possible that **when a high pipeline parallelism count is used, for vLLM to wait a long time after the message `Application startup complete.`, then the requests come in**; this is the LLM engine initializing the pipelines in pipeline parallelism taking longer then tensor parallelism. Moreover, there may be an error `raise TimeoutError(f"RPC call to {method} timed out.")` if this prolongs. If you face the above issues, add the below environment variable(s) to eliminate the timeout error and wait until the responses come in (this may take at least a few minutes to over ten minutes **even after `Application startup complete.` shows and requests come in**):
+
+```yaml
+        env:
+        - name: VLLM_RPC_TIMEOUT
+          value: "1200000"
+```
 
 #### Data Parallelism
 
