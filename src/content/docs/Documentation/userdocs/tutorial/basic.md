@@ -97,11 +97,11 @@ spec:
     image: ubuntu
     resources:
       limits:
-        memory: 100Mi
-        cpu: 100m
+        memory: 200Mi
+        cpu: 200m
       requests:
-        memory: 100Mi
-        cpu: 100m
+        memory: 200Mi
+        cpu: 200m
     command: ["sh", "-c", "echo 'Im a new pod' && sleep infinity"]
 ```
 **Reminder**: Indentation is important in YAML, just like in Python
