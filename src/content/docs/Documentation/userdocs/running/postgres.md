@@ -126,3 +126,82 @@ volume:
 ```
 
 This is how you can manage and deploy a PostgreSQL cluster using the Zalando Postgres Operator in Kubernetes. For more advanced configurations, refer to the [full documentation of the operator](https://postgres-operator.readthedocs.io/en/latest/user/).
+
+---
+
+### Using CloudNativePG in Kubernetes
+
+CloudNativePG (CNPG) is also available for deploying PostgreSQL clusters. Use CNPG when you need PostgreSQL 18 or prefer the CloudNativePG API.
+
+### 1. Deploying a CloudNativePG Cluster
+
+Create a `Cluster` custom resource in your namespace.
+
+#### Example: `cnpg-cluster.yaml`
+
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: my-postgres-cluster
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+  bootstrap:
+    initdb:
+      database: mydatabase
+      owner: myapp
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+  storage:
+    size: 10Gi
+    storageClass: linstor-igrok
+```
+
+Apply the manifest:
+
+```bash
+kubectl apply -n default -f cnpg-cluster.yaml
+```
+
+**Replace "default" here and later with your actual namespace.**
+
+This creates three PostgreSQL 18 instances, a database named `mydatabase` owned by `myapp`, and a 10Gi volume for each instance. Set `instances: 1` for a non-high-availability test deployment.
+
+### 2. Accessing the CloudNativePG Cluster
+
+CNPG creates Kubernetes services and an application credentials secret automatically:
+
+- **Primary endpoint**: `my-postgres-cluster-rw.default.svc.cluster.local`
+- **Read-only endpoint**: `my-postgres-cluster-ro.default.svc.cluster.local`
+- **Application credentials**: `my-postgres-cluster-app`
+
+Get the password for `myapp`:
+
+```bash
+kubectl get secret my-postgres-cluster-app -n default -o 'jsonpath={.data.password}' | base64 -d
+```
+
+Connect to the primary endpoint from the same namespace:
+
+```bash
+kubectl run -n default -i --tty --rm debug --image=postgres:18 -- bash
+psql -h my-postgres-cluster-rw -U myapp -d mydatabase
+```
+
+### 3. Scaling and Monitoring the Cluster
+
+Check the cluster status:
+
+```bash
+kubectl get clusters.postgresql.cnpg.io -n default
+```
+
+To scale the cluster, change the `instances` value in `cnpg-cluster.yaml` and apply the manifest again. CNPG will create or remove instances automatically.
+
+For more advanced configurations, backups, and recovery, refer to the [CloudNativePG documentation](https://cloudnative-pg.io/docs/1.29/).
