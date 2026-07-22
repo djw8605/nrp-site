@@ -189,6 +189,33 @@ kubectl get cephcluster -A \
   -o custom-columns='NAMESPACE:.metadata.namespace,NAME:.metadata.name,EXTERNAL:.spec.external.enable,IMAGE:.spec.cephVersion.image,HEALTH:.status.ceph.health'
 ```
 
+### Back up the current operator and RBAC
+
+The production layout uses one shared Rook operator in `rook-system` to manage all local Ceph namespaces. Preserve the live operator Deployment because it contains site-specific environment variables, tolerations, affinity, and node placement that are not represented by the stock manifest.
+
+```bash
+BACKUP_DIR="rook-operator-upgrade-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$BACKUP_DIR"
+
+kubectl -n rook-system get deploy rook-ceph-operator -o yaml \
+  > "$BACKUP_DIR/rook-ceph-operator.yaml"
+kubectl -n rook-system get sa,role,rolebinding -o yaml \
+  > "$BACKUP_DIR/rook-system-rbac.yaml"
+kubectl get clusterrole,clusterrolebinding -o yaml \
+  > "$BACKUP_DIR/cluster-rbac.yaml"
+
+for NS in rook rook-central rook-east rook-haosu rook-pacific rook-south-east rook-tide rook-ucsd; do
+  kubectl -n "$NS" get sa,role,rolebinding -o yaml \
+    > "$BACKUP_DIR/$NS-rbac.yaml"
+  kubectl -n "$NS" get cephcluster -o yaml \
+    > "$BACKUP_DIR/$NS-cephcluster.yaml"
+done
+```
+
+Do not include `rook-fullerton` in ordinary local-cluster RBAC generation. It is an external CephCluster and must follow the external-cluster upgrade procedure.
+
+### Download the exact target release
+
 ```bash
 # Use the approved target Rook version, for example v1.16.9
 TARGET_ROOK_VERSION=vX.Y.Z
@@ -212,13 +239,19 @@ Do not generate ordinary secondary-cluster RBAC for `rook-fullerton`; it is an e
 
 The link above is only an example pinned to v1.16.9. In the commands below, use the file from `TARGET_ROOK_VERSION`.
 
+The primary `common.yaml` contains namespace markers in object namespaces, service-account subjects, and CSI driver names. Apply all five substitutions from the official alternate-namespace procedure. Replacing only the two `namespace:` markers can leave RBAC subjects or CSI driver names pointing at the default namespace.
+
 ```bash
 export ROOK_OPERATOR_NAMESPACE=rook-system
+export ROOK_CLUSTER_NAMESPACE=rook
 mkdir -p clusters
 
 sed \
   -e "s/\(.*\):.*# namespace:operator/\1: $ROOK_OPERATOR_NAMESPACE # namespace:operator/g" \
-  -e "s/\(.*\):.*# namespace:cluster/\1: rook # namespace:cluster/g" \
+  -e "s/\(.*\):.*# namespace:cluster/\1: $ROOK_CLUSTER_NAMESPACE # namespace:cluster/g" \
+  -e "s/\(.*serviceaccount\):.*:\(.*\) # serviceaccount:namespace:operator/\1:$ROOK_OPERATOR_NAMESPACE:\2 # serviceaccount:namespace:operator/g" \
+  -e "s/\(.*serviceaccount\):.*:\(.*\) # serviceaccount:namespace:cluster/\1:$ROOK_CLUSTER_NAMESPACE:\2 # serviceaccount:namespace:cluster/g" \
+  -e "s/\(.*\): [-_A-Za-z0-9]*\.\(.*\) # driver:namespace:cluster/\1: $ROOK_CLUSTER_NAMESPACE.\2 # driver:namespace:cluster/g" \
   common.yaml > clusters/rook.yaml
 
 for NS in rook-central rook-east rook-haosu rook-pacific rook-south-east rook-tide rook-ucsd; do
@@ -228,14 +261,24 @@ for NS in rook-central rook-east rook-haosu rook-pacific rook-south-east rook-ti
     common-second-cluster.yaml > "clusters/$NS.yaml"
 done
 
-grep "namespace:" clusters/rook.yaml | head -5
-grep "namespace:" clusters/rook-central.yaml | head -5
+# Inspect every namespace-sensitive marker before applying.
+grep -nE 'namespace:operator|namespace:cluster|serviceaccount:namespace|driver:namespace' \
+  common.yaml common-second-cluster.yaml
+
+grep -nE 'namespace:|system:serviceaccount:|driverName:' clusters/rook.yaml
+grep -nE 'namespace:|system:serviceaccount:' clusters/rook-central.yaml
 
 kubectl diff -f crds.yaml -f clusters/
 kubectl apply -f crds.yaml -f clusters/
 ```
 
-Review the diff before applying. Do not add PodSecurityPolicy (PSP) resources; PSP is removed from modern Kubernetes.
+Review the diff before applying. `common-second-cluster.yaml` creates the namespace-scoped RBAC needed by the shared operator; it assumes the primary `common.yaml` resources already exist.
+
+Do not add PodSecurityPolicy (PSP) resources; PSP is removed from modern Kubernetes. Old `*-psp` RoleBindings or ClusterRoleBindings that reference a missing `psp:rook` ClusterRole are legacy residue, not a reason to recreate that ClusterRole. Audit and remove those stale bindings separately from the upgrade after confirming they are unused.
+
+### Update the operator without overwriting site configuration
+
+Do not blindly apply the stock `operator.yaml` to production. It can overwrite the customized operator environment, tolerations, affinity, security context, and node selector. Apply the target CRDs and RBAC, review the target operator manifest for required changes, and then change only the operator image unless the target-version upgrade guide explicitly requires another field.
 
 Check for pinned CSI image variables before changing the operator image. `kubectl set image` only changes the operator container image.
 
@@ -269,18 +312,36 @@ Expected:
 false
 ```
 
-Check that the operator service account can read CephClusters in every local namespace:
+Check that the operator service account can perform its normal reconciliation operations in every local namespace:
 
 ```bash
 for NS in rook rook-central rook-east rook-haosu rook-pacific rook-south-east rook-tide rook-ucsd; do
-  echo -n "$NS: "
+  echo "== $NS =="
   kubectl auth can-i get cephclusters.ceph.rook.io \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i update cephclusters.ceph.rook.io/status \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i create deployments.apps \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i create jobs.batch \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i create services \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i create secrets \
+    --as=system:serviceaccount:rook-system:rook-ceph-system \
+    -n "$NS"
+  kubectl auth can-i create configmaps \
     --as=system:serviceaccount:rook-system:rook-ceph-system \
     -n "$NS"
 done
 ```
 
-Every result should be `yes`. If any result is `no`, regenerate and apply that namespace's target-version `common-second-cluster.yaml`. Do not give `cluster-admin` to the operator, fix the missing namespace RBAC instead.
+Every result should be `yes`. If any result is `no`, regenerate and apply that namespace's target-version `common-second-cluster.yaml`. Do not give `cluster-admin` to the operator; fix the missing namespace RBAC instead.
 
 ```bash
 kubectl get cephcluster -A \
@@ -292,3 +353,22 @@ After the operator starts, it reconciles CephClusters one at a time. If one name
 ```bash
 kubectl -n rook-system logs deploy/rook-ceph-operator -f | grep -E "ERROR|WARN|reconcile"
 ```
+
+After each operator minor version, verify the operator rollout, inspect its logs, and confirm every local CephCluster is still `Ready` before proceeding to the next minor version.
+
+### Rook v1.20 CSI migration
+
+Treat the v1.20 upgrade as a separate maintenance step. Starting with Rook v1.20, Ceph-CSI drivers are managed by `ceph-csi-operator` instead of directly by the Rook operator. Upgrade to at least Rook v1.19.5 first and follow the exact v1.20 operator upgrade guide.
+
+Before upgrading to v1.20, install or verify the target CSI CRDs and save the generated CSI resources if they exist:
+
+```bash
+kubectl -n rook-system get drivers.csi.ceph.io -o yaml \
+  > preupgrade-drivers.yaml
+kubectl -n rook-system get operatorconfigs.csi.ceph.io -o yaml \
+  > preupgrade-opconfig.yaml
+```
+
+On versions before the CSI operator is installed, `kubectl` may report that these resource types do not exist. That is expected, but do not proceed to v1.20 until the target guide's CSI installation and migration steps have been prepared.
+
+Preserve the current CSI settings from the live Rook operator Deployment, including provisioner affinity and CSI tolerations. Do not fully apply a stock v1.20 `operator.yaml` later without first transferring those settings to the ceph-csi-operator configuration; stock defaults can overwrite site-specific values.
