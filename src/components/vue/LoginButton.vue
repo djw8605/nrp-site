@@ -30,9 +30,6 @@
     import Popover from "primevue/popover";
     import Avatar from "primevue/avatar";
 
-    import {Hovercards} from '@gravatar-com/hovercards';
-    import '@gravatar-com/hovercards/dist/style.css';
-
     const user = useStore(userStore);
 
     const handleLogin = () => {
@@ -63,10 +60,7 @@
     onMounted(() => {
         checkLoginStatus(); // Check immediately on mount
         intervalId = setInterval(checkLoginStatus, 60 * 1000); // Check every 60 seconds
-        hovercards.attach( document.getElementById( 'user-avatar' ) );
     });
-
-    const hovercards = new Hovercards( { additionalClass: '-z-100' } );
 
     // Clean up interval on unmount
     onUnmounted(() => {
