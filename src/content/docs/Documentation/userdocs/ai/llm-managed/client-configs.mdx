@@ -256,19 +256,31 @@ capabilities = ["thinking", "image_in", "video_in"]
 
 https://github.com/anthropics/claude-code
 
-Claude Code talks to NRP through the Anthropic-compatible endpoint at `/anthropic`. Set the variables below in your shell or `~/.claude/.env`:
+Claude Code talks to NRP through the Anthropic-compatible endpoint at `/anthropic`. Set the file `~/.claude/settings.json`:
 
-```bash
-ANTHROPIC_BASE_URL="https://ellm.nrp-nautilus.io/anthropic"
-ANTHROPIC_API_KEY="<llm-token>"
-ANTHROPIC_DEFAULT_OPUS_MODEL="<name-of-nrp-model>"
-ANTHROPIC_DEFAULT_SONNET_MODEL="<name-of-nrp-model>"
-ANTHROPIC_DEFAULT_HAIKU_MODEL="<name-of-nrp-model>"
-CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
-CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY="1"
-CLAUDE_CODE_ENABLE_TELEMETRY="0"
-API_TIMEOUT_MS="3000000"
-DISABLE_TELEMETRY="1"
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://ellm.nrp-nautilus.io/anthropic",
+    "ANTHROPIC_AUTH_TOKEN": "<llm-token>",
+    "ANTHROPIC_MODEL": "<name-of-nrp-model>",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "<name-of-nrp-model>",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "<name-of-nrp-model>",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "<name-of-nrp-model>",
+    "ANTHROPIC_DEFAULT_FABLE_MODEL": "<name-of-nrp-model>",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "<name-of-nrp-model>",
+    "ENABLE_TOOL_SEARCH": "false",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "<context-size-of-model>",
+    "CLAUDE_CODE_EFFORT_LEVEL": "max",
+    "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "0",
+    "DISABLE_TELEMETRY": "1",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_MAX_RETRIES": "10"
+  }
+}
 ```
 
 <Aside type="caution">
