@@ -235,8 +235,10 @@ Contents of `~/.kimi/config.toml`:
 default_model = "kimi"
 default_thinking = true
 default_yolo = false
-default_plan_mode = true
+default_plan_mode = false
 show_thinking_stream = true
+merge_all_available_skills = true
+telemetry = false
 
 [providers.nrp]
 type = "openai_legacy"
@@ -249,7 +251,10 @@ model = "kimi"
 max_context_size = 262144
 capabilities = ["thinking", "image_in", "video_in"]
 
-[services]
+[background]
+max_running_tasks = 4
+keep_alive_on_exit = false
+agent_task_timeout_s = 3600
 ```
 
 ## Claude Code
