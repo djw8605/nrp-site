@@ -18,6 +18,18 @@ export const headerData = {
           href: getPermalink('/documentation/admindocs/participating/new-contributor-guide'),
         },
         {
+          text: 'Connect Slurm with InterLink',
+          href: getPermalink('/documentation/admindocs/participating/interlink'),
+        },
+        {
+          text: 'Install an InterLink Virtual Node',
+          href: getPermalink('/documentation/admindocs/participating/interlink-kubernetes'),
+        },
+        {
+          text: 'Ceph S3 for InterLink Jobs',
+          href: getPermalink('/documentation/admindocs/participating/interlink-storage'),
+        },
+        {
           text: 'Network requirements',
           href: getPermalink('/documentation/admindocs/participating/network'),
         },

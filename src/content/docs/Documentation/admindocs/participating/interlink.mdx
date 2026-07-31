@@ -1,0 +1,197 @@
+---
+title: Connect a Slurm Site with InterLink
+description: Connect a participating Slurm site to NRP with InterLink
+---
+
+:::caution
+This page is for administrators adding a Slurm site to NRP. Complete these steps with an NRP administrator.
+:::
+
+import { Steps } from '@astrojs/starlight/components';
+
+InterLink represents the site as one virtual Kubernetes node. Every Kubernetes pod assigned to that node becomes a separate Slurm job.
+
+```text
+Kubernetes pod -> site virtual node -> InterLink plugin -> Slurm job
+```
+
+## 1. Send the site configuration to NRP
+
+Send the following information to [Nautilus Support](/contact):
+
+- site name;
+- Slurm service-account name and account;
+- CPU partition;
+- GPU partition and supported GPU constraints;
+- opportunistic GPU partition, if available;
+- maximum CPU, memory, GPU, and concurrent-job capacity to advertise; and
+- approved Slurm submit or service host where the plugin will run.
+
+NRP will return the Kubernetes namespace, virtual-node name, tunnel hostname, and tunnel credential.
+
+## 2. Verify the Slurm account
+
+Log in to the approved host with the service account:
+
+```bash
+command -v sbatch squeue scancel sinfo apptainer
+sacctmgr show assoc user="$USER" format=User,Account,Partition,QOS
+sinfo -o '%P %a %l %D %G %f'
+```
+
+Submit one normal Slurm job and confirm it with `squeue`, `scontrol`, and `sacct` before continuing.
+
+## 3. Install the plugin and tunnel client
+
+Set the versions approved by NRP:
+
+```bash
+INTERLINK_VERSION=0.6.1
+WSTUNNEL_VERSION=10.5.5
+```
+
+Install the InterLink Slurm plugin:
+
+```bash
+release="https://github.com/interlink-hq/interlink-slurm-plugin/releases/download/${INTERLINK_VERSION}"
+binary=interlink-sidecar-slurm_Linux_x86_64
+
+mkdir -p "$HOME/.local/bin" "$HOME/.config/interlink"
+curl --fail --location "$release/$binary" --output "/tmp/$binary"
+curl --fail --location "$release/checksums.txt" --output /tmp/checksums.txt
+(cd /tmp && grep " $binary$" checksums.txt | sha256sum --check -)
+install -m 0755 "/tmp/$binary" "$HOME/.local/bin/interlink-sidecar-slurm"
+```
+
+Install the tested wstunnel client:
+
+```bash
+archive="wstunnel_${WSTUNNEL_VERSION}_linux_amd64.tar.gz"
+url="https://github.com/erebe/wstunnel/releases/download/v${WSTUNNEL_VERSION}/${archive}"
+expected=b20ffa02e945ec0c0d6b153ba69a290593f0957ed2892aee8f987f715ccd95d6
+
+curl --fail --location "$url" --output "/tmp/$archive"
+printf "%s  %s\n" "$expected" "/tmp/$archive" | sha256sum --check -
+tar --extract --gzip --file "/tmp/$archive" --directory /tmp wstunnel
+install -m 0755 /tmp/wstunnel "$HOME/.local/bin/wstunnel"
+```
+
+## 4. Configure the plugin
+
+Create a shared directory visible from the submit host and all eligible compute nodes:
+
+```bash
+mkdir -p /path/to/shared/interlink/apptainer /path/to/shared/interlink/jobs
+```
+
+Create `$HOME/.config/interlink/SlurmConfig.yaml`. Replace each value inside angle brackets with the site value sent to NRP.
+
+```yaml
+SidecarPort: "4001"
+SbatchPath: /usr/bin/sbatch
+ScancelPath: /usr/bin/scancel
+SqueuePath: /usr/bin/squeue
+SinfoPath: /usr/bin/sinfo
+SingularityPath: /usr/bin/apptainer
+ImagePrefix: docker://
+CommandPrefix: "export APPTAINER_CACHEDIR=/path/to/shared/interlink/apptainer; export SINGULARITY_CACHEDIR=/path/to/shared/interlink/apptainer;"
+ExportPodData: true
+DataRootFolder: /path/to/shared/interlink/jobs/
+Namespace: <kubernetes-namespace>
+EnableProbes: true
+DefaultFlavor: cpu
+
+Flavors:
+  cpu:
+    Name: cpu
+    CPUDefault: 1
+    MemoryDefault: 1G
+    SlurmFlags:
+      - --account=<slurm-account>
+      - --partition=<cpu-partition>
+      - --time=00:30:00
+
+  gpu:
+    Name: gpu
+    CPUDefault: 8
+    MemoryDefault: 64G
+    SlurmFlags:
+      - --account=<slurm-account>
+      - --partition=<gpu-partition>
+      - --gres=gpu:1
+      - --constraint=<gpu-constraint>
+      - --time=04:00:00
+
+  gpu-guest:
+    Name: gpu-guest
+    Description: Opportunistic GPU
+    CPUDefault: 8
+    MemoryDefault: 64G
+    SlurmFlags:
+      - --account=<slurm-account>
+      - --partition=<guest-gpu-partition>
+      - --gres=gpu:1
+      - --constraint=<gpu-constraint>
+      - --time=04:00:00
+```
+
+Remove `gpu-guest` if the site has no opportunistic partition. Keep the trailing semicolon in `CommandPrefix`.
+
+## 5. Configure the tunnel
+
+The NRP administrator securely transfers the same credential file stored in the Kubernetes Secret. Copy it to the approved host as `/tmp/interlink-tunnel-path-prefix`, then install it:
+
+```bash
+install -m 0600 /tmp/interlink-tunnel-path-prefix \
+  "$HOME/.config/interlink/tunnel-path-prefix"
+```
+
+Start the plugin in one terminal:
+
+```bash
+SLURMCONFIGPATH="$HOME/.config/interlink/SlurmConfig.yaml" \
+  "$HOME/.local/bin/interlink-sidecar-slurm"
+```
+
+Start the outbound tunnel in a second terminal:
+
+```bash
+path_prefix=$(tr -d '\r\n' < "$HOME/.config/interlink/tunnel-path-prefix")
+
+"$HOME/.local/bin/wstunnel" client \
+  --http-upgrade-path-prefix "$path_prefix" \
+  --remote-to-local "tcp://0.0.0.0:4001:127.0.0.1:4001" \
+  "wss://<tunnel-hostname>"
+```
+
+Do not expose port `4001` directly to the Internet. After validation, run both processes with the site's service manager instead of interactive terminals.
+
+## 6. Validate the site
+
+NRP will install the [InterLink virtual node](/documentation/admindocs/participating/interlink-kubernetes/) and run these checks:
+
+<Steps>
+
+1. Confirm the virtual node reports `Ready`.
+
+2. Submit the `cpu` flavor and confirm a Slurm job ID appears in the pod logs.
+
+3. Submit `gpu` and verify the requested GPU model with `nvidia-smi`.
+
+4. Submit several pods and confirm each creates a separate Slurm job.
+
+5. Delete a running pod and confirm the Slurm job is canceled.
+
+6. Test input and output with [Ceph S3 for InterLink jobs](/documentation/admindocs/participating/interlink-storage/).
+
+</Steps>
+
+Check jobs at the site with:
+
+```bash
+squeue -u "$USER"
+scontrol show job <job-id>
+sacct -j <job-id> --format=JobID,Account,Partition,State,ExitCode,NodeList,AllocTRES
+```
+
+Kubernetes block PVCs do not mount on remote Slurm nodes. Use Ceph S3 or storage already mounted on the Slurm compute nodes.
