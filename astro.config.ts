@@ -285,14 +285,20 @@ export default defineConfig({
               items: [
                 { label: 'Networking', link: 'documentation/admindocs/participating/network' },
                 { label: 'Joining a server', link: 'documentation/admindocs/participating/new-contributor-guide' },
-                { label: 'Connect Slurm with InterLink', link: 'documentation/admindocs/participating/interlink' },
                 {
-                  label: 'Install an InterLink Virtual Node',
-                  link: 'documentation/admindocs/participating/interlink-kubernetes',
-                },
-                {
-                  label: 'Ceph S3 for InterLink Jobs',
-                  link: 'documentation/admindocs/participating/interlink-storage',
+                  label: 'Participating with InterLink',
+                  collapsed: true,
+                  items: [
+                    { label: 'Connect Slurm with InterLink', link: 'documentation/admindocs/participating/interlink' },
+                    {
+                      label: 'Install an InterLink Virtual Node',
+                      link: 'documentation/admindocs/participating/interlink-kubernetes',
+                    },
+                    {
+                      label: 'Ceph S3 for InterLink Jobs',
+                      link: 'documentation/admindocs/participating/interlink-storage',
+                    },
+                  ],
                 },
               ],
             },
