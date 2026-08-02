@@ -197,18 +197,21 @@ spec:
             port: 5000
           failureThreshold: 900
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 10
           failureThreshold: 6
+          periodSeconds: 10
+          timeoutSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 30
           failureThreshold: 8
+          periodSeconds: 30
+          timeoutSeconds: 5
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -388,18 +391,21 @@ spec:
             port: 5000
           failureThreshold: 900
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 10
           failureThreshold: 6
+          periodSeconds: 10
+          timeoutSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 30
           failureThreshold: 8
+          periodSeconds: 30
+          timeoutSeconds: 5
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -583,20 +589,23 @@ vLLM and SGLang expose a `/health` endpoint (no authentication required) on the 
           httpGet:
             path: /health
             port: 5000
-          failureThreshold: 270
+          failureThreshold: 900
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 10
           failureThreshold: 6
+          periodSeconds: 10
+          timeoutSeconds: 5
         livenessProbe:
           httpGet:
             path: /health
             port: 5000
-          periodSeconds: 30
           failureThreshold: 8
+          periodSeconds: 30
+          timeoutSeconds: 5
 ```
 
 **Startup time guidance by model size:**
@@ -891,15 +900,6 @@ spec:
             name: qwen-vllm-inference-config
         image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 8
-          httpGet:
-            path: /health
-            port: 5000
-            scheme: HTTP
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 1
         name: kimi-bw-vllm-head
         ports:
         - containerPort: 5000
@@ -908,15 +908,6 @@ spec:
         - containerPort: 29501
           name: tcp
           protocol: TCP
-        readinessProbe:
-          failureThreshold: 6
-          httpGet:
-            path: /health
-            port: 5000
-            scheme: HTTP
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
         resources:
           limits:
             cpu: "28"
@@ -933,14 +924,26 @@ spec:
             - ALL
           runAsNonRoot: false
         startupProbe:
-          failureThreshold: 900
           httpGet:
             path: /health
             port: 5000
-            scheme: HTTP
+          failureThreshold: 900
           periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 6
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 8
+          periodSeconds: 30
+          timeoutSeconds: 5
         volumeMounts:
         - mountPath: /dev/shm
           name: shm
@@ -1110,48 +1113,6 @@ spec:
             name: qwen-vllm-inference-config
         image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
         imagePullPolicy: Always
-        livenessProbe:
-          exec:
-            command:
-            - python3
-            - -c
-            - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          failureThreshold: 3
-        readinessProbe:
-          exec:
-            command:
-            - python3
-            - -c
-            - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          failureThreshold: 3
-        startupProbe:
-          exec:
-            command:
-            - python3
-            - -c
-            - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
-          periodSeconds: 20
-          failureThreshold: 450
         name: kimi-bw-vllm-worker
         resources:
           limits:
@@ -1168,6 +1129,51 @@ spec:
             drop:
             - ALL
           runAsNonRoot: false
+        startupProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
+          initialDelaySeconds: 30
+          failureThreshold: 900
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
+          initialDelaySeconds: 30
+          failureThreshold: 6
+          periodSeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - |
+              import urllib.request, sys
+              try:
+                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
+              except Exception:
+                  sys.exit(1)
+          initialDelaySeconds: 30
+          failureThreshold: 8
+          periodSeconds: 30
+          timeoutSeconds: 5
         volumeMounts:
         - mountPath: /dev/shm
           name: shm
