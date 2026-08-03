@@ -6,13 +6,15 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 const metadata = {
   title: 'Namespaces',
 };
-
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6"
+  <WidgetWrapper
+    titleAs="h1"
+    containerClass="py-2 md:py-4 lg:py-6"
     title="Namespaces"
-    description="Namespaces are a way to group related resources in a Kubernetes cluster. They provide a mechanism for isolating resources and managing access to them.">
+    description="Namespaces are a way to group related resources in a Kubernetes cluster. They provide a mechanism for isolating resources and managing access to them."
+  >
     <Namespace client:only="vue" />
   </WidgetWrapper>
 </Layout>

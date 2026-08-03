@@ -1,35 +1,53 @@
 ---
 import type { Headline as Props } from '~/types';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '~/utils/cn';
 
 const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
-  tagline,
+  // Left, not centre. Every page hero is left-aligned, so centred section
+  // headings put the page on two competing axes -- and once the kicker above
+  // them was removed a lone centred heading reads as unanchored above
+  // left-aligned card content. One left axis down the page.
+  // CallToAction opts back into centre explicitly: its card is centred by design.
+  align = 'left',
+  // Section headings are h2. Pass titleAs="h1" when this headline IS the page's
+  // primary heading -- several app pages previously had no <h1> at all because
+  // their only heading came through here.
+  titleAs = 'h2',
   classes = {},
 } = Astro.props;
 
-const {
-  container: containerClass = 'max-w-3xl',
-  title: titleClass = 'text-3xl md:text-4xl ',
-  subtitle: subtitleClass = 'text-xl',
-} = classes;
+const { container: containerClass = 'max-w-3xl', title: titleClass = '', subtitle: subtitleClass = '' } = classes;
+
+const isCentered = align === 'center';
+const TitleTag = titleAs;
 ---
 
 {
-  (title || subtitle || tagline) && (
-    <div class={twMerge('mb-8 md:mx-auto md:mb-12 text-center', containerClass)}>
-      {tagline && (
-        <p class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase" set:html={tagline} />
-      )}
+  /* No kicker. This used to render `tagline` as an eyebrow with a spectrum rule
+     beneath it, on every section of every page -- /about carried eight of them.
+     That broke DESIGN.md section 6's own rule ("a signature repeated is noise")
+     and the heading was always carrying the meaning anyway. The `tagline` prop
+     is still threaded by ~10 widgets and is deliberately inert; the page
+     signature is now the single spectrum rule in the hero. DESIGN.md section 6.
+
+     Subtitle is max-w-2xl, not the container's max-w-3xl: at text-lead's 18px a
+     768px measure runs ~85 characters, past the 65-75ch readable band. 672px
+     lands at ~74ch. */
+}
+{
+  (title || subtitle) && (
+    <div class={twMerge('mb-10 md:mb-14', isCentered ? 'text-center md:mx-auto' : 'text-left', containerClass)}>
       {title && (
-        <h2
-          class={twMerge('font-bold leading-tighter tracking-tighter font-heading text-heading text-3xl', titleClass)}
-          set:html={title}
+        <TitleTag class={twMerge('font-display text-h2 font-bold text-heading', titleClass)} set:html={title} />
+      )}
+      {subtitle && (
+        <p
+          class={twMerge('mt-4 max-w-2xl text-lead text-muted', isCentered && 'mx-auto', subtitleClass)}
+          set:html={subtitle}
         />
       )}
-
-      {subtitle && <p class={twMerge('mt-4 text-muted', subtitleClass)} set:html={subtitle} />}
     </div>
   )
 }

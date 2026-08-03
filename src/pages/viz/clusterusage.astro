@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import ResourceUsage from '~/components/plots/ClusterUsage.astro';
 
 const metadata = {
@@ -8,6 +9,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <ResourceUsage/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Cluster usage"
+    description="GPU and CPU utilisation across the cluster over time."
+    rhythm="tight"
+    width="wide"
+  >
+    <ResourceUsage />
+  </WidgetWrapper>
 </Layout>
-

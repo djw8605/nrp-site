@@ -103,12 +103,22 @@ export interface Widget {
   isDark?: boolean;
   bg?: string;
   classes?: Record<string, string | Record<string, string>>;
+  /** Container measure. See DESIGN.md section 4. */
+  width?: 'content' | 'wide' | 'narrow';
+  /** Vertical rhythm. `none` only when the widget owns its own spacing. */
+  rhythm?: 'normal' | 'tight' | 'none';
+  /** Surface-ladder step for the section background. Adjacent full-width
+   * sections must not share a step. */
+  surface?: 'page' | 'sunken' | 1 | 2 | 3 | 4;
 }
 
 export interface Headline {
   title?: string;
   subtitle?: string;
   tagline?: string;
+  align?: 'center' | 'left';
+  /** Heading level for `title`. Use 'h1' when this is the page's primary heading. */
+  titleAs?: 'h1' | 'h2' | 'h3';
   classes?: Record<string, string>;
 }
 
@@ -220,6 +230,15 @@ export interface Hero extends Omit<Headline, 'classes'>, Omit<Widget, 'isDark' |
   whiteText?: boolean;
   bgImage?: string | unknown;
   alert?: string | unknown;
+  /** Rendered as an inline strip beneath the actions. */
+  stats?: Array<Stat>;
+  /**
+   * Put `image` beside the copy instead of below it, from `lg` up. Requires
+   * `align="left"` and an image; otherwise ignored. Use it whenever a
+   * left-aligned hero has real art — a stacked one leaves the right third of the
+   * container empty.
+   */
+  split?: boolean;
 }
 
 export interface Team extends Omit<Headline, 'classes'>, Widget {
@@ -246,13 +265,21 @@ export interface Brands extends Omit<Headline, 'classes'>, Widget {
 
 export interface People extends Omit<Headline, 'classes'>, Widget {
   people: Array<Person>;
+  /**
+   * `grid` is the compact roster (112px circles, centred). `feature` is the
+   * larger card treatment used for the PI and co-PIs on /about.
+   */
+  layout?: 'grid' | 'feature';
 }
 
 export interface Person extends Widget {
-  img: string,
-  name: string,
-  title: string,
-  imgClass?: string,
+  img: string;
+  name: string;
+  /** Job title and institution. */
+  title: string;
+  /** Project role — "PI", "Co-PI". Rendered as an eyebrow above the name. */
+  role?: string;
+  imgClass?: string;
 }
 
 export interface Features extends Omit<Headline, 'classes'>, Widget {

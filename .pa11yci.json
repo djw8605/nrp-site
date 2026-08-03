@@ -1,0 +1,42 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "wait": 750,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-dev-shm-usage"]
+    },
+    "hideElements": "#nrp-llm-chat, iframe, .p-toast",
+    "ignore": []
+  },
+  "urls": [
+    {
+      "url": "http://localhost:4321/",
+      "comment": [
+        "The homepage header is transparent and floats over the hero, which the",
+        "hero pulls up beneath it with a negative margin. #header and the hero",
+        "<section> are SIBLINGS, so HTML_CodeSniffer -- which resolves a",
+        "backdrop by walking the DOM ancestor chain only -- sees no background",
+        "colour behind the nav text and reports a false contrast failure.",
+        "",
+        "Measured in-browser, the nav sits entirely within the hero's bounds and",
+        "the hero has an OPAQUE rgb(7,12,18) base, giving a true ratio of",
+        "18.07:1 against the 4.5:1 requirement, in both light and dark mode.",
+        "Re-verify with the console probe in DESIGN.md section 9 if the header",
+        "or hero layering changes.",
+        "",
+        "Scoped to this URL and this element only -- contrast checking stays on",
+        "everywhere else, including the rest of this page."
+      ],
+      "hideElements": "#nrp-llm-chat, iframe, .p-toast, #front-page #header nav"
+    },
+    "http://localhost:4321/llms",
+    "http://localhost:4321/education",
+    "http://localhost:4321/partners",
+    "http://localhost:4321/about",
+    "http://localhost:4321/training",
+    "http://localhost:4321/contact",
+    "http://localhost:4321/blog",
+    "http://localhost:4321/distributed-infrastructure"
+  ]
+}

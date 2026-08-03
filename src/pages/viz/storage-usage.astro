@@ -1,6 +1,7 @@
 ---
 import Storage from '~/components/vue/Storage.vue';
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 export const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 
@@ -10,5 +11,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Storage client:only="vue" baseUrl={baseUrl}/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Storage usage"
+    description="Per-namespace consumption across the platform."
+    rhythm="tight"
+    width="wide"
+  >
+    <Storage client:only="vue" baseUrl={baseUrl} />
+  </WidgetWrapper>
 </Layout>

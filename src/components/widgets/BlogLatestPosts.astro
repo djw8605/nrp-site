@@ -7,7 +7,6 @@ import { getBlogPermalink } from '~/utils/permalinks';
 import { findLatestPosts } from '~/utils/blog';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import type { Widget } from '~/types';
-import Button from '../ui/Button.astro';
 
 export interface Props extends Widget {
   title?: string;
@@ -28,6 +27,9 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  width,
+  rhythm,
+  surface,
 } = Astro.props;
 
 const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
@@ -35,24 +37,28 @@ const posts = APP_BLOG.isEnabled ? await findLatestPosts({ count }) : [];
 
 {
   APP_BLOG.isEnabled ? (
-    <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container as string} bg={bg}>
-      <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
+    <WidgetWrapper
+      id={id}
+      isDark={isDark}
+      containerClass={(classes?.container as string) ?? ''}
+      bg={bg}
+      width={width}
+      rhythm={rhythm}
+      surface={surface}
+    >
+      <div class="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         {title && (
-          <div class="md:max-w-sm">
-            <h2
-              class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
-              set:html={title}
-            />
+          <div class="md:max-w-md">
+            <h2 class="font-display text-h2 font-bold text-heading" set:html={title} />
             {APP_BLOG.list.isEnabled && linkText && linkUrl && (
-              <Button variant="link" href={linkUrl}>
-                {' '}
-                {linkText} »
-              </Button>
+              <a href={linkUrl} class="link-quiet mt-3 inline-block text-sm">
+                {linkText} →
+              </a>
             )}
           </div>
         )}
 
-        {information && <p class="text-muted dark:text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
+        {information && <p class="text-muted lg:max-w-md lg:text-sm" set:html={information} />}
       </div>
 
       <Grid posts={posts} />

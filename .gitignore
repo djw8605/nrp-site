@@ -24,3 +24,11 @@ pnpm-lock.yaml
 .astro
 
 tmp
+
+# impeccable: live/config.json is project config and IS committed. Everything
+# else is per-machine state -- resolved roots, event journals, the design hook's
+# scan cache -- and must not be.
+.impeccable/*
+!.impeccable/live/
+.impeccable/live/*
+!.impeccable/live/config.json

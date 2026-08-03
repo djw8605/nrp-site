@@ -2,38 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+/* Global styles. Tokens come from src/components/CustomStyles.astro.
+   See DESIGN.md before adding anything here. */
+
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
 }
 
+@layer base {
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--nrp-font-mono);
+  }
+}
+
 @layer utilities {
   .bg-page {
-    background-color: var(--aw-color-bg-page);
+    background-color: var(--nrp-surface-page);
   }
-  .bg-dark {
-    background-color: var(--aw-color-bg-page-dark);
-  }
-  .bg-light {
-    background-color: var(--aw-color-bg-page);
+  .bg-sunken {
+    background-color: var(--nrp-surface-sunken);
   }
   .text-page {
-    color: var(--aw-color-text-page);
+    color: var(--nrp-text-body);
   }
-  .text-muted {
-    color: var(--aw-color-text-muted);
+  /* text-muted / text-heading / text-body are generated from the `colors`
+     keys in tailwind.config.js -- do not redefine them here. */
+
+  /* Legacy: .bg-dark / .bg-light predate the surface ladder. Kept for
+     unmigrated widgets; prefer bg-surface-* in new code. */
+  .bg-dark {
+    background-color: #0a1118;
+  }
+  .bg-light {
+    background-color: var(--nrp-surface-page);
   }
 }
 
 @layer components {
+  /* ---- Layout ---------------------------------------------------------- */
+  /* The only two vertical rhythms on the site. Applied by WidgetWrapper --
+     never set py-* per section. */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-tight {
+    @apply py-10 md:py-14;
+  }
+
+  /* ---- Buttons --------------------------------------------------------- */
+  /* rounded-md, not rounded-full: the pill shape was AstroWind's signature
+     and the strongest "this is a template" cue on the site. */
   .btn {
-    @apply inline-flex items-center justify-center rounded-full border-gray-400 border bg-transparent font-medium text-center text-base text-page leading-snug transition py-3.5 px-6 md:px-8 ease-in duration-200 focus:ring-blue-500 focus:ring-offset-blue-200 focus:ring-2 focus:ring-offset-2 hover:bg-gray-100 hover:border-gray-600 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-800 dark:hover:border-slate-800 cursor-pointer;
+    @apply inline-flex cursor-pointer items-center justify-center rounded-md border border-hairline
+      bg-transparent px-6 py-3 text-center text-base font-medium leading-snug text-body
+      transition duration-200 ease-in
+      hover:border-teal-600 hover:bg-surface-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+      focus-visible:ring-offset-surface-page
+      md:px-7;
   }
 
   .btn-primary {
-    @apply btn font-semibold bg-primary text-white border-primary hover:bg-secondary hover:border-secondary hover:text-white dark:text-white dark:bg-primary dark:border-primary dark:hover:border-secondary dark:hover:bg-secondary;
+    /* white on teal-700 = 6.13:1; teal-950 on teal-400 = 7.48:1 */
+    @apply btn border-teal-700 bg-teal-700 font-semibold text-white
+      hover:border-teal-800 hover:bg-teal-800 hover:text-white
+      dark:border-teal-400 dark:bg-teal-400 dark:text-teal-950
+      dark:hover:border-teal-300 dark:hover:bg-teal-300 dark:hover:text-teal-950;
   }
 
   .btn-secondary {
@@ -41,22 +83,111 @@ html, body {
   }
 
   .btn-tertiary {
-    @apply btn border-none shadow-none text-muted hover:text-gray-900 dark:text-gray-400 dark:hover:text-white;
+    @apply btn border-none px-3 text-muted shadow-none hover:bg-transparent hover:text-link;
+  }
+
+  /* ---- Links ----------------------------------------------------------- */
+  /* Replaces hardcoded text-blue-600, which measured 2.84:1 on the dark
+     section it sat on because it had no dark: variant. */
+  .link {
+    @apply font-medium text-link underline decoration-1 underline-offset-2
+      transition-colors hover:decoration-2
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* inline-flex + min-h-6: standalone quiet links ("View all →") measured 20px
+     tall on mobile, under the 24px WCAG 2.5.8 floor. Inline links inside a
+     sentence are exempt from that rule, so this class stays usable in prose --
+     `inline-flex` on a link that sits mid-paragraph still flows with the text. */
+  .link-quiet {
+    @apply inline-flex min-h-6 items-center font-medium text-link no-underline transition-colors hover:underline
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* ---- Signature ------------------------------------------------------- */
+  /* The logo gradient as a 2px bar. Exactly once per page, in the hero. */
+  .spectrum-rule {
+    @apply block h-0.5 w-full rounded-full bg-spectrum;
+  }
+
+  /* The page's single authored moment: the signature draws itself in.
+     Deliberately scoped to one element rather than the blanket per-section fade
+     this replaced -- 22 identical entrances on the homepage read as a template
+     tic, not as intent.
+
+     It animates transform, not opacity, so nothing is ever hidden waiting for a
+     script; the rule is legible from first paint even if the animation never
+     runs. Exponential ease-out, and `prefers-reduced-motion` opts out entirely. */
+  .spectrum-rule--draw {
+    transform-origin: left center;
+    animation: spectrum-draw 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .text-center > .spectrum-rule--draw,
+  .mx-auto.spectrum-rule--draw {
+    transform-origin: center;
+  }
+
+  @keyframes spectrum-draw {
+    from {
+      transform: scaleX(0.05);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spectrum-rule--draw {
+      animation: none;
+    }
+  }
+
+  /* ---- Surfaces -------------------------------------------------------- */
+  .card {
+    @apply rounded-lg border border-hairline bg-surface-2 transition-colors;
+  }
+
+  .card-interactive {
+    @apply card hover:border-teal-600 hover:bg-surface-3
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .eyebrow {
+    @apply text-eyebrow uppercase text-link;
+  }
+
+  /* ---- Third-party logo plate ------------------------------------------ */
+  /* The documented exception to "no raw colors": vendor logos are shipped as
+     dark artwork on transparency, so they need a light plate in BOTH modes --
+     a surface token would put them on #17242f in dark mode and make half of
+     them disappear. Kept as one class so the exception lives in one place
+     rather than being re-invented per page. See DESIGN.md section 7. */
+  .logo-plate {
+    @apply flex items-center justify-center rounded-md border border-hairline bg-white p-2;
   }
 }
 
-#header.scroll > div:first-child {
-  @apply bg-page md:bg-white md:backdrop-blur-md;
-  box-shadow: 0 0.375rem 1.5rem 0 rgb(140 152 164 / 13%);
-}
+/* ---- Header ------------------------------------------------------------ */
+
+/* Alpha is applied with color-mix rather than Tailwind's `/90` modifier:
+   surface tokens are hex strings, so Tailwind cannot inject an alpha channel
+   into them. Same reason the hero-overlay rule below is hand-written. */
+#header.scroll > div:first-child,
 .dark #header.scroll > div:first-child,
 #header.scroll.dark > div:first-child {
-  @apply bg-page md:bg-[#030621e6] border-b border-gray-500/20;
-  box-shadow: none;
+  @apply bg-page;
+  border-bottom: 1px solid var(--nrp-border-hairline);
 }
-/* #header.scroll > div:last-child {
-  @apply py-3;
-} */
+
+@media (min-width: 768px) {
+  #header.scroll > div:first-child,
+  .dark #header.scroll > div:first-child,
+  #header.scroll.dark > div:first-child {
+    background-color: color-mix(in srgb, var(--nrp-surface-page) 88%, transparent);
+    backdrop-filter: blur(12px);
+  }
+}
 
 #header.expanded nav {
   position: fixed;
@@ -67,14 +198,31 @@ html, body {
   padding: 0 5px;
 }
 
+/* Transparent header over the homepage hero image. */
 @media (min-width: 768px) {
   #front-page #header:not(.scroll) > div:first-child {
-    @apply bg-slate-950/60;
+    background-color: rgb(7 12 18 / 45%);
+    backdrop-filter: blur(6px);
   }
-  #front-page #header:not(.scroll) nav button,
-  #front-page #header:not(.scroll) nav>ul>li>a,
-  #front-page #header:not(.scroll) svg {
-    @apply text-slate-100;
+  /* Light text for the top level of the nav and the utility icons only.
+     Scoped to DIRECT children of the nav list: a blanket `svg` selector also
+     hit the external-link icons inside the dropdown panel, which sits on a
+     light surface -- white on near-white, invisible. */
+  #front-page #header:not(.scroll) nav > ul > li > button,
+  #front-page #header:not(.scroll) nav > ul > li > a,
+  #front-page #header:not(.scroll) nav > ul > li > button svg,
+  #front-page #header:not(.scroll) nav > ul > li > a svg,
+  #front-page #header:not(.scroll) > div > div:last-child svg {
+    color: #f2f6fa;
+  }
+  /* Belt and braces: the dropdown panel always uses its own surface's tokens,
+     whatever the header above it is doing. */
+  #front-page #header:not(.scroll) .dropdown-menu,
+  #front-page #header:not(.scroll) .dropdown-menu a {
+    color: var(--nrp-text-body);
+  }
+  #front-page #header:not(.scroll) .dropdown-menu svg {
+    color: var(--nrp-text-muted);
   }
 }
 

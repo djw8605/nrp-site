@@ -1,0 +1,26 @@
+# Cloudflare Pages redirects.
+#
+# The five paths below were unmodified AstroWind template demo pages that
+# shipped to production with the theme. They were live, indexed in
+# sitemap-0.xml, and contained placeholder content that misrepresented the
+# NRP (a fictional "AstroWind LLC" as data controller, lorem ipsum, and a
+# paid pricing tier for a platform that is free).
+#
+# They are deleted rather than rewritten. These 301s exist so inbound search
+# traffic and any external links land on something real instead of a 404.
+#
+# NOTE: /privacy and /terms have no genuine replacement yet. Real versions
+# need to be written and reviewed by the PI / institutional counsel; see
+# DESIGN.md and static/NRP-AUP.pdf.
+#
+# /about no longer redirects: it is a real page again (src/pages/about.astro),
+# carrying what the NRP is, the leadership, NSF funding, and the team. It
+# replaced /people, which now redirects to it.
+
+/services   /                                              301
+/pricing    /documentation/userdocs/start/getting-started/  301
+/privacy    /                                              301
+/terms      /NRP-AUP.pdf                                   301
+
+# /people was reworked into /about rather than kept alongside it.
+/people     /about                                         301

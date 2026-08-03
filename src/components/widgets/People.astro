@@ -1,45 +1,93 @@
 ---
 import type { People as Props } from '~/types';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '~/utils/cn';
 
 import Image from '~/components/common/Image.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
 const {
   title = '',
   subtitle = '',
   tagline = '',
+  titleAs,
   people = [],
+  layout = 'grid',
   id,
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  width,
+  rhythm,
+  surface,
 } = Astro.props;
+
+// Two layouts, one component.
+//
+// `feature` is for the PI and co-PIs on /about: fewer people, a 144px portrait
+// on a card, and `role` shown as an eyebrow so "who runs this" is answerable at
+// a glance. `grid` is the compact 112px roster.
+//
+// The feature portrait must be LARGER than the roster's, not smaller. A first
+// pass put it in a horizontal card at 80px, which made the leadership read as
+// less important than the team listed below it -- the exact inversion of what
+// the section is for.
+//
+// Portrait sources range from 72x72 to 1000x917, so `widths` covers 2x the
+// render size and Astro downscales the rest. layout="cover" keeps the intrinsic
+// height out of the inline style -- see DESIGN.md section 7.
+const isFeature = layout === 'feature';
+
+const portraitPx = isFeature ? 144 : 112;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
-  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+<WidgetWrapper
+  id={id}
+  isDark={isDark}
+  containerClass={classes?.container ?? ''}
+  bg={bg}
+  width={width}
+  rhythm={rhythm}
+  surface={surface}
+>
+  <Headline titleAs={titleAs} title={title} subtitle={subtitle} tagline={tagline} />
 
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
+  <div
+    class:list={[
+      'grid',
+      isFeature ? 'gap-6 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-4',
+    ]}
+  >
     {
       people &&
         people.map(
           (person) =>
             person && (
-              <div class="flex flex-col items-center text-center">
+              <div class:list={['flex flex-col items-center text-center', isFeature && 'card p-6']}>
                 <Image
                   src={person.img}
-                  alt={person.name}
+                  alt={`Portrait of ${person.name}`}
                   class={twMerge(
-                    'h-28 w-28 object-cover object-center rounded-full shadow-md ring-1 ring-black/5 transition-transform duration-200 hover:scale-105',
+                    'rounded-full border border-hairline object-cover object-center',
+                    isFeature ? 'h-36 w-36' : 'h-28 w-28 transition-transform duration-200 hover:scale-105',
                     person.imgClass
                   )}
-                  width={170}
-                  height={170}
-                  layout="fixed"
+                  width={portraitPx}
+                  height={portraitPx}
+                  widths={[portraitPx, portraitPx * 2]}
+                  sizes={`${portraitPx}px`}
+                  layout="cover"
                 />
-                <h3 class="mt-4 text-base font-semibold leading-tight">{person.name}</h3>
-                <p class="mt-1 text-sm text-muted leading-snug">{person.title}</p>
+                {person.role && <p class="eyebrow mt-5">{person.role}</p>}
+                <h3
+                  class:list={[
+                    'font-display font-semibold leading-tight text-heading',
+                    isFeature ? 'mt-1.5 text-h4' : 'mt-4 text-base',
+                  ]}
+                >
+                  {person.name}
+                </h3>
+                <p class:list={['text-sm leading-snug text-muted', isFeature ? 'mt-2' : 'mt-1']}>{person.title}</p>
               </div>
             )
         )

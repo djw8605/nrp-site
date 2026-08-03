@@ -9,6 +9,7 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
+  titleAs,
   items = [],
   image = await Astro.slots.render('image'),
   isReversed = false,
@@ -17,19 +18,35 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  width,
+  rhythm,
+  surface,
 } = Astro.props;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-5xl ${classes?.container ?? ''}`} bg={bg}>
+{
+  /* max-w-5xl used to be hardcoded here, making this the one 1024px section on a
+    page of 1152px ones. DESIGN.md section 4. */
+}
+<WidgetWrapper
+  id={id}
+  isDark={isDark}
+  containerClass={classes?.container ?? ''}
+  bg={bg}
+  width={width}
+  rhythm={rhythm}
+  surface={surface}
+>
   <div class:list={['flex flex-col gap-8 md:gap-12', { 'md:flex-row-reverse': isReversed }, { 'md:flex-row': image }]}>
     <div class:list={['md:py-4 md:self-center', { 'md:basis-1/2': image }, { 'w-full': !image }]}>
       <Headline
+        titleAs={titleAs}
         title={title}
         subtitle={subtitle}
         tagline={tagline}
         classes={{
           container: 'text-left rtl:text-right',
-          title: 'text-3xl lg:text-4xl',
+          title: 'text-h2',
           ...((classes?.headline as object) ?? {}),
         }}
       />
@@ -42,7 +59,7 @@ const {
             <Fragment set:html={image} />
           ) : (
             <Image
-              class="inset-0 object-cover object-top w-full rounded-md shadow-lg md:absolute md:h-full bg-gray-400 dark:bg-slate-700"
+              class="inset-0 w-full rounded-lg border border-hairline bg-surface-2 object-cover object-top md:absolute md:h-full"
               widths={[400, 768]}
               sizes="(max-width: 768px) 100vw, 432px"
               width={432}

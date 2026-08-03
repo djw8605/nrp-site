@@ -50,19 +50,18 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
       data-interval-ms={String(intervalMs)}
       data-dismiss-key={dismissKey}
     >
-      <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-        <div
-          class="relative overflow-hidden rounded-lg"
-          style="background:rgba(25,50,100,0.90);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.16);box-shadow:0 10px 28px rgba(0,0,0,0.40)"
-        >
-          {/* Brand accent edge */}
-          <div class="absolute inset-y-0 left-0 w-1 bg-primary" aria-hidden="true" />
-          <div class="flex items-center gap-2 px-5 py-4 sm:py-5">
+      {/* max-w-6xl, matching every other section: this was max-w-7xl, which is
+          why it read as a floating slab rather than part of the page. Surface
+          tokens and a teal edge instead of a hardcoded navy + heavy drop
+          shadow. */}
+      <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <div class="relative overflow-hidden rounded-lg border border-hairline border-l-2 border-l-teal-700 bg-surface-2 dark:border-l-teal-400">
+          <div class="flex items-center gap-2 px-5 py-4">
             {/* Prev chevron (inline, subtle) */}
             {hasMultipleAnnouncements && (
               <button
                 type="button"
-                class="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded text-white/40 transition hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-3 hover:text-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Previous announcement"
                 data-announcement-prev
               >
@@ -86,18 +85,18 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                       <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                         {/* Category pill */}
                         {announcement.category && (
-                          <span class="inline-flex shrink-0 items-center rounded-full bg-primary/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/95 ring-1 ring-primary/60">
+                          <span class="inline-flex shrink-0 items-center rounded-md bg-teal-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-teal-900 dark:bg-teal-950 dark:text-teal-200">
                             {announcement.category}
                           </span>
                         )}
                         {/* Title */}
-                        <span class="text-base font-bold leading-snug text-white sm:text-[17px]">
+                        <span class="font-display text-base font-semibold leading-snug text-heading">
                           {announcement.title}
                         </span>
                         {/* Date/location metadata (data-office-hours-date for JS to inject next date) */}
                         {announcement.dateLocation && (
                           <span
-                            class="text-xs font-medium text-white/45"
+                            class="text-xs font-medium text-muted"
                             {...(announcement.id === 'office-hours' ? { 'data-office-hours-date': '' } : {})}
                           >
                             {announcement.dateLocation}
@@ -106,7 +105,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                       </div>
                       {/* Tagline (falls back to legacy message) */}
                       {(announcement.tagline || announcement.message) && (
-                        <p class="mt-1 text-[13px] leading-snug text-white/[.50] line-clamp-1 sm:line-clamp-2">
+                        <p class="mt-1 line-clamp-2 text-sm leading-snug text-muted">
                           {announcement.tagline || announcement.message}
                         </p>
                       )}
@@ -115,10 +114,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                     {/* Right: CTAs */}
                     <div class="flex shrink-0 items-center gap-3">
                       {announcement.secondaryCtaLabel && announcement.secondaryCtaUrl && (
-                        <a
-                          href={announcement.secondaryCtaUrl}
-                          class="hidden text-xs font-medium text-white/70 underline underline-offset-2 transition hover:text-white sm:inline"
-                        >
+                        <a href={announcement.secondaryCtaUrl} class="link-quiet hidden text-xs sm:inline">
                           {announcement.secondaryCtaLabel}
                         </a>
                       )}
@@ -126,7 +122,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                         variant="primary"
                         text={announcement.ctaLabel}
                         href={announcement.ctaUrl}
-                        class="min-h-[44px] whitespace-nowrap !rounded-full !px-7 !py-3 !text-[15px] !font-semibold !shadow-lg hover:!-translate-y-0.5 !transition-transform"
+                        class="whitespace-nowrap px-5 py-2.5 text-sm font-semibold"
                       />
                     </div>
                   </div>
@@ -138,7 +134,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
             {hasMultipleAnnouncements && (
               <button
                 type="button"
-                class="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded text-white/40 transition hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-3 hover:text-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Next announcement"
                 data-announcement-next
               >
@@ -149,7 +145,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
             {/* Dismiss */}
             <button
               type="button"
-              class="shrink-0 ml-1 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white/50 transition hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              class="ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-3 hover:text-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Dismiss announcement"
               data-announcement-dismiss
             >
@@ -165,7 +161,7 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                   type="button"
                   class:list={[
                     'h-1.5 w-1.5 rounded-full transition',
-                    index === 0 ? 'bg-white/80' : 'bg-white/30 hover:bg-white/50',
+                    index === 0 ? 'bg-teal-700 dark:bg-teal-400' : 'bg-hairline hover:bg-teal-600',
                   ]}
                   data-announcement-dot={index}
                   aria-label={`Show announcement ${index + 1}`}
@@ -211,8 +207,10 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
     const updateDots = () => {
       dotButtons.forEach((dot, i) => {
         const isActive = i === activeIndex;
-        dot.classList.toggle('bg-white/80', isActive);
-        dot.classList.toggle('bg-white/30', !isActive);
+        // Must match the classes rendered in the markup above.
+        dot.classList.toggle('bg-teal-700', isActive);
+        dot.classList.toggle('dark:bg-teal-400', isActive);
+        dot.classList.toggle('bg-hairline', !isActive);
       });
     };
 
@@ -293,7 +291,9 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
 
     // Pause on hover/focus (only affects auto-rotation, not post-interaction)
     root.addEventListener('mouseenter', stopRotation);
-    root.addEventListener('mouseleave', () => { if (!userInteracted) startRotation(); });
+    root.addEventListener('mouseleave', () => {
+      if (!userInteracted) startRotation();
+    });
     root.addEventListener('focusin', stopRotation);
     root.addEventListener('focusout', (event) => {
       const focusTarget = (event as FocusEvent).relatedTarget;

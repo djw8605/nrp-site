@@ -6,11 +6,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 const metadata = {
   title: 'Milvus password',
 };
-
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="Milvus password">
+  <WidgetWrapper titleAs="h1" containerClass="py-2 md:py-4 lg:py-6" title="Milvus password">
     <MilvusPassword client:only="vue" />
   </WidgetWrapper>
 </Layout>

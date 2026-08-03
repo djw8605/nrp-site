@@ -1,23 +1,27 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 
-import Hero from '~/components/widgets/Hero.astro'
+import Hero from '~/components/widgets/Hero.astro';
 import AnnouncementBar from '~/components/common/AnnouncementBar.astro';
 import Image from '~/components/common/Image.astro';
-import Note from '~/components/widgets/Note.astro';
 import MatrixFeed from '~/components/widgets/MatrixFeed.astro';
 import Features from '~/components/widgets/Features.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import Stats from '~/components/widgets/Stats.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import HeroWide from '~/components/widgets/HeroWide.astro';
 import NextOfficeHours from '~/components/widgets/NextOfficeHours.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
   title: 'National Research Platform (NRP)',
   ignoreTitleTemplate: true,
 };
+
+// These figures are the site's strongest credibility signal, so they now sit
+// in the hero rather than 83% of the way down the page. Shared with /about --
+// see src/data/cluster-stats.ts.
+import { clusterStats } from '~/data/cluster-stats';
 
 const homepageAnnouncements = [
   {
@@ -40,7 +44,7 @@ const homepageAnnouncements = [
   {
     id: 'lightscope',
     category: 'Program',
-    title: 'LightScope — Network Telescopes',
+    title: 'LightScope: Network Telescopes',
     tagline: 'Hardware contributors: opt-in to forward closed ports to distributed honeypots.',
     ctaLabel: 'Learn More',
     ctaUrl: '/lightscope',
@@ -49,81 +53,153 @@ const homepageAnnouncements = [
 ---
 
 <Layout metadata={metadata} id="front-page">
-  <!-- Hero Widget ******************* -->
-  <!-- image={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }} -->
-  <!-- bg="<img src='/src/assets/images/NRP_globe.jpg' alt='NRP Background image' class='brightness-50 object-cover object-center w-full h-full' />" -->
+  <!-- Hero ************************** -->
+  <!-- The mission statement is the subtitle. It used to be a separate 56px
+       strip below the hero, styled identically to the announcement bar. -->
   <Hero
-    actions={[
-      { text: 'Learn more', href: '#features', variant: 'primary' },
-    ]}
-    
-    
+    align="left"
     whiteText={true}
-    bgImage={{ src: '~/assets/images/NRP_globe.jpg', alt: 'NRP Globe image' }}
+    bgImage={{ src: '~/assets/images/NRP_globe.jpg', alt: '' }}
+    stats={clusterStats}
+    actions={[
+      { text: 'Get started', href: '/documentation/userdocs/start/getting-started/', variant: 'primary' },
+      { text: 'Explore hosted LLMs', href: '/llms', variant: 'secondary' },
+    ]}
   >
-
-    <Fragment slot="title">
-      The National Research Platform (NRP): Accelerating Research and Education
-    </Fragment>
+    <!-- Hero copy follows /about's framing, which reads better than the old
+         feature-list pitch: say what the NRP *is* first, then who it is for. -->
+    <Fragment slot="title">Shared research computing, run by the people who use it</Fragment>
 
     <Fragment slot="subtitle">
-      The NRP is a community-owned research and education platform connecting
-      researchers and educators to foster collaboration, accelerate innovation,
-      and share resources. Supported by over 50 institutions, including
-      leadership from UC San Diego, the University of Nebraska-Lincoln, and
-      the Massachusetts Green High Performance Computing Center, the NRP
-      provides access to cutting-edge technologies in AI, high-performance
-      computing, data storage, and networking. Open to all nonprofit higher
-      education institutions, from community colleges to top research universities,
-      the NRP advances learning and scientific breakthroughs with support from the
-      U.S. National Science Foundation, Department of Energy, and Department of Defense among others.
+      The National Research Platform pools GPUs, petabyte-scale storage, and hosted open-weight AI models across more
+      than 70 institutions. It is free to U.S. nonprofit research and education, funded by the National Science
+      Foundation and governed by the community that contributes to it.
     </Fragment>
-
-    <Fragment slot="alert">
-      <AnnouncementBar
-        announcements={homepageAnnouncements}
-        autoRotate={true}
-        intervalMs={7000}
-        dismissKey="nrp:home-announcement-bar-dismissed"
-      />
-    </Fragment>
-
   </Hero>
 
-  <!-- NextOfficeHours script must run on homepage to fill announcement bar date -->
+  <!-- Announcements ***************** -->
+  <!-- Below the hero, so it no longer pushes the <h1> down the page. Sits in a
+       surface-1 band with real vertical rhythm and a hairline that continues the
+       hero's bottom edge, rather than floating over the seam. -->
+  <div class="border-b border-hairline bg-surface-1 py-6">
+    <AnnouncementBar
+      announcements={homepageAnnouncements}
+      autoRotate={true}
+      intervalMs={7000}
+      dismissKey="nrp:home-announcement-bar-dismissed"
+    />
+  </div>
+
+  <!-- NextOfficeHours script must run on the homepage to fill the announcement date -->
   <div class="sr-only" aria-hidden="true">
     <NextOfficeHours />
   </div>
 
-  <!-- Note Widget ******************* -->
+  <!-- Features ********************** -->
+  <Features
+    id="features"
+    title="What you can do here"
+    surface="page"
+    items={[
+      {
+        title: 'Artificial Intelligence',
+        description:
+          'Modern GPUs, FPGAs, and specialized hardware for AI research, plus a catalog of hosted open-weight models you can call from your own code.',
+        icon: 'tabler:ai',
+        callToAction: {
+          text: 'Browse hosted models',
+          href: '/llms',
+        },
+      },
+      {
+        title: 'Resources for the classroom',
+        description:
+          'GPUs, CPUs, and storage for educators, reachable through JupyterHub and Coder so students never have to touch Kubernetes.',
+        icon: 'tabler:school',
+        callToAction: {
+          text: 'Teaching with the NRP',
+          href: '/education',
+        },
+      },
+      {
+        title: 'Network experiments',
+        description:
+          'Nodes distributed across 70+ sites on three continents make measurements possible that no single-site cluster can support.',
+        icon: 'tabler:network',
+        callToAction: {
+          text: 'View network dashboards',
+          href: 'https://perfsonar.nrp-nautilus.io/maddash-webui/',
+        },
+      },
+      {
+        title: 'Large data pools',
+        description:
+          'Mount petabyte-scale S3 and Ceph storage from anywhere on the platform and use it directly in your workloads.',
+        icon: 'tabler:server-2',
+        callToAction: {
+          text: 'Storage documentation',
+          href: '/documentation/userdocs/storage/intro',
+        },
+      },
+    ]}
+  />
 
-  <Note />
+  <!-- Map of NRP sites ************** -->
+  <HeroWide
+    title="Distributed Infrastructure"
+    subtitle="A global network of research resources: shared compute, data, and services."
+    actions={[{ text: 'How the network works', href: '/distributed-infrastructure', variant: 'primary' }]}
+  >
+    <Fragment slot="image">
+      <!-- Cross-origin iframe: cannot be themed and will not follow dark mode.
+           Constrained to a fixed aspect box so it stops shifting layout.
+           Replacing it with a self-hosted D3 map (see src/components/plots/)
+           would make it themeable. -->
+      <div
+        class="relative w-full overflow-hidden rounded-lg border border-hairline bg-surface-2 aspect-[16/10] md:aspect-[2/1]"
+      >
+        <iframe
+          src="https://dash.nrp-nautilus.io/map"
+          title="Map of NRP sites"
+          loading="lazy"
+          class="absolute inset-0 h-full w-full border-0"
+          allowfullscreen></iframe>
+      </div>
+    </Fragment>
+  </HeroWide>
 
-  <!-- Recent Event Widget *********** -->
-  <section class="not-prose bg-white py-10 dark:bg-slate-900">
-    <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
-      <a href="/7nrp-workshop/" class="block overflow-hidden rounded-md bg-gray-100 shadow-md dark:bg-slate-800">
-        <Image
-          src="~/assets/images/posts/7nrp-overlap.png"
-          alt="Seventh National Research Platform workshop at UC San Diego"
-          class="h-full w-full object-cover"
-          widths={[400, 768, 1024]}
-          sizes="(max-width: 1023px) 100vw, 520px"
-          width={768}
-          aspectRatio="16:9"
-          layout="cover"
-        />
-      </a>
+  <!-- Happening now ***************** -->
+  <!-- Merges what used to be two separate hand-rolled <section> blocks, each
+       with its own container width and ad-hoc Tailwind colors. -->
+  <WidgetWrapper
+    surface={1}
+    rhythm="normal"
+    title="Events and cluster activity"
+    containerClass=""
+  >
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-14">
+      <!-- Recent event -->
       <div>
-        <p class="mb-3 text-sm font-semibold uppercase tracking-wide text-primary dark:text-blue-300">Recent event</p>
-        <h2 class="font-heading text-3xl font-bold leading-tight text-gray-900 dark:text-white md:text-4xl">
-          7NRP workshop media is now available
-        </h2>
-        <p class="mt-4 text-lg text-muted dark:text-slate-300">
+        {/* "Recent event" was a kicker above this heading, with its own spectrum
+            rule. The heading already says what this is. */}
+        <h3 class="font-display text-h3 font-semibold text-heading">7NRP workshop media is now available</h3>
+        <a href="/7nrp-workshop/" class="card-interactive mt-5 block overflow-hidden">
+          <Image
+            src="~/assets/images/posts/7nrp-overlap.png"
+            alt="Seventh National Research Platform workshop at UC San Diego"
+            class="h-full w-full object-cover"
+            widths={[400, 768, 1024]}
+            sizes="(max-width: 1023px) 100vw, 520px"
+            width={768}
+            aspectRatio="16:9"
+            layout="cover"
+          />
+        </a>
+        <p class="mt-4 text-muted">
           Browse the agenda, slides, tutorial materials, and session recordings from the Seventh National Research
           Platform workshop at UC San Diego.
         </p>
-        <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+        <div class="mt-5 flex flex-col gap-3 sm:flex-row">
           <a class="btn btn-primary w-full sm:w-auto" href="/7nrp-workshop/">View workshop media</a>
           <a
             class="btn btn-secondary w-full sm:w-auto"
@@ -133,209 +209,116 @@ const homepageAnnouncements = [
           </a>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Live Feed Widget -->
-  <section class="py-8 bg-gray-50 dark:bg-gray-800/50">
-    <div class="container mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            Latest NRP Cluster News
-          </h2>
-          <a href="/live" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-            View All →
-          </a>
+      <!-- Live cluster news -->
+      <div>
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            {/* This one stays: a pulsing dot plus "Live" is a status indicator
+                reporting that the feed below is current, not a kicker labelling
+                the heading. Its spectrum rule is gone -- the signature belongs
+                to the hero alone. */}
+            <p class="eyebrow flex items-center gap-2">
+              <span class="relative flex h-2 w-2" aria-hidden="true">
+                <span
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75 motion-reduce:hidden"
+                ></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-500"></span>
+              </span>
+              Live
+            </p>
+            <h3 class="mt-2 font-display text-h3 font-semibold text-heading">Latest cluster news</h3>
+          </div>
+          <a href="/live" class="link-quiet shrink-0 text-sm">View all →</a>
         </div>
-        <MatrixFeed />
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
-          This news is pulled from Nautilus Support. Make sure you're on Nautilus Support for real-time updates.
-          <a href="https://nrp.ai/contact/" class="text-blue-600 underline hover:text-blue-700">Join here</a>
+        <div class="mt-5">
+          <MatrixFeed />
+        </div>
+        <p class="mt-4 text-sm text-muted">
+          Pulled from Nautilus Support chat. <a href="/contact/" class="link">Join the channel</a> for real-time updates.
         </p>
       </div>
     </div>
-  </section>
+  </WidgetWrapper>
 
-  <!-- Features Widget *************** -->
-
-  <Features
-    id="features"
-    tagline="Features"
-    title="Accelerating Science and Education"
-    items={[
-      {
-        title: 'Artificial Intelligence',
-        description:
-          'The National Research Platform supports research, education, classes, and workshops, offering modern GPUs, FPGAs, and specialized hardware for advanced AI projects.',
-        icon: 'tabler:ai',
-        callToAction: {
-          text: 'Learn more',
-          href: '/documentation/userdocs/ai/llm-managed',
-        },
-      },
-      {
-        title: 'Resources for Classroom',
-        description:
-          'The NRP provides resources for educators to use in their classrooms, including GPUs, CPUs, and storage accessible through convenient interfaces like JupyterHub and Coder.',
-        icon: 'tabler:school',
-        callToAction: {
-          text: 'Learn more',
-          href: '/education',
-        },
-      },
-      {
-        title: 'Network Experiments',
-        description:
-          'The NRP nodes are distributed around the world and allow experiments that are impossible on other clusters.',
-        icon: 'tabler:network',
-        callToAction: {
-          text: 'Learn more',
-          href: 'https://perfsonar.nrp-nautilus.io/maddash-webui/',
-        },
-      },
-      {
-        title: 'Large Data Pools',
-        description:
-          'Mount your data across the world and use it in your experiments.',
-        icon: 'tabler:server-2',
-        callToAction: {
-          text: 'Learn how to use storage on the NRP',
-          href: '/documentation/userdocs/storage/intro',
-        },
-      },
-    ]}
-  />
-  <!--     items={[
-      {
-        title: 'Distributed Sites',
-        description: 'The NRP is composed of over 70 sites across the USA and world, connected with high speed networks to provide a seamless experience to users.',
-        icon: 'tabler:wand'
-      },
-      {
-        title: 'Fault Tolerant',
-        description: 'With sites distributed across the world, the NRP is resilient to failures in any one location, ensuring continuous availability and reliability for users.',
-        icon: 'tabler:shield-check'
-      },
-
-    ]} -->
-  
-  <!-- Map of NRP Sites -->
-  <HeroWide
-    title="Distributed Infrastructure"
-    subtitle="A global network of research resources — shared compute, data, and services."
-    tagline='Global Reach'
-    actions={[{ text: 'Learn more', href: '/distributed-infrastructure', variant: 'primary' }]}
-    >
-    <Fragment slot="image">
-      <iframe 
-        src="https://dash.nrp-nautilus.io/map"
-        title="NRP Sites Map"
-        width="100%"
-        height="500"
-        style="border:0;"
-        loading="lazy"
-        allowfullscreen
-      ></iframe>
-    </Fragment>
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-
-  </HeroWide>
-
-  <!-- HighlightedPosts Widget ******* -->
-
+  <!-- Blog ************************** -->
   <BlogLatestPosts
-    title="Find out more content in our Blog"
-    information={`Our blog describes the recent events happening in NRP and all collaborating projects.`}
+    title="From the NRP blog"
+    information="Recent events across the NRP and its collaborating projects."
+    surface="page"
   />
 
-  <!-- FAQs Widget ******************* -->
-
+  <!-- FAQs ************************** -->
   <FAQs
-    title="Frequently Asked Questions"
-    subtitle="Dive into the following questions to gain insights into what NRP can provide to you."
-    tagline="FAQs"
-    classes={{ container: 'max-w-6xl' }}
+    title="Frequently asked questions"
+    subtitle="What the NRP is, who can use it, and what it costs."
+    surface={1}
     items={[
       {
-        title: 'Why NRP?',
+        title: 'What is the difference between NRP and Nautilus?',
         description:
-          "We are the open community of scientists that together make it possible to collaborate free of limitations. We make cutting edge technologies available to anybody in the scientific community.",
+          'The NRP is the platform and the community. Nautilus is the Kubernetes cluster the NRP runs on, and the name you will see in technical documentation and in the cluster tooling itself.',
       },
       {
         title: 'How much does it cost?',
         description:
-          'We are funded by the U.S. National Science Foundation to provide free access to non-profit research and education institutions.',
+          'Nothing. We are funded by the U.S. National Science Foundation to provide free access to nonprofit research and education institutions.',
       },
       {
         title: 'Does my project fit here?',
         description:
-          "As long as your work is related to a scientific project or educational use in the U.S., you can use our infrastructure.",
+          'If your work is part of a scientific project or educational use at a U.S. nonprofit institution, yes. That includes community colleges, not just R1 universities.',
       },
       {
-        title: "What if I'm not fluent with kubernetes?",
+        title: "What if I don't know Kubernetes?",
         description:
-          "We provide hosted JupyterHub, Coder and other high level services that require no knowledge of kubernetes. You can also participate in our tutorials to learn more.",
+          'You do not need it. Hosted JupyterHub, Coder, and our inference API require no Kubernetes knowledge. Our tutorials and bi-weekly office hours cover the rest.',
       },
       {
-        title: "How can I help the project?",
+        title: 'Why NRP rather than a commercial cloud?',
         description:
-          "We gladly accept donations in the form of hardware that you can join to our cluster. You can also help by spreading the word about the NRP.",
+          'It is free to eligible institutions, it is governed by the research community that uses it, and its geographic distribution supports experiments that a single-region cloud cannot.',
       },
       {
-        title: "What will I gain if I join hardware?",
+        title: 'How can I help?',
         description:
-          "You will get priority in computing on your hardware whenever you'd like. When your hardware is not used by your group, we will provide opportunistic access to it to other NRP users.",
+          'Contribute hardware to the cluster, or help by spreading the word. Contributors get priority on their own nodes whenever they want them.',
       },
       {
-        title: "Do I need to manage the hardware I join to the cluster?",
+        title: 'What do I get if I contribute hardware?',
         description:
-          "We will install the OS, configure the node and do upgrades ourselves (we'll need IPMI access to install the OS). We might ask you to reboot the node or swap a hard drive if needed.",
+          'Priority access to your own hardware whenever you need it. When your group is not using it, other NRP users get opportunistic access.',
+      },
+      {
+        title: 'Do I have to administer hardware I contribute?',
+        description:
+          'No. We install the OS, configure the node, and handle upgrades ourselves; we just need IPMI access. Occasionally we may ask you to reboot a node or swap a drive.',
       },
     ]}
   />
 
-  <!-- Stats Widget ****************** -->
-
-  <Stats
-    stats={[
-      { title: 'Nodes', amount: '400+' },
-      { title: 'Locations', amount: '70+' },
-      { title: 'Continents', amount: '3' },
-      { title: 'Users', amount: '5K+' },
-    ]}
-  />
-
-  <!-- CallToAction Widget *********** -->
-
+  <!-- Call to action **************** -->
   <CallToAction
+    surface="page"
     actions={[
       {
         variant: 'primary',
-        text: 'Join us',
+        text: 'Get started',
         href: '/documentation/userdocs/start/getting-started/',
-        icon: 'tabler:comet',
+        icon: 'tabler:arrow-right',
       },
       {
         variant: 'secondary',
-        text: 'Donate hardware',
+        text: 'Contribute hardware',
         href: '/documentation/admindocs/participating/new-contributor-guide/',
         icon: 'tabler:server',
       },
     ]}
   >
-    <Fragment slot="title">
-      NRP + Nautilus
-    </Fragment>
+    <Fragment slot="title">Start computing on the NRP</Fragment>
 
     <Fragment slot="subtitle">
-      Join the cluster today and start your scientific journey with us.
+      Bring your research to a platform built and governed by the people who use it.
     </Fragment>
   </CallToAction>
 </Layout>
