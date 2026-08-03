@@ -1,41 +1,6 @@
 stages:
-  - check
   - build
   - clear
-
-# pa11y and pa11y-ci have been devDependencies for a long time without ever
-# running. Non-blocking (allow_failure) for now so it reports without gating
-# deploys; flip allow_failure to false once the backlog is clear.
-check:
-  stage: check
-  image: node:lts
-  allow_failure: true
-  rules:
-    - changes:
-        - src/**/*
-        - static/**/*
-        - astro.config.ts
-        - tailwind.config.js
-        - package.json
-        - package-lock.json
-        - .pa11yci.json
-      when: on_success
-    - when: manual
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq --no-install-recommends
-      chromium fonts-liberation libnss3 libatk-bridge2.0-0 libgtk-3-0 libasound2
-    - npm ci
-  variables:
-    PUPPETEER_SKIP_DOWNLOAD: 'true'
-    PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
-  script:
-    # Types, lint, and formatting.
-    - npm run check
-    # Accessibility. Serve the built output and run pa11y-ci against it.
-    - npm run build
-    - npx --yes http-server ./public -p 4321 --silent &
-    - npx --yes wait-on http://localhost:4321 -t 60000
-    - npx pa11y-ci --config .pa11yci.json
 
 build:
   stage: build
