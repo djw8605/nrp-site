@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import StorageCeph from '~/components/plots/StorageCeph.astro';
 
 const metadata = {
@@ -8,5 +9,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <StorageCeph/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Ceph storage"
+    description="Capacity and utilisation of the Ceph pools."
+    rhythm="tight"
+    width="wide"
+  >
+    <StorageCeph />
+  </WidgetWrapper>
 </Layout>

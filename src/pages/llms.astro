@@ -35,20 +35,17 @@ const featuredModels = [
   {
     name: 'glm-5',
     src: (await import('~/assets/images/models/glm.png')).default,
-    description:
-      "Zhipu's 744B frontier coding model with NVFP4 weights. Strong on code and reasoning tasks.",
+    description: "Zhipu's 744B frontier coding model with NVFP4 weights. Strong on code and reasoning tasks.",
   },
   {
     name: 'minimax-m2',
     src: (await import('~/assets/images/models/minimax.png')).default,
-    description:
-      'Efficient frontier coding model — 230B in native FP8, fits comfortably on four A100s.',
+    description: 'Efficient frontier coding model — 230B in native FP8, fits comfortably on four A100s.',
   },
   {
     name: 'gpt-oss',
     src: (await import('~/assets/images/models/gpt-oss.png')).default,
-    description:
-      "OpenAI's open-weights agentic model — tiny GPU footprint, strong tool use, LTS candidate.",
+    description: "OpenAI's open-weights agentic model — tiny GPU footprint, strong tool use, LTS candidate.",
   },
 ];
 
@@ -66,33 +63,55 @@ const featuredClients = [
 
 <Layout metadata={metadata}>
   <Hero
-    tagline="Hosted LLMs"
+    align="left"
+    split={true}
     title="Frontier open-weight LLMs, hosted on the NRP"
     subtitle="Free access for researchers and educators to a rotating catalog of frontier open-weight models — through a hosted chat interface, an OpenAI-compatible API, and ready-made configs for the major coding CLIs."
     actions={[
       { variant: 'primary', text: 'Get started', href: '/contact' },
       { text: 'Try Open WebUI', href: 'https://nrp-openwebui.nrp-nautilus.io', target: '_blank' },
     ]}
-    image={{
-      src: '~/assets/images/openwebui-hero.png',
-      alt: 'Open WebUI chat running on the NRP',
-    }}
-  />
+  >
+    <Fragment slot="image">
+      {
+        /* This screenshot used to be styled by a global
+          `img[alt="Open WebUI chat running on the NRP"]` rule -- CSS keyed to an
+          accessibility string, so editing the alt text silently broke the
+          layout.
+
+          That rule also applied a bottom fade mask, which worked when the image
+          was full-width and bled into the section below. In the split hero's
+          side column it just dissolved the bottom of the panel, so it is gone
+          and the image gets a plate instead: a light screenshot needs a defined
+          edge against the page rather than a soft one. DESIGN.md section 5. */
+      }
+      <div class="rounded-lg border border-hairline bg-surface-2 p-1.5">
+        <Image
+          src="~/assets/images/openwebui-hero.png"
+          alt="Open WebUI chat running on the NRP"
+          class="w-full rounded-md"
+          layout="responsive"
+          widths={[400, 768, 1024]}
+          sizes="(max-width: 1023px) 100vw, 520px"
+          loading="eager"
+        />
+      </div>
+    </Fragment>
+  </Hero>
 
   <Steps
+    surface={1}
     title="How to get access"
-    tagline="Three steps"
     items={[
       {
         title: 'Step 1: <span class="font-medium">Get an NRP account</span>',
-        description:
-          'Sign in once with your institutional or research identity to register a Nautilus account.',
+        description: 'Sign in once with your institutional or research identity to register a Nautilus account.',
         icon: 'tabler:user-plus',
       },
       {
         title: 'Step 2: <span class="font-medium">Request an LLM-enabled namespace</span>',
         description:
-          '<a class="text-primary underline" href="/contact">Reach out</a> and we will enable LLM access on your namespace so its members can mint API keys.',
+          '<a class="link" href="/contact">Reach out</a> and we will enable LLM access on your namespace so its members can mint API keys.',
         icon: 'tabler:folder-plus',
       },
       {
@@ -113,51 +132,75 @@ const featuredClients = [
     }}
   />
 
-  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+  {
+    /* These two grids used to carry gray-200/700/800/100/900/600/400 -- eight
+      raw palette values, and gray-800 (#1f2937) is a warm near-black that reads
+      visibly off against the site's cool #17242f. Now `.card` and text tokens.
+      DESIGN.md hard rule 1. */
+  }
+  <WidgetWrapper surface="page">
     <Headline
       title="Models we host"
       subtitle="Frontier open-weight models with strong reasoning, coding, and multimodal capabilities. Pick the one that fits your task."
     />
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {
         featuredModels.map((m) => (
-          <div class="flex flex-col gap-4 p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
+          <div class="card flex flex-col gap-4 p-6">
             <div class="flex items-center gap-4">
-              <div class="flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-md bg-gray-100 dark:bg-gray-200 p-2">
-                <Image src={m.src} alt={`${m.name} logo`} width={56} height={56} class="max-h-full w-auto object-contain" />
+              <div class="logo-plate h-14 w-14 shrink-0">
+                <Image
+                  src={m.src}
+                  alt=""
+                  width={56}
+                  height={56}
+                  widths={[56, 112]}
+                  sizes="56px"
+                  class="max-h-full w-auto object-contain"
+                />
               </div>
-              <h3 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">{m.name}</h3>
+              {/* Model names are the literal API identifiers users paste into a
+                  client config, so they get the mono face. DESIGN.md section 3. */}
+              <h3 class="font-mono text-base font-semibold text-heading">{m.name}</h3>
             </div>
-            <p class="text-sm text-gray-600 dark:text-gray-400">{m.description}</p>
+            <p class="text-sm text-muted">{m.description}</p>
           </div>
         ))
       }
     </div>
-    <div class="flex justify-center mt-8">
+    <div class="mt-8 flex justify-center">
       <Button variant="link" href="/documentation/userdocs/ai/llm-managed/models">
         See all models &amp; feature matrix &rarr;
       </Button>
     </div>
   </WidgetWrapper>
 
-  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+  <WidgetWrapper surface={1}>
     <Headline
-      title="Use the client you already love"
+      title="Use the client you already have"
       subtitle="Hosted chat interfaces, desktop apps, and coding CLIs all work with NRP-hosted LLMs through the OpenAI-compatible endpoint."
     />
-    <div class="flex flex-wrap justify-center items-center gap-8 sm:gap-12">
+    <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
       {
         featuredClients.map((c) => (
           <div class="flex flex-col items-center gap-2">
-            <div class="flex items-center justify-center h-16 w-16 rounded-md bg-gray-100 dark:bg-gray-200 p-2">
-              <Image src={c.src} alt={`${c.name} logo`} width={64} height={64} class="max-h-full w-auto object-contain" />
+            <div class="logo-plate h-16 w-16">
+              <Image
+                src={c.src}
+                alt=""
+                width={64}
+                height={64}
+                widths={[64, 128]}
+                sizes="64px"
+                class="max-h-full w-auto object-contain"
+              />
             </div>
-            <span class="text-xs text-gray-600 dark:text-gray-400 text-center">{c.name}</span>
+            <span class="text-center text-xs text-muted">{c.name}</span>
           </div>
         ))
       }
     </div>
-    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
+    <div class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
       <Button variant="link" href="/documentation/userdocs/ai/llm-managed/chat-interfaces">
         Chat interface guides &rarr;
       </Button>
@@ -168,6 +211,7 @@ const featuredClients = [
   </WidgetWrapper>
 
   <Features2
+    surface="page"
     title="How LLMs are being used on the NRP"
     subtitle="Researchers, educators, and NRP operators are using hosted LLMs to analyze documents, build software, diagnose workloads, and understand platform usage."
     items={[
@@ -212,17 +256,8 @@ const featuredClients = [
     ]}
   />
 
-  <style is:global>
-    img[alt="Open WebUI chat running on the NRP"] {
-      width: 100% !important;
-      height: auto !important;
-      margin-bottom: -8% !important;
-      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 80%);
-      mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 80%);
-    }
-  </style>
-
   <CallToAction
+    surface={1}
     title="Ready to get started?"
     subtitle="We will get you onto NRP-hosted LLMs and answer any questions about access, namespaces, and API keys."
     actions={[

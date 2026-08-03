@@ -6,11 +6,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 const metadata = {
   title: 'LLM API Keys',
 };
-
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="LLM API Keys">
+  <WidgetWrapper titleAs="h1" containerClass="py-2 md:py-4 lg:py-6" title="LLM API Keys">
     <LLMToken client:only="vue" />
   </WidgetWrapper>
 </Layout>

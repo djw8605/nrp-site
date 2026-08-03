@@ -1,15 +1,14 @@
-<section class="py-8 sm:py-16 lg:py-20 mx-auto">
-  <h1 class="font-bold font-heading text-3xl md:text-4xl leading-tighter tracking-tighter px-4 text-center mb-2">Namespaces tree</h1>
-  <div id="graph-plot" class="flex justify-between flex-col sm:flex-row max-w-6xl mx-auto mt-0 mb-2 px-4 sm:px-6"></div>
-</section>
+<!-- The page (src/pages/viz/namespaces.astro) owns the <h1>; this component
+     used to emit its own, giving the page two. -->
+<div id="graph-plot" class="flex flex-col justify-between sm:flex-row"></div>
 
 <script>
   import * as Plot from '@observablehq/plot';
-  import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
+  import { RequestManager, HTTPTransport, Client } from '@open-rpc/client-js';
   const baseUrl = import.meta.env.PUBLIC_SVC_URL;
-  const transport = new HTTPTransport(baseUrl+"/rpc");
+  const transport = new HTTPTransport(baseUrl + '/rpc');
   const client = new Client(new RequestManager([transport]));
-  const namespaces = await client.request({method: "guest.ListNsTree"});
+  const namespaces = await client.request({ method: 'guest.ListNsTree' });
   const calculatedHeight = namespaces.Namespaces.length * 15;
 
   const plot = Plot.plot({
@@ -18,32 +17,31 @@
     margin: 10,
     marginLeft: 80,
     marginRight: 360,
-    style: "font-size: 1em",
+    style: 'font-size: 1em',
     axis: null,
     marks: [
       Plot.tree(namespaces.Namespaces, {
-        path: "Name", 
-        delimiter: "/",
-        treeSort: "node:name",
-        title: "",
-        symbol: node => {
+        path: 'Name',
+        delimiter: '/',
+        treeSort: 'node:name',
+        title: '',
+        symbol: (node) => {
           if (node.IsK8sNamespace && node.IsLiteLLMOrg) {
-            return "hexagon";
+            return 'hexagon';
           } else if (node.IsK8sNamespace) {
-            return "square";
+            return 'square';
           } else if (node.IsLiteLLMOrg) {
-            return "triangle-up";
+            return 'triangle-up';
           } else {
-            return "circle";
+            return 'circle';
           }
         },
       }),
     ],
   });
 
-  const div = document.querySelector("#graph-plot");
+  const div = document.querySelector('#graph-plot');
   div.append(plot);
-
 </script>
 
 <style is:global>

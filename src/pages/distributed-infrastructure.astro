@@ -5,34 +5,64 @@ import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
 
 const metadata = {
-  title: 'NRP - Distributed Services Platform',
+  title: 'Distributed Infrastructure',
 };
 ---
 
 <Layout metadata={metadata} id="distributed-infrastructure">
-  <Hero actions={[{ text: 'Learn how it works', href: '#features', variant: 'primary' }]}>
-    <Fragment slot="title"> Distributed Services Platform </Fragment>
+  {
+    /* "Learn how it works" used to point at #features -- an anchor jump one
+      screen down, which is not an action. Both CTAs now go somewhere. */
+  }
+  <Hero
+    align="left"
+    split={true}
+    actions={[
+      {
+        text: 'Contribute hardware',
+        href: '/documentation/admindocs/participating/new-contributor-guide/',
+        variant: 'primary',
+      },
+      { text: 'Network requirements', href: '/documentation/admindocs/participating/network', variant: 'secondary' },
+    ]}
+  >
+    <Fragment slot="title">Distributed Infrastructure</Fragment>
 
     <Fragment slot="subtitle">
-      NRP provides a global platform for institutions to deploy distributed services, including compute, storage, and networking, with resilience and low-latency access for research and education.
+      Over 400 nodes at more than 70 sites on three continents, running one Kubernetes API. Institutions contribute
+      hardware and keep priority on it; everyone else gets opportunistic access to the rest.
     </Fragment>
 
     <Fragment slot="image">
-      <iframe
-        src="https://dash.nrp-nautilus.io/map"
-        title="NRP Sites Map"
-        width="100%"
-        height="520"
-        style="border:0;"
-        loading="lazy"
-        allowfullscreen></iframe>
+      {
+        /* Cross-origin iframe: cannot be themed and will not follow dark mode.
+          Constrained to an aspect box so it stops shifting layout, and given
+          the same hairline + rounded-lg treatment as every other media panel.
+          Replacing it with a self-hosted D3 map (src/components/plots/) would
+          make it themeable -- see the same note in src/pages/index.astro. */
+      }
+      {
+        /* 4:3 rather than the homepage's 2:1 -- in the hero's split column this
+          box is ~520px wide, and 2:1 would leave a 260px-tall letterbox. */
+      }
+      <div
+        class="relative w-full overflow-hidden rounded-lg border border-hairline bg-surface-2 aspect-[16/10] lg:aspect-[4/3]"
+      >
+        <iframe
+          src="https://dash.nrp-nautilus.io/map"
+          title="Map of NRP sites"
+          loading="lazy"
+          class="absolute inset-0 h-full w-full border-0"
+          allowfullscreen></iframe>
+      </div>
     </Fragment>
   </Hero>
 
   <Features
     id="features"
-    tagline="How it helps"
-    title="Distributed infrastructure benefits"
+    surface={1}
+    title="What distribution buys you"
+    columns={3}
     items={[
       {
         title: 'Standardized environments',
@@ -70,58 +100,55 @@ const metadata = {
           'Encrypted site-to-site links, network segmentation, and tenant isolation protect traffic and reduce the risk of lateral movement.',
         icon: 'tabler:shield-lock',
       },
-      
     ]}
   />
 
+  {
+    /* This section also carried id="features" -- two elements with the same id
+      on one page, which made the #features anchor ambiguous. */
+  }
   <Content
-    id="features"
-    title="How the Open Science Data Federation uses NRP's distributed infrastructure"
-    subtitle="OSDF leverages NRP's global resources to host services without the worry of system administration."
+    surface="page"
+    title="How the Open Science Data Federation builds on the NRP"
+    subtitle="OSDF hosts its national data-distribution network on NRP sites, without running the systems underneath it."
     items={[
       {
-        title: 'Distributed Caches',
+        title: 'Distributed caches',
         description:
-          'The OSDF caches are distributed across multiple NRP sites to provide low-latency access to data for researchers nationwide.',
-        icon: 'tabler:wand',
+          'OSDF caches sit at multiple NRP sites, so data is served from near the researcher rather than from one origin.',
+        icon: 'tabler:database',
       },
       {
-        title: 'Local Origins',
+        title: 'Local origins',
         description:
-          'Origins are hosted on hardware near the data source, owned by the data provider, while leveraging the NRP for service hosting.',
+          'Origins run on hardware near the data source, owned by the data provider, while the NRP handles service hosting.',
         icon: 'tabler:map-pin',
       },
     ]}
     callToAction={{
-      text: 'Learn more about OSDF',
+      text: 'Read about the OSDF',
       href: 'https://osg-htc.org/services/osdf',
-      variant: 'primary',
+      icon: 'tabler:chevron-right',
     }}
   >
     <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Building on the NRP
-      </h3>
-      The <a href="https://osg-htc.org/services/osdf">Open Science Data Federation (OSDF)</a>
-      connects disparate dataset repositories into a single, nation-wide data
-      distribution network. The OSDF leverages the NRP's distributed infrastructure to
-      host its services without the worry of system administration. By utilizing the NRP's
-      global network of compute and storage resources, the OSDF can ensure high availability,
-      fault tolerance, and low-latency access to data for researchers across the country.
-    </Fragment>
-    <Fragment slot="image">
-      <iframe
-        src="https://map.osg-htc.org/map/iframe?view=OpenScienceDataFederation#20.737115,-10.140436|1"
-        title="OSDF Map"
-        width="100%"
-        height="500"
-        style="margin-top:1em; border:0;"
-        loading="lazy"
-        allowfullscreen></iframe>
+      The <a class="link" href="https://osg-htc.org/services/osdf">Open Science Data Federation</a> connects disparate dataset
+      repositories into a single nationwide distribution network. It runs its caches and origins on NRP infrastructure, which
+      means the OSDF team ships data services rather than administering servers — and gets availability and low-latency access
+      from the NRP's geographic spread for free.
     </Fragment>
 
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    <Fragment slot="image">
+      <div
+        class="relative w-full overflow-hidden rounded-lg border border-hairline bg-surface-2 aspect-[4/3] md:aspect-[5/4]"
+      >
+        <iframe
+          src="https://map.osg-htc.org/map/iframe?view=OpenScienceDataFederation#20.737115,-10.140436|1"
+          title="Map of Open Science Data Federation caches and origins"
+          loading="lazy"
+          class="absolute inset-0 h-full w-full border-0"
+          allowfullscreen></iframe>
+      </div>
     </Fragment>
   </Content>
 </Layout>

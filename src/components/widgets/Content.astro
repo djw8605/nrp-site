@@ -10,6 +10,7 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline,
+  titleAs,
   content = await Astro.slots.render('content'),
   callToAction,
   items = [],
@@ -22,33 +23,50 @@ const {
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  width,
+  rhythm,
+  surface,
 } = Astro.props;
 ---
 
+{
+  /* Width comes from WidgetWrapper -- the hardcoded max-w-7xl that used to be
+    here (plus a *second* max-w-7xl on the inner div below) is why this section
+    rendered 128px wider than the ones above and below it. DESIGN.md section 4. */
+}
 <WidgetWrapper
   id={id}
   isDark={isDark}
-  containerClass={`max-w-7xl mx-auto ${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : ''} ${classes?.container ?? ''}`}
+  containerClass={`${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : ''} ${classes?.container ?? ''}`}
   bg={bg}
+  width={width}
+  rhythm={rhythm}
+  surface={surface}
 >
   <Headline
+    titleAs={titleAs}
     title={title}
     subtitle={subtitle}
     tagline={tagline}
     classes={{
-      container: 'max-w-xl sm:mx-auto lg:max-w-2xl',
-      title: 'text-4xl md:text-5xl font-bold tracking-tighter mb-4 font-heading',
-      subtitle: 'max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400',
+      container: 'max-w-2xl',
+      title: 'text-h2',
+      // max-w-2xl, not 3xl: this class overrides Headline's own measure cap via
+      // twMerge, so leaving it at 3xl reintroduced the 85ch line here only.
+      subtitle: 'max-w-2xl text-lead text-muted',
     }}
   />
-  <div class="mx-auto max-w-7xl p-4 md:px-8">
+  <div>
     <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
       <div class="md:basis-1/2 self-center">
-        {content && <div class="mb-12 text-lg dark:text-slate-400" set:html={content} />}
+        {content && <div class="mb-8 text-lead text-muted" set:html={content} />}
 
         {
+          /* Was `mt-[-40px] mb-8`: an AstroWind hack that yanked the CTA up
+             through the prose block's own 48px margin. With the margins set
+             honestly there is nothing to compensate for. */
           callToAction && (
-            <div class="mt-[-40px] mb-8 text-primary">
+            <div class="mb-8">
               <Button variant="link" {...callToAction} />
             </div>
           )
@@ -61,14 +79,21 @@ const {
           classes={{
             container: `gap-y-4 md:gap-y-8`,
             panel: 'max-w-none',
-            title: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
-            description: 'text-muted dark:text-slate-400 ml-2 rtl:ml-0 rtl:mr-2',
-            icon: 'flex h-7 w-7 items-center justify-center rounded-full bg-green-600 dark:bg-green-700 text-gray-50 p-1',
-            action: 'text-lg font-medium leading-6 dark:text-white ml-2 rtl:ml-0 rtl:mr-2',
+            title: 'text-h4 font-medium text-heading ml-2 rtl:ml-0 rtl:mr-2',
+            description: 'text-muted ml-2 rtl:ml-0 rtl:mr-2',
+            icon: 'flex h-7 w-7 items-center justify-center rounded-md bg-teal-700 p-1 text-white dark:bg-teal-400 dark:text-teal-950',
+            action: 'text-h4 font-medium text-heading ml-2 rtl:ml-0 rtl:mr-2',
           }}
         />
       </div>
-      <div aria-hidden="true" class="mt-10 md:mt-0 md:basis-1/2">
+      {
+        /* No aria-hidden here. It used to be unconditional, and this slot can
+          hold focusable content (the OSDF map iframe on
+          /distributed-infrastructure) -- aria-hidden around a focusable element
+          is an axe `aria-hidden-focus` violation. Decorative images carry
+          alt="" instead. */
+      }
+      <div class="mt-10 md:mt-0 md:basis-1/2">
         {
           image && (
             <div class="relative m-auto max-w-4xl">
@@ -76,7 +101,7 @@ const {
                 <Fragment set:html={image} />
               ) : (
                 <Image
-                  class="mx-auto w-full rounded-lg bg-gray-500 shadow-lg"
+                  class="mx-auto w-full rounded-lg border border-hairline bg-surface-2"
                   width={500}
                   height={500}
                   widths={[400, 768]}

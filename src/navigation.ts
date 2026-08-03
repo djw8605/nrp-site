@@ -10,7 +10,7 @@ export const headerData = {
           href: getPermalink('/documentation/userdocs/tutorial/introduction'),
         },
         {
-          text: 'Educational/Classroom Use',
+          text: 'Teaching with the NRP',
           href: getPermalink('/education'),
         },
         {
@@ -30,6 +30,13 @@ export const headerData = {
     {
       text: 'Community',
       links: [
+        // "People" became "About": the page now carries what the NRP is, the
+        // NRP/Nautilus distinction, leadership, the team, and NSF funding, not
+        // just a roster. /people 301s to /about (static/_redirects).
+        {
+          text: 'About the NRP',
+          href: getPermalink('/about'),
+        },
         {
           text: 'Contact',
           href: getPermalink('/contact'),
@@ -38,46 +45,54 @@ export const headerData = {
           text: 'Partners',
           href: getPermalink('/partners'),
         },
-        {
-          text: 'People',
-          href: getPermalink('/people'),
-        },
       ],
     },
     {
-      text: 'InfoGraphics',
+      // Renamed from "InfoGraphics" — an invented word that was carrying eight
+      // links. External destinations are flagged with `external: true` so the
+      // Header can render an icon instead of a "(external)" text suffix.
+      text: 'Dashboards',
       links: [
         {
-          text: 'Cluster InfoGraphics',
-          href: "/viz",
+          text: 'Cluster infographics',
+          href: '/viz',
         },
         {
-          text: 'Cluster Usage',
+          text: 'Cluster usage',
           href: 'https://grafana.nrp-nautilus.io/d/nrp-user-explorer/nrp-accounting',
+          external: true,
         },
         {
-          text: 'LLM Status',
+          text: 'Available resources',
+          href: getPermalink('/viz/resources'),
+        },
+        {
+          text: 'LLM status',
           href: getPermalink('/llm-status'),
         },
         {
-          text: 'Services Status',
+          text: 'Services status',
           href: getPermalink('/services-status'),
         },
         {
-          text: 'Observable notebooks (external)',
-          href: "https://observablehq.com/@nrp-nautilus?type=collections",
+          text: 'Cluster dashboard',
+          href: 'https://dash.nrp-nautilus.io',
+          external: true,
         },
         {
-          text: 'Cluster Dashboard (external)',
-          href: "https://dash.nrp-nautilus.io",
+          text: 'Grafana dashboards',
+          href: 'https://grafana.nrp-nautilus.io/dashboards',
+          external: true,
         },
         {
-          text: 'Grafana Dashboards (external)',
-          href: "https://grafana.nrp-nautilus.io/dashboards",
+          text: 'perfSONAR network',
+          href: 'https://perfsonar.nrp-nautilus.io/maddash-webui/index.cgi',
+          external: true,
         },
         {
-          text: 'PerfSonar network (external)',
-          href: "https://perfsonar.nrp-nautilus.io/maddash-webui/index.cgi",
+          text: 'Observable notebooks',
+          href: 'https://observablehq.com/@nrp-nautilus?type=collections',
+          external: true,
         },
       ],
     },
@@ -107,42 +122,42 @@ export const headerData = {
       ],
     },
     {
-      text: 'User',
+      // Was a flat list of eight that mixed personal account settings with
+      // cluster operations. Split into two labelled groups.
+      text: 'My account',
       links: [
+        { text: 'Account', heading: true },
         {
           text: 'User info',
           href: getPermalink('/userinfo'),
         },
         {
-          text: 'LLM API Keys',
+          text: 'LLM API keys',
           href: getPermalink('/llmtoken'),
         },
         {
-          text: 'S3 Tokens',
+          text: 'S3 tokens',
           href: getPermalink('/s3token'),
         },
         {
           text: 'Milvus password',
           href: getPermalink('/milvus'),
         },
-        {
-          text: 'Reservations',
-          href: getPermalink('/reservations'),
-        },
+        { text: 'Cluster operations', heading: true },
         {
           text: 'Namespaces',
           href: getPermalink('/namespaces'),
         },
         {
-          text: 'Pod Diagnosis',
-          href: getPermalink('/diagnose'),
+          text: 'Reservations',
+          href: getPermalink('/reservations'),
         },
         {
-          text: 'Resources',
-          href: getPermalink('/viz/resources'),
+          text: 'Pod diagnosis',
+          href: getPermalink('/diagnose'),
         },
-      ]
-  },
+      ],
+    },
     {
       text: 'LLMs',
       href: getPermalink('/llms'),
@@ -152,6 +167,9 @@ export const headerData = {
       href: getPermalink('/documentation'),
     },
   ],
+  // No header CTA: the hero already carries "Get started" above the fold, and a
+  // second one in the header only competed with Log In at a mismatched size.
+  actions: [],
 };
 
 export const footerData = {
@@ -174,30 +192,16 @@ export const footerData = {
       ],
     },
   ],
-  secondaryLinks: [
-    { text: 'NRP Acceptable Use Policy', href: getPermalink('/NRP-AUP.pdf') },
-  ],
+  secondaryLinks: [{ text: 'NRP Acceptable Use Policy', href: getPermalink('/NRP-AUP.pdf') }],
   socialLinks: [
     { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
     { ariaLabel: 'GitLab', icon: 'tabler:brand-gitlab', href: 'https://gitlab.nrp-nautilus.io/prp' },
   ],
-  footNote: `
-  <div class="flex items-center justify-between gap-5">
-  <!-- NSF Logo -->
-  <div class="flex items-center">
-    <img
-      src="/nsf-logo.png" 
-      alt="NSF Logo"
-      class="h-20 w-20 object-contain"
-    />
-  </div>
-
-  <!-- Footer Text -->
-  <div class="text-sm text-gray-600 dark:text-gray-400">
-    This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
-  </div>
-</div>
-
-    
-  `,
+  // Rendered as real markup by Footer.astro so the logo can go through Astro's
+  // <Image>. It used to be a raw <img src="/nsf-logo.png"> in this string,
+  // which shipped 184 KB at 480x481 to be displayed at 80x80.
+  funding: {
+    logo: { src: '~/assets/images/nsf-logo.png', alt: 'U.S. National Science Foundation' },
+    text: 'This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.',
+  },
 };

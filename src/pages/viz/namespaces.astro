@@ -1,6 +1,7 @@
 ---
 import NamespacesTree from '~/components/plots/NamespacesTree.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
   title: 'Namespaces Tree',
@@ -8,5 +9,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <NamespacesTree/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Namespaces tree"
+    description="Every namespace on the cluster, grouped by owner."
+    rhythm="tight"
+    width="wide"
+  >
+    <NamespacesTree />
+  </WidgetWrapper>
 </Layout>

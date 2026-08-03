@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import StorageAll from '~/components/plots/StorageAll.astro';
 
 const metadata = {
@@ -8,5 +9,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <StorageAll/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Storage by site"
+    description="Capacity and utilisation for every storage backend."
+    rhythm="tight"
+    width="wide"
+  >
+    <StorageAll />
+  </WidgetWrapper>
 </Layout>

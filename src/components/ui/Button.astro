@@ -17,7 +17,9 @@ const variants = {
   primary: 'btn-primary',
   secondary: 'btn-secondary',
   tertiary: 'btn btn-tertiary',
-  link: 'cursor-pointer hover:text-primary',
+  // `link` is an inline affordance, not a button. py-1 gets it to a 24px+ tap
+  // target (WCAG 2.5.8) without making it look like a control.
+  link: 'link-quiet inline-flex items-center py-1 cursor-pointer',
 };
 ---
 

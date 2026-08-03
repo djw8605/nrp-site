@@ -6,15 +6,11 @@ const metadata = {
   title: 'Partners',
 };
 
-const images = await Astro.glob("/src/assets/images/partners/*").then(files => {
-  return files.map(file => ({src: file.default}));
+const images = await Astro.glob('/src/assets/images/partners/*').then((files) => {
+  return files.map((file) => ({ src: file.default }));
 });
 ---
 
 <Layout metadata={metadata}>
-  <Brands
-  title="Partners"
-  subtitle="Partners that make this project possible."
-  images={images}
-/>
+  <Brands titleAs="h1" title="Partners" subtitle="Partners that make this project possible." images={images} />
 </Layout>

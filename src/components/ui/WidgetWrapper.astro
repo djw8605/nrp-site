@@ -1,7 +1,7 @@
 ---
 import type { HTMLTag } from 'astro/types';
 import type { Widget } from '~/types';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from '~/utils/cn';
 import Background from './Background.astro';
 import Headline from './Headline.astro';
 
@@ -10,15 +10,59 @@ export interface Props extends Widget {
   title?: string;
   description?: string;
   tagline?: string;
+  titleAs?: 'h1' | 'h2' | 'h3';
   ['as']?: HTMLTag;
 }
 
-const { id, isDark = false, containerClass = '', title, description, tagline, bg, as = 'section' } = Astro.props;
+const {
+  id,
+  isDark = false,
+  containerClass = '',
+  title,
+  description,
+  tagline,
+  titleAs,
+  bg,
+  as = 'section',
+  width = 'content',
+  rhythm = 'normal',
+  surface,
+} = Astro.props;
 
 const WrapperTag = as;
+
+// This component is the ONLY place container width and vertical rhythm are
+// decided. A section that sets its own max-w-* or py-* is a bug -- that is how
+// the homepage came to ladder through 7xl -> 6xl -> 4xl -> 5xl -> 7xl with
+// content edges visibly jumping on scroll. See DESIGN.md section 4.
+const widths = {
+  content: 'max-w-6xl', // all prose and marketing sections
+  wide: 'max-w-7xl', // header, footer, full-bleed grids only
+  narrow: 'max-w-3xl', // long-form reading measure
+};
+
+const rhythms = {
+  normal: 'section',
+  tight: 'section-tight',
+  none: '',
+};
+
+// Surface step for the section background. Adjacent full-width sections must
+// not share a step; in light mode prefer a two-step jump.
+const surfaces = {
+  page: 'bg-page',
+  sunken: 'bg-sunken',
+  1: 'bg-surface-1',
+  2: 'bg-surface-2',
+  3: 'bg-surface-3',
+  4: 'bg-surface-4',
+};
 ---
 
-<WrapperTag class="relative not-prose scroll-mt-[72px]" {...id ? { id } : {}}>
+<WrapperTag
+  class:list={['relative not-prose scroll-mt-[72px]', surface ? surfaces[surface] : '']}
+  {...id ? { id } : {}}
+>
   <div class="absolute inset-0 pointer-events-none -z-[1]" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : <Background isDark={isDark} />}
@@ -27,15 +71,19 @@ const WrapperTag = as;
   <div
     class:list={[
       twMerge(
-        'relative mx-auto max-w-7xl px-4 md:px-6 py-12 md:py-16 lg:py-20 text-default intersect-once intersect-quarter intercept-no-queue motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade',
+        'relative mx-auto px-4 md:px-6 text-body     ',
+        widths[width] ?? widths.content,
+        rhythms[rhythm] ?? rhythms.normal,
         containerClass
       ),
       { dark: isDark },
     ]}
   >
-    {(title || description || tagline) && (
-      <Headline title={title} subtitle={description} tagline={tagline} classes={{ container: 'max-w-4xl' }} />
-    )}
+    {
+      (title || description || tagline) && (
+        <Headline title={title} subtitle={description} tagline={tagline} titleAs={titleAs} />
+      )
+    }
     <slot />
   </div>
 </WrapperTag>

@@ -16,38 +16,48 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
+  titleAs,
   actions = await Astro.slots.render('actions'),
 
   id,
   isDark = false,
   classes = {},
   bg = await Astro.slots.render('bg'),
+  width,
+  rhythm,
+  surface,
 } = Astro.props;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
-  <div
-    class="max-w-3xl mx-auto text-center p-6 rounded-md shadow-xl dark:shadow-none dark:border dark:border-slate-600"
-  >
+<WidgetWrapper
+  id={id}
+  isDark={isDark}
+  containerClass={classes?.container ?? ''}
+  bg={bg}
+  width={width}
+  rhythm={rhythm}
+  surface={surface}
+>
+  {/* No spectrum rule here. It used to sit on this card's top edge, which made
+      two per page once the hero also carried one -- and the hero's is the
+      signature. One per page, in the hero. DESIGN.md section 6. */}
+  <div class="card mx-auto max-w-3xl p-8 text-center md:p-12">
     <Headline
+      align="center"
+      titleAs={titleAs}
       title={title}
       subtitle={subtitle}
       tagline={tagline}
       classes={{
         container: 'mb-0 md:mb-0',
-        title: 'text-4xl md:text-4xl font-bold tracking-tighter mb-4 font-heading',
-        subtitle: 'text-xl text-muted dark:text-slate-400',
+        subtitle: 'text-lead text-muted',
       }}
     />
     {
       actions && (
-        <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 mt-6">
+        <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           {Array.isArray(actions) ? (
-            actions.map((action) => (
-              <div class="flex w-full sm:w-auto">
-                <Button {...(action || {})} class="w-full sm:mb-0" />
-              </div>
-            ))
+            actions.map((action) => <Button {...(action || {})} class="w-full sm:w-auto" />)
           ) : (
             <Fragment set:html={actions} />
           )}

@@ -1,13 +1,21 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import LogPlot from '~/components/vue/LogPlot.vue';
 
 const metadata = {
   title: 'Usage Log Plot',
 };
-
 ---
 
 <Layout metadata={metadata}>
-  <LogPlot client:only="vue"/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Usage log"
+    description="Historical record of jobs run on the cluster."
+    rhythm="tight"
+    width="wide"
+  >
+    <LogPlot client:only="vue" />
+  </WidgetWrapper>
 </Layout>

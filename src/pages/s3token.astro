@@ -6,11 +6,10 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 const metadata = {
   title: 'S3 Keys',
 };
-
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper containerClass="py-2 md:py-4 lg:py-6" title="S3 tokens">
+  <WidgetWrapper titleAs="h1" containerClass="py-2 md:py-4 lg:py-6" title="S3 tokens">
     <S3Token client:only="vue" />
   </WidgetWrapper>
 </Layout>

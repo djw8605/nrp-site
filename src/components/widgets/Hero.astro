@@ -1,123 +1,226 @@
 ---
-import { text } from '@observablehq/plot';
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
+import { twMerge } from '~/utils/cn';
 
 import type { Hero as Props } from '~/types';
 
 const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
-  tagline,
 
   content = await Astro.slots.render('content'),
   actions = await Astro.slots.render('actions'),
   image = await Astro.slots.render('image'),
   alert = await Astro.slots.render('alert'),
+  stats,
 
   id,
   bg = await Astro.slots.render('bg'),
   bgImage = await Astro.slots.render('bgImage'),
   whiteText,
+  align = 'center',
+  split = false,
 } = Astro.props;
-// sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
-// width={1024}
-//         widths={[400, 768, 1024, 2040]}
+
+const isCentered = align === 'center';
+
+// `split` puts the media beside the copy instead of below it. A left-aligned
+// hero with stacked media left ~384px of dead space to the right of a max-w-3xl
+// text block, which read as unbalanced; the media now fills it and the hero
+// loses ~500px of height. Only meaningful with align="left" and an image.
+const isSplit = split && !isCentered && !!image;
+
+// Single-column left-aligned copy tapers on purpose: the headline runs wider
+// than its own lead paragraph, so the block reads as a deliberate shape rather
+// than a narrow column floating in a void. In split mode the grid track already
+// constrains both, so they share the column.
+const titleMeasure = isSplit ? '' : isCentered ? '' : 'max-w-4xl';
+const copyMeasure = isSplit ? '' : 'max-w-2xl';
+
+// text-balance evens the line lengths, which is what a centered headline wants
+// and what a narrow split column wants. On a wide left-aligned headline it works
+// against the wider measure: it splits "GPUs and notebooks for your classroom"
+// into two even 570px lines and leaves the right third of an 896px measure
+// empty, which is the imbalance the wider measure was meant to fix. Ragged-right
+// filling to the measure is the correct setting there.
+const titleBalance = isCentered || isSplit ? 'text-balance' : '';
+
+// Light text over the darkened background image. #ffffff on the composited
+// hero measures ~15.5:1, so these are safe. See DESIGN.md section 2.
+const headingColor = whiteText ? 'text-white' : 'text-heading';
+const bodyColor = whiteText ? 'text-white/85' : 'text-muted';
 ---
 
-<section class="relative not-prose md:-mt-[96px] overflow-hidden" {...id ? { id } : {}}>
+{
+  /* `whiteText` makes this a permanently dark region, so it gets BOTH a solid
+    dark base and the `dark` class:
+
+    - solid base: without it the light-mode page background shows through when
+      the image is slow or fails, leaving white text on white.
+    - `dark` class: pins every token (borders, surfaces, .btn text) to its dark
+      value. Otherwise `.btn-secondary` inherits light-mode `text-body`
+      (#1c2b38) and renders dark-on-dark over the hero -- a real light-mode bug,
+      not a checker artifact. */
+}
+<section
+  class:list={['relative not-prose overflow-hidden md:-mt-[96px]', whiteText && 'dark bg-[#070c12]']}
+  {...id ? { id } : {}}
+>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
-      {bgImage ? (
-        <Image
-        class="brightness-50 object-cover object-center w-full h-full"
-        loading="eager"
-        {...bgImage}
-      />
-      ) : null}
+      {
+        bgImage ? (
+          /* layout="cover" is load-bearing. The default "constrained" layout in
+             src/utils/images-optimization.ts forces [width, width*2, ...] into
+             the srcset, so a 1920 base still emitted a 3840w upscale. "cover"
+             uses the given widths verbatim. Ceiling: 1920w / ~346 KB, and it
+             sits behind a 55% scrim so 1x on Retina is imperceptible.
+             NOT "fullWidth", which additionally writes the source's *intrinsic*
+             height into an inline style (height:1280px) -- inline beats the
+             `h-full` class, so the image overflowed this 641px box and the
+             visible crop was the top of the globe rather than the middle.
+             "cover" emits only max-width/max-height, leaving the classes to
+             size it. */
+          <Image
+            class="brightness-[.45] object-cover object-center w-full h-full"
+            loading="eager"
+            layout="cover"
+            widths={[640, 960, 1280, 1920]}
+            sizes="100vw"
+            {...bgImage}
+          />
+        ) : null
+      }
     </slot>
-    {whiteText && <div class="absolute inset-0 bg-slate-950/60"></div>}
+    {whiteText && <div class="absolute inset-0 bg-[#070c12]/55" />}
   </div>
-  <div class="pointer-events-none md:pt-[96px] pt-0"></div>
-    {
-      alert && (
-        <div class="relative  mx-auto w-full">
-          <div set:html={alert}></div>
 
-        </div>
-      )
+  <div class="pointer-events-none pt-0 md:pt-[96px]"></div>
+
+  {alert && <div class="relative mx-auto w-full" set:html={alert} />}
+
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
+    {
+      /* Kept tight on purpose: the hero used to be 861px on a 900px viewport,
+        consuming the entire fold. Target is <=640px desktop. */
     }
-  
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
-    
-    <div class="py-12 md:py-12">
-      <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto">
+    <div
+      class:list={[
+        'py-12 md:py-14',
+        /* Split: copy and media share a row from lg up. Below lg they stack, so
+           the media still follows the copy on phones. */
+        isSplit && 'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-center lg:gap-12',
+      ]}
+    >
+      {
+        /* No max-w on the left-aligned single column: the measures live on the
+          h1 (4xl) and the lead (2xl) so the block tapers. A max-w-3xl here
+          clipped both to 768px, which made `titleMeasure` dead code and left the
+          right third of the container empty with nothing explaining why. */
+      }
+      <div class={twMerge(isCentered && 'mx-auto max-w-3xl text-center')}>
         {
-          tagline && (
-            <p
-              class:list={["text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
-              set:html={tagline}
-            />
-          )
+          /* The page's one signature: a single spectrum rule above the h1, and
+             the only authored motion on the page (it draws itself in). It used
+             to sit under an eyebrow kicker here, and Headline repeated the same
+             pair on every section below -- eight on /about. The kicker is gone,
+             the rule survives once, and the brand gradient still lands in the
+             first viewport. DESIGN.md section 6.
+
+             9rem wide, not the 3.5rem it was as an eyebrow underline: the
+             gradient has four stops across blue -> cyan -> teal -> green, and at
+             72px they compress into a flat teal dash that no longer reads as the
+             logo's spectrum. */
+          <span
+            class={twMerge('spectrum-rule spectrum-rule--draw mb-6 max-w-[9rem]', isCentered && 'mx-auto')}
+            aria-hidden="true"
+          />
         }
         {
           title && (
-            <h1
-              class:list={["text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200 intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}]}
-              set:html={title}
-            />
+            <h1 class={twMerge('font-display text-h1 font-bold', titleBalance, titleMeasure, headingColor)} set:html={title} />
           )
         }
-        <div class="max-w-3xl mx-auto">
-          {
-            subtitle && (
-              <p
-                class:list={["text-xl mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:intersect:animate-fade", {'text-white': whiteText}, {'text-muted': !whiteText}]}
-                set:html={subtitle}
-              />
-            )
-          }
-          {
-            actions && (
-              <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
-                {Array.isArray(actions) ? (
-                  actions.map((action) => (
-                    <div class="flex w-full sm:w-auto">
-                      <Button {...(action || {})} class:list={["w-full sm:mb-0", {'text-white': whiteText}]} />
-                    </div>
-                  ))
-                ) : (
-                  <Fragment set:html={actions} />
-                )}
-              </div>
-            )
-          }
-        </div>
-        {content && <Fragment set:html={content} />}
-      </div>
-      <div
-        class="intersect-once intercept-no-queue intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-      >
         {
-          image && (
-            <div class="relative m-auto max-w-5xl">
-              {typeof image === 'string' ? (
-                <Fragment set:html={image} />
+          subtitle && (
+            <p class={twMerge('mt-4 text-lead', copyMeasure, bodyColor, isCentered && 'mx-auto')} set:html={subtitle} />
+          )
+        }
+        {
+          actions && (
+            <div class={twMerge('mt-7 flex flex-col gap-3 sm:flex-row', isCentered && 'sm:justify-center')}>
+              {Array.isArray(actions) ? (
+                actions.map((action) => <Button {...(action || {})} class="w-full sm:w-auto" />)
               ) : (
-                <Image
-                  class="mx-auto rounded-md w-full"
-                  widths={[400, 768, 1024, 2040]}
-                  sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
-                  loading="eager"
-                  width={1024}
-                  {...image}
-                />
+                <Fragment set:html={actions} />
               )}
             </div>
           )
         }
+        {content && <Fragment set:html={content} />}
+
+        {
+          stats && stats.length > 0 && (
+            /* Pulled into the fold deliberately: these figures are the
+               strongest credibility signal on the site and previously sat
+               83% of the way down the homepage. */
+            /* max-w-3xl explicitly: the stats grid used to inherit it from the
+               wrapper, and four figures spread across the full 1152px container
+               read as unrelated numbers rather than one strip. */
+            <dl
+              class:list={[
+                'mt-8 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-6 border-t pt-6 sm:grid-cols-4',
+                whiteText ? 'border-white/20' : 'border-hairline',
+                isCentered && 'mx-auto',
+              ]}
+            >
+              {stats.map(({ amount, title: statTitle }) => (
+                <div class={twMerge('flex flex-col', isCentered && 'items-center')}>
+                  <dd class={twMerge('order-1 font-display text-3xl font-bold tabular', headingColor)}>{amount}</dd>
+                  <dt class={twMerge('order-2 mt-1 text-eyebrow uppercase', bodyColor)}>{statTitle}</dt>
+                </div>
+              ))}
+            </dl>
+          )
+        }
       </div>
+
+      {
+        image && (
+          <div
+            class:list={[
+              '',
+              isSplit ? 'mt-10 lg:mt-0' : 'mt-14',
+            ]}
+          >
+            {/* layout="responsive" on the Image below. The default
+                "constrained" appends width*2 to the srcset, so the old 2040
+                entry became a 2048w candidate -- 246 KB of decorative classroom
+                photo on /education. "responsive" uses `widths` verbatim (box is
+                max-w-5xl, so 1536 covers 1.5x and caps at 152 KB) and emits
+                height:auto + aspect-ratio. NOT "fullWidth": that one also emits
+                the *intrinsic* height as an inline style -- height:2056px on a
+                4027px-wide source -- which is fine behind object-cover in a
+                fixed box but wrong for an in-flow image. */}
+            <div class:list={['relative m-auto', isSplit ? 'w-full' : 'max-w-5xl']}>
+              {typeof image === 'string' ? (
+                <Fragment set:html={image} />
+              ) : (
+                <Image
+                  class="mx-auto w-full rounded-lg"
+                  layout="responsive"
+                  widths={[400, 768, 1024, 1536]}
+                  sizes={isSplit ? '(max-width: 1023px) 100vw, 520px' : '(max-width: 1023px) 100vw, 1024px'}
+                  loading="eager"
+                  {...image}
+                />
+              )}
+            </div>
+          </div>
+        )
+      }
     </div>
   </div>
 </section>

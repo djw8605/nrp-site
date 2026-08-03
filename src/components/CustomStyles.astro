@@ -1,63 +1,118 @@
 ---
+// NRP design tokens. See DESIGN.md for the rationale, the measured contrast
+// matrix, and the rules that govern these values.
+//
+// Three faces, three jobs: Space Grotesk for display, Inter for body,
+// JetBrains Mono for code and identifiers. Do not cross them.
+import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/inter';
-
-// 'DM Sans'
-// Nunito
-// Dosis
-// Outfit
-// Roboto
-// Literata
-// 'IBM Plex Sans'
-// Karla
-// Poppins
-// 'Fira Sans'
-// 'Libre Franklin'
-// Inconsolata
-// Raleway
-// Oswald
-// 'Space Grotesk'
-// Urbanist
+import '@fontsource-variable/jetbrains-mono';
 ---
 
 <style is:inline>
   :root {
-    --aw-font-sans: 'Inter Variable';
-    --aw-font-serif: 'Inter Variable';
-    --aw-font-heading: 'Inter Variable';
+    /* ---- Typefaces ------------------------------------------------------ */
+    --nrp-font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+    --nrp-font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    --nrp-font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    --aw-color-primary: rgb(1 97 239);
-    --aw-color-secondary: rgb(1 84 207);
-    --aw-color-accent: rgb(109 40 217);
+    /* ---- Brand ramp ----------------------------------------------------- */
+    /* Sampled from NRP_Horizontal_Logo: #4e98c6 -> #56bfd9 -> #38bfb1 -> #19b68c.
+       Asymmetric by design: 300-500 are for dark backgrounds only,
+       700-950 for light backgrounds only. See DESIGN.md section 2. */
+    --nrp-teal-50: #eefafd;
+    --nrp-teal-100: #d3f2f8;
+    --nrp-teal-200: #a9e6f1;
+    --nrp-teal-300: #6fd3e5;
+    --nrp-teal-400: #56bfd9;
+    --nrp-teal-500: #2aa5c4;
+    --nrp-teal-600: #1785a4;
+    --nrp-teal-700: #136a85;
+    --nrp-teal-800: #14566c;
+    --nrp-teal-900: #15485a;
+    --nrp-teal-950: #082e3c;
 
-    --aw-color-text-heading: rgb(0 0 0);
-    --aw-color-text-default: rgb(16 16 16);
-    --aw-color-text-muted: rgb(16 16 16 / 66%);
-    --aw-color-bg-page: rgb(255 255 255);
+    /* The signature gradient, straight off the mark. Use only via .spectrum-rule. */
+    --nrp-gradient-spectrum: linear-gradient(90deg, #4e98c6, #56bfd9, #38bfb1, #19b68c);
 
-    --aw-color-bg-page-dark: rgb(3 6 32);
+    /* ---- Surfaces (light) ----------------------------------------------- */
+    /* Higher number = further from the page. Adjacent full-width sections
+       must not share a step. Light steps are subtle; prefer a two-step jump. */
+    --nrp-surface-sunken: #f1f4f8;
+    --nrp-surface-page: #ffffff;
+    --nrp-surface-1: #f7f9fb;
+    --nrp-surface-2: #eef2f6;
+    --nrp-surface-3: #e4eaf0;
+    --nrp-surface-4: #d7e0e8;
 
-    ::selection {
-      background-color: lavender;
-    }
+    /* ---- Text (light) --------------------------------------------------- */
+    --nrp-text-heading: #0b1620;
+    --nrp-text-body: #1c2b38;
+    --nrp-text-muted: #4f6072; /* 4.84:1 on surface-4, the worst case */
+
+    /* ---- Interactive & lines (light) ------------------------------------ */
+    --nrp-link: #136a85; /* teal-700, 6.13:1 on white */
+    --nrp-ring: #1785a4; /* teal-600, >=3:1 on every surface */
+    --nrp-border-hairline: #d7dfe7; /* decorative only - never a control's sole boundary */
+
+    /* ---- Legacy AstroWind aliases --------------------------------------- */
+    /* Kept so unmigrated widgets keep rendering. Do not author new code
+       against these; delete each as its last consumer migrates. */
+    --aw-font-sans: var(--nrp-font-sans);
+    --aw-font-serif: var(--nrp-font-sans);
+    --aw-font-heading: var(--nrp-font-display);
+
+    --aw-color-primary: var(--nrp-teal-700);
+    --aw-color-secondary: var(--nrp-teal-800);
+    /* teal-700, not teal-500: legacy `text-accent` usages sit on light
+       backgrounds, where teal-500 measures 2.89:1 and fails AA. */
+    --aw-color-accent: var(--nrp-teal-700);
+
+    --aw-color-text-heading: var(--nrp-text-heading);
+    --aw-color-text-default: var(--nrp-text-body);
+    --aw-color-text-muted: var(--nrp-text-muted);
+    --aw-color-text-page: var(--nrp-text-body);
+    --aw-color-bg-page: var(--nrp-surface-page);
+    --aw-color-bg-page-dark: #0a1118;
   }
 
   .dark {
-    --aw-font-sans: 'Inter Variable';
-    --aw-font-serif: 'Inter Variable';
-    --aw-font-heading: 'Inter Variable';
+    /* ---- Surfaces (dark) ------------------------------------------------ */
+    --nrp-surface-sunken: #070c12;
+    --nrp-surface-page: #0a1118;
+    --nrp-surface-1: #101a24;
+    --nrp-surface-2: #17242f;
+    --nrp-surface-3: #1f303d;
+    --nrp-surface-4: #283a49;
 
-    --aw-color-primary: rgb(1 97 239);
-    --aw-color-secondary: rgb(1 84 207);
-    --aw-color-accent: rgb(109 40 217);
+    /* ---- Text (dark) ---------------------------------------------------- */
+    --nrp-text-heading: #f2f6fa;
+    --nrp-text-body: #e2e8ee;
+    --nrp-text-muted: #9aa8b8; /* 4.84:1 on surface-4, the worst case */
 
-    --aw-color-text-heading: rgb(247, 248, 248);
-    --aw-color-text-default: rgb(229 236 246);
-    --aw-color-text-muted: rgb(229 236 246 / 66%);
-    --aw-color-bg-page: rgb(3 6 32);
+    /* ---- Interactive & lines (dark) ------------------------------------- */
+    --nrp-link: #6fd3e5; /* teal-300, 10.96:1 on the page */
+    --nrp-ring: #56bfd9; /* teal-400 */
+    --nrp-border-hairline: #1e2c39;
 
-    ::selection {
-      background-color: black;
-      color: snow;
-    }
+    /* Legacy aliases: the brand ramp flips direction for dark backgrounds. */
+    --aw-color-primary: var(--nrp-teal-400);
+    --aw-color-secondary: var(--nrp-teal-300);
+    --aw-color-accent: var(--nrp-teal-500);
+  }
+
+  ::selection {
+    background-color: var(--nrp-teal-200);
+    color: var(--nrp-teal-950);
+  }
+
+  .dark ::selection {
+    background-color: var(--nrp-teal-800);
+    color: #ffffff;
+  }
+
+  /* Stat figures and tabular data should not jitter as values change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 </style>

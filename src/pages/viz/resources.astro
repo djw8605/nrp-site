@@ -1,6 +1,7 @@
 ---
 import Resources from '~/components/vue/Resources.vue';
 import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 export const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 
@@ -10,5 +11,13 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Resources client:only="vue" baseUrl={baseUrl}/>
+  <WidgetWrapper
+    titleAs="h1"
+    title="Available resources"
+    description="Live inventory of nodes, GPUs, and CPUs you can schedule against."
+    rhythm="tight"
+    width="wide"
+  >
+    <Resources client:only="vue" baseUrl={baseUrl} />
+  </WidgetWrapper>
 </Layout>
