@@ -75,7 +75,7 @@ Based on the above information, **identify the adequate number and type of GPUs*
 If you are a namespace administrator reading this manual for your own namespace, use a relatively high `ingress.kubernetes.io/timeout-server` annotation on your **Ingress** resource if you experience any timeouts.
 :::
 
-Note that `--enable-request-id-headers --otlp-traces-endpoint <endpoint>`, `OTEL_EXPORTER_OTLP_TRACES_INSECURE`, and `OTEL_SERVICE_NAME` are optional and used typically only for the NRP-hosted models. For SGLang, use `--log-requests --log-requests-level 1 --enable-metrics --enable-trace --otlp-traces-endpoint <endpoint>` with `OTEL_EXPORTER_OTLP_TRACES_INSECURE` and `OTEL_SERVICE_NAME`.
+Note that `--enable-request-id-headers --otlp-traces-endpoint <endpoint>`, `OTEL_EXPORTER_OTLP_TRACES_INSECURE` to `true`, and `OTEL_SERVICE_NAME` to the service name are optional and used typically only for the NRP-hosted models. For SGLang, use `--log-requests --log-requests-level 1 --enable-metrics --enable-trace --otlp-traces-endpoint <endpoint>` with `OTEL_EXPORTER_OTLP_TRACES_INSECURE` and `OTEL_SERVICE_NAME`. Moreover, make sure to add `--api-key "${VLLM_API_KEY}"` for SGLang.
 
 The below are the set of example resources required to deploy an LLM model on the `nrp-llm` namespace (similar in the `sdsc-llm` namespace, but check the `StatefulSet` or `Deployment` examples within the namespace for differences):
 
