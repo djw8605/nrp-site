@@ -5,17 +5,18 @@ stages:
 build:
   stage: build
   image: node:lts
+  # No deny-list. `rules` stops at the first match, so a deny-list ahead of the
+  # allow-list suppressed the deploy for any commit that merely touched
+  # .gitignore or .gitlab-ci.yml -- including the merge commit that rebuilt the
+  # whole site, because a merge is diffed against its first parent. The
+  # allow-list alone is enough: anything it does not match falls through to
+  # `when: manual` and simply does not deploy on its own.
   rules:
-    - changes:
-        - .gitignore
-        - .gitlab-ci.yml
-        - LICENSE.md
-        - README.md
-      when: never
     - changes:
         - src/**/*
         - static/**/*
         - astro.config.ts
+        - .gitlab-ci.yml
         - package.json
         - package-lock.json
       when: on_success
