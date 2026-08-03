@@ -94,7 +94,7 @@ spec:
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
-  podManagementPolicy: OrderedReady
+  podManagementPolicy: Parallel
   replicas: 1
   selector:
     matchLabels:
@@ -291,7 +291,7 @@ spec:
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
-  podManagementPolicy: OrderedReady
+  podManagementPolicy: Parallel
   replicas: 1
   selector:
     matchLabels:
