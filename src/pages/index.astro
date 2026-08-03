@@ -44,7 +44,7 @@ const homepageAnnouncements = [
   {
     id: 'lightscope',
     category: 'Program',
-    title: 'LightScope — Network Telescopes',
+    title: 'LightScope: Network Telescopes',
     tagline: 'Hardware contributors: opt-in to forward closed ports to distributed honeypots.',
     ctaLabel: 'Learn More',
     ctaUrl: '/lightscope',
@@ -66,11 +66,14 @@ const homepageAnnouncements = [
       { text: 'Explore hosted LLMs', href: '/llms', variant: 'secondary' },
     ]}
   >
-    <Fragment slot="title">Frontier AI models and GPUs, ready to use</Fragment>
+    <!-- Hero copy follows /about's framing, which reads better than the old
+         feature-list pitch: say what the NRP *is* first, then who it is for. -->
+    <Fragment slot="title">Shared research computing, run by the people who use it</Fragment>
 
     <Fragment slot="subtitle">
-      Call hosted open-weight LLMs from your own code, train on modern GPUs, and mount petabyte-scale storage across 70+
-      sites. Free to U.S. nonprofit research and education institutions, supported by the National Science Foundation.
+      The National Research Platform pools GPUs, petabyte-scale storage, and hosted open-weight AI models across more
+      than 70 institutions. It is free to U.S. nonprofit research and education, funded by the National Science
+      Foundation and governed by the community that contributes to it.
     </Fragment>
   </Hero>
 
@@ -144,7 +147,7 @@ const homepageAnnouncements = [
   <!-- Map of NRP sites ************** -->
   <HeroWide
     title="Distributed Infrastructure"
-    subtitle="A global network of research resources — shared compute, data, and services."
+    subtitle="A global network of research resources: shared compute, data, and services."
     actions={[{ text: 'How the network works', href: '/distributed-infrastructure', variant: 'primary' }]}
   >
     <Fragment slot="image">
@@ -254,7 +257,7 @@ const homepageAnnouncements = [
       {
         title: 'What is the difference between NRP and Nautilus?',
         description:
-          'The NRP is the platform and the community. Nautilus is the Kubernetes cluster the NRP runs on — the name you will see in technical documentation and in the cluster tooling itself.',
+          'The NRP is the platform and the community. Nautilus is the Kubernetes cluster the NRP runs on, and the name you will see in technical documentation and in the cluster tooling itself.',
       },
       {
         title: 'How much does it cost?',
@@ -289,7 +292,7 @@ const homepageAnnouncements = [
       {
         title: 'Do I have to administer hardware I contribute?',
         description:
-          'No. We install the OS, configure the node, and handle upgrades ourselves — we just need IPMI access. Occasionally we may ask you to reboot a node or swap a drive.',
+          'No. We install the OS, configure the node, and handle upgrades ourselves; we just need IPMI access. Occasionally we may ask you to reboot a node or swap a drive.',
       },
     ]}
   />
