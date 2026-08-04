@@ -1,0 +1,30 @@
+id: deepseek-v4-flash
+displayName: deepseek-v4-flash
+huggingfaceId: deepseek-ai/DeepSeek-V4-Flash-0731
+huggingfaceUrl: https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731
+status: evaluating
+badges:
+  tool: true
+  reasoning: true
+  multimodal: false
+  research: false
+contextTokens: 1048576
+parameters: 304B
+quantization: FP8 (deepseek_v4_fp8)
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
+toolCallingDocsUrl: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Flash
+sortOrder: 80
+summary: DeepSeek's 304B MoE with a full million-token context window.
+strengths:
+  - 1M context — the largest window in the catalog, for whole-codebase and long-document work
+  - MoE routing keeps latency low relative to total parameter count
+  - FP8 weights plus an FP8 KV cache leave room for high concurrency at full context
+  - Strong reasoning and tool calling
+weaknesses:
+  - Text-only — no image, video, or audio input
+  - Evaluating — availability and configuration may shift
+  - Long-context requests are memory-hungry; expect slower first-token latency near the limit
+bestFor:
+  - Whole-repository code understanding
+  - Long-document analysis and summarization
+  - Reasoning tasks that need the full context window

@@ -8,7 +8,7 @@ badges:
   reasoning: true
   multimodal: false
   research: false
-contextTokens: 524288
+contextTokens: 300000
 parameters: 744B
 quantization: NVFP4 (NVIDIA)
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
@@ -19,7 +19,7 @@ summary: Zhipu's 744B frontier coding model with NVIDIA NVFP4 weights.
 strengths:
   - Strong agentic coding — competitive with commercial frontier models
   - NVFP4 quantization preserves quality within limited VRAM
-  - ~500K context covers large codebases
+  - 300K context covers large codebases
 weaknesses:
   - Text-only — no multimodal input
   - Evaluating — configuration may shift

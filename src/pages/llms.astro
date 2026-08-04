@@ -38,6 +38,12 @@ const featuredModels = [
     description: "Zhipu's 744B frontier coding model with NVFP4 weights. Strong on code and reasoning tasks.",
   },
   {
+    name: 'deepseek-v4-flash',
+    src: (await import('~/assets/images/models/deepseek.png')).default,
+    description:
+      "DeepSeek's 304B MoE with a full million-token context window. Best for whole-repository and long-document work.",
+  },
+  {
     name: 'minimax-m2',
     src: (await import('~/assets/images/models/minimax.png')).default,
     description: 'Efficient frontier coding model: 230B in native FP8, fits comfortably on four A100s.',

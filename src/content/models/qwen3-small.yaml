@@ -21,7 +21,7 @@ sortOrder: 20
 summary: Compact Qwen3.6 — multimodal, agentic, low-latency.
 strengths:
   - Multimodal (image + video) at a fraction of qwen3's GPU cost
-  - 262K context window for whole-repo or long-doc work
+  - 1M context window for whole-repo or long-doc work
   - Strong agentic and tool-calling behavior
   - Lower latency than larger models — good for interactive use
 weaknesses:

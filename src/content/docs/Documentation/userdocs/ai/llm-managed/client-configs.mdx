@@ -42,7 +42,7 @@ Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${inp
       "url": "https://ellm.nrp-nautilus.io/v1/chat/completions",
       "toolCalling": true,
       "vision": false,
-      "maxInputTokens": 524288,
+      "maxInputTokens": 300000,
       "maxOutputTokens": 100000
     },
     {
@@ -60,7 +60,7 @@ Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${inp
       "url": "https://ellm.nrp-nautilus.io/v1/chat/completions",
       "toolCalling": true,
       "vision": true,
-      "maxInputTokens": 262144,
+      "maxInputTokens": 131072,
       "maxOutputTokens": 100000
     }
   ]
@@ -92,7 +92,7 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
         "kimi": {
           "name": "kimi",
           "limit": {
-            "context": 262144,
+            "context": 131072,
             "output": 32768
           },
           "modalities": {
@@ -159,7 +159,7 @@ Contents of `~/.config/crush/crush.json` (use `"enable_thinking"` or `"thinking"
         {
           "id": "kimi",
           "name": "kimi",
-          "context_window": 262144,
+          "context_window": 131072,
           "default_max_tokens": 32768,
           "modalities": {
             "input": ["text", "image", "video"],
@@ -205,14 +205,14 @@ Contents of `~/.pi/agent/models.json`:
           "id": "kimi",
           "name": "kimi",
           "input": ["text", "image"],
-          "contextWindow": 262144,
+          "contextWindow": 131072,
           "reasoning": true
         },
         {
           "id": "qwen3-small",
           "name": "qwen3-small",
           "input": ["text", "image"],
-          "contextWindow": 262144,
+          "contextWindow": 1010000,
           "reasoning": true,
           "compat": {
             "thinkingFormat": "qwen-chat-template",
@@ -248,7 +248,7 @@ api_key = "<YOUR_API_KEY>"
 [models.kimi]
 provider = "nrp"
 model = "kimi"
-max_context_size = 262144
+max_context_size = 131072
 capabilities = ["thinking", "image_in", "video_in"]
 
 [background]

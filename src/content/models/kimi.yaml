@@ -8,7 +8,7 @@ badges:
   reasoning: true
   multimodal: true
   research: false
-contextTokens: 262144
+contextTokens: 131072
 parameters: 1T
 quantization: Int4 (native)
 multimodalKinds:
@@ -19,7 +19,7 @@ sortOrder: 60
 summary: Moonshot's 1T-parameter frontier coding model with multimodal inputs.
 strengths:
   - Frontier-class agentic coding — close to commercial top models on coding benchmarks
-  - 262K context suits whole-repo analysis
+  - 131K context suits whole-repo analysis
   - Multimodal (image + video) for screenshot debugging and design-to-code
   - Native Int4 weight keeps memory cost manageable at 1T params
 weaknesses:

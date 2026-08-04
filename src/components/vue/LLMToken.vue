@@ -197,17 +197,22 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "kimi",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 262144
+				contextWindow: 131072
 			},
 			{
 				modelId: "glm-5",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 524288
+				contextWindow: 300000
 			},
 			{
 				modelId: "minimax-m2",
 				capabilities: ["reasoning", "tool_use"],
 				contextWindow: 204800
+			},
+			{
+				modelId: "deepseek-v4-flash",
+				capabilities: ["reasoning", "tool_use"],
+				contextWindow: 1048576
 			},
 		]
 	}

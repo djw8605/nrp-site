@@ -1250,6 +1250,76 @@ But, in case user demand increases, higher concurrency and token throughput are 
 - https://github.com/vllm-project/vllm/issues/17569
 - https://github.com/vllm-project/vllm/issues/4232
 
+## Monitoring and the Status Page
+
+[nrp.ai/llm-status](https://nrp.ai/llm-status/) is driven by Prometheus/Thanos, not by the
+Kubernetes API. A model can be `Running`, `Ready`, and serving traffic through the gateway while
+being completely absent from the status page. Three rules decide whether a workload shows up.
+
+### 1. The workload needs a Service labelled `component: llm`
+
+`ServiceMonitor/llm-monitor` discovers scrape targets through **Services**, so a StatefulSet with no
+Service is never scraped at all. This is easy to miss because routing does not depend on it:
+`InferencePool` selects pods by **label**, so a model with no Service routes perfectly and reports no
+metrics anywhere.
+
+```bash
+# every vLLM workload must return a Service here
+kubectl get svc -n nrp-llm -l component=llm
+```
+
+### 2. The container name must be unique, and should match the Service name
+
+The status page keys models on `namespace/container`, and it joins two independent metric families:
+
+```promql
+sum(vllm:num_requests_running) by (namespace, container, model_name)   # from vLLM
+count(DCGM_FI_DEV_GPU_UTIL)    by (namespace, container, modelName)    # from DCGM
+```
+
+Two consequences:
+
+- **Two workloads sharing a container name collapse into one row.** Naming several containers
+  `vllm` puts every one of them on the single key `namespace/vllm`.
+- **DCGM reports the *real* container name and cannot be relabelled.** Rewriting `container` in the
+  `ServiceMonitor` fixes the vLLM half and silently breaks the DCGM half — the model keeps its row but
+  loses `gpu_count` and `gpu_utilization`, and its GPUs get attributed to a phantom row. Rename the
+  container in the manifest instead.
+
+### 3. Metrics only exist after the model serves its first request
+
+vLLM does not emit `vllm:num_requests_running`, `vllm:num_requests_waiting`, or
+`vllm:kv_cache_usage_perc` until a request has been processed. Since the status page *discovers*
+models with `sum(vllm:num_requests_running)`, **a freshly deployed or freshly restarted model is
+invisible until traffic reaches it** — even with a healthy, `up` scrape target. Counters such as
+`vllm:generation_tokens_total` are present from boot, so a target that exposes those but no gauges is
+simply cold, not broken.
+
+After deploying or restarting a model, send it one request:
+
+```bash
+curl -s https://ellm.nrp-nautilus.io/v1/chat/completions \
+  -H "Authorization: Bearer $NRP_LLM_TOKEN" -H 'Content-Type: application/json' \
+  -d '{"model":"<alias>","messages":[{"role":"user","content":"hi"}],"max_tokens":4}'
+```
+
+### Diagnosing a missing model
+
+```bash
+# is it scraped, and is the target healthy?
+curl -s 'https://prometheus.nrp-nautilus.io/api/v1/targets?state=active' \
+  | jq -r '.data.activeTargets[] | select(.scrapePool | test("llm-monitor")) | "\(.labels.pod) \(.health) \(.lastError)"'
+
+# do the two metric families agree on the container name?
+curl -s -G https://thanos.nrp-nautilus.io/api/v1/query \
+  --data-urlencode 'query=sum(vllm:num_requests_running) by (namespace, container)'
+curl -s -G https://thanos.nrp-nautilus.io/api/v1/query \
+  --data-urlencode 'query=count(DCGM_FI_DEV_GPU_UTIL{namespace="nrp-llm"}) by (namespace, container)'
+```
+
+A container appearing in the DCGM output but not the vLLM output is either cold (rule 3) or not
+scraped (rule 1). A container appearing in neither, while its pod is `Running`, has no Service.
+
 ## Envoy AI Gateway Management
 
 :::caution
