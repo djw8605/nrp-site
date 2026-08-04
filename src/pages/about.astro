@@ -6,6 +6,7 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
+import { Icon } from 'astro-icon/components';
 
 import { clusterStats } from '~/data/cluster-stats';
 
@@ -131,6 +132,66 @@ const nsfAwards = [
   'CNS-2100237',
   'CNS-2120019',
 ];
+
+// The platform paper. The AUP requires work supported by the NRP to both
+// acknowledge the NSF awards above and cite this, so the two sections sit
+// together. The BibTeX is byte-identical to the block in
+// src/content/docs/Documentation/userdocs/start/faq.mdx -- if one changes,
+// change the other.
+//
+// Author names are the published forms ("Frank Wuerthwein", "Mohammad Sada"),
+// not the site's own spellings, because a reference has to match the record.
+const paper = {
+  title: 'The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster',
+  authors:
+    'Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Wuerthwein, Mahidhar Tatineni, ' +
+    'Dmitry Mishin, Elham Khoda, Mohammad Sada, Larry Smarr, Thomas DeFanti, and John Graham',
+  abstract:
+    'The National Research Platform (NRP) represents a distributed, multi-tenant Kubernetes-based ' +
+    'cyberinfrastructure designed to facilitate collaborative scientific computing. Spanning over 75 ' +
+    'locations in the U.S. and internationally, the NRP uniquely integrates varied computational ' +
+    'resources, ranging from single nodes to extensive GPU and CPU clusters, to support diverse ' +
+    'research workloads including advanced AI and machine learning tasks. It emphasizes flexibility ' +
+    'through user-friendly interfaces such as JupyterHub and low level control of resources through ' +
+    'direct Kubernetes interaction. Critical operational insights are discussed, including security ' +
+    'enhancements using Kubernetes-integrated threat detection, extensive monitoring, and comprehensive ' +
+    'accounting systems. This paper highlights the NRP’s growing importance and scalability in ' +
+    'addressing the increasing demands for distributed scientific computational resources.',
+  doi: '10.1145/3708035.3736060',
+  acmUrl: 'https://dl.acm.org/doi/10.1145/3708035.3736060',
+  arxivUrl: 'https://arxiv.org/abs/2505.22864',
+  slidesUrl: 'https://zenodo.org/records/16422100',
+};
+
+// Short, single-line values on purpose. The full proceedings title and the
+// publisher's address belong in the reference below, not in a 17rem rail where
+// they wrap to four lines each and stop being scannable.
+const paperMeta = [
+  { label: 'Conference', value: 'PEARC ’25' },
+  { label: 'Publisher', value: 'ACM' },
+  { label: 'Published', value: '20 July 2025' },
+  { label: 'Pages', value: 'Article 69, 1–5' },
+];
+
+// Held as template literals rather than inline markup: the BibTeX is full of
+// braces, which Astro would read as expressions inside a <pre>.
+const acmReference = `Derek Weitzel, Ashton Graves, Sam Albin, Huijun Zhu, Frank Wuerthwein, Mahidhar Tatineni, Dmitry Mishin, Elham Khoda, Mohammad Sada, Larry Smarr, Thomas DeFanti, and John Graham. 2025. The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster. In Practice and Experience in Advanced Research Computing 2025: The Power of Collaboration (PEARC ’25). Association for Computing Machinery, New York, NY, USA, Article 69, 1–5. https://doi.org/${paper.doi}`;
+
+const bibtex = `@inproceedings{10.1145/3708035.3736060,
+author = {Weitzel, Derek and Graves, Ashton and Albin, Sam and Zhu, Huijun and Wuerthwein, Frank and Tatineni, Mahidhar and Mishin, Dmitry and Khoda, Elham and Sada, Mohammad and Smarr, Larry and DeFanti, Thomas and Graham, John},
+title = {The National Research Platform: Stretched, Multi-Tenant, Scientific Kubernetes Cluster},
+year = {2025},
+isbn = {9798400713989},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3708035.3736060},
+doi = {10.1145/3708035.3736060},
+booktitle = {Practice and Experience in Advanced Research Computing 2025: The Power of Collaboration},
+articleno = {69},
+numpages = {5},
+keywords = {Distributed Computing, Kubernetes, High Throughput Computing, Artificial Intelligence},
+series = {PEARC '25}
+}`;
 ---
 
 <Layout metadata={metadata}>
@@ -202,9 +263,11 @@ const nsfAwards = [
         loading="lazy"
       />
       <div class="min-w-0">
-        {/* max-w-xl: unconstrained this ran the full 926px card width (~116
+        {
+          /* max-w-xl: unconstrained this ran the full 926px card width (~116
             characters per line). max-w-2xl still gave ~82ch at this 16px size --
-            the 2xl cap suits text-lead's 18px, not body copy. 576px lands ~70ch. */}
+            the 2xl cap suits text-lead's 18px, not body copy. 576px lands ~70ch. */
+        }
         <p class="max-w-xl text-muted">
           The National Research Platform is supported in part by the U.S. National Science Foundation under the
           following awards. Any opinions, findings, and conclusions or recommendations expressed on this site are those
@@ -223,7 +286,134 @@ const nsfAwards = [
     </div>
   </WidgetWrapper>
 
-  <WidgetWrapper surface={1} title="Institutions and how to join" titleAs="h2" width="content">
+  {
+    /* Sits directly under the NSF acknowledgement on purpose: the AUP asks for
+      both, so someone writing an acknowledgements section finds the award
+      numbers and the citation without leaving the viewport. */
+  }
+  <WidgetWrapper
+    surface={1}
+    title="How to cite the NRP"
+    description="If the NRP supported your work, acknowledge the awards above in the format the Acceptable Use Policy specifies, and cite the platform paper."
+    titleAs="h2"
+    width="content"
+  >
+    <article class="card p-6 md:p-8">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-12">
+        <div>
+          <h3 class="max-w-3xl font-display text-h3 font-semibold text-heading">{paper.title}</h3>
+          <p class="mt-3 max-w-3xl text-sm text-muted">{paper.authors}</p>
+          {/* max-w-xl keeps the abstract near 70ch; the card itself is 926px wide. */}
+          <p class="mt-6 max-w-xl text-muted">{paper.abstract}</p>
+        </div>
+
+        {
+          /* A rail, not a nested card: one hairline at lg, nothing at mobile
+            where the stack order already separates it. */
+        }
+        <div class="lg:border-l lg:border-hairline lg:pl-12">
+          {/* Two columns while this is a stacked block; one once it becomes the rail at lg. */}
+          <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            {
+              paperMeta.map((item) => (
+                <div>
+                  <dt class="text-sm text-muted">{item.label}</dt>
+                  <dd class="mt-0.5 text-body">{item.value}</dd>
+                </div>
+              ))
+            }
+            <div>
+              <dt class="text-sm text-muted">DOI</dt>
+              <dd class="mt-0.5">
+                <a class="link-quiet break-all font-mono text-sm" href={`https://doi.org/${paper.doi}`}>
+                  {paper.doi}
+                </a>
+              </dd>
+            </div>
+          </dl>
+
+          <div class="mt-6 flex flex-col items-start gap-3">
+            {/* Full-bleed only inside the 17rem rail; stretched across a stacked 680px block it reads as a banner. */}
+            <Button variant="secondary" class="lg:w-full" href={paper.acmUrl} target="_blank" text="Read on ACM" />
+            <Button variant="link" href={paper.arxivUrl} target="_blank" icon="tabler:external-link">
+              arXiv preprint
+            </Button>
+            <Button variant="link" href={paper.slidesUrl} target="_blank" icon="tabler:external-link">
+              PEARC ’25 slides
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div id="citation" class="mt-8 border-t border-hairline pt-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <div
+            class="flex gap-1 rounded-md bg-surface-3 p-1"
+            role="tablist"
+            aria-label="Citation format"
+            data-citation-tablist
+          >
+            <button
+              type="button"
+              role="tab"
+              id="citation-tab-acm"
+              aria-controls="citation-panel-acm"
+              aria-selected="true"
+              class="rounded px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:text-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2 aria-selected:bg-surface-4 aria-selected:text-heading"
+            >
+              ACM reference
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="citation-tab-bibtex"
+              aria-controls="citation-panel-bibtex"
+              aria-selected="false"
+              tabindex="-1"
+              class="rounded px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:text-body focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2 aria-selected:bg-surface-4 aria-selected:text-heading"
+            >
+              BibTeX
+            </button>
+          </div>
+
+          <button
+            type="button"
+            data-citation-copy
+            class="ml-auto inline-flex items-center gap-1.5 rounded-md border border-hairline px-3 py-1.5 text-sm font-medium text-body transition-colors hover:border-teal-600 hover:bg-surface-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface-2"
+          >
+            <Icon name="tabler:copy" class="h-4 w-4" data-citation-icon="idle" aria-hidden="true" />
+            <Icon name="tabler:check" class="hidden h-4 w-4" data-citation-icon="done" aria-hidden="true" />
+            <span data-citation-copy-label>Copy</span>
+          </button>
+          <span class="sr-only" role="status" aria-live="polite" data-citation-status></span>
+        </div>
+
+        <div
+          id="citation-panel-acm"
+          role="tabpanel"
+          aria-labelledby="citation-tab-acm"
+          tabindex="0"
+          class="mt-4 rounded-md bg-sunken p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {/* break-words: the trailing DOI is one unbreakable 39-character token and bled past the panel at 375px. */}
+          <p class="break-words font-mono text-sm leading-relaxed text-body">{acmReference}</p>
+        </div>
+
+        <div
+          id="citation-panel-bibtex"
+          role="tabpanel"
+          aria-labelledby="citation-tab-bibtex"
+          tabindex="0"
+          hidden
+          class="mt-4 rounded-md bg-sunken p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <pre class="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-body">{bibtex}</pre>
+        </div>
+      </div>
+    </article>
+  </WidgetWrapper>
+
+  <WidgetWrapper surface="page" title="Institutions and how to join" titleAs="h2" width="content">
     <div class="grid gap-8 md:grid-cols-3">
       <div class="card p-6">
         <h3 class="font-display text-h3 font-semibold text-heading">Use the platform</h3>
@@ -261,7 +451,7 @@ const nsfAwards = [
   </WidgetWrapper>
 
   <CallToAction
-    surface="page"
+    surface={1}
     title="Questions about the NRP?"
     subtitle="Come to bi-weekly office hours, join the support chat, or email the team directly."
     actions={[
@@ -270,3 +460,88 @@ const nsfAwards = [
     ]}
   />
 </Layout>
+
+{
+  /* The citation block's two behaviours. Both are state changes, not entrance
+    motion -- the page's one authored moment is still the hero spectrum rule.
+    Everything is legible before this runs: the ACM reference is the default
+    panel and is present in the HTML. */
+}
+<script>
+  const root = document.getElementById('citation');
+
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const copyButton = root.querySelector<HTMLButtonElement>('[data-citation-copy]');
+    const copyLabel = root.querySelector<HTMLElement>('[data-citation-copy-label]');
+    const copyStatus = root.querySelector<HTMLElement>('[data-citation-status]');
+    const idleIcon = root.querySelector<HTMLElement>('[data-citation-icon="idle"]');
+    const doneIcon = root.querySelector<HTMLElement>('[data-citation-icon="done"]');
+
+    const panelOf = (tab: HTMLButtonElement) =>
+      document.getElementById(tab.getAttribute('aria-controls') ?? '') as HTMLElement | null;
+
+    // Roving tabindex: only the selected tab is in the tab order, and the
+    // arrow keys move between them. Without this a keyboard user has to tab
+    // through every format to reach the copy button.
+    const select = (next: HTMLButtonElement, focus = false) => {
+      tabs.forEach((tab) => {
+        const isNext = tab === next;
+        tab.setAttribute('aria-selected', String(isNext));
+        tab.tabIndex = isNext ? 0 : -1;
+        const panel = panelOf(tab);
+        if (panel) panel.hidden = !isNext;
+      });
+      if (focus) next.focus();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (event) => {
+        const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!step) return;
+        event.preventDefault();
+        select(tabs[(index + step + tabs.length) % tabs.length], true);
+      });
+    });
+
+    let resetTimer: ReturnType<typeof setTimeout>;
+
+    const resetCopy = () => {
+      if (copyLabel) copyLabel.textContent = 'Copy';
+      if (copyStatus) copyStatus.textContent = '';
+      idleIcon?.classList.remove('hidden');
+      doneIcon?.classList.add('hidden');
+    };
+
+    copyButton?.addEventListener('click', async () => {
+      const active = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+      const panel = active ? panelOf(active) : null;
+      const text = panel?.textContent?.trim();
+      if (!text) return;
+
+      clearTimeout(resetTimer);
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        // Clipboard access can be refused: an insecure context, a denied
+        // permission, a browser that never shipped the API. The citation is
+        // selectable text either way, so name the recovery instead of failing
+        // silently. No keystroke in the label -- it differs by platform and is
+        // meaningless on touch.
+        if (copyLabel) copyLabel.textContent = 'Copy failed';
+        if (copyStatus) copyStatus.textContent = 'Copying failed. Select the citation text and copy it manually.';
+        resetTimer = setTimeout(resetCopy, 5000);
+        return;
+      }
+
+      if (copyLabel) copyLabel.textContent = 'Copied';
+      if (copyStatus) copyStatus.textContent = `${active?.textContent?.trim()} copied to clipboard`;
+      idleIcon?.classList.add('hidden');
+      doneIcon?.classList.remove('hidden');
+
+      resetTimer = setTimeout(resetCopy, 2000);
+    });
+  }
+</script>
