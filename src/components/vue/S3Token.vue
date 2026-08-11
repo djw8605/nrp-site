@@ -97,6 +97,11 @@
                                 <Button icon="pi pi-copy" text rounded size="small" severity="secondary"
                                     aria-label="Copy S3 username" @click="copyText(creds.UID, 'S3 username')" />
                             </div>
+                            <p v-if="uidIdentity" class="text-xs text-slate-500 mt-2 mb-0">
+                                The encoded string above is your actual S3 username — it's your CILogon ID
+                                (<code class="break-all">{{ uidIdentity }}</code>) encoded. Share it exactly as shown to be
+                                added to a bucket; the number alone won't match.
+                            </p>
                         </div>
                         <div>
                             <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Endpoint</div>
@@ -112,7 +117,8 @@
                                 :loading="isEmailing" :disabled="readOnly" @click="emailMyKeys" />
                         </div>
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">
-                            Full access to your buckets. Emailed as a one-time link, never shown.
+                            Full access to your buckets. The access key ID is shown below; the secret key is never
+                            displayed here — use the button above to have it emailed to you as a one-time link.
                         </p>
                         <div v-if="creds.MainAccessKeys && creds.MainAccessKeys.length" class="flex flex-wrap gap-2">
                             <span v-for="ak in creds.MainAccessKeys" :key="ak" class="inline-flex items-center">
@@ -327,6 +333,21 @@ const poolOptions = computed(() => (creds.value?.Pools || []).map((p) => ({ labe
 // Data served from cache because the dashboard is down → reads are fine but
 // key changes must be paused until the live dashboard recovers.
 const readOnly = computed(() => creds.value?.Stale === true);
+
+// The S3 username is the user's CILogon identity base64url-encoded, which reads
+// as a random blob and prompts "what is my real user ID?" tickets. Decode it back
+// so the page can show what it actually is — and make clear the encoded form is
+// what bucket owners need, since the tempting six-digit number matches nothing.
+const uidIdentity = computed(() => {
+    const uid = creds.value?.UID;
+    if (!uid) return null;
+    try {
+        const decoded = atob(uid.replace(/-/g, '+').replace(/_/g, '/'));
+        return /^https?:\/\/cilogon\.org\//.test(decoded) ? decoded : null;
+    } catch (e) {
+        return null; // not base64 (legacy raw-uid account) — nothing to explain
+    }
+});
 
 const appKeyCount = computed(() => creds.value?.AppKeys?.length || 0);
 const bucketCount = computed(() => creds.value?.Buckets?.length || 0);
