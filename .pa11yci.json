@@ -37,6 +37,8 @@
     "http://localhost:4321/training",
     "http://localhost:4321/contact",
     "http://localhost:4321/blog",
-    "http://localhost:4321/distributed-infrastructure"
+    "http://localhost:4321/distributed-infrastructure",
+    "http://localhost:4321/documentation/",
+    "http://localhost:4321/documentation/userdocs/start/getting-started/"
   ]
 }

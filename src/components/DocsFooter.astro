@@ -1,50 +1,77 @@
 ---
+import { Image } from 'astro:assets';
 import Default from '@astrojs/starlight/components/Footer.astro';
+import type { Props as StarlightFooterProps } from '@astrojs/starlight/props';
+import nsfLogo from '~/assets/images/nsf-logo.png';
 
-export interface Props {
-  links: Array<any>;
-  secondaryLinks: Array<any>;
-  socialLinks: Array<any>;
-  footNote?: string;
-  theme?: string;
-  pagination?: {
-    prev?: { href: string; title: string };
-    next?: { href: string; title: string };
-  };
-  editUrl?: string;
-}
-
-const { links, secondaryLinks, socialLinks, footNote, theme, pagination, editUrl } = Astro.props;
+// Take Starlight's own prop type rather than hand-rolling one. The previous
+// local interface mistyped `editUrl` (declared string, actually URL) and
+// `pagination` (declared its own shape, actually Starlight's Link), and both
+// surfaced as errors under `astro check`.
+export type Props = StarlightFooterProps;
 ---
+
+{
+  /*
+  Styled entirely from Starlight's own --sl-* tokens, with no Tailwind classes.
+  Docs routes do not load Tailwind (see applyBaseStyles in astro.config.ts), and
+  Tailwind's dark: variants never fired here anyway: tailwind.config.js sets
+  darkMode: 'class' while Starlight themes via data-theme on <html>.
+*/
+}
 
 <div>
   <!-- Reuse the Default Footer and pass all required props -->
-  <Default 
-    links={links} 
-    secondaryLinks={secondaryLinks} 
-    socialLinks={socialLinks} 
-    footNote={footNote} 
-    theme={theme}
-    pagination={pagination}
-    editUrl={editUrl}
-  >
+  <Default {...Astro.props}>
     <slot />
   </Default>
 
   <!-- NSF Acknowledgment Section -->
-  <div class="flex items-center justify-between mt-8 gap-2">
-    <!-- NSF Logo -->
-    <div class="flex items-center">
-      <img
-        src="/nsf-logo.png" 
-        alt="NSF Logo"
-        class="h-20 w-auto object-contain"
-      />
-    </div>
-  
-    <!-- Footer Text -->
-    <div class="text-sm text-gray-600 dark:text-gray-400">
-        This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349, OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
-    </div>
+  <div class="nsf-ack">
+    <Image
+      src={nsfLogo}
+      alt="U.S. National Science Foundation"
+      width={80}
+      densities={[1, 2]}
+      loading="lazy"
+      class="nsf-ack__seal"
+    />
+    <p class="nsf-ack__text">
+      This work was supported in part by National Science Foundation (NSF) awards CNS-1730158, ACI-1540112, ACI-1541349,
+      OAC-1826967, OAC-2112167, CNS-2100237, CNS-2120019.
+    </p>
   </div>
 </div>
+
+<style>
+  .nsf-ack {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    margin-block-start: 2.5rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--sl-color-hairline);
+  }
+
+  /* Explicit box so the flex sibling cannot crush the seal: the previous
+     markup let it collapse to 41px wide inside an 80px-tall box. */
+  .nsf-ack__seal {
+    flex: 0 0 auto;
+    width: 80px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .nsf-ack__text {
+    flex: 1 1 20rem;
+    min-width: 0;
+    max-width: 62ch;
+    margin: 0;
+    font-size: var(--sl-text-sm);
+    line-height: 1.6;
+    /* 5.3:1 on the dark background, 8.0:1 on the light one. */
+    color: var(--sl-color-gray-3);
+    text-wrap: pretty;
+  }
+</style>

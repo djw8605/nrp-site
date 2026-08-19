@@ -52,7 +52,8 @@ export default defineConfig({
         },
         {
           tag: 'script',
-          content: 'window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }',
+          content:
+            'window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }',
         },
       ],
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
@@ -250,7 +251,7 @@ export default defineConfig({
                     { label: 'Linstor', link: 'documentation/userdocs/storage/linstor' },
                     { label: 'Nextcloud', link: 'documentation/userdocs/storage/nextcloud' },
                     { label: 'Syncthing', link: 'documentation/userdocs/storage/syncthing' },
-                    { label: 'Mounting FUSE', link: 'documentation/userdocs/storage/fuse' }
+                    { label: 'Mounting FUSE', link: 'documentation/userdocs/storage/fuse' },
                   ],
                 },
                 {
@@ -417,7 +418,14 @@ export default defineConfig({
       ],
     }),
     tailwind({
-      applyBaseStyles: true,
+      // The integration's applyBaseStyles injects `@tailwind base/components/utilities`
+      // into EVERY page via injectScript('page-ssr'), which put ~90 KB of marketing CSS
+      // on all 147 Starlight docs routes that never used it. Marketing pages get Tailwind
+      // from `~/assets/styles/tailwind.css`, imported by src/layouts/Layout.astro, which
+      // every page under src/pages/ funnels through -- so turning this off scopes Tailwind
+      // to the marketing site and leaves /documentation on Starlight's own styles.
+      // See DESIGN.md section 11.
+      applyBaseStyles: false,
     }),
     sitemap(),
     mdx(),

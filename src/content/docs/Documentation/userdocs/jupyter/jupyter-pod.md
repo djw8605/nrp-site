@@ -137,14 +137,16 @@ Check the default context with command and check your own namespace is listed un
 
 1. **Connect to Jupyter**<br>
     In a new web browser window connect to an address **localhost:8888**, you should see the
-    following page: <img src="/userdocs/images/jupyter-login.png">
+    following page:
+
+    ![The Jupyter sign-in page, asking for a password or token](../../../../assets/images/jupyter-login.png)
 
     Enter the previously saved token on the **Password or Token** line at the top
     of the page.  Optionally, to set a password follow direcitons on the page.  Click
     appropriate **Log in** button.
 
     You get a Jupyter notebook with access to tensorflow:
-    <img src="/userdocs/images/jupyter-access.png">
+    ![The Jupyter notebook interface, with TensorFlow available](../../../../assets/images/jupyter-access.png)
 
     **Note:**
     Once you are finished, we'll [tear down](#step4) our setup.
