@@ -3,14 +3,7 @@ title: Knowledge Base
 description: Knowledge Base
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
-#### Get involved in NRP
+## Get involved in NRP
 
 1. Check out [fasterdata.es.net][esnet] to understand terms, tools, and capabilities common to R&E networking performance measurement and monitoring.
 1. Review materials and videos from 2017 and 2018 National Research Platform Workshops at [https://nrp.ai/][prp]
@@ -25,7 +18,7 @@ This page contains administrative documentation intended for cluster administrat
    - Campus Cyberinfrastructure Technical community calls. Sign-up for cybinf-engr@es.net mail list hosted by Jason Zurawski at ESnet.
 
 
-##### Docs, blogs and other links
+### Docs, blogs and other links
 
 - [Internet2 Global summit 2019][summit]
 - [Internet2 TechEx and other meetings][internet2events]

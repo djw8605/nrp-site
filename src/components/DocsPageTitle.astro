@@ -1,0 +1,88 @@
+---
+/**
+ * Starlight `PageTitle` override.
+ *
+ * Renders the stock page title, then — on pages under `admindocs/` — a quiet
+ * orientation label naming which part of the documentation the reader is in.
+ *
+ * This replaces a `:::caution` block that was pasted into 51 of the 59
+ * admindocs pages (and missing from the other 8). That block was amber, so it
+ * read as a warning; it carried no page-specific information, so 51 consecutive
+ * repetitions trained readers to skip amber — including the amber that says
+ * "do not continue until the Ceph cluster is healthy". It also told campus IT
+ * staff evaluating a hardware contribution that the page they had just opened
+ * "may not be relevant" to them.
+ *
+ * Keeping it here means it is stated once, applies uniformly, and can say
+ * something different to the two audiences that share this branch.
+ */
+import type { Props } from '@astrojs/starlight/props';
+
+// Starlight's own PAGE_TITLE_ID. `@astrojs/starlight/constants` is not an
+// exported subpath in 0.29, so the value is inlined — it must stay `_top`,
+// because the skip link and the "Overview" entry in the table of contents both
+// target that id.
+const PAGE_TITLE_ID = '_top';
+
+const { entry } = Astro.props;
+
+// `slug` is the lowercased route path; `id` is the file path within the
+// collection. Either identifies the section, so normalize and check both.
+const path = `${entry.slug ?? ''}/${entry.id ?? ''}`.toLowerCase();
+
+const section = path.includes('admindocs/participating')
+  ? {
+      name: 'Contributing hardware',
+      detail: 'For institutions and campus IT staff adding servers to the NRP pool.',
+    }
+  : path.includes('admindocs/')
+    ? {
+        name: 'Cluster operations',
+        detail: 'Reference for the administrators and operators who run Nautilus.',
+      }
+    : null;
+---
+
+<h1 id={PAGE_TITLE_ID}>{entry.data.title}</h1>
+
+{
+  section && (
+    <p class="docs-section-note">
+      <span class="docs-section-note__name">{section.name}</span>
+      {/* A real character, not a ::after — a generated separator is invisible to
+          a screen reader, which then runs the two halves into one sentence. */}
+      <span class="docs-section-note__detail">
+        {' — '}
+        {section.detail}
+      </span>
+    </p>
+  )
+}
+
+<style>
+  h1 {
+    margin-top: 1rem;
+    font-size: var(--sl-text-h1);
+    line-height: var(--sl-line-height-headings);
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  /* Metadata under the title, not an alert. Sized and coloured to be read
+     once on arrival and then ignored, so it never competes with a real
+     admonition further down the page. */
+  .docs-section-note {
+    margin-top: 0.5rem;
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+  }
+
+  .docs-section-note__name {
+    font-weight: 600;
+    color: var(--sl-color-white);
+  }
+
+  .docs-section-note__detail {
+    color: var(--sl-color-gray-3);
+  }
+</style>

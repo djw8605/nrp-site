@@ -3,10 +3,6 @@ title: Upgrades Introduction
 description: Introduction to cluster upgrades
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 **Make sure to update `src\pages\services-status.astro` and the `nautilus-config` ConfigMap in the `kube-system` namespace as well for [Services Status](/services-status/), if applicable.**
 
 **Instructions for other cluster or service upgrades can be found in relevant individual pages. They likely require additional procedures.**

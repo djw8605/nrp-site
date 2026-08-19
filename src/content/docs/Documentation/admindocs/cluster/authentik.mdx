@@ -3,11 +3,7 @@ title: Authentik
 description: Authentik configuration and management.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-:::danger
+:::danger[Always attach the NSF policy]
 Whenever creating a new application in Authentik, always add Expression Policy `[IMP] NSF Policy`, unless there's a more restrictive policy already implemented for provider.
 :::
 

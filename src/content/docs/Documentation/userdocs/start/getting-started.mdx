@@ -1,21 +1,21 @@
 ---
-title: Getting Started with NRP Nautilus
-description: getting started with the NRP nautilus cluster
+title: Getting access to Nautilus
+description: Log in through CILogon, get added to a namespace, and install the tools you need to reach the Nautilus cluster.
 ---
 import { Steps } from '@astrojs/starlight/components';
 import { LinkButton } from '@astrojs/starlight/components';
 
-### Get access and log in
+## Get access and log in
 
-If you are a new user and want to access the NRP Nautilus cluster, follow the steps below.
+If you are a new user and want to access the Nautilus cluster, follow the steps below.
 
-:::caution[New namespace management page]
+:::note[The namespaces manager has moved]
 The namespaces management page is now at [https://nrp.ai/namespaces](https://nrp.ai/namespaces). If you can't find the namespace in the old portal, try the new one.
 :::
 
 <Steps>
 
-1. Point your browser to the [NRP Nautilus portal](https://nrp.ai).
+1. Point your browser to the [NRP portal](https://nrp.ai).
 
 2. On the portal page, click on the **`Log In`** button at the top right corner.
 
@@ -60,21 +60,21 @@ As an **`admin`**, you will have the ability to:
     - If you got added to a namespace as a **`user`**, you can verify it by going to the [**Namespaces manager**](https://nrp.ai/namespaces) tab after logging in to the portal. The namespaces you're a member of will be marked in bold.
 
 2. **Make sure you read the cluster policies before starting to use it.**
-    :::danger[Read the Cluster Policies]
+    :::caution[Read these before you run anything]
     - Read the <a href="/NRP-AUP.pdf" target="_blank">**NRP Acceptable Use Policy (AUP)**</a>.
     - Read the <a href="/documentation/userdocs/start/policies/" target="_blank">**Cluster Policies**</a>.
     :::
 
 3. **Make sure you're on Nautilus Support. All Nautilus and NRP users are expected to join for user support and real-time updates.**
-    :::danger[Joining Nautilus Support Chat]
+    :::note[Join the Nautilus Support chat]
     - If you do not yet have access to Nautilus Support, please register right away following the instructions at <a href="https://nrp.ai/contact/" target="_blank">**this link.**</a>
     :::
 </Steps>
 
 
-### Cluster access via kubectl
+## Cluster access via kubectl
 
-    :::danger[Please follow the steps below carefully!]
+    :::note[Do not skip any steps]
     - Please do not skip any steps. <b>All steps below are necessary to be able to connect to Nautilus.</b>
     - Common Kubelogin connectivity issues are addressed in Step 3. Please view carefully if you run into any issues.
     :::
@@ -85,7 +85,7 @@ As an **`admin`**, you will have the ability to:
 
 2. [Install kubelogin](https://github.com/int128/kubelogin?tab=readme-ov-file#setup) plugin
 
-    :::danger[Required]
+    :::caution[Install kubelogin first]
     You **must** install the `kubelogin` plugin, or your kubeconfig file **will not work**.
     :::
 
@@ -203,7 +203,7 @@ As an **`admin`**, you will have the ability to:
 
 </Steps>
 
-### Updating namespace membership
+## Updating namespace membership
 
 By default the access token expires in half an hour and is automatically updated after that. If you need to update one sooner (for example, you were added to a new namespace), you can invalidate the token:
 
@@ -211,18 +211,18 @@ By default the access token expires in half an hour and is automatically updated
 kubectl oidc-login clean
 ```
 
-After that any `kubectl` command will trigget getting the new token. (F.e. `kubectl get nodes`)
+After that any `kubectl` command will trigger getting the new token. (F.e. `kubectl get nodes`)
 
 
-:::caution[Read it before using the cluster]
+:::danger[Read this before you run anything on the cluster]
 - Containers are stateless. 
     - **All your data will be gone forever when the container restarts**, unless you store it in a persistent volume.
-- Container restart is normal in the Kubernates (k8s) cluster. Expect it.
+- Container restart is normal in the Kubernetes (k8s) cluster. Expect it.
 - Never force Delete Pods.
 - Users running a **`Job`** with **`sleep` command** or equivalent (any command that never ends by itself) will be banned from using the cluster.
 :::
 
-### Use the Cluster
+## Use the Cluster
 
 1. Read the [Using Nautilus](/documentation/userdocs/start/using-nautilus) page to learn how to use the cluster. 
 
@@ -238,7 +238,7 @@ After that any `kubectl` command will trigget getting the new token. (F.e. `kube
 
 
 
-### GUI tools for Kubernetes
+## GUI tools for Kubernetes
 
 You might want to try one of these GUI tools for Kubernetes:
 
@@ -248,7 +248,7 @@ You might want to try one of these GUI tools for Kubernetes:
 
     They will all use your `config` file in the default location to get access to the cluster.
 
-#### Visual Studio Code
+### Visual Studio Code
 
 <details>
 <summary>Open Instructions</summary>

@@ -3,10 +3,6 @@ title: Storage
 description: Storage
 ---
 
-# Storage
-
-
-
 In Kubernetes, a Persistent Volume Claim (PVC) is a resource that allows a user to request storage from a storage class defined in the cluster. StorageClasses enable the cluster to abstract the details of storage provisioning and management, allowing users to request storage without needing to know the specifics of the underlying infrastructure.
 
 ## Prerequisites
@@ -44,9 +40,7 @@ Let’s explore the `emptyDir`by creating a simple example.
 
 You can copy-and-paste the lines below into a new file called `strg1.yaml`.
 
-###### strg1.yaml:
-
-```yaml
+```yaml title="strg1.yaml"
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -147,9 +141,7 @@ To get storage, we need to create an abstraction called `PersistentVolumeClaim`.
 
 Create the file:
 
-###### pvc.yaml:
-
-```yaml
+```yaml title="pvc.yaml"
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

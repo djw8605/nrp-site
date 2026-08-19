@@ -3,14 +3,7 @@ title: GitLab
 description: GitLab
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
-#### Upgrading GitLab
+## Upgrading GitLab
 
 Follow the [upgrade doc](https://docs.gitlab.com/ee/update/#upgrade-paths) ([upgrade paths](https://docs.gitlab.com/update/upgrade_paths/)).
 

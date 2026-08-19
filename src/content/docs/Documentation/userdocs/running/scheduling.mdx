@@ -10,8 +10,8 @@ import { LinkButton } from '@astrojs/starlight/components';
   We welcome friendly users to test this function and would like feedback.
 :::
 
-:::danger
-  The content of the jobs (yaml file) will be initially visible to all users. It's not possible to limit it by namespace. We will probably limit access to lookout in the future or implement the limited visibility per group.
+:::caution[Job specs are visible to every user]
+  Job specs (the YAML you submit) are visible to every user of the cluster, and there is currently no way to restrict that per namespace. Do not put secrets, credentials, or unpublished data in a job spec.
 :::
 
 ## Introduction
@@ -90,11 +90,11 @@ Allowed priorities in armada:
 |armada-preemptible|true|50|
 |armada-high-priority|false|1000|
 
-:::danger
+:::caution
   Preempted jobs will **not** be automatically resheduled.
 :::
 
-:::danger
+:::note
   Preemption is only working inside armada. Once the pods are in k8s cluster, those won't be preempted by normal pods or preempt other cluster pods.
 :::
 

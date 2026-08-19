@@ -5,7 +5,7 @@ description: CVMFS
 
 [CVMFS](https://cernvm.cern.ch/fs/) is a distributed filesystem that allows you to mount software repositories and datasets on your local machine. It is used to distribute software and data across the grid, and is widely used in the High Energy Physics community.
 
-### OSDF Origins
+## OSDF Origins
 
 We host a number of OSDF origins in the cluster, that can be used to distribute read-only data, f.e. software packages or datasets. You can [contact us](/contact) to place data on origins.
 
@@ -25,7 +25,7 @@ new Runtime().module(define, name => {
 
 [Caches and origins map](https://nrp-website.vercel.app)
 
-### Using OSG caches and origins data via CVMFS
+## Using OSG caches and origins data via CVMFS
 
 To attach the  CVMFS volume which can mount all repos, create the PVC (taken from [https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example](https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example) ):
 
@@ -80,7 +80,7 @@ If you need to mount a specific repo, add the subPath to the pod mount:
          mountPropagation: HostToContainer
 ```
 
-##### Existing subPaths
+### Existing subPaths
 
 * ams.cern.ch
 * atlas.cern.ch

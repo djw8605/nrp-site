@@ -12,7 +12,7 @@ It uses the [DRBD](https://linbit.com/drbd/) kernel module that handles the repl
 - `linstor-ha` provides the highest level of redundancy and reliability at a cost of higher replication factor, and can only be used for smaller most critical use cases. (jupyter hub volume is a good example)
 :::
 
-### Linstor storage pools data use
+## Linstor storage pools data use
 
 <div id="observablehq-plot-93570ad6"></div>
 <p>Credit: <a href="https://observablehq.com/d/4d813a19acd33267">Linstor data use</a></p>
@@ -28,7 +28,7 @@ new Runtime().module(define, name => {
 
 [Linstor Grafana dashboard](https://grafana.nrp-nautilus.io/d/f_tZtVlMz/linstor-drbd)
 
-### Currently available Storage Classes:
+## Currently available Storage Classes:
 
 <table>
   <thead>

@@ -3,13 +3,6 @@ title: Software
 description: Software
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## For DTNs
 [GridFTP ][gridftp] as baseline for disk-to-disk throughput testing
 

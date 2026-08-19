@@ -134,4 +134,4 @@ Mostly, though, it is a good answer to "what is the LLM gateway *for*?" Here it 
 
 ---
 
-*Course: VIS 145B, Department of Visual Arts, UC San Diego, Spring 2026. Instructor: Jon Paden. Base repositories and student projects hosted on [`gitlab.nrp-nautilus.io`](https://gitlab.nrp-nautilus.io); LLM inference via the NRP Nautilus LLM gateway.*
+*Course: VIS 145B, Department of Visual Arts, UC San Diego, Spring 2026. Instructor: Jon Paden. Base repositories and student projects hosted on [`gitlab.nrp-nautilus.io`](https://gitlab.nrp-nautilus.io); LLM inference via the NRP LLM gateway.*

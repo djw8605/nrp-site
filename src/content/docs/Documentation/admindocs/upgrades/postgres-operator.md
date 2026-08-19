@@ -3,14 +3,7 @@ title: Postgres operators
 description: Zalando and CloudNativePG operators
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
-#### Upgrading Zalando Postgres operator
+## Upgrading Zalando Postgres operator
 
 Instructions: https://postgres-operator.readthedocs.io/en/latest/administrator/#upgrading-the-operator
 
@@ -24,7 +17,7 @@ kubectl apply -f https://raw.githubusercontent.com/zalando/postgres-operator/v1.
 helm upgrade -n postgres-operator postgres-operator postgres-operator-charts/postgres-operator
 ```
 
-#### Upgrading CloudNativePG
+## Upgrading CloudNativePG
 
 Instructions: https://cloudnative-pg.io/docs/1.29/installation_upgrade/
 

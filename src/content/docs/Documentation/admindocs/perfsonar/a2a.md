@@ -1,16 +1,9 @@
 ---
 title: A2A Maddash
-description: Description
+description: How the all-to-all MaDDash reports connectivity between sites, and how to find the node each zone contributes to the mesh.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
-#### All to All maddash
+## All to All maddash
 
 The [NRP][maddash1] maddash shows the connectivity between a node selected at each site. The sites are labelled in Kubernetes by the `topology.kubernetes.io/zone` label.
 

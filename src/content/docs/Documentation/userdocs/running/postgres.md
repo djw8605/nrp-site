@@ -3,7 +3,7 @@ title: Postgres Cluster
 description: Postgres Cluster
 ---
 
-### Using Zalando Postgres Operator in Kubernetes
+## Using Zalando Postgres Operator in Kubernetes
 
 This guide provides instructions for end users on how to deploy a PostgreSQL cluster using the [Zalando Postgres Operator](https://postgres-operator.readthedocs.io/en/latest/) in a Kubernetes environment.
 
@@ -11,11 +11,11 @@ This guide provides instructions for end users on how to deploy a PostgreSQL clu
 Postgres is the right pick for transactional and relational workloads (rows, foreign keys, OLTP). For append-heavy analytic workloads — time-series, event logs, observability data, columnar aggregates over large tables — see [ClickHouse cluster](/documentation/userdocs/running/clickhouse/) instead.
 :::
 
-### 1. Deploying a PostgreSQL Cluster
+## 1. Deploying a PostgreSQL Cluster
 
 You can deploy your PostgreSQL cluster by creating a `Postgresql` custom resource (CR).
 
-#### Example: `postgres-cluster.yaml`
+### Example: `postgres-cluster.yaml`
 ```yaml
 apiVersion: "acid.zalan.do/v1"
 kind: "postgresql"
@@ -43,7 +43,7 @@ spec:
       memory: "1Gi"
 ```
 
-#### Apply the Cluster Manifest:
+### Apply the Cluster Manifest:
 ```bash
 kubectl apply -n default -f postgres-cluster.yaml
 ```
@@ -59,7 +59,7 @@ This command will create a PostgreSQL cluster with the following configuration:
 - PostgreSQL version 14
 
 
-### 2. Accessing the PostgreSQL Cluster
+## 2. Accessing the PostgreSQL Cluster
 
 Once the cluster is running, you can connect to PostgreSQL using a Kubernetes service that is automatically created by the operator. The service will follow this format:
 
@@ -83,7 +83,7 @@ psql -h my-postgres-cluster -U postgres
 The user for your created database (`mydatabase`) will have a different password stored in `myapp.my-postgres-cluster.credentials.postgresql.acid.zalan.do`.
 
 
-### 3. Scaling the PostgreSQL Cluster
+## 3. Scaling the PostgreSQL Cluster
 
 To scale the cluster, you can modify the `numberOfInstances` field in your `postgres-cluster.yaml` file. For example, to scale to 5 instances:
 
@@ -100,7 +100,7 @@ kubectl apply -f postgres-cluster.yaml
 The operator will handle scaling up or down the number of PostgreSQL instances automatically.
 
 
-### 4. Monitoring the Cluster
+## 4. Monitoring the Cluster
 
 The Zalando Postgres Operator provides built-in support for monitoring the health and performance of the PostgreSQL cluster. You can check the status of your cluster by running:
 
@@ -115,7 +115,7 @@ NAME                TEAM   VERSION   STATUS    INSTANCES   AGE
 my-postgres-cluster my-team 14       Running   3           5m
 ```
 
-### 4. Choosing the storage for the cluster
+## 4. Choosing the storage for the cluster
 
 Linstor storageClass is preferred as it provides the best performance for postgres. Refer to [linstor storage docs](/documentation/userdocs/storage/linstor/). Example of adding the linstor storage:
 
@@ -129,15 +129,15 @@ This is how you can manage and deploy a PostgreSQL cluster using the Zalando Pos
 
 ---
 
-### Using CloudNativePG in Kubernetes
+## Using CloudNativePG in Kubernetes
 
 CloudNativePG (CNPG) is also available for deploying PostgreSQL clusters. Use CNPG when you need PostgreSQL 18 or prefer the CloudNativePG API.
 
-### 1. Deploying a CloudNativePG Cluster
+## 1. Deploying a CloudNativePG Cluster
 
 Create a `Cluster` custom resource in your namespace.
 
-#### Example: `cnpg-cluster.yaml`
+### Example: `cnpg-cluster.yaml`
 
 ```yaml
 apiVersion: postgresql.cnpg.io/v1
@@ -173,7 +173,7 @@ kubectl apply -n default -f cnpg-cluster.yaml
 
 This creates three PostgreSQL 18 instances, a database named `mydatabase` owned by `myapp`, and a 10Gi volume for each instance. Set `instances: 1` for a non-high-availability test deployment.
 
-### 2. Accessing the CloudNativePG Cluster
+## 2. Accessing the CloudNativePG Cluster
 
 CNPG creates Kubernetes services and an application credentials secret automatically:
 
@@ -194,7 +194,7 @@ kubectl run -n default -i --tty --rm debug --image=postgres:18 -- bash
 psql -h my-postgres-cluster-rw -U myapp -d mydatabase
 ```
 
-### 3. Scaling and Monitoring the Cluster
+## 3. Scaling and Monitoring the Cluster
 
 Check the cluster status:
 

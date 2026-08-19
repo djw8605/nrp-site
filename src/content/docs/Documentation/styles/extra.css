@@ -1,10 +1,28 @@
+/* Docs-only styles. Loaded via `customCss` in astro.config.ts.
+   Docs routes do not load Tailwind (see applyBaseStyles in astro.config.ts),
+   so Starlight's own list and prose styles apply unmodified. */
 
-.main-pane ul:not(.sl-steps) {
-    list-style: revert;
-    padding: revert;
+/* Compatibility shim. Four legacy admin pages wrap link lists in
+   <div class="border">, which used to resolve to Tailwind's `border` utility
+   (border-width: 1px, relying on preflight for style and colour). With Tailwind
+   scoped out of the docs, the rule lives here so those pages keep their frame:
+   admindocs/fiona/builds.md, admindocs/links/vis.md, admindocs/links/hardware.md,
+   admindocs/perfsonar/install.md. Delete this once those four are rewritten as
+   plain lists. */
+.sl-markdown-content .border {
+  /* gray-5 reads in both themes; hairline-light is near-invisible on white. */
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.25rem;
+  padding: 0.75rem 1rem;
 }
 
-.main-pane ol:not(.sl-steps) {
-    list-style: revert;
-    padding: revert;
+/*
+ * Starlight paints banner links the same colour as the banner's own text and
+ * gives them no underline, so the link is identified by nothing at all. A page
+ * banner exists to send the reader somewhere, so the destination has to look
+ * like a destination.
+ */
+.sl-banner a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }

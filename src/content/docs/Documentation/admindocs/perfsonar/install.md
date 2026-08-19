@@ -1,14 +1,7 @@
 ---
 title: Install
-description: Description
+description: Installing a perfSONAR testpoint so a site joins the mesh-orchestrated tests and registers results to the measurement archive.
 ---
-
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
 
 <div class="border">
 <strong>perfSONAR installation options</strong>

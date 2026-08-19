@@ -44,7 +44,7 @@ The morning session was designed for beginners and focused on foundational conce
 - **Navigating NRP** — user portals, JupyterHub, and interactive environments
 - **Running AI workloads** — using CPU and GPU resources for machine learning tasks
 - **Exploring LLM services** — interacting with hosted large language models through APIs and notebooks
-- **Practical exercises** — guided hands-on sessions on the live NRP Nautilus cluster
+- **Practical exercises** — guided hands-on sessions on the live Nautilus cluster
 
 Participants left the morning with a solid understanding of how to access NRP resources and run interactive AI workflows.
 

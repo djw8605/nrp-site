@@ -3,13 +3,6 @@ title: Volume Mounting Troubleshooting
 description: Volume Mounting Troubleshooting
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 This article describes how to resolve pods that are in status of `ContainerCreating`, and command `kubectl describe pod <pod-name>` indicates volume mounting failures in the events.
 
 ## Mount failed for "PVC already exists"
@@ -61,7 +54,7 @@ If and only if, there's a stale or orphaned Ceph RBD lock that was not properly 
 
 ⚠️ **Make sure you follow the steps carefully to not damage data or filesystem.**
 
-#### 1. Check for RBD Lock
+### 1. Check for RBD Lock
 
 Obtain the `pool` and `imageName` from the PersistentVolumeClaim:
 
@@ -87,13 +80,13 @@ Locker            ID                     Address
 client.<id>       auto <lock-id>         <ip>:0/<session-id>
 ```
 
-#### 2. Identify the Node by IP
+### 2. Identify the Node by IP
 
 Use NetBox or node inventory system to find which node matches the IP address from the lock entry. Then:
 
 - Confirm that **no nodes** are using the volume.
 
-#### 3. Reboot The Node
+### 3. Reboot The Node
 
 ⚠️ **Only reboot the node after verifying it has been drained and no user pods are running on it..**
 

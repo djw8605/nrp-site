@@ -3,8 +3,6 @@ title: Federation
 description: Federation
 ---
 
-# Establishing cluster federation from your cluster to Nautilus cluster via admiralty
-
 ## Before Start
 
 Create a namespace on your cluster with the **same** name as the one on Nautilus. Otherwise, federation wont work.
@@ -25,7 +23,7 @@ kubectl config set-context <context-name> --namespace=<the-same-namespace> \
 
 First, change the currrent context to use your namespace inside the Nautilus cluster.
 
-#### Create a service account in Nautilus cluster for your cluster to access
+### Create a service account in Nautilus cluster for your cluster to access
 
 ```bash
 kubectl create serviceaccount my-sa
@@ -41,7 +39,7 @@ kubernetes-dashboard-key-holder   Opaque                                2      4
 my-sa-token-qfz8b                 kubernetes.io/service-account-token   3      11s
 ```
 
-#### Create a config file named `config_sa` that includes the token emitted for the service account that you just created
+### Create a config file named `config_sa` that includes the token emitted for the service account that you just created
 
 First get the name of the secret:
 
@@ -104,7 +102,7 @@ users:
     token: REDACTED
 ```
 
-#### Create a `Source` object in the same namespace. Use the same service account name you used in the previous step
+### Create a `Source` object in the same namespace. Use the same service account name you used in the previous step
 
 ```yaml
 #source.yaml
@@ -124,7 +122,7 @@ kubectl apply -f source.yaml
 
 First, change the currrent context to use your namespace (mine is `default`) inside your cluster.
 
-#### Create the secret holding credentials to access target cluster
+### Create the secret holding credentials to access target cluster
 
 Encode the config file you just created in Base64 format and copy the output of the encoded config file.
 
@@ -149,7 +147,7 @@ type: Opaque
 kubectl apply -f secret.yaml
 ```
 
-#### Create a `Target` object, referencing the secret we just created
+### Create a `Target` object, referencing the secret we just created
 
 ```yaml
 #target.yaml
@@ -166,11 +164,11 @@ spec:
 kubectl apply -f target.yaml
 ```
 
-#### Label the namespace as being federated
+### Label the namespace as being federated
 
 `kubectl label ns default multicluster-scheduler=enabled`
 
-#### Check if the virual node is up
+### Check if the virual node is up
 
 ```bash
 kubectl get nodes --watch
@@ -178,7 +176,7 @@ NAME                                             STATUS   ROLES                 
 admiralty-dev-namespace-nautilus-tg-2e2a858480   Ready    cluster,control-plane,master   4d23h
 ```
 
-#### Try to run a federated pod by adding the annotation
+### Try to run a federated pod by adding the annotation
 
 ```yaml
 #test-pod.yaml
@@ -206,7 +204,7 @@ spec:
 kubectl apply -f test-pod.yaml
 ```
 
-#### Check if the proxy and delegate pods are running on source and target cluster respectively
+### Check if the proxy and delegate pods are running on source and target cluster respectively
 
 ```bash
 #proxy pod

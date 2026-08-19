@@ -3,7 +3,7 @@ title: GitLab Runners
 description: A Cluster Admin Guide Running Gitlab CI/CD Runners
 ---
 
-# Restore GitLab Runner KubeVirt VMs (docker:dind, docker tag)
+## Restore GitLab Runner KubeVirt VMs (docker:dind, docker tag)
 
 Minimal guide for the production GitLab runners: **docker** executor, **docker:dind** image, **docker** tag. The docker-tagged runners are KubeVirt VMs not Kubernetes Pods. The configuration for each VM is in a secret in the namespace. Duplicate and get a new runner token from Gitlab for new secret. Duplicate runner DataVolume before applying VM.
 
@@ -93,7 +93,7 @@ spec:
 
 ---
 
-## Verify
+### Verify
 
 ```bash
 virtctl ssh ubuntu@runner1 -n gitlab -- sudo gitlab-runner status

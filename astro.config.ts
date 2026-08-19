@@ -40,7 +40,12 @@ export default defineConfig({
     starlight({
       disable404Route: true,
       favicon: '/favicon.ico',
-      title: 'NRP Nautilus',
+      // "NRP" is the platform, "Nautilus" is the cluster it runs on; the two must
+      // never be merged into a compound name. See DESIGN.md §12.
+      title: 'NRP Documentation',
+      // Surfaces a per-page freshness signal, so a page describing a component
+      // that is still rolling out is visibly dated rather than silently stale.
+      lastUpdated: true,
       head: [
         {
           tag: 'script',
@@ -52,12 +57,16 @@ export default defineConfig({
         },
         {
           tag: 'script',
-          content: 'window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }',
+          content:
+            'window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }',
         },
       ],
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       components: {
         Footer: './src/components/DocsFooter.astro',
+        // Renders the admindocs section label that used to be pasted into each
+        // page as a `:::caution` block.
+        PageTitle: './src/components/DocsPageTitle.astro',
         Search: './src/components/DocsSearch.astro',
       },
       social: {
@@ -80,7 +89,7 @@ export default defineConfig({
               label: 'Start',
               collapsed: true,
               items: [
-                { label: 'Getting Started', link: 'documentation/userdocs/start/getting-started' },
+                { label: 'Getting access', link: 'documentation/userdocs/start/getting-started' },
                 { label: 'Using Nautilus', link: 'documentation/userdocs/start/using-nautilus' },
                 { label: 'Hierarchical resources', link: 'documentation/userdocs/start/hierarchy' },
                 { label: 'Cluster Policies', link: 'documentation/userdocs/start/policies' },
@@ -250,7 +259,7 @@ export default defineConfig({
                     { label: 'Linstor', link: 'documentation/userdocs/storage/linstor' },
                     { label: 'Nextcloud', link: 'documentation/userdocs/storage/nextcloud' },
                     { label: 'Syncthing', link: 'documentation/userdocs/storage/syncthing' },
-                    { label: 'Mounting FUSE', link: 'documentation/userdocs/storage/fuse' }
+                    { label: 'Mounting FUSE', link: 'documentation/userdocs/storage/fuse' },
                   ],
                 },
                 {
@@ -417,7 +426,14 @@ export default defineConfig({
       ],
     }),
     tailwind({
-      applyBaseStyles: true,
+      // The integration's applyBaseStyles injects `@tailwind base/components/utilities`
+      // into EVERY page via injectScript('page-ssr'), which put ~90 KB of marketing CSS
+      // on all 147 Starlight docs routes that never used it. Marketing pages get Tailwind
+      // from `~/assets/styles/tailwind.css`, imported by src/layouts/Layout.astro, which
+      // every page under src/pages/ funnels through -- so turning this off scopes Tailwind
+      // to the marketing site and leaves /documentation on Starlight's own styles.
+      // See DESIGN.md section 11.
+      applyBaseStyles: false,
     }),
     sitemap(),
     mdx(),

@@ -3,13 +3,6 @@ title: SENSE/Multus
 description: SENSE/Multus configuration and management.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 Follow these steps to provision an L2 path using SENSE and Multus.
 
 :::note
@@ -20,15 +13,15 @@ Before starting, make sure you have access to the Sense Orchestrator either on [
 
 Login into the orchestrator's online portal at [sense-o](https://sense-o.es.net:8443/StackV-web/portal/) or [sense-o-dev](https://sense-o-dev.es.net:8443/StackV-web/portal/) (Credentials provided by ESnet).
 
-#### Create a new instance from the "+" button in the bottom right corner.
+### Create a new instance from the "+" button in the bottom right corner.
 
 ![Create New Instance](../../../../assets/images/sense/sense1.png)
 
-#### Select the service profile you want. (These will be provided and already populated by the ESnet SENSE Team).
+### Select the service profile you want. (These will be provided and already populated by the ESnet SENSE Team).
 
 ![Select Service Profile](../../../../assets/images/sense/sense2.png)
 
-#### Fill in the fields specifying the configuration for the L2 path you want. (You can view and search for URIs in the `Visualization` tab).
+### Fill in the fields specifying the configuration for the L2 path you want. (You can view and search for URIs in the `Visualization` tab).
 
 ![Fill Configuration](../../../../assets/images/sense/sense3.png)
 
@@ -40,11 +33,11 @@ Login into the orchestrator's online portal at [sense-o](https://sense-o.es.net:
 
 `bandwidth.capacity`: QoS bandwidth and **not** an upper cap.
 
-#### Specify an alias for the instance (name).
+### Specify an alias for the instance (name).
 
 ![Specify Alias](../../../../assets/images/sense/sense4.png)
 
-#### You can view the status (failure/success) and logs after hitting submit.
+### You can view the status (failure/success) and logs after hitting submit.
 
 ![View Status](../../../../assets/images/sense/sense5.png)
 
