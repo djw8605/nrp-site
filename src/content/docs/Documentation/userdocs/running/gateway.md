@@ -9,7 +9,7 @@ This is a temporary solution until we completely migrate the top domain from Ing
 
 [Gateway API](https://gateway-api.sigs.k8s.io/) is a Kubernetes API for defining and managing network gateways and their associated routing rules. It provides a declarative way to define how traffic should be routed to services within a Kubernetes cluster, making it easier to manage complex network topologies and improve the scalability and reliability of applications. It obsoletes [Ingress](/documentation/userdocs/running/ingress/).
 
-# Exposing HTTP services
+## Exposing HTTP services
 
 :::note
 The service will be exposed on ports 50080 and 50443.
@@ -52,7 +52,7 @@ Replace:
 
 Use the [official docs](https://gateway-api.sigs.k8s.io/api-types/httproute/) / [reference spec](https://gateway-api.sigs.k8s.io/reference/spec/#httproute) for other fields.
 
-# Exposing GRPC services
+## Exposing GRPC services
 
 :::note
 The service will be exposed on port 50051.
@@ -90,9 +90,9 @@ Replace:
 
 Use the [official docs](https://gateway-api.sigs.k8s.io/api-types/grpcroute/) / [reference spec](https://gateway-api.sigs.k8s.io/reference/spec/#grpcroute) for other fields.
 
-# Testing
+## Testing
 
-## Testing GRPC
+### Testing GRPC
 
 :::caution
 Please delete the deployed objects after testing.

@@ -11,7 +11,7 @@ Our cluster combines various hardware resources from multiple universities and o
 
 :::
 
-#### All Taints
+## All Taints
 
 Please use caution when applying tolerations and only tolerate taints for which you have explicit authorization from cluster administrators. Tolerating the wrong taints may cause your workloads to land on unintended or restricted nodes, leading to failures or policy violations.
 
@@ -26,7 +26,7 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 
 ---
 
-##### Taint name mappings from old to new system
+### Taint name mappings from old to new system
 
 | Old Taint                      | New Taint                                  |
 |-------------------------------|-------------------------------------------|
@@ -66,7 +66,7 @@ Here is the taint system and their descriptions. To run on a node with a taint, 
 
 [Observable notebook with taints summary](https://observablehq.com/d/1cb451398e09c3ff)
 
-#### Reservations
+## Reservations
 
 **Groups may request exclusive access to entire nodes** if their workloads justify it.
 Such nodes can be reserved by setting the following `taint` and corresponding `toleration`:
@@ -103,7 +103,7 @@ spec:
 For large jobs, this helps avoid consuming all shared cluster resources. Optionally, a higher priority can be used (contact the admins before using one).
 
 
-#### Other taints
+## Other taints
 
 Some nodes in the cluster don't have access to public Internet, and can only access educational network. They still can pull images from Docker Hub using a proxy.
 

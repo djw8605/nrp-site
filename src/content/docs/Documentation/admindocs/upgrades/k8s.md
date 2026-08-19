@@ -8,7 +8,7 @@ This page contains administrative documentation intended for cluster administrat
 :::
 
 
-#### Kubernetes upgrades
+## Kubernetes upgrades
 
 Check the [versions skew policy](https://kubernetes.io/releases/version-skew-policy/)
 

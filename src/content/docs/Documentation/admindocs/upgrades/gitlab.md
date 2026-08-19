@@ -10,7 +10,7 @@ This page contains administrative documentation intended for cluster administrat
 
 
 
-#### Upgrading GitLab
+## Upgrading GitLab
 
 Follow the [upgrade doc](https://docs.gitlab.com/ee/update/#upgrade-paths) ([upgrade paths](https://docs.gitlab.com/update/upgrade_paths/)).
 

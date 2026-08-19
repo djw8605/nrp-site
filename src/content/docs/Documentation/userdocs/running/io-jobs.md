@@ -11,7 +11,7 @@ Start with 1 GPU and a representative / subsampled data set and look at utilizat
 
 You can try copying the files from ceph to the local node disk. Most of our nodes have NVME drives, which provide hundred(s) times better performance than remote Ceph storage.
 
-#### Adjust ephemeral-size to your data volume, otherwise pod can be killed by kubernetes
+## Adjust ephemeral-size to your data volume, otherwise pod can be killed by kubernetes
 
 > **Note:** On Nautilus, pods that write more than **50Gi** of ephemeral scratch data per container (for example, to an `emptyDir` used for local NVMe scratch) can be evicted. When your job uses an `emptyDir` scratch volume, request `ephemeral-storage` in the container `resources` to cover the maximum scratch size you expect (for example, `ephemeral-storage: 100Gi` as in the example below), and optionally set a matching limit.
 
@@ -70,7 +70,7 @@ spec:
   backoffLimit: 5
 ```
 
-#### Ram Disk
+## Ram Disk
 
 You can mount a RAM disk to your pod to reduce IO pressure. The RAM disk is dynamically sized, but does not count against your PODs memory request. The [kubernetes documentation describes setting it up](https://kubernetes.io/docs/concepts/storage/volumes/#emptydir), the example below contains just the components you need to add to your YAML file to mount a ram disk.
 
@@ -88,7 +88,7 @@ spec:
             medium: "Memory"
 ```
 
-#### Large dataset sampling strategies that work (and issues to watch out for)
+## Large dataset sampling strategies that work (and issues to watch out for)
 
 If you have a large dataset (>100 GB) and need to sample data from it at a high IO rate (>100 MB/sec) the suggestions below will apply to you.
 

@@ -3,8 +3,6 @@ title: Scheduling Workloads in Nautilus
 description: Learn how to schedule and optimize the placement of pods in the Nautilus Cluster, including using node selectors, resource requests, and geographical preferences.
 ---
 
-# Scheduling
-
 In Kubernetes, scheduling refers to the process of assigning pods to nodes in a cluster based on various factors such as resource requirements, node capacity, and other constraints. The Kubernetes scheduler is responsible for determining where and how to run pods within the cluster.
 
 ❗ While you can run jobs without any special node selectors, understanding this section will allow you to better optimize the placement of your workloads and significantly increase computational performance. You can request more performant CPUs, GPUs with more memory, faster network links, and even select nodes in a specific geographical region to optimize latency to your storage.

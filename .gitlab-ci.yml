@@ -15,6 +15,7 @@ build:
     - changes:
         - src/**/*
         - static/**/*
+        - scripts/**/*
         - astro.config.ts
         - .gitlab-ci.yml
         - package.json
@@ -31,6 +32,7 @@ build:
     - echo "CI_MERGE_REQUEST_SOURCE_BRANCH_NAME=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - 'export PAGES_BRANCH="${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME:-$CI_COMMIT_REF_NAME}"'
     - 'echo "Deploying Cloudflare Pages branch: $PAGES_BRANCH"'
+    - npm run check:docs-headings
     - npm run build
     - wrangler pages deploy ./public --project-name "nrp-portal" --branch "$PAGES_BRANCH"
 

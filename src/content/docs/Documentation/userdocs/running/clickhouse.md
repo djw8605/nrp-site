@@ -3,7 +3,7 @@ title: ClickHouse Cluster
 description: ClickHouse Cluster on Kubernetes via the Altinity ClickHouse Operator
 ---
 
-### Using the Altinity ClickHouse Operator in Kubernetes
+## Using the Altinity ClickHouse Operator in Kubernetes
 
 This guide explains how to deploy a [ClickHouse](https://clickhouse.com) cluster on NRP using the [Altinity ClickHouse Operator](https://github.com/Altinity/clickhouse-operator). A single cluster-wide operator reconciles `ClickHouseInstallation` resources in every namespace — you don't deploy your own.
 
@@ -11,11 +11,11 @@ This guide explains how to deploy a [ClickHouse](https://clickhouse.com) cluster
 Use **ClickHouse** for append-heavy analytic workloads: time-series, event logs, observability, columnar aggregates over large tables. Use **[Postgres](/documentation/userdocs/running/postgres/)** for transactional / relational workloads where you need rows, foreign keys, and OLTP guarantees.
 :::
 
-### 1. Deploying a ClickHouse Cluster
+## 1. Deploying a ClickHouse Cluster
 
 Create a `ClickHouseInstallation` (CHI) custom resource. The simplest case is a single-replica cluster:
 
-#### Example: `clickhouse-cluster.yaml`
+### Example: `clickhouse-cluster.yaml`
 ```yaml
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
@@ -65,7 +65,7 @@ NAME            STATUS      CLUSTERS   HOSTS   AGE
 my-clickhouse   Completed   1          1       2m
 ```
 
-### 2. Accessing the ClickHouse Cluster
+## 2. Accessing the ClickHouse Cluster
 
 Two services are created automatically:
 
@@ -84,7 +84,7 @@ kubectl run -i --tty --rm ch-client --image=clickhouse/clickhouse-server:25.5.6 
   --query "SELECT version()"
 ```
 
-### 3. Scaling and Sharding
+## 3. Scaling and Sharding
 
 To add a replica, increase `replicasCount`:
 
@@ -108,7 +108,7 @@ clusters:
 
 Apply the changes; the operator will reconcile in place.
 
-### 4. Choosing the storage class
+## 4. Choosing the storage class
 
 Your data PVC's storage class determines which nodes can mount it. Pick based on whether your CHI spans regions or zones:
 
@@ -120,7 +120,7 @@ Your data PVC's storage class determines which nodes can mount it. Pick based on
 
 Refer to the [linstor storage docs](/documentation/userdocs/storage/linstor/) for details.
 
-### 5. Backups
+## 5. Backups
 
 Two patterns are in production use on NRP:
 
@@ -158,7 +158,7 @@ curl -X POST http://chi-my-clickhouse-main-0-0:7171/backup/create?name=backup-$(
 
 Use a Job that runs `clickhouse-client --query 'SELECT * FROM <db>.<table> FORMAT Native'` per table, gzips, and writes to a separate `clickhouse-backup` PVC. See `kubectl get cronjob backup-clickhouse -n clickhouse` for a working example.
 
-### 6. Monitoring
+## 6. Monitoring
 
 Operator-aggregated metrics (`chi_clickhouse_*` series, per-CHI) are scraped automatically by the shared NRP Prometheus and visible in Grafana under the **ClickHouse Operator** and **ClickHouse Server** dashboards. No tenant-side ServiceMonitor needed.
 
@@ -178,7 +178,7 @@ CHI status:
 kubectl get chi my-clickhouse -o jsonpath='{.status.status}'
 ```
 
-### 7. Common pitfalls
+## 7. Common pitfalls
 
 - **`distributed_ddl_task_timeout` setting**: this is a **profile** setting (must go under `spec.configuration.profiles`), not a server-wide one (`spec.configuration.settings`). ClickHouse 24.x will refuse to start with `Code: 137 UNKNOWN_ELEMENT_IN_CONFIG` if placed wrong.
 - **Multi-region shards**: each per-region pod template needs `topology.kubernetes.io/zone`-level affinity, not just region — otherwise pods land in zones their PVC can't reach.

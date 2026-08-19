@@ -3,8 +3,6 @@ title: Running Batch Jobs
 description: Running Batch Jobs
 ---
 
-# Running batch jobs
-
 The Nautilus Cluster is designed specifically to support high-throughput batch jobs.  
 
 

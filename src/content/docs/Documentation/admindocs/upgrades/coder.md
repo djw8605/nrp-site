@@ -10,6 +10,6 @@ This page contains administrative documentation intended for cluster administrat
 
 
 
-#### Upgrading Coder
+## Upgrading Coder
 
 https://coder.com/docs/v2/latest/install/kubernetes#upgrading-coder-via-helm

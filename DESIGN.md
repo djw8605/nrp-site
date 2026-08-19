@@ -452,6 +452,18 @@ grep -rnE 'slate-(800|900)|gray-800|text-blue-[67]00|bg-blue-50' src/pages/index
 
 **One `<h1>` per page:** `document.querySelectorAll('h1').length` → `1`.
 
+**Docs heading hierarchy** (runs in `npm run check` and in the GitLab pipeline before `build`):
+
+```bash
+npm run check:docs-headings
+```
+
+Starlight renders the frontmatter `title` as each page's only `<h1>`, so body content starts at `##` and
+steps down one level at a time. The guard (`scripts/check-docs-headings.mjs`) fails the build on a body
+`# ` heading, a first heading below `##`, any skipped level, and the scaffold's `title: Title` /
+`description: Description` placeholders. It reads column-0 headings only — indented headings inside list
+items and MDX components are owned by their surrounding block.
+
 **Page weight** (mobile viewport, expect `totalKB` < 450):
 
 ```js

@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: Description
+description: 'An overview of NRP storage: POSIX volumes and PVCs, choosing a filesystem and region, expanding volumes, and the purging policy.'
 ---
 
 :::tip

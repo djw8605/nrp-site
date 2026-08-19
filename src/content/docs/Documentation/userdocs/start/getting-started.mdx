@@ -5,7 +5,7 @@ description: getting started with the NRP nautilus cluster
 import { Steps } from '@astrojs/starlight/components';
 import { LinkButton } from '@astrojs/starlight/components';
 
-### Get access and log in
+## Get access and log in
 
 If you are a new user and want to access the NRP Nautilus cluster, follow the steps below.
 
@@ -72,7 +72,7 @@ As an **`admin`**, you will have the ability to:
 </Steps>
 
 
-### Cluster access via kubectl
+## Cluster access via kubectl
 
     :::danger[Please follow the steps below carefully!]
     - Please do not skip any steps. <b>All steps below are necessary to be able to connect to Nautilus.</b>
@@ -203,7 +203,7 @@ As an **`admin`**, you will have the ability to:
 
 </Steps>
 
-### Updating namespace membership
+## Updating namespace membership
 
 By default the access token expires in half an hour and is automatically updated after that. If you need to update one sooner (for example, you were added to a new namespace), you can invalidate the token:
 
@@ -222,7 +222,7 @@ After that any `kubectl` command will trigget getting the new token. (F.e. `kube
 - Users running a **`Job`** with **`sleep` command** or equivalent (any command that never ends by itself) will be banned from using the cluster.
 :::
 
-### Use the Cluster
+## Use the Cluster
 
 1. Read the [Using Nautilus](/documentation/userdocs/start/using-nautilus) page to learn how to use the cluster. 
 
@@ -238,7 +238,7 @@ After that any `kubectl` command will trigget getting the new token. (F.e. `kube
 
 
 
-### GUI tools for Kubernetes
+## GUI tools for Kubernetes
 
 You might want to try one of these GUI tools for Kubernetes:
 
@@ -248,7 +248,7 @@ You might want to try one of these GUI tools for Kubernetes:
 
     They will all use your `config` file in the default location to get access to the cluster.
 
-#### Visual Studio Code
+### Visual Studio Code
 
 <details>
 <summary>Open Instructions</summary>
