@@ -35,7 +35,9 @@ spec:
 This example requests 1 GPU device. You can have up to 8 per node if you're [using jobs](/documentation/userdocs/running/jobs/), and up to 2 for pods. If you request GPU devices in your pod, 
 kubernetes will auto schedule your pod to the appropriate node. There's no need to specify the location manually.
 
-:::danger[You should always delete your pod when your computation is done to let other users use the GPUs.]
+:::caution[Delete your pod when your computation is done]
+
+A GPU stays reserved for as long as your pod exists, so an idle pod blocks it for everyone else.
 
 Consider using [Jobs](/documentation/userdocs/running/jobs/) **with actual script instead of `sleep`** whenever possible to ensure your pod is not wasting GPU time.
 If you have never used Kubernetes before, see the [tutorial](/documentation/userdocs/tutorial/introduction/).
@@ -61,7 +63,7 @@ The current list is:
 | NVIDIA A100 MIG 1g.10gb     | nvidia.com/mig-small      |
 > **Note:** NVIDIA RTX PRO 6000 Blackwell nodes are reserved for exclusive use and are not generally available at this time.
 
-:::danger[Access policy for A100 / H100 / H200 / GH200]
+:::caution[Access policy for A100 / H100 / H200 / GH200]
 These four GPU types are gated by a per-namespace ResourceQuota. By default every namespace has a quota of **zero**
 for each of them. To run a pod on one of them you have one of these paths:
 
@@ -123,7 +125,7 @@ Since 1 and 2 GPU jobs are blocking nodes from getting 4 and 8-GPU jobs, there a
 We have a variety of GPU flavors attached to Nautilus. This table describes the types of GPUs available for use, but is not up to date - it's better to use the actual cluster information (f.e. `kubectl get nodes -L nvidia.com/gpu.product`).
 
 <div id="observablehq-chart-35acf314"></div>
-<p>Credit: <a href="https://observablehq.com/d/7c0f46855b4212e0">GPU types by NRP Nautilus</a></p>
+<p>Credit: <a href="https://observablehq.com/d/7c0f46855b4212e0">GPU types on Nautilus</a></p>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@observablehq/inspector@5/dist/inspector.css">
 <script type="module">

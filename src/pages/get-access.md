@@ -3,9 +3,9 @@ title: 'Get Access'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
-To get access to the NRP Nautilus cluster:
+To get access to the Nautilus cluster:
 
-1. Point your browser to the [NRP Nautilus portal][1]
+1. Point your browser to the [NRP portal][1]
 
 1. On the portal page click on "Login" button at the top right corner
 

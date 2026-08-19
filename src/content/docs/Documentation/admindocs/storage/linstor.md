@@ -3,10 +3,6 @@ title: Broken Drives
 description: Broken Drives
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 ## Using the linstor console
 
 ```bash

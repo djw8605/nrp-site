@@ -3,14 +3,6 @@ title: JupyterLab Admin
 description: JupyterLab administration guide.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
-
 ## Adding a User to JupyterLab
 
 To grant access to the [JupyterLab](https://jupyterhub-west.nrp-nautilus.io) service, first verify the user's email address used for CILogon.

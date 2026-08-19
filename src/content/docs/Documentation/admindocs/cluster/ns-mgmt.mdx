@@ -3,13 +3,6 @@ title: Namespace Management
 description: Managing namespaces inlcuding creating and deleting namespaces in the cluster.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 import Image from '~/components/common/Image.astro';
 
 
@@ -31,7 +24,7 @@ Do **not** use `kubectl create namespace`.
 2. Delete from the website (NOT AUTHENTIK).
 3. Remove any exceptions in the portal configuration and any Gatekeeper exceptions. 
 
-:::danger
+:::note
 The website uses a cached version of authentik groups. Changed in Authentik directly will have users see old cache until portal refreshes cache.
 :::
 

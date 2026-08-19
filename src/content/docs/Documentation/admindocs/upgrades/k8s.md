@@ -3,11 +3,6 @@ title: Kubernetes Upgrades
 description: Kubernetes upgrade procedures
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
 #### Kubernetes upgrades
 
 Check the [versions skew policy](https://kubernetes.io/releases/version-skew-policy/)

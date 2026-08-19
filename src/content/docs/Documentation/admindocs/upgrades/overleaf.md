@@ -3,10 +3,6 @@ title: Overleaf
 description: Description
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 #### Upgrading Overleaf
 
 First, find the latest version of the Overleaf Docker image from https://hub.docker.com/r/sharelatex/sharelatex/tags. Take note of the minor version number (e.g. "X.Y") you wish to upgrade to.

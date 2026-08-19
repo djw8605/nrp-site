@@ -3,11 +3,6 @@ title: KubeVirt GPU
 description: KubeVirt GPU configuration and management.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
 :::note
 The steps below are using the NVIDIA GPU Operator to bind the correct drivers.
 :::

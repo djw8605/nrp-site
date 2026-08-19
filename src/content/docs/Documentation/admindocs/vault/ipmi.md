@@ -3,10 +3,6 @@ title: Updating IPMI info
 description: Updating IPMI info
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 Login to Vault from your local computer:
 
 ```

@@ -3,13 +3,6 @@ title: Install
 description: Description
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 <div class="border">
 <strong>perfSONAR installation options</strong>
 </div>

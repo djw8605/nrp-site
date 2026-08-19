@@ -1,33 +1,17 @@
 ---
 import Default from '@astrojs/starlight/components/Footer.astro';
+import type { Props } from '@astrojs/starlight/props';
 
-export interface Props {
-  links: Array<any>;
-  secondaryLinks: Array<any>;
-  socialLinks: Array<any>;
-  footNote?: string;
-  theme?: string;
-  pagination?: {
-    prev?: { href: string; title: string };
-    next?: { href: string; title: string };
-  };
-  editUrl?: string;
-}
-
-const { links, secondaryLinks, socialLinks, footNote, theme, pagination, editUrl } = Astro.props;
+/**
+ * Forward the whole route-data object. Hand-listing props here silently drops
+ * the ones Starlight's own children read from `Astro.props` — `lastUpdated` and
+ * `lang` feed the `LastUpdated` component, so enumerating a subset switched the
+ * per-page freshness date off without any error.
+ */
 ---
 
 <div>
-  <!-- Reuse the Default Footer and pass all required props -->
-  <Default 
-    links={links} 
-    secondaryLinks={secondaryLinks} 
-    socialLinks={socialLinks} 
-    footNote={footNote} 
-    theme={theme}
-    pagination={pagination}
-    editUrl={editUrl}
-  >
+  <Default {...Astro.props}>
     <slot />
   </Default>
 

@@ -3,10 +3,6 @@ title: Nextcloud / LanguageTool
 description: Description
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 #### Upgrading Nextcloud
 
 ##### Before Upgrading
