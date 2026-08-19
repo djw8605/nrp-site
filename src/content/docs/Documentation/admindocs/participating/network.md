@@ -3,13 +3,6 @@ title: Networking
 description: Network requirements
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 Our cluster contains several hundreds of nodes around the world, and to make a cluster out of these we place certain connectivity requirements to join a node.
 
 The nodes are mostly connected to a Science DMZ with 10G-100G speeds. To utilize this speed, they should support jumbo frames (9000 MTU) to all other nodes in the cluster. 

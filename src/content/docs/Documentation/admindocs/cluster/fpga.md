@@ -3,10 +3,6 @@ title: FPGA Administration
 description: Cluster Admin Guide to managing FPGA-equipped nodes, JTAG cables, the device plugins, and shell flashing.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 ## Overview
 
 This guide pertains to the **AMD/Xilinx Alveo U55C FPGAs** used on the NRP cluster.

@@ -5,10 +5,6 @@ description: Broken Drives
 
 import { Steps } from '@astrojs/starlight/components';
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 ## Draining an OSD
 
 To remove the OSD first instead of `osd out` use this: `ceph osd crush reweight osd.<id> 0.0`. OSD OUT will shift the weight to other OSDs around, and will require another rebalance.

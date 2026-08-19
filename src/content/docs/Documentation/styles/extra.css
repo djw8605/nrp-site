@@ -15,3 +15,14 @@
   border-radius: 0.25rem;
   padding: 0.75rem 1rem;
 }
+
+/*
+ * Starlight paints banner links the same colour as the banner's own text and
+ * gives them no underline, so the link is identified by nothing at all. A page
+ * banner exists to send the reader somewhere, so the destination has to look
+ * like a destination.
+ */
+.sl-banner a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

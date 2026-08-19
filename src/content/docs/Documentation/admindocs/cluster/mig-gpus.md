@@ -3,13 +3,6 @@ title: MIG GPUs
 description: Managing MIG GPUs in the cluster.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 1. Drain the node.
 
 2. Run the command to convert **ALL** GPUs to MIGs:

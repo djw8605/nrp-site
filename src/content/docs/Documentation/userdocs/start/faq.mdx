@@ -9,7 +9,7 @@ description: FAQ
 > * The storage attached to the pod can't be unmounted.
 > * Due to the high load on the node, your pod termination process could not be completed. 
 > In all these cases, you should ask a cluster admin in [Nautilus Support](/contact) chat to look at your pod, or just wait for somebody to fix it.
->    :::danger[Do Not Force delete your pod]
+>    :::danger[Do not force-delete your pod]
 >    Do not use `kubectl  delete --grace-period=0 --force` to delete stuck pods!    
 >    It will keep resources attached to the node for an indefinite period and will require the rebooting of the node (if you happen to know which node was it).
 >    :::

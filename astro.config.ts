@@ -40,7 +40,12 @@ export default defineConfig({
     starlight({
       disable404Route: true,
       favicon: '/favicon.ico',
-      title: 'NRP Nautilus',
+      // "NRP" is the platform, "Nautilus" is the cluster it runs on; the two must
+      // never be merged into a compound name. See DESIGN.md §12.
+      title: 'NRP Documentation',
+      // Surfaces a per-page freshness signal, so a page describing a component
+      // that is still rolling out is visibly dated rather than silently stale.
+      lastUpdated: true,
       head: [
         {
           tag: 'script',
@@ -59,6 +64,9 @@ export default defineConfig({
       customCss: ['/src/content/docs/Documentation/styles/extra.css'],
       components: {
         Footer: './src/components/DocsFooter.astro',
+        // Renders the admindocs section label that used to be pasted into each
+        // page as a `:::caution` block.
+        PageTitle: './src/components/DocsPageTitle.astro',
         Search: './src/components/DocsSearch.astro',
       },
       social: {
@@ -81,7 +89,7 @@ export default defineConfig({
               label: 'Start',
               collapsed: true,
               items: [
-                { label: 'Getting Started', link: 'documentation/userdocs/start/getting-started' },
+                { label: 'Getting access', link: 'documentation/userdocs/start/getting-started' },
                 { label: 'Using Nautilus', link: 'documentation/userdocs/start/using-nautilus' },
                 { label: 'Hierarchical resources', link: 'documentation/userdocs/start/hierarchy' },
                 { label: 'Cluster Policies', link: 'documentation/userdocs/start/policies' },

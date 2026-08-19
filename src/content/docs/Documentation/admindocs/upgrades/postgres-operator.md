@@ -3,13 +3,6 @@ title: Postgres operators
 description: Zalando and CloudNativePG operators
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## Upgrading Zalando Postgres operator
 
 Instructions: https://postgres-operator.readthedocs.io/en/latest/administrator/#upgrading-the-operator

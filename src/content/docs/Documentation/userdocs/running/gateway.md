@@ -3,7 +3,7 @@ title: Gateway API
 description: Exposing services via Gateway API
 ---
 
-:::danger
+:::note[Temporary, pending the Gateway API migration]
 This is a temporary solution until we completely migrate the top domain from Ingresses to Gateway API. Once the migration is done, any service in the top level domain will be possible to create as GRPC.
 :::
 

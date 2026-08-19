@@ -3,13 +3,6 @@ title: Knowledge Base
 description: Knowledge Base
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## Get involved in NRP
 
 1. Check out [fasterdata.es.net][esnet] to understand terms, tools, and capabilities common to R&E networking performance measurement and monitoring.

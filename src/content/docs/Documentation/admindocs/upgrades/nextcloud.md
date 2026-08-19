@@ -3,10 +3,6 @@ title: Nextcloud / LanguageTool
 description: Upgrade procedure for Nextcloud and LanguageTool, including major-release sequencing and the NGINX ConfigMap.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
 ## Upgrading Nextcloud
 
 ### Before Upgrading

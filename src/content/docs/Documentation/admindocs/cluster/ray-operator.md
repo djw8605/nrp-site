@@ -3,13 +3,6 @@ title: KubeRay Operator Installation and Management
 description: Instructions for installing and managing the KubeRay operator in the Kubernetes cluster.
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## Deploying the KubeRay Operator
 
 Deploy the KubeRay operator in the `ray` namespace using the [Helm chart repository](https://github.com/ray-project/kuberay-helm). If you don't have `helm` installed, [install Helm](https://helm.sh/docs/intro/install/) first.

@@ -3,13 +3,6 @@ title: Getting Certs
 description: Getting Certs
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## Using cert-manager to generate a certificate from Vault (NSI example)
 
 1. Use [the Vault guide](https://www.vaultproject.io/docs/auth/approle) to generate the approle token for your namespace

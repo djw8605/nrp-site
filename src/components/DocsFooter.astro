@@ -4,10 +4,18 @@ import Default from '@astrojs/starlight/components/Footer.astro';
 import type { Props as StarlightFooterProps } from '@astrojs/starlight/props';
 import nsfLogo from '~/assets/images/nsf-logo.png';
 
-// Take Starlight's own prop type rather than hand-rolling one. The previous
-// local interface mistyped `editUrl` (declared string, actually URL) and
-// `pagination` (declared its own shape, actually Starlight's Link), and both
-// surfaced as errors under `astro check`.
+/**
+ * Forward the whole route-data object, and take Starlight's own prop type
+ * rather than hand-rolling one.
+ *
+ * Hand-listing props here silently drops the ones Starlight's own children read
+ * from `Astro.props`: `lastUpdated` and `lang` feed the `LastUpdated`
+ * component, so enumerating a subset switched the per-page freshness date off
+ * without any error. The local interface was also wrong where it did exist --
+ * it mistyped `editUrl` (declared string, actually URL) and `pagination`
+ * (declared its own shape, actually Starlight's Link), and both surfaced as
+ * errors under `astro check`.
+ */
 export type Props = StarlightFooterProps;
 ---
 
@@ -21,7 +29,6 @@ export type Props = StarlightFooterProps;
 }
 
 <div>
-  <!-- Reuse the Default Footer and pass all required props -->
   <Default {...Astro.props}>
     <slot />
   </Default>

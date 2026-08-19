@@ -3,13 +3,6 @@ title: Nodes
 description: Nodes
 ---
 
-:::caution
-This page contains administrative documentation intended for cluster administrators and operators. This content may not be relevant for regular users.
-:::
-
-
-
-
 ## Upgrade compute nodes
 ### Upgrade GPU driver
 1. Verify that the target driver is available at https://yumrepo.nrp-nautilus.io/nvidia/. If not, obtain the driver file from nvidia.com, and transfer it to the pod `repo` in the `kernel` namespace, in directory `/repo/nvidia`. Make sure the name of the driver file is in the format of `NVIDIA-Linux-<architecture>-<driver-version>.run`. For example: `NVIDIA-Linux-x86_64-550.76.run`.
