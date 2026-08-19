@@ -10,7 +10,7 @@ This page contains administrative documentation intended for cluster administrat
 
 
 
-#### Upgrading Calico
+## Upgrading Calico
 
 Follow the [official guide](https://docs.tigera.io/calico/latest/operations/upgrading/kubernetes-upgrade#upgrading-an-installation-that-uses-manifests-and-the-kubernetes-api-datastore).
 

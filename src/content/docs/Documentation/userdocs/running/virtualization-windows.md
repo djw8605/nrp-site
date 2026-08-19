@@ -293,7 +293,7 @@ Taints:             nvidia.com/gpu=Exists:PreferNoSchedule
 
 In the node description, look for GPU availability under a specific name that aligns with KubeVirt's allocation method, rather than `nvidia.com/gpu`.
 
-#### Adding virtvnc
+### Adding virtvnc
 
 In your namespace create a deployment:
 

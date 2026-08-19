@@ -3,10 +3,6 @@ title: Docker Images
 description: Docker Images
 ---
 
-# **Images**
-
-
-
 Images are fundamental components in Nautilus as they package the application code, dependencies, and runtime environment required to run containers within Kubernetes clusters. Images serve as the building blocks for containerized applications, allowing developers to deploy their software in a consistent and portable manner.
 
 

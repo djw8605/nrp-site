@@ -298,9 +298,7 @@ You can copy-and-paste the lines below into a new file on your local system (usi
 
 
 
-###### Deployment 1
-
-```yaml
+```yaml title="Deployment 1"
 // dep1.yaml
 apiVersion: apps/v1
 kind: Deployment

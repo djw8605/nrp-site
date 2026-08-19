@@ -10,6 +10,6 @@ This page contains administrative documentation intended for cluster administrat
 
 
 
-#### Current NRP nodes topology
+## Current NRP nodes topology
 
 ![GigaIO topology](~/assets/images/docs/GigaIO_FabreX_Update.jpg)

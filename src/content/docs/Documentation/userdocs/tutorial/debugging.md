@@ -3,8 +3,6 @@ title: Debugging
 description: Debugging
 ---
 
-# Debugging
-
 No one writes perfect code or executes scripts without failures or errors. Understanding how to diagnose and fix these roadblocks is an important skill. Because Nautilus is highly complex and Kubernetes requires additional skills, this page is written to help you understand some basic steps you can use for debugging.
 
 

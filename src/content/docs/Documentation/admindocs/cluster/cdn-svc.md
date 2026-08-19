@@ -14,7 +14,7 @@ The nodes in the cluster are grouped by the `topology.kubernetes.io/{region,zone
 
 **Note:** This setup has not been fully successful yet, most likely due to [safeguards](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/#safeguards) that are being violated in this configuration.
 
-#### Pod Affinities and Anti-Affinities
+## Pod Affinities and Anti-Affinities
 
 The first step is to configure pod affinities and anti-affinities to control where pods are placed within the cluster:
 
@@ -77,7 +77,7 @@ spec:
 
 You can also adjust the weight to fine-tune the affinity preferences.
 
-#### Service Topology Awareness
+## Service Topology Awareness
 
 To ensure that your service is [topology-aware](https://kubernetes.io/docs/concepts/services-networking/topology-aware-hints/) and prefers serving traffic within the same zone:
 

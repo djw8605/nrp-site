@@ -3,10 +3,6 @@ title: Scheduling and Exposing
 description: Scheduling and Exposing
 ---
 
-# Horizontal scaling
-
-
-
 In a Kubernetes cluster, orchestration refers to the automated coordination, deployment, scaling, and management of containerized applications and their associated workloads.
 
 
@@ -207,9 +203,7 @@ Having to manually switch between the two Pods is obviously tedious. What we rea
 
 You can copy-and-paste the lines below.
 
-###### svc2.yaml:
-
-```yaml
+```yaml title="svc2.yaml"
 apiVersion: v1
 kind: Service
 metadata:
@@ -266,9 +260,7 @@ The above Web services only serve traffic on the private IP network LAN. If you 
 
 What we need, is set up an Ingress instance for our service.
 
-###### ingress.yaml:
-
-```yaml
+```yaml title="ingress.yaml"
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

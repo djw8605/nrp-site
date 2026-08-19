@@ -1,6 +1,6 @@
 ---
 title: Install
-description: Description
+description: Installing a perfSONAR testpoint so a site joins the mesh-orchestrated tests and registers results to the measurement archive.
 ---
 
 :::caution

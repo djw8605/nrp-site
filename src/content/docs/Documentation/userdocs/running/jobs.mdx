@@ -19,7 +19,7 @@ Since jobs in Nautilus can run forever, you can only run jobs with meaningful `c
 
 Use [our tutorial](/documentation/userdocs/tutorial/jobs/) for a simple job example.
 
-#### Pulling code from GIT
+## Pulling code from GIT
 
 You can put your code to our [<Icon name="tabler:brand-gitlab" style="display:inline" /> GitLab](https://gitlab.nrp-nautilus.io) repository and pull it from there using the following example. To modify your code between iterations you can use the [Web IDE][2] - simply click the *Web IDE*  button on your project's repository page once you are logged in on Gitlab. Make sure your repo is not private or use the [private repo example](#private-repo).
 
@@ -77,7 +77,7 @@ This pod will:
 - then will start your main container, and execute the script  that was downloaded from the git repo
 - when script is finished, terminate the whole pod. 
 
-#### Running several bash commands
+## Running several bash commands
 
 
 You can group several commands, and use pipes, like this:
@@ -89,7 +89,7 @@ You can group several commands, and use pipes, like this:
     - "cd /home/user/my_folder && apt-get install -y wget && wget pull some_file && do something else"
 ```
 
-#### Logs
+## Logs
 
 
 All stdout and stderr output from the script will be preserved and accessible by running 
@@ -110,12 +110,12 @@ kubectl logs -f pod_name
 
 The pod will remain in Completed state until you delete it or timeout is passed.
 
-#### Retries
+## Retries
 
 The backoffLimit field specifies how many times your pod will run in case the exit status of your script is not 0
 or if pod was terminated for a different reason (for example a node was rebooted). It's a good idea to have it more than 0.
 
-#### Fair queueing
+## Fair queueing
 
 
 There is no fair queue implemented on Nautilus. If you submit 1000 jobs, you block **all** other users from submitting in the cluster.
@@ -123,7 +123,7 @@ There is no fair queue implemented on Nautilus. If you submit 1000 jobs, you blo
 To limit your submission to a fair portion of the cluster, refer to [this guide](https://kubernetes.io/docs/tasks/job/fine-parallel-processing-work-queue/). Make sure to use a deployment and persistent storage for Redis pod. Here's [our example](https://gitlab.nrp-nautilus.io/prp/job-queue/-/blob/master/redis.yaml)
 
 
-#### Private repo
+## Private repo
 
 
 If your repository is **private**, you should create a Gitlab  Personal Access Token (see [Access Tokens][4] and [Access Tokens for command line][5]) 

@@ -9,19 +9,19 @@ We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source
 containers registry and other development lifecycle tasks. It fully uses Nautilus Cluster resources, which provides our users plenty of storage and fast builds.
 All data from our GitLab except container images are backed up nightly to Google storage, which means there's almost zero chance that you might lose your code in our repository. 
 
-#### Step 1: Create a Git repo
+## Step 1: Create a Git repo
 1. To use our GitLab installation, register at [https://gitlab.nrp-nautilus.io][4]
 1. Use GitLab for storing your code like any git repository. Here's [GitLab basics guide][5].
 1. [Create a new project][project] in your GitLab account 
 
-#### Step 2: Use Containers Registry
+## Step 2: Use Containers Registry
 What makes GitLab especially useful for kubernetes cluster in integration with
 Containers Registry. You can store your containers directly in our cluster and
 avoid slow downloads from [DockerHub][dockerhub] (although you're still free to do that as well).
 
 If you wish to use our registry, in your <https://gitlab.nrp-nautilus.io> project go to `Deploy -> Container Registry` menu and read instructions on how to use one.
 
-#### Step 3: Continuous Integration automation
+## Step 3: Continuous Integration automation
 To fully unleash the GitLab powers, introduce yourself to [Continuous Integration automation][3] and more advanced [DevOps article][6].
 
 1. Create the `.gitlab-ci.yml` file in your project, see [Quick start guide][quickstart]. The runners are already configured.  
@@ -78,7 +78,7 @@ spec:
     image: gitlab-registry.nrp-nautilus.io/<your_group>/<your_project>:<optional_tag>
 ```
 
-#### Multiarch builds
+## Multiarch builds
 
 Nautilus has several ARM64 nodes, which require a specifically build images to run on.
 

@@ -3,8 +3,6 @@ title: Cloud AI 100
 description: Qualcomm Cloud AI 100 Ultra Cards
 ---
 
-# Qualcomm Cloud AI 100 Ultra Documentation
-
 This documentation provides guidelines for deploying and managing workloads on the Qualcomm Cloud AI 100 Ultra cards available in the Nautilus cluster.
 
 ## Overview

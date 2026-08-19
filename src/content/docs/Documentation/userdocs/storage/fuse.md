@@ -1,9 +1,7 @@
 ---
-title: Title
-description: Description
+title: Mounting FUSE filesystems
+description: Mount an S3 bucket or other FUSE filesystem inside a pod using the smarter-devices/fuse resource and the SYS_ADMIN capability.
 ---
-
-#### Mounting FUSE filesystem
 
 Currently kubernetes requires elevated privileges to use FUSE mounts. The improvements are tracked in [this issue](https://github.com/kubernetes/kubernetes/issues/7890). Normally we don't allow users to run with privileged access in the cluster, and this methoud can only be used in exceptional cases.
 

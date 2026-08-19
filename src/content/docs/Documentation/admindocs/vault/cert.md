@@ -10,7 +10,7 @@ This page contains administrative documentation intended for cluster administrat
 
 
 
-#### Using cert-manager to generate a certificate from Vault (NSI example)
+## Using cert-manager to generate a certificate from Vault (NSI example)
 
 1. Use [the Vault guide](https://www.vaultproject.io/docs/auth/approle) to generate the approle token for your namespace
 2. Create the Issuer in the namespace to generate the certificate from Vault:

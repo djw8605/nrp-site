@@ -5,7 +5,7 @@ description: Ceph S3
 
 The Nautilus Ceph storage cluster can be accessed via S3 protocol. It uses our own storage, which is free for our users and is not part of Amazon or any commercial cloud.
 
-### Ceph filesystems data use
+## Ceph filesystems data use
 
 <div id="observablehq-plot-087dc8ea"></div>
 <p>Credit: <a href="https://observablehq.com/d/b9c19d9f7c57a186">Ceph data usage</a></p>
@@ -349,7 +349,7 @@ Now, you can share this URL to allow anyone to download the file.
 
 Once you add the profile, you can connect to the S3 endpoint by entering the endpoint hostname in the "Server" field. If you enter it as a URL instead of a hostname, it will likely trigger the selection of a different and undesired connection profile. For example, to connect to the S3 endpoint the for the NRP project's western region, you would enter `s3-west.nrp-nautilus.io` in the "Server" field. You can then enter your access key and secret key in the "Access Key ID" and "Secret Access Key" fields, respectively.
 
-# S3 Cookbook
+## S3 Cookbook
 
 <details>
 <summary>S3 from tensorflow</summary>

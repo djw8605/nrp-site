@@ -3,8 +3,6 @@ title: Docker and Kubernetes
 description: Docker and Kubernetes
 ---
 
-# Docker and Nautilus
-
 ## Introduction
 
 
@@ -16,13 +14,13 @@ Learning to use Docker for Nautilus enables you to take advantage of containeriz
 ## Prerequisites
 You will need the ability to install applications on your computer running a supported operating system (OS), such as Windows, Mac OS X or Linux (Chromebooks are not supported). You should also be familiar with the basic concepts of software containers (images) and [Docker Hub](https://hub.docker.com).
 
-#### Installing docker
+### Installing docker
 
 Docker container image is an easy way to package some files together and run as an isolated environment on virtually any computer in the world - from your own laptop to a supercomputer.
 
 The most popular, but not the only one, tool to run containers is [Docker](https://www.docker.com). There is a [nice guide](https://www.docker.com/get-started) on installing docker on your local machine and [getting started with it](https://www.docker.com/101-tutorial).
 
-#### Building image
+### Building image
 
 
 There are millions of already existing containers available for free on [docker hub](https://hub.docker.com) (use the search field to search for the software you need). In case you want something that doesn't exist there, or want to extend the already existing container, it's easy to do so.
@@ -57,7 +55,7 @@ You will see docker pulling the existing container *images* from docker hub, and
 
 Now type `docker images` and see that your image `my-first-container` was created and is saved in your local docker *repository*.
 
-#### Running image
+### Running image
 
 
 Now we can actually run the image. A single image can be ran multiple times, and all changes to the files will only be visible while the container is running once it stops, all new data **will be lost** unless it's placed in a [persistent volume](https://docs.docker.com/storage/volumes/).
@@ -98,7 +96,7 @@ This will execute bash inside the container. YOu can enter and exit from it mult
 docker rm -f <name_or_id>
 ```
 
-#### Exporting image
+### Exporting image
 
 
 For now the container image we've built is stored in our local docker registry. To make it available to the kubernetes cluster we need to put it somewhere globally available. You can register on docker hub and [upload there](https://docs.docker.com/docker-hub/), or use [our GitLab instance](/documentation/userdocs/development/gitlab/) and create a repository. Our GitLab is free, has unlimited space and is much faster than Docker Hub. Also for larger images it's possible to build those directly in our cluster and not on your local computer, which will significantly increase the speed and upload time. But you're free to upload the images from your local machine if you wish.
