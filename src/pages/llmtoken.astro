@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import LLMToken from '~/components/vue/LLMToken.vue';
+import EndpointPanel from '~/components/ai/EndpointPanel.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
@@ -9,7 +10,19 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <WidgetWrapper titleAs="h1" containerClass="py-2 md:py-4 lg:py-6" title="LLM API Keys">
+  <WidgetWrapper
+    titleAs="h1"
+    containerClass="py-2 md:py-4 lg:py-6"
+    title="LLM API Keys"
+    description="Every NRP-hosted model is served from one OpenAI-compatible endpoint. Create a key below, then give your client the base URL and send the key as a bearer token."
+  >
+    {
+      /* Server-rendered, above the island: the endpoint is a fact a visitor needs
+         whether or not they are logged in, and the key manager below is
+         `client:only` -- content placed under it would arrive after hydration and
+         shift on load. */
+    }
+    <EndpointPanel />
     <LLMToken client:only="vue" />
   </WidgetWrapper>
 </Layout>

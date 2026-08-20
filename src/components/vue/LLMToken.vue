@@ -1,8 +1,4 @@
 <template>
-    <div class="flex flex-col items-center justify-center">
-        <h1 class="text-2xl font-bold mb-4">Create LLM API keys</h1>
-    </div>
-
     <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
     <VueSpinnerPie v-if="isTokensLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
 
@@ -121,6 +117,7 @@ import {VueSpinnerPie} from 'vue3-spinners';
 
 import { useStore } from '@nanostores/vue';
 import { userStore } from '../../auth.ts';
+import { LLM_ENDPOINT } from '../../data/llm-endpoint.ts';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
@@ -166,7 +163,7 @@ var chatboxConfigTemplate = {
 	name: "NRP",
 	type: "openai",
 	settings: {
-		apiHost: "https://ellm.nrp-nautilus.io",
+		apiHost: LLM_ENDPOINT.host,
 		apiKey: "",
 		models: [
 			{

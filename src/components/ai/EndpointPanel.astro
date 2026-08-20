@@ -1,0 +1,207 @@
+---
+/**
+ * The endpoint readout on /llmtoken.
+ *
+ * A key is only half of what a visitor needs from this page: the other half is
+ * the base URL the key authenticates against, which the page never showed. It
+ * was reachable only from the API Access doc, so the flow was "make a key, then
+ * go find where to send it".
+ *
+ * Composed as one readout rather than a row of cards. The three facts are a
+ * single unit -- URL, header, and the call that proves both are right -- and
+ * splitting them into equal-weight panels would have made a set out of a
+ * sequence. Same code-plate chrome as the homepage capability panels
+ * (`surface-sunken`, hairline, mono figcaption) so it reads as this site's
+ * instrument register rather than a callout box.
+ *
+ * `<dt>` labels are labels for data, not kickers above headings (DESIGN.md
+ * section 6). Mono is on the values only: they are the literal strings a user
+ * pastes into a client config, and prose stays in the sans face.
+ *
+ * The copy button is the one interactive thing here, and its feedback is a state
+ * change, not an entrance -- nothing on this page animates in. Its boundary is
+ * `border-current`, never `border-hairline`: the hairline measures ~1.4:1 on this
+ * plate, and a control's boundary needs 3:1 (DESIGN.md section 2). Inheriting
+ * `text-muted` puts the border wherever the label already passes, in both modes,
+ * without making the chip teal and louder than the value it sits beside.
+ */
+import { Icon } from 'astro-icon/components';
+import { LLM_ENDPOINT } from '~/data/llm-endpoint';
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* Built here instead of as <pre> children: <pre> is whitespace-significant and
+   prettier's Astro parser re-indents element children, which folds the plate's
+   own indentation into the command. Structure beats a prettier-ignore
+   directive -- the same lesson CapabilityTabs' code plate records.
+
+   Broken across two lines with a `\` continuation on purpose: as one line it
+   ran 76 characters and forced a horizontal scroll inside the plate at 375px. */
+const verifyCommand = [`curl -H "Authorization: Bearer $NRP_KEY" \\`, `  ${LLM_ENDPOINT.baseUrl}/models`].join('\n');
+const verifyHtml = `<span aria-hidden="true" class="select-none text-muted">$ </span>${esc(verifyCommand)}`;
+
+const rowClass =
+  'grid gap-x-4 gap-y-1.5 border-t border-hairline px-3.5 py-3.5 sm:grid-cols-[7rem_minmax(0,1fr)] sm:px-4';
+---
+
+<div class="mb-12 md:mb-16">
+  {
+    /* Full-bleed below `sm`, cancelling the page gutters: it buys the command 32px,
+      which is the difference between the continuation line fitting and clipping at
+      the plate's edge on a 375px screen. */
+  }
+  <figure class="-mx-4 overflow-hidden border-y border-hairline bg-sunken sm:mx-0 sm:rounded-lg sm:border">
+    <figcaption class="flex items-center gap-2 px-3.5 py-2.5 font-mono text-xs text-muted sm:px-4">
+      <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+      endpoint
+    </figcaption>
+
+    <dl class="text-sm">
+      <div class={rowClass}>
+        <dt class="text-muted sm:pt-0.5">Base URL</dt>
+        <dd class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
+          <code id="llm-endpoint-base-url" class="min-w-0 break-all font-mono text-base font-medium text-heading"
+            >{LLM_ENDPOINT.baseUrl}</code
+          >
+          <button
+            type="button"
+            data-copy-from="llm-endpoint-base-url"
+            aria-label={`Copy the base URL, ${LLM_ENDPOINT.baseUrl}`}
+            class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-current px-2.5 py-1.5
+              text-xs font-medium text-muted transition-colors hover:border-teal-600 hover:bg-surface-3
+              hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              focus-visible:ring-offset-2 focus-visible:ring-offset-surface-sunken
+              dark:hover:border-teal-400 dark:hover:text-teal-300"
+          >
+            <Icon name="tabler:copy" class="h-3.5 w-3.5" data-copy-icon="idle" aria-hidden="true" />
+            <Icon name="tabler:check" class="hidden h-3.5 w-3.5" data-copy-icon="done" aria-hidden="true" />
+            <span data-copy-label>Copy</span>
+          </button>
+          {
+            /* The visible label swap is not announced, because the button's name
+              comes from aria-label -- this carries the result instead. It stays
+              screen-reader-only on success, where the swapped label and the check
+              icon already report it, and is unhidden on failure: a blocked
+              clipboard has to name its recovery to everyone, not just to a
+              screen reader. */
+          }
+          <span class="sr-only text-xs text-muted" role="status" data-copy-status></span>
+        </dd>
+      </div>
+
+      <div class={rowClass}>
+        <dt class="text-muted sm:pt-0.5">Auth header</dt>
+        <dd class="min-w-0 break-all font-mono text-sm text-body">
+          Authorization: Bearer <span class="text-muted">&lt;your API key&gt;</span>
+        </dd>
+      </div>
+
+      <div class={rowClass}>
+        <dt class="text-muted sm:pt-0.5">Verify</dt>
+        <dd class="min-w-0">
+          <pre class="overflow-x-auto font-mono text-xs leading-[1.7] text-body sm:text-sm" set:html={verifyHtml} />
+        </dd>
+      </div>
+    </dl>
+  </figure>
+
+  <div class="mt-5 flex flex-col gap-y-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6">
+    {
+      /* Non-breaking space binds the arrow to the last word so it can never
+        orphan onto a line of its own. */
+    }
+    <a class="link-quiet" href={LLM_ENDPOINT.docsHref}>Using the LLM endpoint&nbsp;→</a>
+    <a class="link-quiet" href={LLM_ENDPOINT.clientConfigsHref}>Client configurations&nbsp;→</a>
+    <a class="link-quiet" href="/llms">Available models&nbsp;→</a>
+  </div>
+</div>
+
+<style>
+  /* Copied state: label and check icon carry it, the border confirms it. Both
+     values are mode-correct tokens, and neither is the sole signal. */
+  button[data-copy-state='copied'] {
+    border-color: var(--nrp-ring);
+    color: var(--nrp-link);
+  }
+</style>
+
+<script>
+  // Clipboard with two fallbacks, because the API is unavailable on insecure
+  // origins and can be permission-blocked: execCommand first, and failing that
+  // the value is selected so the reader can copy it by hand -- an error that
+  // names the recovery rather than a button that silently does nothing.
+  const write = async (text: string): Promise<boolean> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      /* fall through */
+    }
+    try {
+      const scratch = document.createElement('textarea');
+      scratch.value = text;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.top = '0';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      const ok = document.execCommand('copy');
+      scratch.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-from]').forEach((button) => {
+    const source = document.getElementById(button.dataset.copyFrom ?? '');
+    if (!source) return;
+
+    const idle = button.querySelector<SVGElement>('[data-copy-icon="idle"]');
+    const done = button.querySelector<SVGElement>('[data-copy-icon="done"]');
+    const label = button.querySelector<HTMLElement>('[data-copy-label]');
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    let reset: number | undefined;
+
+    // `w-full` is applied only while the message is on screen. sr-only positions
+    // the span absolutely, and as a static class `w-full` won the cascade
+    // against its 1px width -- 13px of horizontal document overflow at 375px.
+    const showStatus = (visible: boolean) => {
+      status?.classList.toggle('sr-only', !visible);
+      status?.classList.toggle('w-full', visible);
+    };
+
+    button.addEventListener('click', async () => {
+      const value = source.textContent?.trim() ?? '';
+      const ok = await write(value);
+
+      if (ok) {
+        button.dataset.copyState = 'copied';
+        if (label) label.textContent = 'Copied';
+        idle?.classList.add('hidden');
+        done?.classList.remove('hidden');
+        showStatus(false);
+        if (status) status.textContent = 'Base URL copied to the clipboard.';
+      } else {
+        const range = document.createRange();
+        range.selectNodeContents(source);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        showStatus(true);
+        if (status) status.textContent = 'The browser blocked the clipboard. The base URL is selected — copy it now.';
+      }
+
+      window.clearTimeout(reset);
+      reset = window.setTimeout(() => {
+        delete button.dataset.copyState;
+        if (label) label.textContent = 'Copy';
+        idle?.classList.remove('hidden');
+        done?.classList.add('hidden');
+        showStatus(false);
+        if (status) status.textContent = '';
+      }, 2400);
+    });
+  });
+</script>

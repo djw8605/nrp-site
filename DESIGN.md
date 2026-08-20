@@ -317,6 +317,28 @@ and anything a user might copy use `--nrp-font-mono`. That includes the model na
 (`qwen3`, `gpt-oss`, `minimax-m2`) — they are the literal strings a user pastes into a client config,
 not prose.
 
+### The endpoint readout
+
+[`ai/EndpointPanel.astro`](src/components/ai/EndpointPanel.astro) on `/llmtoken`: one `bg-sunken`
+figure, a mono figcaption, and a `<dl>` of base URL / auth header / verify command. It carries the same
+code-plate chrome as the homepage capability panels, because it holds the same kind of thing — literal
+strings a user pastes into a client config.
+
+Three decisions in it generalise:
+
+- **A readout, not a row of cards.** The three facts are one sequence, and splitting them into
+  equal-weight panels would have made a set out of it. `<dt>` labels here are labels for data, not
+  kickers above headings.
+- **Its copy control uses `border-current`, never `border-hairline`.** The hairline measures ~1.4:1 on
+  this plate and a control's boundary needs 3:1 (§2) — the same reason the office-hours join button
+  does it. Inheriting `text-muted` puts the border wherever the label already passes, in both modes,
+  without making the chip teal and louder than the value beside it.
+- **Server-rendered above the `client:only` island.** The endpoint is a fact a visitor needs whether or
+  not they are logged in, and anything placed below the island arrives after hydration and shifts.
+
+The host itself is data, in [`src/data/llm-endpoint.ts`](src/data/llm-endpoint.ts) — shared with the
+Chatbox config the same page generates.
+
 ### The office-hours strip
 
 [`common/OfficeHoursBar.astro`](src/components/common/OfficeHoursBar.astro), rendered by
@@ -543,7 +565,7 @@ The `--aw-*` aliases exist so this can proceed incrementally. Update this table 
 `widgets/BlogLatestPosts.astro` · `widgets/Header.astro` · `widgets/Footer.astro` ·
 `widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` ·
 `common/AnnouncementBar.astro` · `widgets/People.astro` · `blog/GridItem.astro` ·
-`pages/index.astro` · `pages/education.astro` · `pages/llms.astro` ·
+`ai/EndpointPanel.astro` · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
 `pages/distributed-infrastructure.astro` · `pages/about.astro`
 
 **Deleted** — ten widgets reachable only from the five removed AstroWind demo pages:

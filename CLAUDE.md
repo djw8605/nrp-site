@@ -105,3 +105,7 @@ Facts that appear twice, because there is no single source for them yet:
   `src/pages/about.astro`.
 - **Cluster scale figures** — these DO have one source, `src/data/cluster-stats.ts`, used by the
   homepage hero and `/about`. Verify against Grafana before changing them.
+- **The LLM endpoint host** — one source for site code, `src/data/llm-endpoint.ts`, used by the readout
+  on `/llmtoken` and by the Chatbox config that page generates. The Starlight docs under
+  `userdocs/ai/llm-managed/` still carry it literally, because theirs sit inside fenced code samples
+  that do not interpolate. If the host changes, grep for `ellm.nrp-nautilus.io`.
