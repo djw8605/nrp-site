@@ -51,11 +51,14 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
       data-dismiss-key={dismissKey}
     >
       {/* max-w-6xl, matching every other section: this was max-w-7xl, which is
-          why it read as a floating slab rather than part of the page. Surface
-          tokens and a teal edge instead of a hardcoded navy + heavy drop
-          shadow. */}
+          why it read as a floating slab rather than part of the page. The
+          hardcoded navy + heavy drop shadow became surface tokens plus a teal
+          left edge; the edge is gone too now -- at 2px it was the `side-tab`
+          antipattern, and DESIGN.md's geometry table has no accent edge, only
+          the 1px hairline. The surface-1 -> surface-2 step and that hairline
+          carry the card, and the category pill carries the teal. */}
       <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <div class="relative overflow-hidden rounded-lg border border-hairline border-l-2 border-l-teal-700 bg-surface-2 dark:border-l-teal-400">
+        <div class="relative overflow-hidden rounded-lg border border-hairline bg-surface-2">
           <div class="flex items-center gap-2 px-5 py-4">
             {/* Prev chevron (inline, subtle) */}
             {hasMultipleAnnouncements && (
