@@ -203,6 +203,17 @@ or lower. (`HeroWide.astro` used to emit a second `<h1>`, giving the homepage tw
 | Gutters           | `px-4 sm:px-6`                                                     |
 | Section rhythm    | `.section` = `py-16 md:py-24`; `.section-tight` = `py-10 md:py-14` |
 
+**Breakpoints are Tailwind's defaults plus one: `nav` (1152px).** It is the width at which the
+header's horizontal nav bar fits beside the logo and the utility controls; below it the hamburger owns
+the nav. It exists because the seven top-level items measure ~716px, so at `md` the nav sat on top of
+the wordmark and at `lg` it still overlapped both neighbours by ~47px. The number is defined once, in
+`tailwind.config.js`, and referenced by `Header.astro`, the `#front-page #header` rules in
+`assets/styles/tailwind.css` (via `theme('screens.nav')`) and the menu-closing `matchMedia` in
+`common/BasicScripts.astro`. Adding a nav item means re-measuring it.
+
+Don't reach for `nav` for anything else — a new one-off breakpoint per component is how a scale stops
+being a scale.
+
 [`src/components/ui/WidgetWrapper.astro`](src/components/ui/WidgetWrapper.astro) is the **only** place
 container width and section padding are decided. A section that sets its own `max-w-*` or `py-*` is a
 bug — that is how the homepage came to ladder through `7xl → 6xl → 6xl → 4xl → 5xl → 7xl` with content

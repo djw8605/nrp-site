@@ -9,6 +9,21 @@ export default {
   content: ['./src/**/*.{astro,html,js,jsx,json,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     extend: {
+      // `nav` is the width at which the header's horizontal nav bar fits.
+      // Measured: the seven top-level items need ~716px, and the logo (158px),
+      // the utility controls (152px), two 16px grid gaps and the 48px gutters
+      // take another 374px -- so the bar needs a ~1090px viewport, and 1152
+      // leaves ~45px of slack. Below that the hamburger owns the nav. `lg`
+      // (1024px) is NOT wide enough: the nav overlapped the wordmark and the
+      // theme toggle by ~47px on each side.
+      //
+      // Referenced by Header.astro, the `#front-page #header` rules in
+      // assets/styles/tailwind.css (via `theme('screens.nav')`) and the
+      // menu-closing matchMedia in common/BasicScripts.astro. Keep them in sync.
+      screens: {
+        nav: '1152px',
+      },
+
       colors: {
         // Brand ramp. Asymmetric on purpose: teal-300/400/500 are for dark
         // backgrounds, teal-700/800/900 for light. See DESIGN.md section 2.
