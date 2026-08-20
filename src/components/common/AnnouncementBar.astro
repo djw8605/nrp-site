@@ -93,14 +93,11 @@ const hasMultipleAnnouncements = visibleAnnouncements.length > 1;
                         <span class="font-display text-base font-semibold leading-snug text-heading">
                           {announcement.title}
                         </span>
-                        {/* Date/location metadata (data-office-hours-date for JS to inject next date) */}
+                        {/* Date/location metadata. The office-hours special case that
+                            used to live here is gone with the office-hours item --
+                            the schedule has its own strip above the header now. */}
                         {announcement.dateLocation && (
-                          <span
-                            class="text-xs font-medium text-muted"
-                            {...(announcement.id === 'office-hours' ? { 'data-office-hours-date': '' } : {})}
-                          >
-                            {announcement.dateLocation}
-                          </span>
+                          <span class="text-xs font-medium text-muted">{announcement.dateLocation}</span>
                         )}
                       </div>
                       {/* Tagline (falls back to legacy message) */}

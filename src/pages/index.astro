@@ -10,7 +10,6 @@ import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import HeroWide from '~/components/widgets/HeroWide.astro';
-import NextOfficeHours from '~/components/widgets/NextOfficeHours.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
 const metadata = {
@@ -23,6 +22,10 @@ const metadata = {
 // see src/data/cluster-stats.ts.
 import { clusterStats } from '~/data/cluster-stats';
 
+// Office hours are no longer one of these: a rotating item that appeared for
+// seven seconds in twenty-one, below the fold, was not a schedule anyone could
+// rely on. It now has its own strip above the header -- see
+// src/components/common/OfficeHoursBar.astro.
 const homepageAnnouncements = [
   {
     id: 'training-recordings',
@@ -31,15 +34,6 @@ const homepageAnnouncements = [
     tagline: 'Catch up on Docker, Kubernetes, JupyterHub and more from recent sessions.',
     ctaLabel: 'Watch Now',
     ctaUrl: '/training',
-  },
-  {
-    id: 'office-hours',
-    category: 'Office Hours',
-    title: 'Bi-Weekly Office Hours',
-    tagline: 'Get hands-on help from the NRP team to unblock your research workloads.',
-    dateLocation: 'Next: …',
-    ctaLabel: 'Join Meeting',
-    ctaUrl: 'https://ucsd.zoom.us/j/96377381436',
   },
   {
     id: 'lightscope',
@@ -88,11 +82,6 @@ const homepageAnnouncements = [
       intervalMs={7000}
       dismissKey="nrp:home-announcement-bar-dismissed"
     />
-  </div>
-
-  <!-- NextOfficeHours script must run on the homepage to fill the announcement date -->
-  <div class="sr-only" aria-hidden="true">
-    <NextOfficeHours />
   </div>
 
   <!-- Features ********************** -->

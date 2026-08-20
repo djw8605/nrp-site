@@ -1,0 +1,186 @@
+---
+import { Icon } from 'astro-icon/components';
+import { OFFICE_HOURS, nextSession, formatDate, formatTime, formatLong, formatCountdown } from '~/data/office-hours';
+
+// Rendered above the header, so the next session is the first thing on the page
+// at every viewport. It used to be one of three rotating items in the
+// announcement carousel below the hero, where it showed for seven seconds out of
+// twenty-one and only after a scroll.
+//
+// The one teal-tinted band on the site, and that is deliberate: it has to
+// separate from a white page and from the near-black hero it sits above, in both
+// modes, without borrowing the hero's own darkness and disappearing into it.
+//
+// Rendered at build time and re-rendered on load: the strip is correct and
+// legible with JavaScript disabled, and the client pass corrects a build that
+// has gone stale, drives the countdown, and restates the time in the reader's
+// own timezone -- a static build cannot know it, so the server render falls
+// back to the schedule's Pacific time.
+const session = nextSession();
+---
+
+{
+  /* relative z-10 is load-bearing. `Hero.astro` pulls itself up by `-mt-[96px]`
+     so the transparent header floats over the hero art, but the header measures
+     77px -- the hero's opaque base therefore bleeds 19px ABOVE it. That used to
+     land off the top of the viewport; with a strip here it landed on the strip
+     and painted over its bottom third, clipping the date and the join button.
+
+     z-10, not z-50: it has to beat the hero (z-index auto, later sibling) while
+     still losing to the sticky header (z-40), so the strip slides UNDER the
+     header on scroll instead of riding over it. */
+}
+<aside
+  class="relative z-10 border-b border-teal-200 bg-teal-100 dark:border-teal-900 dark:bg-teal-950"
+  aria-label="Next NRP office hours"
+  data-office-hours
+  data-live={String(session.isLive)}
+>
+  <div class="mx-auto w-full max-w-7xl px-3 md:px-6">
+    {
+      /* One row of markup, reordered rather than duplicated: below sm the label
+         and the join control share the first line and the date drops to a
+         full-width second line; from sm up all three sit on one 48px line with
+         the actions at the right edge. */
+    }
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-0.5 py-1.5 sm:h-12 sm:flex-nowrap sm:py-0">
+      <p class="eyebrow order-1 mr-auto flex shrink-0 items-center gap-2 sm:mr-0">
+        <span class="relative flex h-2 w-2" aria-hidden="true">
+          <span
+            class="oh-ping absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-600 opacity-75 dark:bg-teal-400"
+          ></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-teal-700 dark:bg-teal-400"></span>
+        </span>
+        Office hours
+      </p>
+
+      <p class="order-3 flex min-w-0 basis-full items-center gap-x-3 sm:order-2 sm:mr-auto sm:basis-auto">
+        <time
+          class="truncate font-display text-base font-semibold tabular text-heading md:text-lead"
+          datetime={session.start.toISOString()}
+          title={formatLong(session)}
+          data-office-hours-when
+        >
+          {formatDate(session)} · {formatTime(session)}
+        </time>
+        <span class="oh-lead shrink-0 font-mono text-xs tabular text-muted" data-office-hours-lead>
+          {formatCountdown(session)}
+        </span>
+      </p>
+
+      {
+        /* The calendar icon rides along at every width -- a phone is where
+           someone is most likely to want this saved -- and only the label drops.
+           The accessible name keeps the visible text as a prefix so it still
+           satisfies Label in Name once the label shows. */
+      }
+      <div class="order-2 flex shrink-0 items-center gap-4 sm:order-3">
+        <a
+          href={OFFICE_HOURS.calendarUrl}
+          type="text/calendar"
+          class="link-quiet gap-1.5 text-sm"
+          aria-label="Add to calendar: NRP office hours"
+        >
+          <Icon name="tabler:calendar-plus" class="h-4 w-4" aria-hidden="true" />
+          <span class="hidden lg:inline">Add to calendar</span>
+        </a>
+        {
+          /* border-current, not border-hairline: on this tint a hairline is far
+             under 3:1, and DESIGN.md forbids it as a control's sole boundary. */
+        }
+        <a
+          href={OFFICE_HOURS.joinUrl}
+          class="oh-join inline-flex items-center gap-1.5 rounded-md border border-current px-3 py-1 text-sm sm:py-1.5 font-semibold text-link transition-colors hover:bg-teal-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:bg-teal-900"
+        >
+          <Icon name="tabler:video" class="h-4 w-4" aria-hidden="true" />
+          Join Zoom
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<style>
+  /* The component's one state change, so it is the one place it raises its
+     voice: while a session is running the dot starts pulsing, the countdown
+     becomes a filled badge, and the join control becomes a filled button.
+     A dot that pulses at "in 13 days" is decoration -- and it would be the
+     homepage's second pulsing dot, alongside the one reporting the live cluster
+     feed. Motion here reports a state, which is the only reason DESIGN.md
+     section 6 allows any. */
+  .oh-ping {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    [data-office-hours][data-live='true'] .oh-ping {
+      display: inline-flex;
+    }
+  }
+
+  [data-office-hours][data-live='true'] .oh-lead {
+    border-radius: 9999px;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--nrp-teal-700);
+    font-family: var(--nrp-font-sans);
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  [data-office-hours][data-live='true'] .oh-join {
+    border-color: var(--nrp-teal-700);
+    background-color: var(--nrp-teal-700);
+    color: #ffffff;
+  }
+
+  :global(.dark) [data-office-hours][data-live='true'] .oh-lead,
+  :global(.dark) [data-office-hours][data-live='true'] .oh-join {
+    border-color: var(--nrp-teal-400);
+    background-color: var(--nrp-teal-400);
+    color: var(--nrp-teal-950);
+  }
+</style>
+
+<script>
+  import {
+    nextSession,
+    formatDate,
+    formatTime,
+    formatLong,
+    formatCountdown,
+    viewerTimeZone,
+  } from '~/data/office-hours';
+
+  // The schedule is defined in Pacific time; the reader is not necessarily in
+  // it. The build can only render the schedule's own zone, so the client pass
+  // re-renders in whatever zone the browser reports.
+  const zone = viewerTimeZone();
+
+  const render = () => {
+    for (const root of document.querySelectorAll('[data-office-hours]')) {
+      const now = new Date();
+      const session = nextSession(now);
+
+      root.setAttribute('data-live', String(session.isLive));
+
+      const when = root.querySelector('[data-office-hours-when]');
+      if (when) {
+        when.textContent = `${formatDate(session, zone)} · ${formatTime(session, zone)}`;
+        when.setAttribute('datetime', session.start.toISOString());
+        when.setAttribute('title', formatLong(session, zone));
+      }
+
+      const lead = root.querySelector('[data-office-hours-lead]');
+      if (lead) lead.textContent = formatCountdown(session, now, zone);
+    }
+  };
+
+  render();
+  document.addEventListener('astro:page-load', render);
+
+  // One interval per document, not one per view transition.
+  const w = window as typeof window & { __nrpOfficeHoursTimer?: number };
+  if (!w.__nrpOfficeHoursTimer) {
+    w.__nrpOfficeHoursTimer = window.setInterval(render, 30_000);
+  }
+</script>
