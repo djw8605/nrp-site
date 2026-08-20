@@ -54,6 +54,9 @@ export default [
     },
   },
   {
-    ignores: ['dist', 'node_modules', '.github', 'types.generated.d.ts', '.astro'],
+    // 'public' is the build output (astro.config.ts sets outDir: 'public'); committed
+    // static assets live in 'static/'. Linting generated bundles is both wrong and
+    // ruinously slow -- see the same exclusion in tsconfig.json and .prettierignore.
+    ignores: ['dist', 'public', '.output', 'node_modules', '.github', 'types.generated.d.ts', '.astro'],
   },
 ];
