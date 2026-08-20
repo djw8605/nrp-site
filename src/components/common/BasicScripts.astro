@@ -105,7 +105,10 @@ import { UI } from 'astrowind:config';
       newlink.click();
     });
 
-    const screenSize = window.matchMedia('(max-width: 767px)');
+    // Closes the menu when the viewport crosses the width at which the nav
+    // becomes a bar and the hamburger disappears -- `screens.nav` in
+    // tailwind.config.js, one pixel below.
+    const screenSize = window.matchMedia('(max-width: 1151px)');
     screenSize.addEventListener('change', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
       document.body.classList.remove('overflow-hidden');

@@ -198,14 +198,32 @@ body {
   padding: 0 5px;
 }
 
-/* Transparent header over the homepage hero image. */
+/* Transparent header over the homepage hero image. Keyed to `md` because that
+   is where the hero pulls itself up under the header (`md:-mt-[96px]` in
+   Hero.astro), NOT to the nav breakpoint: between the two the header floats over
+   the hero with only the logo and the hamburger in it.
+
+   `:not(.expanded)` because the open mobile menu turns the header into a
+   full-height opaque panel -- darkening it by 45% would put body text on a
+   half-lit background. */
 @media (min-width: 768px) {
-  #front-page #header:not(.scroll) > div:first-child {
+  #front-page #header:not(.scroll):not(.expanded) > div:first-child {
     background-color: rgb(7 12 18 / 45%);
     backdrop-filter: blur(6px);
   }
-  /* Light text for the top level of the nav and the utility icons only.
-     Scoped to DIRECT children of the nav list: a blanket `svg` selector also
+  /* The hamburger's bars are `bg-black dark:bg-white`, which is right on the
+     page background but invisible on the scrim above. */
+  #front-page #header:not(.scroll):not(.expanded) [data-aw-toggle-menu] span[aria-hidden] {
+    background-color: #f2f6fa;
+  }
+}
+
+/* Light ink for the nav bar and the utility icons, which only sit on the scrim
+   once the header is in its horizontal bar form. Below `nav` the nav list is the
+   full-screen menu panel on an opaque `bg-page`, where light-on-light would be
+   invisible in light mode. */
+@media (min-width: theme('screens.nav')) {
+  /* Scoped to DIRECT children of the nav list: a blanket `svg` selector also
      hit the external-link icons inside the dropdown panel, which sits on a
      light surface -- white on near-white, invisible. */
   #front-page #header:not(.scroll) nav > ul > li > button,
