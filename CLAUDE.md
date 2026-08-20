@@ -34,6 +34,18 @@ publicDir: 'static',  // committed static assets live HERE
 So committed assets (`favicon.ico`, `robots.txt`, `_headers`, `_redirects`, `NRP-AUP.pdf`) go in
 `static/`. Anything you find in `public/` is generated and will be overwritten by the next build.
 
+Because of that inversion, every tool that walks the repo has to be told about `public/` by hand:
+their defaults exclude `dist/`, which this repo never writes. `tsconfig.json` (`exclude`),
+`eslint.config.js` (`ignores`), and `.prettierignore` all list it — keep the three in sync. Without
+the tsconfig exclusion, `npm run check` run _after_ `npm run build` walks the 236 generated HTML files
+plus the JS bundles and dies with `FATAL ERROR: Ineffective mark-compacts near heap limit`, even at
+`NODE_OPTIONS=--max-old-space-size=8192`.
+
+No CI job runs `check` and `build` in the same working tree: the GitLab deploy job runs
+`check:docs-headings` then `build`, and GitHub Actions runs `build` and `check` as separate jobs with
+separate checkouts. That ordering was incidental, not a safeguard — the exclusions above are what
+actually make the two orders equivalent.
+
 **The docs sidebar is hand-maintained.** Adding or removing a page under
 `src/content/docs/Documentation/` requires editing the ~390-line `sidebar` array in `astro.config.ts`
 by hand — it is not generated from the filesystem. New docs pages should be `.mdx`, not `.md`.
