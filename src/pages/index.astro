@@ -5,7 +5,7 @@ import Hero from '~/components/widgets/Hero.astro';
 import AnnouncementBar from '~/components/common/AnnouncementBar.astro';
 import Image from '~/components/common/Image.astro';
 import MatrixFeed from '~/components/widgets/MatrixFeed.astro';
-import Features from '~/components/widgets/Features.astro';
+import CapabilityTabs from '~/components/widgets/CapabilityTabs.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
@@ -44,6 +44,196 @@ const homepageAnnouncements = [
     ctaUrl: '/lightscope',
   },
 ];
+
+import type { Capability } from '~/components/widgets/CapabilityTabs.astro';
+
+// The value proposition, directly under the hero. Four capabilities as tabs
+// rather than the four-up icon grid that used to sit here: they are
+// alternatives, not a sequence, and a visitor arrives wanting exactly one of
+// them. See src/components/widgets/CapabilityTabs.astro for the composition
+// notes.
+//
+// Every YAML fragment below is real -- lifted from our own documentation
+// (userdocs/running/gpu-pods, jupyter/values, running/ingress) and trimmed to
+// stay legible at a phone's width. Nothing here is illustrative: if a key
+// changes in the docs, change it here too.
+//
+// Two of the four panels carry a screenshot of the real interface and two carry
+// a manifest. Both screenshots are captures of the platform mid-task, not of an
+// idle landing screen -- that distinction is the whole reason this section reads
+// as a demonstration rather than a claim, so preserve it if either is replaced.
+// The alt text on each describes that specific capture, so it has to be rewritten
+// in the same edit as any swap.
+const capabilities: Capability[] = [
+  {
+    id: 'jupyterhub',
+    tab: 'Use Jupyter Notebooks',
+    title: 'Use our hosted JupyterHub, or run your own',
+    description:
+      // Same length band as the other three descriptions, so all four panels
+      // measure the same and the section does not jump on switch. The detail
+      // trimmed off the end ("your own images, profiles, sign-in rules") is
+      // stated by the spec rows directly below it.
+      'Sign in with your institution and get a notebook server on shared GPUs \u2014 no setup, no Kubernetes. When a course or a lab needs more control, run a private hub with your own images, profiles, and sign-in rules.',
+    specs: [
+      { term: 'Hosted', value: 'Sign in, pick a profile, get a server' },
+      { term: 'Your own', value: 'Your images, your profiles, your sign-in rules' },
+      { term: 'Behind both', value: 'The same shared GPUs and CPUs as everything else' },
+    ],
+    actions: [
+      { text: 'JupyterHub service guide', href: '/documentation/userdocs/jupyter/jupyterhub-service/' },
+      { text: 'Teaching with the NRP', href: '/education' },
+    ],
+    // Replaced the values.yaml artifact this tab shipped with. The capture is a
+    // real JupyterLab session on our own hub, cropped from 1644px to 1400px to
+    // drop the empty canvas below the output cell. It shows the platform
+    // composing with itself -- a notebook calling the NRP's own inference
+    // endpoint -- which is a better argument than a Helm chart. The API key in
+    // the visible cell is already the `sk-xxxx` placeholder.
+    media: {
+      kind: 'image',
+      src: '~/assets/images/jupyterhub-notebook.png',
+      framed: true,
+      alt: 'A JupyterLab notebook running on the NRP, calling the platform’s own qwen3-small endpoint through LangChain and printing the tool call it returned',
+    },
+  },
+  {
+    id: 'gpus',
+    tab: 'Train and serve models',
+    title: 'Train and serve models on shared GPUs',
+    description:
+      // Held to roughly the same length as its siblings: a fifth line here made
+      // this panel 29px taller than the others, so the section jumped when you
+      // switched tabs. The "what is idle" nudge moved to the quiet link below,
+      // where it was going to be read anyway.
+      'Ask for GPUs by the card in a job manifest, or take a whole multi-GPU node \u2014 the scheduler holds 4- and 8-GPU machines back for jobs that need them. Pin a specific accelerator when your run needs the memory.',
+    specs: [
+      { term: 'Interface', value: '<code class="font-mono">kubectl</code>, or a browser IDE' },
+      { term: 'Pick by', value: 'GPU product, CUDA runtime, region, or host' },
+      { term: 'Also here', value: 'FPGAs and other specialized accelerators' },
+    ],
+    actions: [
+      { text: 'GPU job documentation', href: '/documentation/userdocs/running/gpu-pods/' },
+      { text: 'See what is idle right now', href: '/viz/resources/' },
+    ],
+    media: {
+      kind: 'code',
+      filename: 'train-job.yaml',
+      command: 'kubectl apply -f train-job.yaml',
+      lines: [
+        { text: '# four GPUs on one node' },
+        { text: 'apiVersion: batch/v1' },
+        { text: 'kind: Job' },
+        { text: 'spec:' },
+        { text: '  template:' },
+        { text: '    spec:' },
+        { text: '      restartPolicy: Never' },
+        { text: '      containers:' },
+        { text: '        - name: train' },
+        { text: '          image: pytorch/pytorch' },
+        { text: '          resources:' },
+        { text: '            limits:' },
+        { text: '              nvidia.com/gpu: "4"', mark: true },
+        { text: '              memory: 64Gi' },
+        { text: '              cpu: "16"' },
+      ],
+    },
+  },
+  {
+    id: 'llms',
+    tab: 'Use open-weight LLMs',
+    // Kept to one line at the panel's measure: a two-line h3 here made this
+    // panel 28px taller than the other three and the section visibly jumped on
+    // switch. "Frontier" carries in the description instead.
+    title: 'Call open-weight models from your own code',
+    description:
+      'A rotating catalog of open-weight models runs on NRP hardware behind an OpenAI-compatible endpoint. Point any client at it with a personal API key, or skip the setup entirely and open the hosted chat interface in a browser.',
+    specs: [
+      { term: 'Endpoint', value: 'OpenAI-compatible, with per-user API keys' },
+      {
+        term: 'Models',
+        value:
+          '<code class="font-mono">qwen3</code> \u00b7 <code class="font-mono">kimi</code> \u00b7 <code class="font-mono">glm-5</code> \u00b7 <code class="font-mono">gpt-oss</code>',
+      },
+      { term: 'Clients', value: 'Open WebUI, Chatbox, or your coding CLI' },
+    ],
+    actions: [
+      { text: 'Browse the model catalog', href: '/llms' },
+      { text: 'Open the chat interface', href: 'https://nrp-openwebui.nrp-nautilus.io', external: true },
+    ],
+    // Its own capture rather than reusing /llms's `openwebui-hero.png`, which
+    // was an idle landing screen showing Open WebUI's stock suggestions
+    // ("Explain options trading") -- the one panel promising the interface at
+    // work showed nothing being done. This one is a real exchange: the model
+    // picker on `deepseek-v4-flash`, the tool-call rows it actually ran, and an
+    // answer sourced from our own documentation.
+    //
+    // `framed` because this capture is opaque white to its own edges, unlike the
+    // hero shot it replaced, which carried window chrome and a transparent
+    // shadow. Uncropped on purpose: the dead space is the app's own margins
+    // rather than empty canvas, and the composer and model picker at the bottom
+    // are what keep it identifiable once it scales down.
+    media: {
+      kind: 'image',
+      src: '~/assets/images/openwebui-example.png',
+      framed: true,
+      alt: 'The Open WebUI chat interface hosted on the NRP: deepseek-v4-flash answers a question about deploying JupyterHub, having searched the NRP documentation, and lists the CILogon setup steps',
+    },
+  },
+  {
+    id: 'services',
+    tab: 'Host a service',
+    // "long-running" came off the front: at 45 characters this title sat right
+    // on the wrap boundary and fell to two lines in the production build while
+    // staying on one in dev, which made the panel 28px taller than its siblings
+    // only in the built site. The description's first sentence carries the
+    // long-running point anyway.
+    title: 'Host services close to your data',
+    description:
+      'Not everything is a batch job. Expose an HTTP service on its own nrp-nautilus.io hostname with TLS, then pin it to a region, a zone, or a single machine when it has to sit next to the instrument or the dataset it serves.',
+    specs: [
+      // Deliberately NOT the node/location/continent figures: the hero's stat
+      // strip states them one screen above, and they are bound to
+      // src/data/cluster-stats.ts, so a second hardcoded copy here would be a
+      // third place to keep in sync.
+      { term: 'Runs as', value: 'Deployments and StatefulSets, not just Jobs' },
+      { term: 'Placement', value: 'By region, zone, or individual host' },
+      { term: 'Ingress', value: 'HAProxy, with TLS on <code class="font-mono">*.nrp-nautilus.io</code>' },
+    ],
+    actions: [
+      { text: 'How the network works', href: '/distributed-infrastructure' },
+      // "Exposing HTTP" is the linked page's own title, and it is short enough
+      // that the row fits on one line: at "Exposing HTTP over ingress" the pair
+      // measured 477px inside a 475px row, so `sm:flex-wrap` did its job and
+      // dropped the link to a second line -- correct behaviour, but it made this
+      // one panel 36px taller than the other three.
+      { text: 'Exposing HTTP', href: '/documentation/userdocs/running/ingress/' },
+    ],
+    media: {
+      kind: 'code',
+      filename: 'my-app.yaml',
+      command: 'kubectl apply -f my-app.yaml',
+      lines: [
+        { text: '# your own hostname, with TLS' },
+        { text: 'kind: Ingress' },
+        { text: 'spec:' },
+        { text: '  ingressClassName: haproxy' },
+        { text: '  rules:' },
+        { text: '    - host: my-app.nrp-nautilus.io', mark: true },
+        { text: '  tls:' },
+        { text: '    - hosts: [my-app.nrp-nautilus.io]' },
+        { text: '---' },
+        { text: '# running where the data already is' },
+        { text: 'kind: Deployment' },
+        { text: 'spec:' },
+        { text: '  template:' },
+        { text: '    spec:' },
+        { text: '      nodeSelector:' },
+        { text: '        topology.kubernetes.io/region: pacific', mark: true },
+      ],
+    },
+  },
+];
 ---
 
 <Layout metadata={metadata} id="front-page">
@@ -71,11 +261,29 @@ const homepageAnnouncements = [
     </Fragment>
   </Hero>
 
+  <!-- Value proposition ************* -->
+  <!-- Directly under the hero, ahead of the announcement band, so the first
+       thing to clear the fold after the headline is the row of four things a
+       visitor can actually do here. `rhythm="tight"` for the same reason: the
+       standard py-24 pushed the tab rail below 800px of viewport.
+
+       This replaced the four-up icon grid ("What you can do here"). Two of its
+       items -- petabyte storage and network experiments -- came off the homepage
+       with it; both are still covered on /distributed-infrastructure and in the
+       docs. -->
+  <CapabilityTabs
+    id="capabilities"
+    surface="page"
+    rhythm="tight"
+    title="What can you do with the NRP?"
+    items={capabilities}
+  />
+
   <!-- Announcements ***************** -->
   <!-- Below the hero, so it no longer pushes the <h1> down the page. Sits in a
        surface-1 band with real vertical rhythm and a hairline that continues the
        hero's bottom edge, rather than floating over the seam. -->
-  <div class="border-b border-hairline bg-surface-1 py-6">
+  <div class="border-y border-hairline bg-surface-1 py-6">
     <AnnouncementBar
       announcements={homepageAnnouncements}
       autoRotate={true}
@@ -83,55 +291,6 @@ const homepageAnnouncements = [
       dismissKey="nrp:home-announcement-bar-dismissed"
     />
   </div>
-
-  <!-- Features ********************** -->
-  <Features
-    id="features"
-    title="What you can do here"
-    surface="page"
-    items={[
-      {
-        title: 'Artificial Intelligence',
-        description:
-          'Modern GPUs, FPGAs, and specialized hardware for AI research, plus a catalog of hosted open-weight models you can call from your own code.',
-        icon: 'tabler:ai',
-        callToAction: {
-          text: 'Browse hosted models',
-          href: '/llms',
-        },
-      },
-      {
-        title: 'Resources for the classroom',
-        description:
-          'GPUs, CPUs, and storage for educators, reachable through JupyterHub and Coder so students never have to touch Kubernetes.',
-        icon: 'tabler:school',
-        callToAction: {
-          text: 'Teaching with the NRP',
-          href: '/education',
-        },
-      },
-      {
-        title: 'Network experiments',
-        description:
-          'Nodes distributed across 70+ sites on three continents make measurements possible that no single-site cluster can support.',
-        icon: 'tabler:network',
-        callToAction: {
-          text: 'View network dashboards',
-          href: 'https://perfsonar.nrp-nautilus.io/maddash-webui/',
-        },
-      },
-      {
-        title: 'Large data pools',
-        description:
-          'Mount petabyte-scale S3 and Ceph storage from anywhere on the platform and use it directly in your workloads.',
-        icon: 'tabler:server-2',
-        callToAction: {
-          text: 'Storage documentation',
-          href: '/documentation/userdocs/storage/intro',
-        },
-      },
-    ]}
-  />
 
   <!-- Map of NRP sites ************** -->
   <HeroWide
@@ -160,17 +319,14 @@ const homepageAnnouncements = [
   <!-- Happening now ***************** -->
   <!-- Merges what used to be two separate hand-rolled <section> blocks, each
        with its own container width and ad-hoc Tailwind colors. -->
-  <WidgetWrapper
-    surface={1}
-    rhythm="normal"
-    title="Events and cluster activity"
-    containerClass=""
-  >
+  <WidgetWrapper surface={1} rhythm="normal" title="Events and cluster activity" containerClass="">
     <div class="grid gap-10 lg:grid-cols-2 lg:gap-14">
       <!-- Recent event -->
       <div>
-        {/* "Recent event" was a kicker above this heading, with its own spectrum
-            rule. The heading already says what this is. */}
+        {
+          /* "Recent event" was a kicker above this heading, with its own spectrum
+            rule. The heading already says what this is. */
+        }
         <h3 class="font-display text-h3 font-semibold text-heading">7NRP workshop media is now available</h3>
         <a href="/7nrp-workshop/" class="card-interactive mt-5 block overflow-hidden">
           <Image
@@ -203,10 +359,12 @@ const homepageAnnouncements = [
       <div>
         <div class="flex items-center justify-between gap-4">
           <div>
-            {/* This one stays: a pulsing dot plus "Live" is a status indicator
+            {
+              /* This one stays: a pulsing dot plus "Live" is a status indicator
                 reporting that the feed below is current, not a kicker labelling
                 the heading. Its spectrum rule is gone -- the signature belongs
-                to the hero alone. */}
+                to the hero alone. */
+            }
             <p class="eyebrow flex items-center gap-2">
               <span class="relative flex h-2 w-2" aria-hidden="true">
                 <span

@@ -1,0 +1,435 @@
+---
+/**
+ * "What can you do with the NRP?" -- the homepage value proposition.
+ *
+ * Replaces the four-item icon grid that used to sit here. That grid was the
+ * shape DESIGN.md warns about: same-size cards of icon + heading + text as the
+ * page structure, four claims competing at equal weight, none of them shown
+ * doing anything. A visitor could read all four and still not know what using
+ * the platform looks like.
+ *
+ * Tabs instead, because the four capabilities are alternatives rather than a
+ * sequence: a researcher arrives wanting exactly one of them, and a rail of
+ * four labels lets them self-select in one glance -- which is also what makes
+ * this section legible when only its top edge clears the fold.
+ *
+ * Three things about the composition are deliberate:
+ *
+ * - **No section numbers on the tabs.** These are four independent choices, not
+ *   steps 01-04. Numbering a set that has no order is decoration.
+ * - **The active cell is lit, not just underlined.** It takes `surface-page`
+ *   out of the rail's `surface-2` *and* a 2px teal bar on the shared baseline,
+ *   so the selected channel reads at a glance and the bar ties the tab to the
+ *   panel it labels. The bar is solid `teal-700`/`teal-400`, never the spectrum
+ *   gradient -- the signature belongs to the hero alone (DESIGN.md section 6).
+ * - **Every panel carries a media artifact in the same frame.** Where a real
+ *   screenshot exists it is used; otherwise the frame holds a real manifest in
+ *   `--nrp-font-mono`. Mono here is code, not costume: these are the literal
+ *   YAML fragments from our own documentation, so the section shows the
+ *   platform being used rather than described. Two ink levels only -- muted for
+ *   the scaffold, heading for the lines that carry the point.
+ *
+ * Motion: the panel crossfade is keyed to a `data-enter` attribute the script
+ * sets on activation, never present in the server render. So this is a state
+ * change, not a 5th entrance animation on a page whose one authored moment is
+ * the hero's spectrum rule (DESIGN.md section 6).
+ *
+ * No JavaScript: all four panels are in the DOM. The `<noscript>` block below
+ * unhides them and drops the rail, so the content is complete either way.
+ */
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+import Image from '~/components/common/Image.astro';
+import type { Widget } from '~/types';
+
+/** A line in a code artifact. `mark` promotes it from muted to heading ink. */
+export interface CodeLine {
+  text: string;
+  mark?: boolean;
+}
+
+export interface ImageMedia {
+  kind: 'image';
+  src: string;
+  alt: string;
+  /**
+   * Set for captures that run opaque to their own edges -- a hairline is the
+   * only thing separating a white screenshot from a white page. Leave unset for
+   * captures that already carry window chrome and a transparent drop shadow;
+   * there the border sits out in the empty margin instead of on the artwork.
+   */
+  framed?: boolean;
+}
+
+export interface CodeMedia {
+  kind: 'code';
+  filename: string;
+  lines: CodeLine[];
+  /** Rendered under the fragment behind a `$` prompt. */
+  command?: string;
+}
+
+export type CapabilityMedia = ImageMedia | CodeMedia;
+
+export interface Capability {
+  /** Slug used for the tab/panel id pair. Stable: it lands in the DOM. */
+  id: string;
+  /** Rail label. Verb-first, short enough to stay on one line at 4-up. */
+  tab: string;
+  title: string;
+  description: string;
+  /** Field rows under the copy. Labels for data, not headings. */
+  specs?: { term: string; value: string }[];
+  /** First one renders as the bordered button; the rest as quiet links. */
+  actions?: { text: string; href: string; external?: boolean }[];
+  media?: CapabilityMedia;
+}
+
+export interface Props extends Widget {
+  title?: string;
+  subtitle?: string;
+  items: Capability[];
+}
+
+const { id, title, subtitle, items = [], surface, rhythm = 'normal' } = Astro.props;
+
+// Ids have to be unique per instance, but must not depend on anything random --
+// the markup is prerendered and the script pairs tabs to panels by id.
+const uid = id ?? 'capabilities';
+const tabId = (slug: string) => `${uid}-tab-${slug}`;
+const panelId = (slug: string) => `${uid}-panel-${slug}`;
+
+// The code fragment is assembled here, as a single string, and injected with
+// `set:html`. It has to be: `<pre>` is whitespace-significant, so mapping the
+// lines inside the template put the template's OWN indentation into the render
+// -- the first line came out 22 columns right of the rest and every row was
+// followed by a blank line of 24 spaces. Prettier reformatting the block made it
+// worse each time. With no child nodes in the template there is no indentation
+// left to leak. The escape is deliberate rather than incidental: these strings
+// carry `"` and `[]` today and could carry `<` or `&` tomorrow.
+const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+const codeHtml = (lines: CodeLine[]) =>
+  '<code>' +
+  lines
+    .map((line) => (line.mark ? `<span class="text-heading">${escapeHtml(line.text)}</span>` : escapeHtml(line.text)))
+    .join('\n') +
+  '</code>';
+---
+
+<WidgetWrapper id={uid} surface={surface} rhythm={rhythm}>
+  {
+    /* Tighter than the site's standard `mb-10 md:mb-14` under a section heading,
+      and deliberately so: the heading is a question and the rail is its answer,
+      so binding the two reads better than floating them apart. It also keeps
+      the spacing rule the right way round -- 56px above the heading from the
+      section rhythm, 32px below -- which the default inverted once the rail's
+      own top margin was added on top of it. */
+  }
+  <Headline title={title} subtitle={subtitle} classes={{ container: 'max-w-3xl mb-6 md:mb-8' }} />
+
+  <div class="overflow-hidden rounded-lg border border-hairline" data-capability-tabs>
+    {
+      /* `gap-px` over a hairline-coloured rail draws the dividers, which keeps
+        them correct at both 2-up and 4-up without per-cell nth-child rules. */
+    }
+    <div
+      role="tablist"
+      aria-label="NRP capabilities"
+      class="grid grid-cols-2 gap-px border-b border-hairline bg-hairline sm:grid-cols-4"
+    >
+      {
+        items.map((item, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={tabId(item.id)}
+            aria-controls={panelId(item.id)}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab
+            class="relative flex min-h-[3.75rem] items-center justify-center px-3 py-3.5 text-center text-sm
+              font-medium leading-snug transition-colors duration-150
+              focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring
+              aria-selected:bg-surface-page aria-selected:font-semibold aria-selected:text-heading
+              aria-[selected=false]:bg-surface-2 aria-[selected=false]:text-muted
+              aria-[selected=false]:hover:bg-surface-3 aria-[selected=false]:hover:text-body
+              sm:px-4 sm:text-base"
+          >
+            {item.tab}
+            {/* Sits on the rail's baseline hairline so it reads as the tab
+                joining its panel, rather than as a free-floating accent. */}
+            <span
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-x-0 -bottom-px hidden h-0.5 bg-teal-700 dark:bg-teal-400"
+              data-indicator
+            />
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      items.map((item, i) => (
+        <div
+          role="tabpanel"
+          id={panelId(item.id)}
+          aria-labelledby={tabId(item.id)}
+          tabindex="0"
+          hidden={i !== 0}
+          data-panel
+          class="bg-surface-page p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset
+            focus-visible:ring-ring md:p-8 lg:p-10"
+        >
+          {/* Media column slightly the wider of the two: it holds the artifact,
+              and the copy column still lands at ~58ch of `text-lead`, inside
+              the 65-75ch band once you account for the 18px measure.
+
+              Two columns from `xl`, not `lg`. The content container is
+              `max-w-6xl` (1152px), so between 1024 and 1152 the split left the
+              copy column at ~413px -- narrow enough that the action row wrapped
+              on three of the four tabs and panel heights spread across 104px.
+              Stacked is the honest layout at that width, and it holds the four
+              panels within 16px of each other instead. */}
+          <div class="grid items-start gap-8 xl:min-h-[25rem] xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)] xl:gap-12">
+            <div>
+              <h3 class="font-display text-h3 font-semibold text-heading">{item.title}</h3>
+              <p class="mt-4 max-w-2xl text-lead text-body">{item.description}</p>
+
+              {item.specs && item.specs.length > 0 && (
+                <dl class="mt-7 border-t border-hairline text-sm">
+                  {item.specs.map((spec) => (
+                    <div class="grid gap-x-4 gap-y-1 border-b border-hairline py-3 sm:grid-cols-[7.5rem_minmax(0,1fr)]">
+                      <dt class="text-muted">{spec.term}</dt>
+                      <dd class="text-body" set:html={spec.value} />
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              {/* The lead action is `.btn-secondary`, not `.btn-primary`. This
+                  section shares the first viewport with the hero, whose "Get
+                  started" is the page's one filled button (DESIGN.md section 6,
+                  one per view) -- a second filled teal button 400px below it
+                  split the emphasis and, since the panel's lead action is a
+                  documentation link, argued for the weaker of the two.
+
+                  It does carry teal border, teal label and semibold weight
+                  though. A plain hairline `.btn-secondary` left the quiet link
+                  beside it as the only coloured thing in the row, so the
+                  supporting link out-competed the action it supports. Both teals
+                  are mode-correct: `teal-700` measures 6.13:1 on white,
+                  `teal-400` 8.90:1 on the dark page, and each doubles as the
+                  border, which clears the 3:1 a control boundary needs.
+
+                  `flex-wrap` so a narrow row drops the quiet link to its own
+                  line instead of wrapping the button's label inside its own
+                  border, which is what "How the network works" did at 1280. */}
+              {item.actions && item.actions.length > 0 && (
+                <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                  {item.actions.map((action, j) =>
+                    j === 0 ? (
+                      <a
+                        class="btn btn-secondary w-full whitespace-nowrap border-teal-700 font-semibold text-teal-700
+                          hover:border-teal-800 hover:bg-teal-50 hover:text-teal-800
+                          dark:border-teal-400 dark:text-teal-400
+                          dark:hover:border-teal-300 dark:hover:bg-teal-950 dark:hover:text-teal-300
+                          sm:w-auto"
+                        href={action.href}
+                        {...(action.external ? { target: '_blank', rel: 'noopener' } : {})}
+                      >
+                        {action.text}
+                      </a>
+                    ) : (
+                      <a
+                        class="link-quiet sm:px-1"
+                        href={action.href}
+                        {...(action.external ? { target: '_blank', rel: 'noopener' } : {})}
+                      >
+                        {/* Non-breaking space binds the arrow to the last word,
+                            so it can never orphan onto a line of its own. */}
+                        {action.text + ' ' + (action.external ? '↗' : '→')}
+                      </a>
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Media sizes to its own content and stays top-aligned. It is
+                deliberately NOT stretched to the copy column's height: an
+                `<Image>` writes `height:auto` as an inline style, which beats a
+                Tailwind `lg:h-full` class and left the screenshot floating in a
+                stretched plate (DESIGN.md section 7), and stretching the code
+                plates instead opened 120px of dead air above their command
+                line. The copy column is the taller of the two on every tab, so
+                it governs the panel height and nothing jumps on switch. */}
+            {item.media &&
+              (item.media.kind === 'image' ? (
+                /* Edge treatment is per capture -- see `framed` on ImageMedia.
+                   Width is capped below `xl`, where the panel is stacked rather
+                   than split: a 16:9 capture at the full 900px column ran 500px
+                   tall and made the image tabs 230px taller than the code ones.
+
+                   `loading="eager"` even for a panel that starts closed: a lazy
+                   image inside a `hidden` container is never fetched until the
+                   panel opens, so the first click on that tab showed an empty
+                   box while it downloaded. */
+                <Image
+                  src={item.media.src}
+                  alt={item.media.alt}
+                  class={`w-full rounded-lg sm:max-w-xl xl:max-w-none${item.media.framed ? ' border border-hairline' : ''}`}
+                  layout="responsive"
+                  widths={[400, 768, 1024]}
+                  sizes="(max-width: 1279px) min(92vw, 36rem), 520px"
+                  loading="eager"
+                />
+              ) : (
+                /* One container, not a plate around a plate: `surface-sunken` is
+                   the ladder's step for code, and in light mode it sits 0.4%
+                   off `surface-2`, so the ring the screenshot needs was simply
+                   invisible here.
+
+                   Full-bleed below `sm`, cancelling the panel's own `p-6`. That
+                   buys the code 48px, which is the difference between the
+                   highlighted line fitting at 390px and being clipped at the
+                   plate's edge -- `allowed_domains` and
+                   `topology.kubernetes.io/region` are the two lines carrying each
+                   fragment's point, and both ran past the edge before this. */
+                <figure
+                  class="-mx-6 overflow-hidden border-y border-hairline bg-sunken
+                    sm:mx-0 sm:max-w-xl sm:rounded-lg sm:border xl:max-w-none"
+                >
+                  <figcaption
+                    class="flex items-center gap-2 border-b border-hairline px-3.5 py-2.5 font-mono
+                      text-[0.6875rem] text-muted sm:text-xs"
+                  >
+                    <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-teal-500" />
+                    {item.media.filename}
+                  </figcaption>
+                  {/* The `<code>` wrapper lives inside `set:html`, not as a child
+                      in the template, so this element has no children for a
+                      formatter to indent. That is the whole point: `<pre>` is
+                      whitespace-significant, and a prettier-ignore directive in
+                      JSX-comment form is NOT honoured by prettier's Astro parser
+                      -- it silently split the tag across lines again and put 20
+                      spaces back on the first code line. Structure beats a
+                      directive. */}
+                  <pre
+                    class="overflow-x-auto px-3.5 py-4 font-mono text-[0.6875rem] leading-[1.7] text-muted sm:text-xs"
+                    set:html={codeHtml(item.media.lines)}
+                  />
+                  {item.media.command && (
+                    <p class="border-t border-hairline px-3.5 py-2.5 font-mono text-[0.6875rem] text-body sm:text-xs">
+                      <span aria-hidden="true" class="select-none text-muted">
+                        $&nbsp;
+                      </span>
+                      {item.media.command}
+                    </p>
+                  )}
+                </figure>
+              ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  {
+    /* Without JS the rail is inert, so it goes away and all four panels stack.
+      Written through set:html because Astro only hoists top-level <style>. */
+  }
+  <noscript
+    set:html={`<style>[data-capability-tabs] [role="tablist"]{display:none}[data-capability-tabs] [data-panel][hidden]{display:block}[data-capability-tabs] [data-panel]+[data-panel]{border-top:1px solid var(--nrp-border-hairline)}</style>`}
+  />
+</WidgetWrapper>
+
+<style>
+  /* The indicator is `hidden` by default rather than opacity-0, so the server
+     render never paints a bar under an unselected tab. */
+  [role='tab'][aria-selected='true'] [data-indicator] {
+    display: block;
+  }
+
+  /* Keyed to data-enter, which only the click/keyboard handler sets -- the
+     first paint has no animation. Exponential ease-out, per DESIGN.md. */
+  [data-panel][data-enter] {
+    animation: capability-panel-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes capability-panel-in {
+    from {
+      opacity: 0.35;
+      transform: translateY(0.375rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-panel][data-enter] {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Standard ARIA tabs with automatic activation: the panels are already in the
+  // DOM, so there is nothing to defer and following the arrow keys with focus
+  // is the cheaper interaction. Up/Down are aliased to Left/Right because the
+  // rail is a 2x2 grid below `sm`, where "left" of the third tab is upward.
+  function initCapabilityTabs(root: HTMLElement) {
+    const tabs = Array.from(root.querySelectorAll<HTMLElement>('[data-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-panel]'));
+    if (tabs.length === 0 || tabs.length !== panels.length) return;
+
+    const select = (index: number, moveFocus: boolean) => {
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        tab.tabIndex = on ? 0 : -1;
+      });
+
+      panels.forEach((panel, i) => {
+        if (i === index) {
+          panel.hidden = false;
+          // Restart the animation on every switch, including a re-select of the
+          // panel that is already showing.
+          panel.removeAttribute('data-enter');
+          void panel.offsetWidth;
+          panel.setAttribute('data-enter', '');
+        } else {
+          panel.hidden = true;
+          panel.removeAttribute('data-enter');
+        }
+      });
+
+      if (moveFocus) tabs[index].focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i, false));
+
+      tab.addEventListener('keydown', (event) => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+        let next: number | undefined;
+
+        if (step !== undefined) next = (i + step + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+
+        if (next === undefined) return;
+        event.preventDefault();
+        select(next, true);
+      });
+    });
+
+    panels.forEach((panel) => {
+      panel.addEventListener('animationend', () => panel.removeAttribute('data-enter'));
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-capability-tabs]').forEach(initCapabilityTabs);
+</script>
