@@ -2,3 +2,9 @@ dist
 node_modules
 .github
 .changeset
+
+# Build output. astro.config.ts sets outDir: 'public' -- committed static assets
+# live in static/, so everything in public/ is generated. Same exclusion lives in
+# tsconfig.json and eslint.config.js.
+public
+.output

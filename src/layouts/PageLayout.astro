@@ -2,6 +2,7 @@
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/components/widgets/Header.astro';
 import Footer from '~/components/widgets/Footer.astro';
+import OfficeHoursBar from '~/components/common/OfficeHoursBar.astro';
 
 import { headerData, footerData } from '~/navigation';
 
@@ -16,6 +17,11 @@ const { metadata, id } = Astro.props;
 ---
 
 <Layout metadata={metadata} id={id}>
+  {
+    /* Above the header on purpose: the next office hours is the site's one
+      time-sensitive fact, and it needs to be readable before any scroll. */
+  }
+  <OfficeHoursBar />
   <slot name="header">
     <Header {...headerData} isSticky showRssFeed showToggleTheme />
   </slot>

@@ -317,6 +317,43 @@ and anything a user might copy use `--nrp-font-mono`. That includes the model na
 (`qwen3`, `gpt-oss`, `minimax-m2`) — they are the literal strings a user pastes into a client config,
 not prose.
 
+### The office-hours strip
+
+[`common/OfficeHoursBar.astro`](src/components/common/OfficeHoursBar.astro), rendered by
+`PageLayout` **above** the header, so the next bi-weekly session is legible on every page before any
+scroll. It replaced a rotating carousel item below the hero, which showed for seven seconds out of
+twenty-one and only after a scroll.
+
+Three things about it are deliberate and should survive future edits:
+
+- **It is the one teal-tinted band on the site** — `bg-teal-100` / `dark:bg-teal-950` — and the one
+  full-width band that is not a step on the surface ladder. It has to read as a distinct band against
+  a white page _and_ against the near-black homepage hero directly beneath it. Any surface step would
+  vanish into one of the two. This is a component-scoped exception, not a new ladder rung: nothing else
+  gets a tinted band.
+- **The dot pulses only while a session is running.** A dot pulsing at "in 13 days" is decoration, and
+  on the homepage it would be the second pulsing dot after the live-feed indicator. The pulse, the
+  filled countdown badge, and the filled join button are all keyed to `data-live="true"` — one state
+  change, three signals, `prefers-reduced-motion` opts out of the pulse.
+- **The join control uses `border-current`, not `border-hairline`.** On this tint a hairline measures
+  well under 3:1, and a hairline is never a control's sole boundary (§5).
+
+Schedule, timezone, duration, Zoom link, and the `.ics` path live in
+[`src/data/office-hours.ts`](src/data/office-hours.ts) and nowhere else. The same functions run at
+build time and in the browser: the strip is correct without JavaScript, and the client pass corrects a
+stale build and steps the countdown. Dates step in **calendar days** with the local wall clock
+re-resolved per candidate — adding a fixed `14 × 24h` to a UTC instant, which is what the previous
+widget did, displayed "9:00 AM PT" for the whole winter.
+
+**The schedule's zone and the display zone are two different things.** Sessions are defined as 10:00
+Pacific, so `OFFICE_HOURS.timeZone` decides when they occur and must not be touched. What the strip
+_shows_ is the reader's own zone — `Tue, Sep 1 · 12:00 PM CDT` in Chicago — because a reader should
+not have to do timezone arithmetic to use the thing. A static build cannot know that zone, so the
+server render falls back to Pacific and the client pass restates it; the Pacific time stays reachable
+in the `title`. Every formatter takes the display zone as an argument, and the countdown counts day
+boundaries in it too, so "tomorrow" means the reader's tomorrow. The zone abbreviation is always
+rendered, so no reading is ambiguous.
+
 ### `.logo-plate`
 
 The **one sanctioned exception** to hard rule 1. Third-party vendor logos ship as dark artwork on

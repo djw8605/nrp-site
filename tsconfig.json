@@ -5,13 +5,13 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
+      "~/*": ["src/*"]
     },
     "jsx": "preserve"
   },
-  "exclude": [
-    "dist/"
-  ]
+  // `public/` is the BUILD OUTPUT (astro.config.ts sets outDir: 'public'), not static
+  // assets -- those live in `static/`. Without excluding it, `astro check` after a
+  // build walks 236 generated HTML files plus the JS bundles and OOMs. `dist/` and
+  // `.output/` are here for the same reason, in case a tool writes them.
+  "exclude": ["dist/", "public/", ".output/"]
 }
