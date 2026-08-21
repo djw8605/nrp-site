@@ -293,7 +293,7 @@ export default defineConfig({
               collapsed: true,
               items: [
                 { label: 'Networking', link: 'documentation/admindocs/participating/network' },
-                { label: 'Joining a server', link: 'documentation/admindocs/participating/new-contributor-guide' },
+                { label: 'Joining the NRP', link: 'documentation/admindocs/participating/new-contributor-guide' },
                 {
                   label: 'Participating with InterLink',
                   collapsed: true,

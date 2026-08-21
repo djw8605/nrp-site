@@ -1,28 +1,114 @@
 ---
-title: Joining a Server
-description: Joining a Server
+title: Joining the NRP
+description: Contribute hardware to the National Research Platform, keep priority on your own nodes, and give your researchers a managed GPU cluster without running one yourself.
 ---
 
 import { Steps } from '@astrojs/starlight/components';
+import ContribResponsibilities from '../../../../../components/docs/ContribResponsibilities.astro';
 
-In this guide, you will learn how to join a server to the [National Research Platform (NRP)](/).  Joining the NRP is as easy as gathering required server information and sending that data to the NRP administrators.
+Contributing a node to the NRP is a trade. You supply the hardware, the rack space, and the network path. The NRP installs the operating system, joins the node to the Nautilus cluster, and runs it from there — patching, monitoring, and upgrades included. In return your researchers get a share of the entire pool, not only the machine you bought.
 
-Required Information:
+**You keep priority on your own hardware.** When your people want the nodes you contributed, they get them. When those nodes are idle, the rest of the community runs opportunistic work on them. That is the whole mechanism: nothing sits unused, and every contributor draws on far more capacity than they put in.
+
+The NRP is funded by the National Science Foundation rather than cost recovery, so there is no fee to participate and no charge for your researchers' access.
+
+## Who can join
+
+**Using** the platform is open to U.S. nonprofit research and education institutions. Community colleges qualify, not only R1 universities.
+
+**Contributing** hardware comes from that same community: U.S. researchers and the collaborators they work with can add nodes to the pool.
+
+## What your researchers get
+
+- **The whole GPU pool**, not just your nodes — plus FPGAs and other specialized hardware.
+- **Hosted JupyterHub and Coder**, so people who will never write a Kubernetes manifest can still use the cluster. A private JupyterHub is an option for groups that want one.
+- **Direct cluster access** with `kubectl` against the Nautilus API, for those who do want it.
+- **Petabyte-scale S3 and Ceph storage** shared across the cluster.
+- **A hosted LLM endpoint** — OpenAI-compatible, with per-user API keys.
+- **Training and support** — recorded Docker, Kubernetes, and JupyterHub sessions, bi-weekly office hours, and the [Nautilus Support chat](/contact).
+
+## Responsibilities
+
+The split is deliberately lopsided. You own the physical plant and the network path; the NRP owns everything from the firmware up.
+
+<ContribResponsibilities
+  site={{
+    title: 'Contributing site',
+    required: [
+      {
+        term: 'Network connectivity',
+        detail: 'A Science DMZ path to the node at 10–100G with jumbo frames, outside the campus firewall.',
+      },
+      {
+        term: 'Management access ACL',
+        detail: "Permit the NRP management address to reach the node's IPMI interface.",
+      },
+      { term: 'Rack space and cabling', detail: 'Rack units, power drops, and network cabling for the node.' },
+      { term: 'Power and cooling', detail: 'Conditioned power and environmental control the node can stay up on.' },
+      {
+        term: 'On-site contact',
+        detail: 'A named person we can reach for physical access, reboots, and hardware swaps.',
+      },
+    ],
+    suggested: [
+      { term: 'Physical security', detail: 'Controlled access to the rack: locks, badge policy, datacenter rules.' },
+      { term: 'Warranty coordination', detail: 'Forward vendor hardware tickets to the NRP for triage.' },
+      {
+        term: 'Maintenance notice',
+        detail: 'Tell us before planned power or network downtime so we can drain the node.',
+      },
+    ],
+  }}
+  nrp={{
+    title: 'NRP',
+    required: [
+      { term: 'Firmware and OS', detail: 'BIOS updates, OS installation, and lifecycle management.' },
+      { term: 'Security from the OS up', detail: 'Patching, package updates, and host hardening.' },
+      { term: 'Monitoring and response', detail: '24/7 alerting, health checks, and incident handling.' },
+      {
+        term: 'Cluster network policy',
+        detail: 'Central Calico policy firewalls the node, so you maintain no per-node rules.',
+      },
+    ],
+    suggested: [
+      { term: 'Procurement guidance', detail: 'Hardware recommendations and fulfillment support.' },
+      { term: 'Onboarding', detail: 'Cluster join, storage provisioning, and GPU drivers.' },
+      { term: 'Capacity reporting', detail: 'Grafana dashboards and accounting for your own utilization.' },
+      { term: 'Docs and training', detail: 'Reference material and sessions for your local administrators.' },
+    ],
+  }}
+/>
+
+Two of these deserve the detail on the [Networking](/documentation/admindocs/participating/network/) page before you commit: the node needs a Science DMZ path with 9000 MTU to every other node in the cluster, and local `iptables` or `firewalld` has to be off so the cluster-wide Calico policy can manage the host firewall centrally.
+
+## What to send us
 
 <Steps>
 
-1. The server’s IP information, including Public IP, subnet mask and gateway IP
+1. **Node IP configuration** — public IP, subnet mask, and gateway.
 
-2. DNS information of the host network.
-   
-   If unknown, we will default to using public DNS such as `1.1.1.1` (Cloudflare) and `8.8.8.8` (Google)
+2. **DNS servers** for the host network
 
-3. The IP address (and any credentials if they are set) for the server’s IPMI. Jump host information if required to reach the IPMI interface.
+   If you have no preference we default to public resolvers: `1.1.1.1` (Cloudflare) and `8.8.8.8` (Google).
 
-4. If need to set the ACL accessing host for IPMI our IP is `67.58.53.149`
+3. **IPMI access** — the address, and credentials if any are set. Include jump-host details if the interface is not directly reachable.
 
-5. Review the [network requirements](/documentation/admindocs/participating/network/)
+4. **Firewall allowance for IPMI** — if your ACL needs an entry, the NRP management address is `67.58.53.149`.
+
+5. **Confirmation you have read the [network requirements](/documentation/admindocs/participating/network/)**
 
 </Steps>
 
-That’s enough for us to set up the host.  Send this information to central contact of administrators. [Nautilus Support](/contact) is the preferred way to contact us.
+That is enough for us to build the host.
+
+## Submit the details
+
+Send the list above through [Nautilus Support](/contact), the Matrix chat that is our primary support channel. We take it from there: configuring the node, joining it to Nautilus, and bringing it into the scheduling pool.
+
+Questions before you commit are welcome at the same address, or at the bi-weekly office hours.
+
+## After the node is online
+
+Your researchers still need accounts, and that path is separate from the hardware. It runs through CILogon federated identity, a guest-to-user promotion by an existing admin, assignment to a namespace, and accepting the [Acceptable Use Policy](/NRP-AUP.pdf). Namespace admins are personally responsible for activity in their namespaces.
+
+[Get Access](/get-access) is the full walkthrough — point your researchers there rather than repeating it locally.

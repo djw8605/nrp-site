@@ -1,0 +1,264 @@
+---
+/**
+ * Side-by-side division of duties between a contributing site and the NRP.
+ *
+ * Docs routes do not load Tailwind (see `applyBaseStyles` in astro.config.ts),
+ * and DESIGN.md §11 scopes the Starlight app out of the `--nrp-*` system, so
+ * every colour here is a `--sl-color-*` token. Two of those need care:
+ *   - `--sl-color-accent-high` is the only accent that clears 4.5:1 in *both*
+ *     modes (dark: 100% 85% on near-black; light: 80% 30% on white).
+ *     `--sl-color-text-accent` resolves to bare `accent` in light mode, which
+ *     is ~3.5:1 — fine for a rule, not for a label.
+ *   - `--sl-color-gray-7` is defined only in light mode. Never reach for it.
+ *
+ * The two columns align their Required and Suggested bands with `subgrid`, so
+ * the reader can scan across. Where subgrid is unsupported the declaration is
+ * dropped and each column simply stacks on its own — no broken layout.
+ */
+interface Duty {
+  /** The duty itself. Set in heading colour, one per line. */
+  term: string;
+  /** Optional elaboration, set below the term. */
+  detail?: string;
+}
+
+interface Party {
+  title: string;
+  required?: Duty[];
+  suggested?: Duty[];
+}
+
+interface Props {
+  site: Party;
+  nrp: Party;
+}
+
+const { site, nrp } = Astro.props;
+
+/** `accent` marks the emphasised column — the one carrying most of the load. */
+const columns = [
+  { party: site, accent: false },
+  { party: nrp, accent: true },
+];
+
+const groupsOf = (party: Party) =>
+  [
+    { kind: 'required', label: 'Required', items: party.required ?? [] },
+    { kind: 'suggested', label: 'Suggested', items: party.suggested ?? [] },
+  ].filter((group) => group.items.length > 0);
+---
+
+<div class="cr not-content">
+  <div class="cr-grid">
+    {
+      columns.map(({ party, accent }) => (
+        <div class:list={['cr-col', accent && 'cr-col--accent']}>
+          <h3 class="cr-title">{party.title}</h3>
+          {groupsOf(party).map((group) => (
+            <div class="cr-group" data-kind={group.kind}>
+              <p class="cr-label">{group.label}</p>
+              <ul class="cr-list">
+                {group.items.map((duty) => (
+                  <li class="cr-item">
+                    <span class="cr-term">{duty.term}</span>
+                    {duty.detail && <span class="cr-detail">{duty.detail}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .cr {
+    /* Queried by the stacking rules at the end of this block. */
+    container-type: inline-size;
+    /* Starlight's sibling rule would give this 1rem; a framed panel wants more. */
+    margin-block: 1.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    /* DESIGN.md §5: panels are 8px. */
+    border-radius: 0.5rem;
+    /* Lets the accent column's fill run to the rounded corners. */
+    overflow: hidden;
+  }
+
+  .cr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Title, Required, Suggested — shared by both columns via subgrid. */
+    grid-template-rows: repeat(3, auto);
+    /* Row gap is inherited by the subgrids; column gap must stay 0 so the
+       accent fill meets the divider with no seam. */
+    gap: 1.375rem 0;
+  }
+
+  .cr-col {
+    display: grid;
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+    padding: 1.25rem 1.375rem 1.5rem;
+    min-width: 0;
+  }
+
+  .cr-col--accent {
+    background: var(--sl-color-gray-6);
+    border-inline-start: 1px solid var(--sl-color-gray-5);
+  }
+
+  /* Explicit placement, so a column missing one band still lines up with the
+     other rather than sliding its Suggested list into the Required row. */
+  .cr-title {
+    grid-row: 1;
+  }
+
+  .cr-group[data-kind='required'] {
+    grid-row: 2;
+  }
+
+  .cr-group[data-kind='suggested'] {
+    grid-row: 3;
+  }
+
+  .cr-title {
+    margin: 0;
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--sl-color-white);
+    padding-block-end: 0.6rem;
+    border-block-end: 2px solid var(--sl-color-gray-4);
+  }
+
+  .cr-col--accent .cr-title {
+    border-block-end-color: var(--sl-color-accent);
+  }
+
+  .cr-label {
+    margin: 0 0 0.6rem;
+    font-size: var(--sl-text-2xs);
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .cr-group[data-kind='required'] .cr-label {
+    color: var(--sl-color-accent-high);
+  }
+
+  /* gray-3 would read as the quieter choice here, but on the accent column's
+     gray-6 fill it measures 4.49:1 in dark mode — under the 4.5 floor for text
+     this size. gray-2 clears it in both modes; uppercase and letter-spacing
+     still keep the label subordinate to the terms. The hollow marker below
+     stays on gray-3, which only owes 3:1 as a non-text indicator. */
+  .cr-group[data-kind='suggested'] .cr-label {
+    color: var(--sl-color-gray-2);
+  }
+
+  .cr-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .cr-item {
+    position: relative;
+    padding-inline-start: 1.125rem;
+  }
+
+  /* Marker is a 7px square: filled for required, hollow for suggested — the
+     same distinction the label makes, carried down to each row. Drawn with an
+     empty `content` and a box, so screen readers announce nothing. */
+  .cr-item::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    /* Centres on the term's first line: (1.4em − 7px) / 2 at 15px. */
+    top: 0.47em;
+    box-sizing: border-box;
+    width: 0.4375rem;
+    height: 0.4375rem;
+  }
+
+  .cr-group[data-kind='required'] .cr-item::before {
+    background: var(--sl-color-accent);
+  }
+
+  .cr-group[data-kind='suggested'] .cr-item::before {
+    border: 1px solid var(--sl-color-gray-3);
+  }
+
+  .cr-term {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--sl-color-white);
+  }
+
+  .cr-detail {
+    display: block;
+    margin-block-start: 0.15rem;
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+    color: var(--sl-color-gray-2);
+  }
+
+  /* Stack when the panel itself is too narrow for two columns of prose.
+     A viewport media query cannot see when that happens: between 50em and 72em
+     Starlight adds the sidebar back, so at an 830px viewport the content column
+     is ~500px and each half is 248px — while `max-width: 44em` never fires.
+     Measuring the panel catches that case and real mobile with one threshold.
+     The media query repeats the rules for browsers without container queries,
+     where the @container block is skipped entirely. */
+  @container (max-width: 35rem) {
+    .cr-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      gap: 0;
+    }
+
+    .cr-col {
+      display: block;
+      grid-row: auto;
+    }
+
+    .cr-col--accent {
+      border-inline-start: none;
+      border-block-start: 1px solid var(--sl-color-gray-5);
+    }
+
+    .cr-group {
+      margin-block-start: 1.375rem;
+    }
+  }
+
+  @media (max-width: 44em) {
+    .cr-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      gap: 0;
+    }
+
+    .cr-col {
+      display: block;
+      grid-row: auto;
+    }
+
+    .cr-col--accent {
+      border-inline-start: none;
+      border-block-start: 1px solid var(--sl-color-gray-5);
+    }
+
+    .cr-group {
+      margin-block-start: 1.375rem;
+    }
+  }
+</style>
