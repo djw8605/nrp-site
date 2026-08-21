@@ -1,0 +1,423 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Button from '~/components/ui/Button.astro';
+import Image from '~/components/common/Image.astro';
+import { Icon } from 'astro-icon/components';
+
+import { OFFICE_HOURS, nextSession, formatDate, formatTime, formatLong, formatCountdown } from '~/data/office-hours';
+
+const metadata = {
+  title: 'Contact',
+};
+
+// This page was a MarkdownLayout .mdx file, which put it outside the design
+// system in five ways at once: a max-w-4xl container on a max-w-6xl site, a
+// prose <h1> at text-4xl instead of the type scale, `prose-a:text-blue-600`
+// links instead of `.link`, two <h2>s buried inside decorative cards, and six
+// hardcoded palette colours (bg-blue-50, text-blue-800, border-gray-200,
+// from-blue-50, bg-gray-800, text-gray-100). Two of its tints -- `bg-primary/10`
+// and `border-primary/40` -- rendered as nothing at all: Tailwind cannot inject
+// an alpha channel into a var() token, so the callout it was meant to tint was
+// flat. DESIGN.md section 2 records that failure mode.
+//
+// No hero, and therefore no spectrum rule: this is a utility page whose whole
+// job is four addresses, so it uses the same shape /llmtoken and /namespaces do
+// -- a WidgetWrapper title block with the content directly beneath it. A hero
+// here would push every address a scroll down the page to hold copy the reader
+// did not come for. The signature is a hero element (DESIGN.md section 6), so a
+// page without one does not get it.
+//
+// Content is unchanged apart from ordering, headings, and two corrections noted
+// below. Nothing was added that the site did not already know: the office-hours
+// row reads the same src/data/office-hours schedule the strip above the header
+// does, and the existing client pass in OfficeHoursBar.astro re-renders it in
+// the reader's own timezone -- it picks up every [data-office-hours] root in the
+// document, so this row needs no script of its own.
+const session = nextSession();
+
+const SLACK_INVITE = 'https://join.slack.com/t/nrp-chat/shared_invite/zt-3xv6t5l9d-kXX5j79CHQrrXMpfSyM5QQ';
+const SUPPORT_EMAIL = 'support@nationalresearchplatform.org';
+const MAILING_LIST = 'https://groups.google.com/a/ucsd.edu/g/prp-l/';
+
+// Every channel is one readout rather than a grid of cards: there are four of
+// them, they are alternatives to each other, and they are the entire point of
+// the page -- so they belong in one scannable sequence in the first screen,
+// ordered by how often each is the right answer. Same reasoning as
+// ai/EndpointPanel.astro. The <dt> labels are labels for data, not kickers above
+// headings, which is also why this shape needs no heading levels of its own.
+const rowClass = 'grid gap-x-8 gap-y-3 p-5 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] sm:p-6';
+// Labels sit on the first line of their description rather than centred in the
+// row: a four-line row otherwise floats its label halfway down the box.
+const dtClass = 'flex items-center gap-2.5 self-start font-display text-h4 font-semibold text-heading';
+const dtIconClass = 'h-5 w-5 shrink-0 text-link';
+
+// Element and Matrix screenshots are third-party UI captures on a white ground.
+// They get a hairline plate and nothing else: dimming them in dark mode would
+// cost legibility on the exact detail the step is pointing at.
+const shotClass = 'mt-4 w-full rounded-md border border-hairline';
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper
+    rhythm="tight"
+    width="content"
+    titleAs="h1"
+    title="Where to reach us"
+    description="Nearly everything happens in the support chat: account requests, namespace admin promotions, a pod that will not start, and cluster news. All NRP and Nautilus users are expected to join it."
+  >
+    <dl class="card overflow-hidden">
+      <div class={rowClass}>
+        <dt class={dtClass}>
+          <Icon name="tabler:messages" class={dtIconClass} aria-hidden="true" />
+          Support chat
+        </dt>
+        <dd class="min-w-0">
+          <p class="text-muted">
+            Two front doors to the same rooms, and the Nautilus team is in both. Slack is one invite link away; Matrix
+            takes a few minutes to set up and runs on the NRP's own homeserver.
+          </p>
+          <p class="mt-4 flex flex-col gap-3 sm:flex-row">
+            <Button
+              variant="primary"
+              href={SLACK_INVITE}
+              text="Join NRP Slack"
+              icon="tabler:brand-slack"
+              class="w-full sm:w-auto"
+            />
+            <Button variant="secondary" href="#matrix" text="Set up Matrix" class="w-full sm:w-auto" />
+          </p>
+        </dd>
+      </div>
+
+      <div class={`border-t border-hairline ${rowClass}`}>
+        <dt class={dtClass}>
+          <Icon name="tabler:mail" class={dtIconClass} aria-hidden="true" />
+          Email
+        </dt>
+        <dd class="min-w-0">
+          <p class="text-muted">
+            Accounts, namespaces, hosted LLM access, or anything else. Slower than the chat, and the right choice when
+            the details are not for a public room.
+          </p>
+          <p class="mt-3">
+            <a class="link-quiet break-all font-mono text-sm" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+          </p>
+        </dd>
+      </div>
+
+      {
+        /* Same schedule as the strip above the header, from the same module, and
+          corrected by the same client pass -- data-office-hours is the hook it
+          looks for. A visitor sent here by "join office hours" from /education
+          or /about previously landed on a page that never mentioned them. */
+      }
+      <div class={`border-t border-hairline ${rowClass}`}>
+        <dt class={dtClass}>
+          <Icon name="tabler:calendar-event" class={dtIconClass} aria-hidden="true" />
+          Office hours
+        </dt>
+        <dd class="min-w-0">
+          <p class="text-muted">Bring a question to the NRP team live, on Zoom. Every two weeks.</p>
+          <p class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1" data-office-hours>
+            <time
+              class="font-display text-base font-semibold tabular text-heading"
+              datetime={session.start.toISOString()}
+              title={formatLong(session)}
+              data-office-hours-when
+            >
+              {formatDate(session)} · {formatTime(session)}
+            </time>
+            <span class="font-mono text-xs tabular text-muted" data-office-hours-lead>
+              {formatCountdown(session)}
+            </span>
+          </p>
+          <p class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a class="link-quiet gap-1.5 text-sm" href={OFFICE_HOURS.joinUrl}>
+              <Icon name="tabler:video" class="h-4 w-4" aria-hidden="true" />
+              Join Zoom
+            </a>
+            <a
+              class="link-quiet gap-1.5 text-sm"
+              href={OFFICE_HOURS.calendarUrl}
+              type="text/calendar"
+              aria-label="Add to calendar: NRP office hours"
+            >
+              <Icon name="tabler:calendar-plus" class="h-4 w-4" aria-hidden="true" />
+              Add to calendar
+            </a>
+          </p>
+        </dd>
+      </div>
+
+      <div class={`border-t border-hairline ${rowClass}`}>
+        <dt class={dtClass}>
+          <Icon name="tabler:bell" class={dtIconClass} aria-hidden="true" />
+          Mailing list
+        </dt>
+        <dd class="min-w-0">
+          <p class="text-muted">
+            Recordings from the weekly NRP community meeting and other announcements, sent to the
+            <code class="font-mono text-sm">prp-l</code> list.
+          </p>
+          <p class="mt-3">
+            <a class="link-quiet text-sm" href={MAILING_LIST}>Subscribe&nbsp;→</a>
+          </p>
+        </dd>
+      </div>
+    </dl>
+  </WidgetWrapper>
+
+  {
+    /* Both of these used to be coloured alert boxes stacked under the intro --
+      one with a 4px teal border-left and a tint that never rendered, one
+      hardcoded blue-on-blue. They are conventions, not warnings, and they belong
+      together: each is a thing to do before the first message, not a hazard.
+      surface={1} against the page-surface block above: adjacent full-width
+      sections must not share a step. DESIGN.md section 2. */
+  }
+  <WidgetWrapper
+    surface={1}
+    rhythm="tight"
+    width="content"
+    titleAs="h2"
+    title="Before you post"
+    description="Two conventions in the chat rooms, both of which save you a round trip."
+  >
+    <div class="grid gap-6 md:grid-cols-2 md:gap-8">
+      <div class="card p-6">
+        <div class="flex items-start gap-3.5">
+          <Icon name="tabler:id-badge-2" class="mt-0.5 h-5 w-5 shrink-0 text-link" aria-hidden="true" />
+          <div class="min-w-0">
+            <p class="font-semibold text-heading">Set a display name we can place</p>
+            <p class="mt-2 text-muted">
+              Admins have to match a question to a person and an institution before they can act on it. Your name and
+              where you are is enough:
+            </p>
+            {
+              /* A full-width nested plate, not an inline pill. As a pill with a
+                user-circle glyph the 27-character example needed ~250px and the
+                panel gives ~256px at 375px -- so it wrapped to two lines with
+                the icon floating between them at both 375px and 768px. The
+                literal string is what matters here, and a plate is the register
+                this site already uses for strings a reader copies. */
+            }
+            <p class="mt-4 rounded-md border border-hairline bg-surface-3 px-3 py-2 font-mono text-sm text-body">
+              Nautilus User (Institution)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <div class="flex items-start gap-3.5">
+          <Icon name="tabler:forbid" class="mt-0.5 h-5 w-5 shrink-0 text-link" aria-hidden="true" />
+          <div class="min-w-0">
+            <p class="font-semibold text-heading">Ask in the public rooms</p>
+            <p class="mt-2 text-muted">
+              Private messages to admins on Matrix are rejected. General support questions belong in a room where anyone
+              who knows the answer can pick them up.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </WidgetWrapper>
+
+  <WidgetWrapper
+    id="matrix"
+    surface="page"
+    width="content"
+    titleAs="h2"
+    title="Setting up Matrix"
+    description="Skip this if you joined through Slack. The NRP runs its own homeserver, so the Nautilus team supports accounts on it directly — and because Matrix is federated, the same account reaches other homeservers, IRC networks, and Gitter."
+  >
+    <div class="max-w-3xl">
+      <h3 class="font-display text-h3 font-semibold text-heading">Create your account in a browser</h3>
+      <ol class="steps mt-5">
+        <li>
+          Open <a class="link" href="https://element.nrp-nautilus.io">our web version of the Element client</a>, which
+          runs against the Nautilus homeserver and is fully supported by the Nautilus team. Plenty of people use the
+          <a class="link" href="https://app.element.io/">Matrix.org homeserver</a> or another one instead — those work too,
+          and are the better choice if you expect to use Matrix outside Nautilus, but we may not be able to help with problems
+          on them.
+        </li>
+        <li>
+          Choose <strong class="font-semibold text-heading">Create Account</strong>, then pick a username, a password,
+          and an email address.
+        </li>
+        <li>
+          You end up with an account of the form
+          <code class="break-words font-mono text-sm">@username:matrix.nrp-nautilus.io</code>, which can join rooms on
+          any federated Matrix server, <a class="link" href="https://matrix.org">matrix.org</a> included.
+        </li>
+        <li>
+          Click <strong class="font-semibold text-heading">Explore rooms</strong> and check that you are exploring the NRP
+          server, <code class="break-words font-mono text-sm">matrix.nrp-nautilus.io</code>. You join
+          <strong class="font-semibold text-heading">Nautilus General</strong> and
+          <strong class="font-semibold text-heading">News</strong> automatically. On any other homeserver, including matrix.org,
+          join the
+          <a class="link" href="https://matrix.to/#/%23nrp:matrix.nrp-nautilus.io">NRP Matrix Space</a> directly, or by address
+          at <code class="break-words font-mono text-sm">#nrp:matrix.nrp-nautilus.io</code>.
+        </li>
+      </ol>
+
+      {
+        /* A card with an icon, not a coloured border-left: the site has no alert
+          palette, and this is the one genuinely irreversible step on the page --
+          keys lost here are lost for good. Same panel register as every other box
+          on the page rather than the sunken plate, which is reserved for literal
+          strings a reader copies. */
+      }
+      <div class="card mt-8 flex gap-3.5 p-5">
+        <Icon name="tabler:key" class="mt-0.5 h-5 w-5 shrink-0 text-link" aria-hidden="true" />
+        <div class="min-w-0">
+          <p class="font-semibold text-heading">Back up your encryption key before you need it</p>
+          <p class="mt-2 text-muted">
+            In Element, go to <strong class="font-semibold text-heading">User Settings → Security &amp; Privacy</strong>
+            and click <strong class="font-semibold text-heading">Start using Key Backup</strong>. Without the backup,
+            encrypted messages stay locked: a registered email address recovers your password, never your keys.
+            Element's
+            <a class="link" href="https://element.io/help">help pages</a> go into the detail.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="mt-14 font-display text-h3 font-semibold text-heading">On a phone or desktop app</h3>
+      <ol class="steps mt-5">
+        <li>
+          Get the <a class="link" href="https://element.io/get-started">phone or desktop version of Element</a>, or
+          <a class="link" href="https://matrix.org/clients/">any other compatible client</a>.
+        </li>
+        <li>
+          {
+            /* The old copy said "click the change server button"; the control in
+              the screenshot is labelled "Change". Naming what is actually on
+              screen is the point of shipping the screenshot at all. */
+          }
+          Point it at the NRP homeserver: on the sign-in screen, click
+          <strong class="font-semibold text-heading">Change</strong> beside the server name and enter
+          <code class="break-words font-mono text-sm">https://matrix.nrp-nautilus.io</code>.
+          <Image
+            src="~/assets/images/matrix_server.png"
+            alt="Element's sign-in screen, reading “Sign in to your Matrix account on matrix.org”, with a Change link beside the server name."
+            class={`${shotClass} max-w-[24rem]`}
+            layout="responsive"
+            widths={[385, 770]}
+            sizes="(max-width: 640px) 100vw, 384px"
+            width={770}
+            height={170}
+          />
+        </li>
+        <li>Then follow the browser steps above from step 2.</li>
+      </ol>
+
+      <h3 class="mt-14 font-display text-h3 font-semibold text-heading">Make yourself discoverable</h3>
+      <p class="mt-4 text-muted">
+        So we can find you by email when an NRP account needs linking to a Matrix one, turn on the identity server
+        integration. Your address is protected against harvesting and is only ever used to look up an account by someone
+        who already knows the address.
+      </p>
+      <ol class="steps mt-5">
+        <li>
+          In Element, open
+          <strong class="font-semibold text-heading">Your Account → All Settings → Security &amp; Privacy</strong>.
+        </li>
+        <li>
+          Click <strong class="font-semibold text-heading">Accept</strong> under the Privacy heading, then
+          <strong class="font-semibold text-heading">Continue</strong>.
+          <Image
+            src="~/assets/images/discovery.png"
+            alt="Element's Privacy settings: a “Let people find you” notice about the identity server, an Accept checkbox for the Privacy Notice, and a Continue button."
+            class={`${shotClass} max-w-[34rem]`}
+            layout="responsive"
+            widths={[544, 1088, 1368]}
+            sizes="(max-width: 640px) 100vw, 544px"
+            width={1368}
+            height={562}
+          />
+        </li>
+        <li>
+          Click <strong class="font-semibold text-heading">Share</strong> for each address you want to be findable by.
+        </li>
+      </ol>
+
+      <h3 class="mt-14 font-display text-h3 font-semibold text-heading">Getting News by email</h3>
+      <p class="mt-4 text-muted">
+        Registration puts you in the <strong class="font-semibold text-heading">News</strong> channel already. To have it
+        reach your inbox as well, open the channel in Element, click the channel icon at the top, then
+        <strong class="font-semibold text-heading">Settings → Notifications</strong>, and choose
+        <strong class="font-semibold text-heading">All messages</strong>.
+      </p>
+
+      <h3 class="mt-14 font-display text-h3 font-semibold text-heading">Other clients, bridges, and help</h3>
+      <ul class="mt-5 space-y-4">
+        <li class="text-muted">
+          <strong class="font-semibold text-heading">Another web client.</strong>
+          <a class="link" href="https://app.cinny.in">Cinny</a> does much the same job as Element in the browser.
+        </li>
+        <li class="text-muted">
+          <strong class="font-semibold text-heading">IRC and Gitter.</strong> The same Matrix account reaches the
+          {
+            /* prettier-ignore -- broken across lines, the anchor's trailing newline becomes an underlined trailing space. */
+          }
+          <a class="link" href="https://matrix-org.github.io/matrix-appservice-irc/latest/bridged_networks"
+            >bridged IRC networks</a
+          >
+          and any <a class="link" href="https://gitter.im/">Gitter</a> community. The IRC bridge is worth the setup on its
+          own: your client keeps receiving IRC messages while you are offline, and notifies you when someone mentions you.
+        </li>
+        <li class="text-muted">
+          <strong class="font-semibold text-heading">The manual.</strong> Element publishes a full
+          <a class="link" href="https://element.io/user-guide">user guide</a>.
+        </li>
+        <li class="text-muted">
+          <strong class="font-semibold text-heading">Registered on matrix.org by mistake?</strong> If your user ID looks like
+          <code class="break-words font-mono text-sm">@username:matrix.org</code> rather than
+          <code class="break-words font-mono text-sm">@username:matrix.nrp-nautilus.io</code>, sign in at
+          <a class="link" href="https://app.element.io">app.element.io</a> instead of the NRP Element — the account is still
+          fine, it just lives elsewhere.
+        </li>
+      </ul>
+    </div>
+  </WidgetWrapper>
+
+  <CallToAction
+    surface={1}
+    title="Not on the cluster yet?"
+    subtitle="Access is vouched, not self-serve: you log in through CILogon, then an admin validates you and adds you to a namespace. The support chat is where you ask for that."
+    actions={[
+      { variant: 'primary', text: 'How to get access', href: '/get-access', icon: 'tabler:key' },
+      { variant: 'secondary', text: 'Read the documentation', href: '/documentation/userdocs/start/getting-started/' },
+    ]}
+  />
+</Layout>
+
+<style>
+  /* Numbered procedures, styled through ::marker rather than a column of badge
+     circles. The numbers are information here -- these are steps you follow
+     while switching between this page and Element -- but they are not the
+     loudest thing on the page, and a mono tabular marker keeps them aligned
+     without building a second visual system for them. */
+  .steps {
+    list-style: decimal;
+    padding-left: 1.5rem;
+  }
+
+  .steps > li {
+    color: var(--nrp-text-muted);
+    margin-top: 1rem;
+  }
+
+  .steps > li:first-child {
+    margin-top: 0;
+  }
+
+  .steps > li::marker {
+    font-family: var(--nrp-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.875rem;
+    color: var(--nrp-text-muted);
+  }
+</style>

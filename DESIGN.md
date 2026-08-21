@@ -271,6 +271,12 @@ Nothing else may use it. The earlier rule allowed it under section eyebrows, on 
 divider — and the result was 7 on the homepage and 8 on `/about`, which broke this rule's own second
 sentence. One per page is the enforceable form.
 
+**It lives in `Hero.astro`, so a page without a hero has none.** That is correct, not an omission:
+`/llmtoken`, `/namespaces`, and `/contact` open on a `WidgetWrapper` title block with their content
+directly beneath, because their whole job is a readout the reader came for. Do not hand-place a rule
+above those headings to even the pages up — the alternative to a hero is not a hero with the art
+removed.
+
 Two sizing notes, both learned the hard way:
 
 - **At `3.5rem` it stops being the signature.** The gradient has four stops across
@@ -566,7 +572,7 @@ The `--aw-*` aliases exist so this can proceed incrementally. Update this table 
 `widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` ·
 `common/AnnouncementBar.astro` · `widgets/People.astro` · `blog/GridItem.astro` ·
 `ai/EndpointPanel.astro` · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
-`pages/distributed-infrastructure.astro` · `pages/about.astro`
+`pages/distributed-infrastructure.astro` · `pages/about.astro` · `pages/contact.astro`
 
 **Deleted** — ten widgets reachable only from the five removed AstroWind demo pages:
 `Features3`, `Contact`, `Stats`, `Pricing`, `Announcement`, `Testimonials`, `Steps2`, `Hero2`,
@@ -583,6 +589,14 @@ by `common/AnnouncementBar.astro`.)
 | `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset |
 | `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the `/llms` catalogue                                |
 | `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp       |
+| `layouts/MarkdownLayout.astro`                   | see below — two pages left                           |
+| `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`         |
+
+`MarkdownLayout.astro` is the one still worth calling out, because everything it renders inherits the
+problems rather than declaring them: a `max-w-4xl` container on a `max-w-6xl` site, an `<h1>` at
+`text-4xl md:text-5xl` instead of `text-h1`, `prose-a:text-blue-600 dark:prose-a:text-blue-400`
+instead of `.link`, and `dark:prose-headings:text-slate-300`. `/contact` was its largest consumer and
+is now an `.astro` page; `get-access.md` and `7nrp-travel-support.md` are what remain.
 
 ---
 
