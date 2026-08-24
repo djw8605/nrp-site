@@ -49,9 +49,12 @@ The split is deliberately lopsided. You own the physical plant and the network p
         term: 'On-site contact',
         detail: 'A named person we can reach for physical access, reboots, and hardware swaps.',
       },
+      {
+        term: 'Security incident notice',
+        detail: 'Tell us about incidents at your site that could affect the node you contribute.',
+      },
     ],
     suggested: [
-      { term: 'Physical security', detail: 'Controlled access to the rack: locks, badge policy, datacenter rules.' },
       { term: 'Warranty coordination', detail: 'Forward vendor hardware tickets to the NRP for triage.' },
       {
         term: 'Maintenance notice',
@@ -65,6 +68,10 @@ The split is deliberately lopsided. You own the physical plant and the network p
       { term: 'Firmware and OS', detail: 'BIOS updates, OS installation, and lifecycle management.' },
       { term: 'Security from the OS up', detail: 'Patching, package updates, and host hardening.' },
       { term: 'Monitoring and response', detail: '24/7 alerting, health checks, and incident handling.' },
+      {
+        term: 'Security incident notice',
+        detail: 'We tell you about incidents on the cluster that could affect your site.',
+      },
       {
         term: 'Cluster network policy',
         detail: 'Central Calico policy firewalls the node, so you maintain no per-node rules.',
@@ -80,6 +87,20 @@ The split is deliberately lopsided. You own the physical plant and the network p
 />
 
 Two of these deserve the detail on the [Networking](/documentation/admindocs/participating/network/) page before you commit: the node needs a Science DMZ path with 9000 MTU to every other node in the cluster, and local `iptables` or `firewalld` has to be off so the cluster-wide Calico policy can manage the host firewall centrally.
+
+## Security
+
+The NRP monitors the security of the nodes it runs and applies security patches to their software
+continuously. You do not track CVEs, schedule OS updates, or maintain host firewall rules for a
+contributed node — that work is ours from the firmware up.
+
+Incident disclosure runs both ways:
+
+- **You tell us** about security incidents at your site that could affect the node you contribute —
+  a compromised management network, credentials exposed, anything that puts the host at risk.
+- **We tell you** about security incidents on the cluster that could affect your site.
+
+Report either direction through [Nautilus Support](/contact).
 
 ## What to send us
 
