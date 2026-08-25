@@ -1,0 +1,375 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { Icon } from 'astro-icon/components';
+
+// One source for the scale figures, shared with the homepage hero and /about.
+// Verify against Grafana before changing them there.
+import { clusterStats } from '~/data/cluster-stats';
+
+const metadata = {
+  title: 'NSF AI Infrastructure Hubs',
+  description:
+    'NSF 26-513 names the NRP as one way for State and Regional AI Infrastructure Hubs to integrate on-site resources with national infrastructure. What integration involves, and how to reach the NRP team about it.',
+};
+
+// DIRECTION CONTRACT -- seed 5960fbf5 (surface, persuade), form 5 of 7
+//
+// THESIS: A crosswalk, not a pitch -- the solicitation's own five element
+//   headings, each set beside NRP infrastructure that is already running. It
+//   refuses the four-up "why choose us" feature grid that every
+//   cyberinfrastructure landing page ships, this one included until now.
+// OWN-WORLD: The NRP system unchanged -- surface ladder, teal ramp, Space
+//   Grotesk / Inter / JetBrains Mono, hairline-separated readout rows inside one
+//   card, exactly one spectrum rule, in the hero.
+// STORY: A team considering a Hub sees that NSF named the NRP, learns what
+//   integration actually involves, and emails support@ if it is worth a
+//   conversation.
+// FIRST VIEWPORT: Split hero. Headline and lead left; the solicitation's naming
+//   sentence quoted verbatim on a sunken plate right, cited in mono. The primary
+//   action is a subject-prefilled mailto.
+// FORM: The five-element crosswalk, candidate 5 on the ordered list.
+//
+// TONE, and this is a constraint not a preference: the page describes what the
+// NRP does and quotes the solicitation. It does NOT explain the solicitation and
+// it does NOT presume how anyone will write a proposal. An earlier draft carried
+// a "The program, in brief" facts table (deadline, award size, awards per cycle)
+// and paraphrased what NSF asks of each element in our own voice; both were cut,
+// because defining the competition is NSF's job and reading it is the visitor's.
+// If either wants to come back, the solicitation link is the answer instead.
+//
+// This lives in frontmatter rather than as an HTML comment in the markup, which
+// is where the generating skill wanted it. It cannot go there: `astro-compress`
+// runs html-minifier-terser over every built page (astro.config.ts), and its
+// default `removeComments` strips the lot -- `grep -c '<!--' public/ai-hubs/index.html`
+// returns 0. Frontmatter is where the rest of this repo keeps its rationale anyway.
+
+const SUPPORT_EMAIL = 'support@nationalresearchplatform.org';
+
+// Prefilled subject: this address is the cluster's general support queue, and a
+// proposal question arriving in it unlabelled looks like a broken pod. The
+// literal address is still stated in the closing card for anyone whose browser
+// has no mail handler.
+const PROPOSAL_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('NSF AI Infrastructure Hub proposal')}`;
+
+const SOLICITATION_URL =
+  'https://www.nsf.gov/funding/opportunities/us-national-science-foundation-state-regional-artificial/nsf26-513/solicitation';
+
+// Verbatim from NSF 26-513, section II (Program Description), in the paragraph
+// on leveraging OAC cyberinfrastructure investments. This one sentence is the
+// reason the page exists, so it is quoted rather than paraphrased and left
+// unemphasised -- the surrounding copy makes the point, the quotation does not
+// need to be edited to make it.
+const SOLICITATION_QUOTE =
+  'Hubs with on-site resources are encouraged to integrate with national resources through mechanisms such as the NRP or PATh.';
+
+// The three advantages of integration that the solicitation itself lists, in its
+// own order, restated as what each one is on the NRP. Not our framing: NSF's.
+//
+// These shipped once as a three-up `Features` grid and that was wrong twice
+// over: an icon-tile-plus-heading-plus-paragraph grid is the exact scaffold this
+// page exists to avoid, and it left the page speaking two visual languages --
+// a grid here, readout rows everywhere below. They are three rows of one card
+// now, in the same register as the crosswalk and the facts table.
+//
+// `nsf` is NSF's own phrase for each advantage, lifted from the same sentence as
+// SOLICITATION_QUOTE. It is here because the label track needs to carry
+// something: with only a three-word title in it the track was 440px wide with
+// ~250px of void, and narrowing it pushed the answer paragraph past the 65-75ch
+// band instead. Quoting the solicitation fills the track with the one thing that
+// belongs there -- the section is called "the three advantages NSF names", and
+// now it shows the naming rather than asserting it.
+const advantages = [
+  {
+    title: 'Administration, handled',
+    nsf: 'access to system administration support and services',
+    description:
+      'The consortium buys the nodes and keeps them. The NRP installs the operating system, configures the machine, patches it, and handles upgrades — all it needs is IPMI access. Occasionally we will ask someone on site to reboot a node or swap a drive.',
+    icon: 'tabler:server-cog',
+  },
+  {
+    title: 'Surge past local capacity',
+    nsf: 'the ability to surge to utilize additional resources beyond local capacity periodically',
+    description:
+      'When a deadline outruns the Hub’s own machines, its members schedule onto the rest of the pool through the same Kubernetes API they already use — no second cluster to learn, and no second allocation to apply for.',
+    icon: 'tabler:arrows-maximize',
+  },
+  {
+    title: 'Idle hardware does work',
+    nsf: 'the ability to share underutilized resources when available',
+    description:
+      'Contributors keep first claim on their own nodes whenever they want them. Between campaigns those nodes run somebody else’s science opportunistically instead of nothing, and the contributor’s researchers get the same courtesy back.',
+    icon: 'tabler:transfer-in',
+  },
+];
+
+// The page's spine: the five element headings NSF 26-513 organises a proposal
+// around, each set beside NRP infrastructure that relates to it. `element` is
+// the solicitation's own heading, quoted; the number is its own numbering.
+//
+// There used to be an `asks` line under each heading, paraphrasing what NSF
+// wants from that element. It is gone on purpose. Summarising the competition's
+// requirements in our voice both restated something the solicitation says better
+// and made the page sound like it knew how the reader's proposal would go. The
+// heading plus a link to NSF's text is the honest amount to say.
+//
+// `brings` claims nothing the rest of this site does not already document, and
+// every row carries the link that proves it.
+const crosswalk = [
+  {
+    n: '1',
+    element: 'Hub consortium stakeholders, vision, and key deliverables',
+    brings:
+      'A letter of support or collaboration, on request. Beyond that, the arrangement is not a new one to describe: the NRP already pools contributed hardware across more than 70 sites on three continents, governed by the research community that uses it, and free to community colleges and R1 universities on the same terms.',
+    links: [
+      { text: 'About the NRP', href: '/about' },
+      { text: 'Ask us for a letter', href: PROPOSAL_MAILTO },
+    ],
+  },
+  {
+    n: '2',
+    element: 'Computing, data, and AI infrastructure',
+    brings:
+      'Contributed nodes join one Kubernetes cluster spanning three continents, and the institution that paid for a node keeps priority on it. Nothing about that is specific to this program — it is how every site in the NRP already joins.',
+    links: [
+      { text: 'New Contributor Guide', href: '/documentation/admindocs/participating/new-contributor-guide/' },
+      { text: 'What is idle right now', href: '/viz/resources' },
+    ],
+  },
+  {
+    n: '3',
+    element: 'Partnerships with regional stakeholders',
+    brings:
+      'A Hub integrated with the NRP joins a fabric that is already in service: one API across more than 70 sites, Open Science Data Federation caches placed near the people reading from them, and perfSONAR measurement between sites, so a slow path is a diagnosis rather than a mystery.',
+    links: [
+      { text: 'How the network works', href: '/distributed-infrastructure' },
+      { text: 'Who is already here', href: '/partners' },
+    ],
+  },
+  {
+    n: '4',
+    element: 'Development of an AI infrastructure workforce',
+    brings:
+      'Facilitators and student operators can work on a production cluster alongside the team that runs it, rather than on a testbed of their own. Bi-weekly office hours, recorded trainings on Docker, Kubernetes and JupyterHub, and the National Research Platform workshop series are open to anyone and already on the calendar.',
+    links: [
+      { text: 'Training recordings', href: '/training' },
+      { text: 'Office hours and support chat', href: '/contact' },
+    ],
+  },
+  {
+    n: '5',
+    element: 'Faculty training and instructional material development',
+    brings:
+      'Hosted JupyterHub and an OpenAI-compatible endpoint serving open-weight models are running now, and neither asks a faculty member to learn Kubernetes. A course is a namespace and a URL, and we size it before the semester starts.',
+    links: [
+      { text: 'Teaching with the NRP', href: '/education' },
+      { text: 'Hosted model catalog', href: '/llms' },
+    ],
+  },
+];
+
+// The readout rows on this page follow /contact's and ai/EndpointPanel's shape:
+// one card, hairline-separated rows, a label track and a content track. A set of
+// equal-weight panels would have made five unrelated cards out of one sequence.
+//
+// The answer track is sized to its own measure (36rem = the max-w-xl cap for
+// 16px body copy, ~70ch) rather than being `1fr` with the cap applied to the
+// paragraph inside it. As `1fr` the track ran to ~680px and the capped paragraph
+// left the same 150px of dead gutter on all five rows. Letting the ask track
+// absorb the slack costs nothing -- it is set at 14px, so it reads fine wider.
+// 19rem, not `1fr`. The label track held a heading plus a paraphrase of what NSF
+// asks until that paraphrase was cut; at `1fr` it then ran 440px wide with a
+// one- or two-line heading in it and read as an empty column. 19rem puts every
+// element heading on two or three lines, which fills the track, and leaves the
+// answer track at its own measure. The ~136px that then goes spare sits at the
+// card's right edge, where the card's padding already makes an edge, rather than
+// inside a column where it reads as a hole.
+const gridTracks = 'md:grid-cols-[minmax(0,19rem)_minmax(0,36rem)]';
+const rowClass = `grid gap-x-10 gap-y-4 p-5 sm:p-6 ${gridTracks}`;
+
+// The advantages card uses this same row, tracks and gaps alike: it carries the
+// same kind of thing in each track -- NSF's wording, then ours -- so a second
+// set of numbers would only be a difference to maintain. It briefly had a
+// narrower label column and a tighter `gap-y-2`, and both were wrong: at
+// 17rem/1fr the description ran to ~740px, ~92 characters and well past the band
+// section 3 caps body copy to, and 8px of gap put the quoted phrase and the
+// answer too close to tell apart once the tracks stack on a phone. Sharing the
+// row also lines the two cards' internal edges up, so they read as one
+// instrument rather than two tables that happen to be adjacent.
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    align="left"
+    split={true}
+    actions={[
+      { text: 'Email the NRP team', href: PROPOSAL_MAILTO, variant: 'primary', icon: 'tabler:mail' },
+      { text: 'Read NSF 26-513', href: SOLICITATION_URL, variant: 'secondary' },
+    ]}
+  >
+    <Fragment slot="title">Operating compute for AI Infrastructure Hubs</Fragment>
+
+    <Fragment slot="subtitle">
+      The arrangement behind that sentence is a straightforward one: a consortium buys the hardware, the NRP installs
+      and operates it, and the institution that paid for a node keeps priority on it whenever it wants it.
+    </Fragment>
+
+    {
+      /* The `image` slot, carrying a quotation rather than art. Hero's `split`
+        shape is what this hero needs -- copy left, one object right, and the
+        object here is the evidence. Same precedent as the cross-origin map
+        iframe passed through this slot on / and /distributed-infrastructure.
+
+        Register is ai/EndpointPanel's: one bg-sunken figure with a mono
+        figcaption, which is what this site uses for a literal string quoted from
+        somewhere else. DESIGN.md section 6. */
+    }
+    <Fragment slot="image">
+      <figure class="rounded-lg border border-hairline bg-sunken p-6 md:p-7">
+        <blockquote class="text-lead text-body">&ldquo;{SOLICITATION_QUOTE}&rdquo;</blockquote>
+        <figcaption class="mt-5 border-t border-hairline pt-4 font-mono text-xs text-muted">
+          NSF 26-513 &middot; II. Program Description
+        </figcaption>
+      </figure>
+    </Fragment>
+  </Hero>
+
+  {
+    /* surface={1} against the page-surface hero: adjacent full-width sections
+      must not share a step. DESIGN.md section 2. */
+  }
+  <WidgetWrapper
+    surface={1}
+    titleAs="h2"
+    title="The three advantages NSF names"
+    description="The solicitation names three advantages to integrating with a national resource. Each is quoted below in its own words, with what that one is on the NRP."
+  >
+    <div class="card overflow-hidden">
+      <dl>
+        {
+          advantages.map((item, i) => (
+            <div class:list={[rowClass, i > 0 && 'border-t border-hairline']}>
+              <dt class="self-start">
+                <span class="flex items-center gap-2.5 font-display text-h4 font-semibold text-heading">
+                  <Icon name={item.icon} class="h-5 w-5 shrink-0 text-link" aria-hidden="true" />
+                  {item.title}
+                </span>
+                <span class="mt-2 block text-sm text-muted">&ldquo;{item.nsf}&rdquo;</span>
+              </dt>
+              <dd class="min-w-0 text-body">{item.description}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      {
+        /* The card's foot band, answering the size question the surge row raises
+          rather than leaving "the rest of the pool" as an adjective. Same
+          figures, same module, as the homepage hero and /about -- not a fourth
+          hardcoded copy. The <dt> labels sit under their figures, which is the
+          one shape DESIGN.md section 6 allows a small label above nothing. */
+      }
+      <dl class="grid grid-cols-2 gap-x-8 gap-y-5 border-t border-hairline bg-surface-3 p-5 sm:grid-cols-4 sm:p-6">
+        {
+          clusterStats.map(({ amount, title: statTitle }) => (
+            <div class="flex flex-col">
+              <dd class="order-1 font-display text-h3 font-bold tabular text-heading">{amount}</dd>
+              <dt class="order-2 mt-0.5 text-eyebrow uppercase text-muted">{statTitle}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </WidgetWrapper>
+
+  <WidgetWrapper
+    surface="page"
+    titleAs="h2"
+    title="What the NRP can provide"
+    description="NSF 26-513 organises a proposal around five elements. Below are its own headings for them, and the NRP infrastructure that relates to each. What the solicitation actually asks for is in the solicitation."
+  >
+    <dl class="card overflow-hidden">
+      {
+        /* Column heads, labelling the two tracks of data beneath them rather than
+          introducing a heading -- the readout-head shape DESIGN.md section 6's
+          allowance table lists. Hidden below `md`, where the tracks stack. They
+          needed per-row replacements at that width while the label track held a
+          paraphrase of what NSF asks; now that it holds only the solicitation's
+          own heading, a heading followed by a paragraph reads correctly stacked
+          and the extra labels were noise. */
+      }
+      <div class:list={['hidden border-b border-hairline bg-surface-3 px-6 py-3 md:gap-x-10', gridTracks, 'md:grid']}>
+        <p class="text-eyebrow uppercase text-muted">Solicitation element</p>
+        <p class="text-eyebrow uppercase text-muted">Related NRP infrastructure</p>
+      </div>
+
+      {
+        crosswalk.map((row, i) => (
+          <div class:list={[rowClass, i > 0 && 'border-t border-hairline']}>
+            <dt class="self-start">
+              {/* The number is NSF's own -- the solicitation numbers its five
+                  required elements -- so it is named in words, and it sits INLINE
+                  with the title rather than on a line of its own above it. On its
+                  own line it was the same label-above-a-heading shape the homepage
+                  callout was corrected for, and one page should not treat that
+                  shape two ways. */}
+              <span class="block font-display text-h4 font-semibold text-heading">
+                <span class="mr-2 font-mono text-sm font-normal tabular text-muted">Element {row.n}</span>
+                {row.element}
+              </span>
+            </dt>
+            <dd class="min-w-0">
+              <p class="text-body">{row.brings}</p>
+              <p class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                {row.links.map((link) => (
+                  <a class="link-quiet text-sm" href={link.href}>
+                    {link.text}&nbsp;&rarr;
+                  </a>
+                ))}
+              </p>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    {
+      /* Rescued from the "The program, in brief" table this page used to carry.
+        The table went because summarising a competition's deadlines and award
+        sizes is NSF's job, not ours; this sentence is the part worth keeping,
+        because it says so. */
+    }
+    <p class="mt-5 text-sm text-muted">
+      Eligibility, deadlines, award sizes, review criteria, and everything the program actually requires are in
+      <a class="link" href={SOLICITATION_URL}>NSF 26-513</a>. The NRP is not the program and has no part in reviewing
+      proposals for it.
+    </p>
+  </WidgetWrapper>
+
+  {
+    /* surface={1}, not "page". The crosswalk above is on the page surface, and
+      two adjacent full-width sections on the same step is the thing DESIGN.md
+      section 2 forbids -- with nothing marking the seam, the crosswalk's 96px of
+      bottom padding and this card's 96px of top padding read as 192px of empty
+      page rather than as a section boundary. This step used to be occupied by
+      the "The program, in brief" band that sat between them; it went, and the
+      alternation has to close back up behind it. */
+  }
+  <CallToAction
+    surface={1}
+    actions={[
+      { variant: 'primary', text: 'Email the NRP team', href: PROPOSAL_MAILTO, icon: 'tabler:mail' },
+      { variant: 'secondary', text: 'Read NSF 26-513', href: SOLICITATION_URL },
+    ]}
+  >
+    <Fragment slot="title">Questions about integrating?</Fragment>
+
+    <Fragment slot="subtitle">
+      Happy to talk it through at whatever stage you are at &mdash; how integration would work for the resources you
+      have in mind, the technical detail behind any of the above, or a letter of support if one would be useful. Reach
+      us at <a class="link break-words" href={PROPOSAL_MAILTO}>{SUPPORT_EMAIL}</a>.
+    </Fragment>
+  </CallToAction>
+</Layout>

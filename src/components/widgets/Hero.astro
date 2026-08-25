@@ -12,6 +12,7 @@ const {
   content = await Astro.slots.render('content'),
   actions = await Astro.slots.render('actions'),
   image = await Astro.slots.render('image'),
+  aside = await Astro.slots.render('aside'),
   alert = await Astro.slots.render('alert'),
   stats,
 
@@ -30,6 +31,16 @@ const isCentered = align === 'center';
 // text block, which read as unbalanced; the media now fills it and the hero
 // loses ~500px of height. Only meaningful with align="left" and an image.
 const isSplit = split && !isCentered && !!image;
+
+// The fourth shape: a left-aligned hero whose headline still runs the full
+// measure, with a narrow column beside the copy *beneath* it. That distinction
+// is the whole point -- putting the aside in the outer grid the way `split`
+// does would narrow the h1's track from 896px to ~776px, wrap the homepage
+// headline onto a third line, and add ~66px to a hero budgeted at 640px.
+// Splitting below the h1 costs nothing: a callout is shorter than the lead,
+// actions and stats it sits beside, so the hero's height is unchanged.
+// DESIGN.md section 6.
+const hasAside = !!aside && !isCentered && !isSplit;
 
 // Single-column left-aligned copy tapers on purpose: the headline runs wider
 // than its own lead paragraph, so the block reads as a deliberate shape rather
@@ -122,7 +133,8 @@ const bodyColor = whiteText ? 'text-white/85' : 'text-muted';
       }
       <div class={twMerge(isCentered && 'mx-auto max-w-3xl text-center')}>
         {
-          /* The page's one signature: a single spectrum rule above the h1, and
+          (
+            /* The page's one signature: a single spectrum rule above the h1, and
              the only authored motion on the page (it draws itself in). It used
              to sit under an eyebrow kicker here, and Headline repeated the same
              pair on every section below -- eight on /about. The kicker is gone,
@@ -133,68 +145,92 @@ const bodyColor = whiteText ? 'text-white/85' : 'text-muted';
              gradient has four stops across blue -> cyan -> teal -> green, and at
              72px they compress into a flat teal dash that no longer reads as the
              logo's spectrum. */
-          <span
-            class={twMerge('spectrum-rule spectrum-rule--draw mb-6 max-w-[9rem]', isCentered && 'mx-auto')}
-            aria-hidden="true"
-          />
+            <span
+              class={twMerge('spectrum-rule spectrum-rule--draw mb-6 max-w-[9rem]', isCentered && 'mx-auto')}
+              aria-hidden="true"
+            />
+          )
         }
         {
           title && (
-            <h1 class={twMerge('font-display text-h1 font-bold', titleBalance, titleMeasure, headingColor)} set:html={title} />
+            <h1
+              class={twMerge('font-display text-h1 font-bold', titleBalance, titleMeasure, headingColor)}
+              set:html={title}
+            />
           )
         }
         {
-          subtitle && (
-            <p class={twMerge('mt-4 text-lead', copyMeasure, bodyColor, isCentered && 'mx-auto')} set:html={subtitle} />
-          )
+          /* Everything below the headline shares a row with `aside` when one is
+             passed. The wrapper is unconditional so the aside and the no-aside
+             layouts differ by one class rather than by two copies of these four
+             blocks; with no grid classes on it a bare block div collapses its
+             child's margin through and changes nothing. */
         }
-        {
-          actions && (
-            <div class={twMerge('mt-7 flex flex-col gap-3 sm:flex-row', isCentered && 'sm:justify-center')}>
-              {Array.isArray(actions) ? (
-                actions.map((action) => <Button {...(action || {})} class="w-full sm:w-auto" />)
-              ) : (
-                <Fragment set:html={actions} />
-              )}
-            </div>
-          )
-        }
-        {content && <Fragment set:html={content} />}
-
-        {
-          stats && stats.length > 0 && (
-            /* Pulled into the fold deliberately: these figures are the
-               strongest credibility signal on the site and previously sat
-               83% of the way down the homepage. */
-            /* max-w-3xl explicitly: the stats grid used to inherit it from the
-               wrapper, and four figures spread across the full 1152px container
-               read as unrelated numbers rather than one strip. */
-            <dl
-              class:list={[
-                'mt-8 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-6 border-t pt-6 sm:grid-cols-4',
-                whiteText ? 'border-white/20' : 'border-hairline',
-                isCentered && 'mx-auto',
-              ]}
-            >
-              {stats.map(({ amount, title: statTitle }) => (
-                <div class={twMerge('flex flex-col', isCentered && 'items-center')}>
-                  <dd class={twMerge('order-1 font-display text-3xl font-bold tabular', headingColor)}>{amount}</dd>
-                  <dt class={twMerge('order-2 mt-1 text-eyebrow uppercase', bodyColor)}>{statTitle}</dt>
+        <div class:list={[hasAside && 'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start lg:gap-10']}>
+          <div>
+            {
+              subtitle && (
+                <p
+                  class={twMerge('mt-4 text-lead', copyMeasure, bodyColor, isCentered && 'mx-auto')}
+                  set:html={subtitle}
+                />
+              )
+            }
+            {
+              actions && (
+                <div class={twMerge('mt-7 flex flex-col gap-3 sm:flex-row', isCentered && 'sm:justify-center')}>
+                  {Array.isArray(actions) ? (
+                    actions.map((action) => <Button {...(action || {})} class="w-full sm:w-auto" />)
+                  ) : (
+                    <Fragment set:html={actions} />
+                  )}
                 </div>
-              ))}
-            </dl>
-          )
-        }
+              )
+            }
+            {content && <Fragment set:html={content} />}
+
+            {
+              stats && stats.length > 0 && (
+                /* Pulled into the fold deliberately: these figures are the
+                   strongest credibility signal on the site and previously sat
+                   83% of the way down the homepage. */
+                /* max-w-3xl explicitly: the stats grid used to inherit it from the
+                   wrapper, and four figures spread across the full 1152px container
+                   read as unrelated numbers rather than one strip. */
+                <dl
+                  class:list={[
+                    'mt-8 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-6 border-t pt-6 sm:grid-cols-4',
+                    whiteText ? 'border-white/20' : 'border-hairline',
+                    isCentered && 'mx-auto',
+                  ]}
+                >
+                  {stats.map(({ amount, title: statTitle }) => (
+                    <div class={twMerge('flex flex-col', isCentered && 'items-center')}>
+                      <dd class={twMerge('order-1 font-display text-3xl font-bold tabular', headingColor)}>{amount}</dd>
+                      <dt class={twMerge('order-2 mt-1 text-eyebrow uppercase', bodyColor)}>{statTitle}</dt>
+                    </div>
+                  ))}
+                </dl>
+              )
+            }
+          </div>
+
+          {
+            /* Below `lg` the callout stacks under the stats rather than above the
+               lead: it is a secondary offer, and on a phone the reader should
+               reach the primary action first. */
+            hasAside && (
+              <div class="mt-10 lg:mt-4">
+                <Fragment set:html={aside} />
+              </div>
+            )
+          }
+        </div>
       </div>
 
       {
         image && (
-          <div
-            class:list={[
-              '',
-              isSplit ? 'mt-10 lg:mt-0' : 'mt-14',
-            ]}
-          >
+          <div class:list={['', isSplit ? 'mt-10 lg:mt-0' : 'mt-14']}>
             {/* layout="responsive" on the Image below. The default
                 "constrained" appends width*2 to the srcset, so the old 2040
                 entry became a 2048w candidate -- 246 KB of decorative classroom

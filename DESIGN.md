@@ -294,15 +294,25 @@ every section of every page.
 `tagline` is still accepted by ~10 widgets and is **deliberately inert** — nothing renders it. Delete
 the prop from the chain when convenience allows; do not wire it back up to a visible kicker.
 
-Three things that look like kickers but are not, and are allowed:
+Four things that look like kickers but are not, and are allowed:
 
-| Allowed                           | Why                                                    |
-| --------------------------------- | ------------------------------------------------------ |
-| `<dt>` labels under stat figures  | labels for data, not a heading's preamble              |
-| `role` on a person card (`Co-PI`) | a field on a record                                    |
-| the pulsing dot + `Live` on `/`   | a status indicator reporting the feed below is current |
+| Allowed                             | Why                                                    |
+| ----------------------------------- | ------------------------------------------------------ |
+| `<dt>` labels under stat figures    | labels for data, not a heading's preamble              |
+| `role` on a person card (`Co-PI`)   | a field on a record                                    |
+| the pulsing dot + `Live` on `/`     | a status indicator reporting the feed below is current |
+| column heads on a two-track readout | they name the tracks, and vanish when the tracks stack |
 
 Dropdown group labels in the header (`Account`, `Cluster operations`) are menu section names, also fine.
+
+The last row was added for the `/ai-hubs` crosswalk, where five rows pair an NSF requirement with the
+NRP's answer and the two tracks are only distinguishable if something names them. It carries two
+conditions, both load-bearing: the head sits in the card's own bordered band rather than floating over
+the first row, and it is `hidden … md:grid`, because below `md` the tracks stack and a two-column head
+would land on top of itself. When they stack, **each row labels its own halves instead** — the head
+disappearing without a replacement is what turns a crosswalk into two unlabelled paragraphs, and that
+shipped once here before it was caught. A label is legal on a readout that has tracks to name; it is
+still never legal above a heading.
 
 ### Motion: one authored moment
 
@@ -392,15 +402,16 @@ Use it only for logos you do not control. Everything else uses the surface ladde
 
 ### Hero layout
 
-`Hero.astro` has three shapes. Getting this wrong is what made the subpage tops look unbalanced:
+`Hero.astro` has four shapes. Getting this wrong is what made the subpage tops look unbalanced:
 
-| Shape          | Set                  | Measures                                       |
-| -------------- | -------------------- | ---------------------------------------------- |
-| Centered       | (default)            | one `max-w-3xl` column, `text-balance`         |
-| Left, with art | `align="left" split` | two columns from `lg`, `1fr / 0.85fr`          |
-| Left, no art   | `align="left"`       | h1 `max-w-4xl`, lead `max-w-2xl`, ragged right |
+| Shape            | Set                  | Measures                                          |
+| ---------------- | -------------------- | ------------------------------------------------- |
+| Centered         | (default)            | one `max-w-3xl` column, `text-balance`            |
+| Left, with art   | `align="left" split` | two columns from `lg`, `1fr / 0.85fr`             |
+| Left, with aside | `align="left" aside` | h1 full measure; below it `1fr / 18rem` from `lg` |
+| Left, no art     | `align="left"`       | h1 `max-w-4xl`, lead `max-w-2xl`, ragged right    |
 
-Two rules behind that table:
+Three rules behind that table:
 
 - **A left-aligned hero with stacked art is always wrong.** The copy caps at ~768px inside an 1152px
   container and the art sits below it, so the right third is empty and the hero runs past a viewport
@@ -410,6 +421,15 @@ Two rules behind that table:
   line lengths _against_ the wider measure — it broke a 38-character h1 into two 570px lines and left
   the right third of an 896px measure empty, which is the exact imbalance the wide measure was there to
   fix. Ragged-right filling to the measure is correct there.
+- **`aside` splits _below_ the h1; `split` splits the whole row.** That is the only difference and it
+  is the whole reason `aside` exists. Reusing `split` for the homepage's AI-Hubs callout would have
+  narrowed the h1's track from 896px to ~776px, wrapped a 53-character headline onto a third line, and
+  added ~66px to a hero budgeted at 640px. Starting the second column beneath the headline costs
+  nothing, because a callout is shorter than the lead, actions and stats it sits beside. Use `aside`
+  for a small notice or cross-link, `split` for real art. Below `lg` the aside stacks _after_ the
+  stats: it is a secondary offer, and on a phone the reader should reach the primary action first.
+  The slot is unstyled on purpose — `Hero` owns the layout, the page owns the callout's skin, because
+  a light-hero aside and the homepage's dark-hero aside need different treatments (§2).
 
 ---
 

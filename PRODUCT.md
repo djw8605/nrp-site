@@ -8,7 +8,7 @@ web
 
 ## Users
 
-The site serves **four distinct audiences**, all confirmed as primary. There is no single dominant
+The site serves **five distinct audiences**, all confirmed as primary. There is no single dominant
 user, and that is a product fact rather than an unresolved question — it is why the navigation carries
 both marketing and operational surfaces.
 
@@ -24,6 +24,12 @@ both marketing and operational surfaces.
 4. **Cluster operators and the NRP team.** The people running Nautilus. They are a real audience for the
    public site, not only for internal tooling: the Dashboards menu, `/live`, `/llm-status`,
    `/reservations`, `/diagnose`, and `/namespaces` exist for them.
+5. **Proposal teams assembling a funded consortium.** State and multi-state coalitions writing an NSF
+   proposal that will need somebody to operate the compute they are raising money for. Job: decide
+   whether to integrate with a national resource, then get the technical detail and a letter of support
+   in time for a deadline. A narrower and more time-boxed audience than the other four, and it overlaps
+   audience 3 — the difference is that the hardware does not exist yet when they arrive. Served by
+   `/ai-hubs`.
 
 ## Product Purpose
 
@@ -75,7 +81,7 @@ Support chat that is the primary help channel and is syndicated onto the site.
 
 - **Eligibility: U.S. nonprofit research and education institutions.** International sites contribute
   hardware and host services, but the eligible user base is U.S. institutions. (Confirmed — the cited
-  NRP paper's "over 75 locations in the U.S. and internationally" describes *sites*, not eligibility.)
+  NRP paper's "over 75 locations in the U.S. and internationally" describes _sites_, not eligibility.)
 - **NRP vs Nautilus is a hard terminology rule**, not a style preference. See Brand Commitments.
 - **Documentation is a 143-page Starlight app** mounted at `/documentation`, with a hand-maintained
   sidebar. It is deliberately outside the marketing site's design system.
@@ -101,8 +107,8 @@ Support chat that is the primary help channel and is syndicated onto the site.
 - **Logo:** `src/assets/images/NRP_Horizontal_Logo.png.webp` — a blue → cyan → teal → green gradient
   wordmark. The site palette is sampled from it.
 - **NSF acknowledgement is contractual.** Papers must acknowledge the NRP's NSF grants in the format
-  specified by the AUP, and cite *The National Research Platform: Stretched, Multi-Tenant, Scientific
-  Kubernetes Cluster* (ACM, `10.1145/3708035.3736060`). The NSF logo and award list appear in the site
+  specified by the AUP, and cite _The National Research Platform: Stretched, Multi-Tenant, Scientific
+  Kubernetes Cluster_ (ACM, `10.1145/3708035.3736060`). The NSF logo and award list appear in the site
   footer and on `/about`.
 
 ## Evidence on Hand
@@ -121,6 +127,24 @@ Support chat that is the primary help channel and is syndicated onto the site.
 - **Live operational data:** Grafana, perfSONAR, the site map at `dash.nrp-nautilus.io/map`, and the
   Matrix support feed — all real and already surfaced on the site.
 - **15 live blog posts** in `src/content/post/`.
+
+**Standing offers this project has made in public, which future copy must not exceed or contradict:**
+
+- **Proposal support for NSF State and Regional AI Infrastructure Hubs (NSF 26-513).** The solicitation
+  names the NRP by name in §II as a mechanism Hubs are encouraged to integrate with. `/ai-hubs` offers
+  three things to a proposal team: design and architecture consultation, technical answers, and **a
+  letter of support or collaboration on request**. The letter is offered as an invitation to ask, never
+  as a guarantee — NSF expects about ten awards and only one per state or multi-state region, so
+  competing consortia will ask, and the page must not read as a commitment made to all of them.
+  Consultation and technical answers carry no such limit. Nothing else about the program has been
+  promised, and no Hub has been named as a partner.
+- **The NRP does not explain the competition, and does not presume anyone's proposal.** Confirmed as an
+  editorial rule on 2026-08-25, after a first draft of `/ai-hubs` carried a facts table of deadlines,
+  award sizes and awards-per-cycle, plus a paraphrase of what NSF asks of each proposal element.
+  Defining the program is NSF's job and reading the solicitation is the visitor's; copy that summarises
+  either, or that assumes how a reader will write or time their proposal, gets replaced by a link to
+  NSF 26-513. Quoting the solicitation verbatim, with a citation, is the one exception and is
+  encouraged — it is the difference between reporting and interpreting.
 
 **Absences future work must not fabricate:**
 
@@ -152,7 +176,7 @@ Support chat that is the primary help channel and is syndicated onto the site.
 
 - The project enforces **WCAG 2 AA** in practice: `pa11y-ci` runs over nine key routes in CI, and both
   light and dark modes are contrast-verified. Nine of nine routes currently pass.
-- **Open decision:** whether a *formal* standard applies (Section 508 / NSF award terms / institutional
+- **Open decision:** whether a _formal_ standard applies (Section 508 / NSF award terms / institutional
   policy) as opposed to this being a self-imposed bar. This matters because a formal obligation would
   extend to the Starlight documentation, which is currently outside the design system.
 - The audience includes community colleges and under-resourced institutions, so the site must not assume

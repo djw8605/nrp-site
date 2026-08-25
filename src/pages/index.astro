@@ -114,7 +114,7 @@ const capabilities: Capability[] = [
     ],
     actions: [
       { text: 'GPU job documentation', href: '/documentation/userdocs/running/gpu-pods/' },
-      { text: 'See what is idle right now', href: '/viz/resources/' },
+      { text: 'See what is idle right now', href: '/viz/resources' },
     ],
     media: {
       kind: 'code',
@@ -258,6 +258,60 @@ const capabilities: Capability[] = [
       The National Research Platform pools GPUs, petabyte-scale storage, and hosted open-weight AI models across more
       than 70 institutions. It is free to U.S. nonprofit research and education, funded by the National Science
       Foundation and governed by the community that contributes to it.
+    </Fragment>
+
+    {
+      /* A single timely notice in the ~300px of dead space to the right of the
+        lead and the stats strip. It goes in `aside`, not `image`: `split` would
+        have narrowed the h1's track and wrapped the headline onto a third line
+        (see Hero.astro), whereas this column starts below the headline and the
+        hero's height is unchanged.
+
+        Skinned in the hero's own vocabulary rather than with `.card` -- a
+        `bg-surface-2` panel pasted onto the globe reads as a foreign object,
+        while `border-white/20` is the same hairline the stats strip above it
+        already uses. White on the composited hero measures ~15.5:1. Alpha on a
+        literal colour is fine; DESIGN.md section 2 only forbids it on tokens.
+
+        No heading inside: the hero owns the page's one <h1>, and a notice does
+        not need a level of its own in the outline.
+
+        The mono line is the citation and nothing else. It used to read
+        "NSF 26-513 · due 4 Nov 2026"; the date came off with the "The program, in
+        brief" table on /ai-hubs, for the same reason -- announcing a federal
+        competition's deadline is NSF's job, and a countdown in a homepage
+        callout is pressure the NRP has no business applying.
+
+        The mono line sits BELOW the title, not above it. Above, it is the kicker
+        DESIGN.md section 6 bans outright -- a small label introducing a title --
+        and being a <p> rather than an <h*> only answers the outline objection,
+        not the visual one. Below, it is a caption under its subject, which is
+        the shape section 6 does allow.
+
+        `text-white/85` on the anchor itself, not only on its children. The hero
+        pins `dark` on its own <section>, but `color` is declared up on <body>,
+        so the value inherited into here was computed against the LIGHT tokens --
+        #1c2b38 ink on a #070c12 hero. Every child below carries an explicit
+        colour so nothing is invisible today, but a bare text node added to this
+        anchor later would be, and the contrast probe flags the element either
+        way. Setting it once here closes the trap. */
+    }
+    <Fragment slot="aside">
+      <a
+        href="/ai-hubs"
+        class="group block rounded-lg border border-white/20 p-5 text-white/85 transition-colors hover:border-white/45 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#070c12]"
+      >
+        <p class="font-display text-base font-semibold text-white">NSF AI Infrastructure Hubs</p>
+        <p class="mt-1.5 font-mono text-xs tabular text-white/70">NSF 26-513</p>
+        <p class="mt-2.5 text-sm">
+          The solicitation names the NRP as one way for a Hub to integrate its on-site resources.
+        </p>
+        <p class="mt-3 text-sm font-medium text-white">
+          What that involves<span class="inline-block transition-transform group-hover:translate-x-0.5"
+            >&nbsp;&rarr;</span
+          >
+        </p>
+      </a>
     </Fragment>
   </Hero>
 

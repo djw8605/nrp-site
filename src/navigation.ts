@@ -13,6 +13,14 @@ export const headerData = {
           text: 'Teaching with the NRP',
           href: getPermalink('/education'),
         },
+        // Sits at the head of the institution-facing half of this group, ahead of
+        // the contributor guides it leads into. Label omits "NSF" that the page's
+        // own <h1> and <title> carry: at 26 characters it widened the dropdown
+        // past every sibling, and the group is already about participating.
+        {
+          text: 'AI Infrastructure Hubs',
+          href: getPermalink('/ai-hubs'),
+        },
         {
           text: 'New Contributor Guide',
           href: getPermalink('/documentation/admindocs/participating/new-contributor-guide'),
@@ -179,6 +187,7 @@ export const footerData = {
       links: [
         { text: 'Getting Started', href: '/documentation/userdocs/start/getting-started/' },
         { text: 'Contact', href: '/contact' },
+        { text: 'NSF AI Infrastructure Hubs', href: '/ai-hubs' },
         { text: 'Network Requirements', href: '/documentation/admindocs/participating/network/' },
         { text: 'New Contributor Guide', href: '/documentation/admindocs/participating/new-contributor-guide/' },
       ],
@@ -188,7 +197,7 @@ export const footerData = {
       links: [
         { text: 'Namespaces management', href: '/namespaces' },
         { text: 'Reservations', href: '/reservations' },
-        { text: 'Available resources', href: '/viz/resources/' },
+        { text: 'Available resources', href: '/viz/resources' },
       ],
     },
   ],

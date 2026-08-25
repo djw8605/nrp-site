@@ -239,6 +239,13 @@ export interface Hero extends Omit<Headline, 'classes'>, Omit<Widget, 'isDark' |
    * container empty.
    */
   split?: boolean;
+  /**
+   * A narrow column beside the lead, actions and stats, from `lg` up, while the
+   * `<h1>` keeps the full measure above it. For a small notice or cross-link in
+   * an otherwise text-only hero. Requires `align="left"`; ignored on a centered
+   * hero and superseded by `split`, which owns the whole row.
+   */
+  aside?: string | unknown;
 }
 
 export interface Team extends Omit<Headline, 'classes'>, Widget {
