@@ -85,6 +85,7 @@ const modelsCollection = defineCollection({
     disableReasoningSnippet: z.string().optional(),
     enableReasoningSnippet: z.string().optional(),
     preserveReasoningSnippet: z.string().optional(),
+    reasoningEffortSnippet: z.string().optional(),
     toolCallingDocsUrl: z.string().url().optional(),
     isEmbedding: z.boolean().default(false),
     sortOrder: z.number(),

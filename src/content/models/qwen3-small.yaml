@@ -1,33 +1,35 @@
 id: qwen3-small
 displayName: qwen3-small
-huggingfaceId: Qwen/Qwen3.6-27B
-huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.6-27B
+huggingfaceId: Qwen/Qwen3.8-27B
+huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.8-27B
 status: main
 badges:
   tool: true
   reasoning: true
   multimodal: true
   research: true
-contextTokens: 1010000
+contextTokens: 1000000
 parameters: 27B
 quantization: bf16 (native)
 multimodalKinds:
   - image
   - video
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
-preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true, "preserve_thinking": true}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/Qwen/Qwen3.6-27B
+reasoningEffortSnippet: 'reasoning_effort="low"  # or "medium"; "xhigh" is the default'
+toolCallingDocsUrl: https://recipes.vllm.ai/Qwen/Qwen3.8-27B
 sortOrder: 20
-summary: Compact Qwen3.6 — multimodal, agentic, low-latency.
+summary: Compact Qwen3.8 — multimodal, agentic, low-latency.
 strengths:
   - Multimodal (image + video) at a fraction of qwen3's GPU cost
-  - 1M context window for whole-repo or long-doc work
-  - Strong agentic and tool-calling behavior
-  - Lower latency than larger models — good for interactive use
+  - Large agentic gains over Qwen3.6 — Terminal Bench 2.1 63.4 → 73.0, SWE-bench Pro 53.5 → 61.7, OSWorld-Verified 63.9 → 84.3
+  - 1M context (262K native, YaRN-extended) for whole-repo or long-doc work
+  - Reasoning depth is tunable per request with reasoning_effort (low, medium, xhigh)
+  - Thinking from earlier turns is preserved by default, which keeps agents consistent and improves prefix-cache reuse
 weaknesses:
+  - Reasoning is on at xhigh by default — the most expensive setting; lower reasoning_effort or disable thinking for simple queries
+  - Preserved thinking grows the prompt over a long conversation; pass preserve_thinking false to keep only the latest turn's reasoning
   - Lower throughput compared to the model size (dense model)
   - Lower reasoning ceiling than the 397B qwen3 on the hardest tasks
-  - Native bf16 weights use more memory than FP8 (also available officially)
 bestFor:
   - Latency-sensitive multimodal tasks
   - Agentic coding and tool use
