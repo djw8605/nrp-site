@@ -1,7 +1,7 @@
 id: glm-5
 displayName: glm-5
-huggingfaceId: nvidia/GLM-5.2-NVFP4
-huggingfaceUrl: https://huggingface.co/nvidia/GLM-5.2-NVFP4
+huggingfaceId: Inferact/GLM-5.3-NVFP4
+huggingfaceUrl: https://huggingface.co/Inferact/GLM-5.3-NVFP4
 status: evaluating
 badges:
   tool: true
@@ -9,13 +9,12 @@ badges:
   multimodal: false
   research: false
 contextTokens: 300000
-parameters: 744B
-quantization: NVFP4 (NVIDIA)
-disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
-preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true, "clear_thinking": false}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.2
+parameters: 753B
+quantization: NVFP4 (Inferact)
+reasoningEffortSnippet: 'extra_body={"chat_template_kwargs": {"reasoning_effort": "low"}}  # or "high"; "max" is the default'
+toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.3
 sortOrder: 70
-summary: Zhipu's 744B frontier coding model with NVIDIA NVFP4 weights.
+summary: Zhipu's 753B frontier coding model with NVFP4 weights.
 strengths:
   - Strong agentic coding — competitive with commercial frontier models
   - NVFP4 quantization preserves quality within limited VRAM
@@ -23,7 +22,7 @@ strengths:
 weaknesses:
   - Text-only — no multimodal input
   - Evaluating — configuration may shift
-  - Reasoning on by default; adds latency for simple tasks
+  - Thinking is always on and defaults to max effort; lower reasoning_effort for simple queries
 bestFor:
   - Agentic coding workflows
   - Long-form reasoning and text tasks

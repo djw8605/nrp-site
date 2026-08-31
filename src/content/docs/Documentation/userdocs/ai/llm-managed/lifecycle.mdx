@@ -20,6 +20,7 @@ GPU allocation is the limiting factor: larger models that require many GPUs are 
 <details>
   <summary>August 2026</summary>
 
+- `glm-5` ([nvidia/GLM-5.2-NVFP4](https://huggingface.co/nvidia/GLM-5.2-NVFP4)) was changed to GLM-5.3 ([Inferact/GLM-5.3-NVFP4](https://huggingface.co/Inferact/GLM-5.3-NVFP4)). The `glm-5` alias, the endpoint, and the 300K context window are unchanged. Thinking is now always on — the old `enable_thinking: false` toggle no longer applies — and its depth is tunable per request with `reasoning_effort`: `low`, `high`, or `max`, with `max` the default.
 - `qwen3-small` was changed from [Qwen/Qwen3.6-27B](https://huggingface.co/Qwen/Qwen3.6-27B) to [Qwen/Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B). Context size changed from 1,010,000 to 1,000,000 tokens, the documented ceiling for the model. The alias, the endpoint, and the API are otherwise unchanged, so no client configuration has to change beyond the context window.
 - Thinking behaviour on `qwen3-small` changed with that upgrade. Reasoning depth is now tunable per request with the standard `reasoning_effort` parameter — `low`, `medium`, or `xhigh`, and `xhigh` is the model's default — and reasoning from earlier turns is preserved by default (`preserve_thinking`). Both raise tokens per request relative to Qwen3.6. Requests that do not need reasoning should keep passing `extra_body={"chat_template_kwargs": {"enable_thinking": false}}`, which is unchanged.
 
