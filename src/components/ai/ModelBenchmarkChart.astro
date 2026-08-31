@@ -1,0 +1,423 @@
+---
+/**
+ * Third-party benchmark comparison for the NRP-managed models, in the house style
+ * of Artificial Analysis' own leaderboard cards: one card per metric, bars sorted
+ * best-first, the score printed inside each bar.
+ *
+ * Scores are data, in `src/data/model-benchmarks.ts` — see the header there for how
+ * they are sourced and how to refresh them.
+ *
+ * Docs routes do not load Tailwind (see `applyBaseStyles` in astro.config.ts), so
+ * everything below is plain CSS over Starlight's `--sl-color-*` tokens, matching
+ * `ModelFeatureMatrix.astro` and `ModelCard.astro`. The one exception is the bar
+ * fill: it is the NRP brand teal from DESIGN.md §2, restated as a local custom
+ * property because the `--nrp-*` ramp lives in `CustomStyles.astro`, which the
+ * Starlight app does not load (DESIGN.md §11).
+ */
+import { getCollection } from 'astro:content';
+import { BENCHMARK_METRICS, BENCHMARK_SOURCE, MODEL_BENCHMARKS } from '~/data/model-benchmarks';
+
+const models = await getCollection('models');
+const byId = new Map(models.map((m) => [m.data.id, m.data]));
+
+// Without this a renamed model would drop out of the chart silently.
+const orphans = MODEL_BENCHMARKS.filter((b) => !byId.has(b.modelId)).map((b) => b.modelId);
+if (orphans.length > 0) {
+  throw new Error(
+    `model-benchmarks.ts references model id(s) absent from the models collection: ${orphans.join(', ')}`
+  );
+}
+
+const retrieved = new Date(`${BENCHMARK_SOURCE.retrieved}T00:00:00Z`).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+
+const GRIDLINES = [20, 40, 60, 80, 100];
+
+/** Round up to the next gridline so the tallest bar never touches the ceiling. */
+const axisMax = (values: number[]) => Math.min(100, Math.ceil(Math.max(...values) / 20) * 20);
+
+const charts = BENCHMARK_METRICS.map((metric) => {
+  const rows = MODEL_BENCHMARKS.filter((b) => b[metric.key] != null)
+    .map((b) => ({
+      ...b,
+      value: b[metric.key] as number,
+      model: byId.get(b.modelId)!,
+      // Only the Intelligence Index carries an estimated flag today.
+      estimated: metric.key === 'intelligenceIndex' && b.intelligenceIndexEstimated === true,
+    }))
+    .sort((a, b) => b.value - a.value);
+  return { metric, rows, max: axisMax(rows.map((r) => r.value)) };
+});
+
+const anyEstimated = charts.some((c) => c.rows.some((r) => r.estimated));
+
+/** Provenance rows, in the catalog's own order rather than either ranking. */
+const provenance = MODEL_BENCHMARKS.map((b) => ({ ...b, model: byId.get(b.modelId)! })).sort(
+  (a, b) => a.model.sortOrder - b.model.sortOrder
+);
+
+const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixed(1)}${unit}`);
+---
+
+<section class="mb-set not-content">
+  <p class="mb-lede">
+    How the catalog ranks on <a href={BENCHMARK_SOURCE.url}>{BENCHMARK_SOURCE.name}</a>, an independent evaluator that
+    runs each model itself under one fixed harness. The scores are for the upstream weights. NRP serves the
+    quantizations listed in the matrix above, which can move a score a point or two in either direction.
+  </p>
+
+  {
+    charts.map(({ metric, rows, max }) => (
+      <figure class="mb-card">
+        <figcaption class="mb-head">
+          <h3 class="mb-title">
+            <span class="mb-swatch" aria-hidden="true" />
+            {metric.label}
+          </h3>
+          <p class="mb-sub">{metric.subtitle}</p>
+        </figcaption>
+
+        <div class="mb-scroll">
+          <div class="mb-plot-wrap">
+            <div class="mb-plot" role="list" aria-label={`${metric.label}: ${metric.subtitle}`}>
+              {GRIDLINES.filter((g) => g <= max).map((g) => (
+                <span class="mb-gridline" style={`bottom:${(g / max) * 100}%`} />
+              ))}
+              {rows.map((r) => (
+                <div
+                  class="mb-col"
+                  role="listitem"
+                  aria-label={`${r.model.displayName}: ${r.value.toFixed(1)}${metric.unit}${
+                    r.estimated ? ', estimated' : ''
+                  }`}
+                >
+                  <div
+                    class:list={['mb-bar', { 'is-estimated': r.estimated }]}
+                    style={`height:${(r.value / max) * 100}%`}
+                  >
+                    <span class="mb-value" aria-hidden="true">{`${Math.round(r.value)}${metric.unit}`}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div class="mb-axis" aria-hidden="true">
+              {rows.map((r) => (
+                <div class="mb-axis-cell">
+                  <a class="mb-axis-label" href={`#${r.model.id}`} title={r.aaVariant}>
+                    <code>{r.model.displayName}</code>
+                    {r.estimated && <sup>*</sup>}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <p class="mb-note">{metric.note}</p>
+      </figure>
+    ))
+  }
+
+  <details class="mb-details">
+    <summary>Exact scores, and what was measured</summary>
+    <div class="mb-table-wrap">
+      <table class="mb-table">
+        <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col">Configuration benchmarked</th>
+            {
+              BENCHMARK_METRICS.map((m) => (
+                <th scope="col" class="mb-num">
+                  {m.label}
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            provenance.map((p) => (
+              <tr>
+                <th scope="row">
+                  <a href={`#${p.model.id}`}>
+                    <code>{p.model.displayName}</code>
+                  </a>
+                </th>
+                <td>
+                  <a href={`${BENCHMARK_SOURCE.modelUrlBase}/${p.aaSlug}`}>{p.aaVariant}</a>
+                </td>
+                {BENCHMARK_METRICS.map((m) => (
+                  <td class="mb-num">
+                    {fmt(p[m.key], m.unit)}
+                    {m.key === 'intelligenceIndex' && p.intelligenceIndexEstimated && '*'}
+                  </td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <p class="mb-source">
+    {
+      anyEstimated && (
+        <>
+          <strong>*</strong> Estimated by {BENCHMARK_SOURCE.name}: not every component evaluation was run against that
+          model, and the bar is drawn hatched to say so.{' '}
+        </>
+      )
+    }
+    Read from <a href={BENCHMARK_SOURCE.url}>{BENCHMARK_SOURCE.name}</a> on {retrieved}. Reasoning settings move these
+    numbers a long way, so the exact configuration AA measured is named in the table above; in every case it is the
+    reasoning-on default NRP serves.
+    <code>qwen3-embedding</code> is absent because it is an embedding model, and no chat benchmark applies to it.
+  </p>
+</section>
+
+<style>
+  .mb-set {
+    margin-block: 1.5rem 2rem;
+    /* DESIGN.md §2 brand ramp, restated because the docs app does not load the
+       `--nrp-*` tokens. White on teal-700 is 6.13:1, on teal-600 4.26:1; the value
+       labels sit over the darker two thirds of the gradient. */
+    --mb-bar-top: #1785a4; /* teal-600 */
+    --mb-bar-bottom: #136a85; /* teal-700 */
+    --mb-bar-ink: #ffffff;
+  }
+
+  /* `.not-content` (above) tells Starlight to leave this subtree alone — its
+     `table { display: block }` rule collapses the score table's columns, and its
+     prose link colour turns the whole axis into accent text. Everything Starlight
+     would have supplied has to be restated here. */
+  .mb-set :global(a) {
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+  }
+
+  .mb-set :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .mb-set :global(code) {
+    font-family: var(--sl-font-system-mono);
+    font-size: var(--sl-text-code-sm);
+  }
+
+  .mb-set :global(p) {
+    line-height: 1.75;
+  }
+
+  .mb-lede {
+    margin: 0 0 1.5rem;
+    color: var(--sl-color-white);
+  }
+
+  .mb-card {
+    margin: 0 0 1.75rem;
+    padding: 1.25rem 1.25rem 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+  }
+
+  .mb-head {
+    margin-block-end: 1.5rem;
+  }
+
+  .mb-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  .mb-swatch {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 0.15rem;
+    background: linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+  }
+
+  .mb-sub {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  /* Nine bars need more width than the docs content column has to give. */
+  .mb-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .mb-plot-wrap {
+    min-width: 34rem;
+    /* A -45° label runs down and to the LEFT of its bar, so the first column's
+       label would otherwise spill past the card edge. Wide enough for the longest
+       handle in the catalog. */
+    padding-inline-start: 4.5rem;
+  }
+
+  .mb-plot {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 15rem;
+    border-block-end: 1px solid var(--sl-color-gray-5);
+  }
+
+  .mb-gridline {
+    position: absolute;
+    inset-inline: 0;
+    border-block-start: 1px dashed var(--sl-color-gray-5);
+    pointer-events: none;
+  }
+
+  .mb-col {
+    position: relative;
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .mb-bar {
+    width: 100%;
+    /* Keeps the value label inside the bar even for the shortest one. */
+    min-height: 1.9rem;
+    border-radius: 0.2rem 0.2rem 0 0;
+    background: linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+  }
+
+  /* An AA-estimated score is drawn as provisional rather than measured. */
+  .mb-bar.is-estimated {
+    background-image:
+      repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.3) 0 4px, transparent 4px 9px),
+      linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+  }
+
+  .mb-value {
+    display: block;
+    padding-block-start: 0.4rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--mb-bar-ink);
+  }
+
+  .mb-axis {
+    display: flex;
+    gap: 0.5rem;
+    /* Tall enough for the longest handle at -45°; `.mb-scroll` clips vertically,
+       so a label that does not fit here is silently cut in half. */
+    height: 8rem;
+  }
+
+  .mb-axis-cell {
+    position: relative;
+    flex: 1 1 0;
+  }
+
+  /* Anchor the end of the label under the centre of its bar and swing it down and
+     left, so the text reads up into the column it belongs to. */
+  .mb-axis-label {
+    position: absolute;
+    top: 0.5rem;
+    right: 50%;
+    transform-origin: 100% 0;
+    transform: rotate(-45deg);
+    white-space: nowrap;
+    font-size: 0.8rem;
+    /* Starlight's 1.75 body leading widens the rotated box by a third. */
+    line-height: 1.2;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+  }
+
+  .mb-axis-label:hover code,
+  .mb-axis-label:focus-visible code {
+    text-decoration: underline;
+  }
+
+  .mb-axis-label code {
+    font-size: inherit;
+  }
+
+  .mb-note,
+  .mb-source {
+    font-size: 0.85rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .mb-note {
+    margin: 0.9rem 0 0;
+  }
+
+  .mb-source {
+    margin: 1rem 0 0;
+  }
+
+  .mb-details {
+    margin-block: 0.5rem;
+  }
+
+  .mb-details summary {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .mb-table-wrap {
+    overflow-x: auto;
+    margin-block-start: 0.75rem;
+  }
+
+  .mb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .mb-table th,
+  .mb-table td {
+    border: 1px solid var(--sl-color-gray-5);
+    padding: 0.35rem 0.7rem;
+    text-align: left;
+  }
+
+  /* Only the configuration column is allowed to wrap; the rest are short. */
+  .mb-table tbody th,
+  .mb-table .mb-num {
+    white-space: nowrap;
+  }
+
+  .mb-table thead th {
+    background: var(--sl-color-gray-6);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .mb-table .mb-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 30rem) {
+    .mb-card {
+      padding-inline: 0.75rem;
+    }
+  }
+</style>

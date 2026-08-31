@@ -10,12 +10,13 @@ badges:
   research: false
 contextTokens: 300000
 parameters: 753B
-quantization: NVFP4 (Inferact)
+quantization: NVFP4
 reasoningEffortSnippet: 'extra_body={"chat_template_kwargs": {"reasoning_effort": "low"}}  # or "high"; "max" is the default'
 toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.3
 sortOrder: 70
-summary: Zhipu's 753B frontier coding model with NVFP4 weights.
+summary: Z.ai's 753B frontier coding model with NVFP4 weights — the catalog's top scorer on Artificial Analysis.
 strengths:
+  - Highest Artificial Analysis Intelligence Index and Terminal-Bench v2.1 score in the catalog
   - Strong agentic coding — competitive with commercial frontier models
   - NVFP4 quantization preserves quality within limited VRAM
   - 300K context covers large codebases
