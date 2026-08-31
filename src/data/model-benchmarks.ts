@@ -23,6 +23,8 @@
  * hand.
  */
 
+import type { CreatorKey } from './model-creators';
+
 export interface BenchmarkMetric {
   /** Axis / card title. */
   label: string;
@@ -43,7 +45,8 @@ export interface ModelBenchmark {
   /** AA's name for the exact configuration measured. */
   aaVariant: string;
   aaSlug: string;
-  creator: string;
+  /** Key into `CREATORS` — decides the bar's colour and mark. */
+  creator: CreatorKey;
   /** Artificial Analysis Intelligence Index, 0-100. */
   intelligenceIndex: number | null;
   /** Terminal-Bench v2.1, % of tasks resolved. */
@@ -102,7 +105,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'glm-5',
     aaVariant: 'GLM-5.3 (max)',
     aaSlug: 'glm-5-3',
-    creator: 'Z.ai',
+    creator: 'zai',
     intelligenceIndex: 59.5,
     terminalBench: 83.9,
   },
@@ -110,7 +113,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'qwen3-small',
     aaVariant: 'Qwen3.8 27B (xhigh)',
     aaSlug: 'qwen3-8-27b',
-    creator: 'Alibaba',
+    creator: 'alibaba',
     intelligenceIndex: 52.0,
     terminalBench: 79.8,
   },
@@ -118,7 +121,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'deepseek-v4-flash',
     aaVariant: 'DeepSeek V4 Flash 0731 (Reasoning, Max Effort)',
     aaSlug: 'deepseek-v4-flash',
-    creator: 'DeepSeek',
+    creator: 'deepseek',
     intelligenceIndex: 51.8,
     terminalBench: 78.7,
   },
@@ -126,7 +129,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'kimi',
     aaVariant: 'Kimi K2.7 Code',
     aaSlug: 'kimi-k2-7-code',
-    creator: 'Moonshot AI',
+    creator: 'moonshot',
     intelligenceIndex: 43.0,
     terminalBench: 67.4,
   },
@@ -134,7 +137,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'minimax-m2',
     aaVariant: 'MiniMax-M2.7',
     aaSlug: 'minimax-m2-7',
-    creator: 'MiniMax',
+    creator: 'minimax',
     intelligenceIndex: 38.9,
     terminalBench: 55.4,
   },
@@ -142,7 +145,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'qwen3',
     aaVariant: 'Qwen3.5 397B A17B (Reasoning)',
     aaSlug: 'qwen3-5-397b-a17b',
-    creator: 'Alibaba',
+    creator: 'alibaba',
     intelligenceIndex: 34.3,
     terminalBench: 51.3,
   },
@@ -150,7 +153,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'gemma',
     aaVariant: 'Gemma 4 31B (Reasoning)',
     aaSlug: 'gemma-4-31b',
-    creator: 'Google',
+    creator: 'google',
     intelligenceIndex: 29.7,
     terminalBench: 43.4,
   },
@@ -158,7 +161,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'gpt-oss',
     aaVariant: 'gpt-oss-120b (high)',
     aaSlug: 'gpt-oss-120b',
-    creator: 'OpenAI',
+    creator: 'openai',
     intelligenceIndex: 24.1,
     terminalBench: 26.2,
   },
@@ -166,7 +169,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     modelId: 'gemma-small',
     aaVariant: 'Gemma 4 12B (Reasoning)',
     aaSlug: 'gemma-4-12b',
-    creator: 'Google',
+    creator: 'google',
     intelligenceIndex: 22.2,
     intelligenceIndexEstimated: true,
     terminalBench: 27.3,

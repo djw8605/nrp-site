@@ -2,20 +2,24 @@
 /**
  * Third-party benchmark comparison for the NRP-managed models, in the house style
  * of Artificial Analysis' own leaderboard cards: one card per metric, bars sorted
- * best-first, the score printed inside each bar.
+ * best-first, the score printed inside each bar, each bar carrying its creator's
+ * colour and brand mark.
  *
- * Scores are data, in `src/data/model-benchmarks.ts` — see the header there for how
- * they are sourced and how to refresh them.
+ * Scores are data, in `src/data/model-benchmarks.ts`. Colours and marks are data,
+ * in `src/data/model-creators.ts` — that file's header explains where each colour
+ * comes from and what it was measured against.
  *
  * Docs routes do not load Tailwind (see `applyBaseStyles` in astro.config.ts), so
  * everything below is plain CSS over Starlight's `--sl-color-*` tokens, matching
- * `ModelFeatureMatrix.astro` and `ModelCard.astro`. The one exception is the bar
- * fill: it is the NRP brand teal from DESIGN.md §2, restated as a local custom
- * property because the `--nrp-*` ramp lives in `CustomStyles.astro`, which the
- * Starlight app does not load (DESIGN.md §11).
+ * `ModelFeatureMatrix.astro` and `ModelCard.astro`. Bar fills are the one thing not
+ * expressed as a token: they are per-creator, so each bar carries its own colour as
+ * an inline custom property. The `--nrp-*` ramp is unavailable here regardless —
+ * it lives in `CustomStyles.astro`, which the Starlight app does not load
+ * (DESIGN.md §11).
  */
 import { getCollection } from 'astro:content';
 import { BENCHMARK_METRICS, BENCHMARK_SOURCE, MODEL_BENCHMARKS } from '~/data/model-benchmarks';
+import { CREATORS } from '~/data/model-creators';
 
 const models = await getCollection('models');
 const byId = new Map(models.map((m) => [m.data.id, m.data]));
@@ -40,25 +44,64 @@ const GRIDLINES = [20, 40, 60, 80, 100];
 /** Round up to the next gridline so the tallest bar never touches the ceiling. */
 const axisMax = (values: number[]) => Math.min(100, Math.ceil(Math.max(...values) / 20) * 20);
 
+/**
+ * A -45° handle runs down and to the *left* of its bar, so a long one near the left
+ * edge overhangs the plot. `.mb-scroll` cannot scroll to a negative offset, so that
+ * overhang would be clipped rather than reachable — the plot needs a gutter in
+ * front of it.
+ *
+ * Sizing that gutter for the longest handle in the catalog leaves ~4rem of dead
+ * space whenever the leader is short, which it usually is. Size it for the labels
+ * that actually reach past the edge instead: a label's horizontal reach at -45° is
+ * (its width + one line box) / √2, and column `i`'s centre already sits (i + 0.5)
+ * columns in. Only the first two or three columns can ever come out positive.
+ *
+ * The constants are measured off the rendered 0.8rem mono handle, and `COL_REM` is
+ * a column at the plot's `min-width` — the narrowest a column ever gets, so the
+ * result is conservative at every wider size.
+ */
+const CHAR_REM = 0.484;
+const LINE_REM = 0.9;
+const COL_REM = 3.2;
+const gutterRem = (labels: string[]) =>
+  Math.max(0, ...labels.map((l, i) => (l.length * CHAR_REM + LINE_REM) / Math.SQRT2 - (i + 0.5) * COL_REM));
+
 const charts = BENCHMARK_METRICS.map((metric) => {
   const rows = MODEL_BENCHMARKS.filter((b) => b[metric.key] != null)
     .map((b) => ({
       ...b,
       value: b[metric.key] as number,
       model: byId.get(b.modelId)!,
+      brand: CREATORS[b.creator],
       // Only the Intelligence Index carries an estimated flag today.
       estimated: metric.key === 'intelligenceIndex' && b.intelligenceIndexEstimated === true,
     }))
     .sort((a, b) => b.value - a.value);
-  return { metric, rows, max: axisMax(rows.map((r) => r.value)) };
+  return {
+    metric,
+    rows,
+    max: axisMax(rows.map((r) => r.value)),
+    gutter: gutterRem(rows.map((r) => r.model.displayName)),
+  };
 });
 
 const anyEstimated = charts.some((c) => c.rows.some((r) => r.estimated));
 
 /** Provenance rows, in the catalog's own order rather than either ranking. */
-const provenance = MODEL_BENCHMARKS.map((b) => ({ ...b, model: byId.get(b.modelId)! })).sort(
-  (a, b) => a.model.sortOrder - b.model.sortOrder
-);
+const provenance = MODEL_BENCHMARKS.map((b) => ({
+  ...b,
+  model: byId.get(b.modelId)!,
+  brand: CREATORS[b.creator],
+})).sort((a, b) => a.model.sortOrder - b.model.sortOrder);
+
+/**
+ * Legend order follows the catalog, so a creator with two models appears once, in
+ * the position of its higher-ranked one.
+ */
+const legend = [...new Set(provenance.map((p) => p.creator))].map((key) => ({
+  ...CREATORS[key],
+  models: provenance.filter((p) => p.creator === key).map((p) => p.model.displayName),
+}));
 
 const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixed(1)}${unit}`);
 ---
@@ -66,23 +109,22 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
 <section class="mb-set not-content">
   <p class="mb-lede">
     How the catalog ranks on <a href={BENCHMARK_SOURCE.url}>{BENCHMARK_SOURCE.name}</a>, an independent evaluator that
-    runs each model itself under one fixed harness. The scores are for the upstream weights. NRP serves the
-    quantizations listed in the matrix above, which can move a score a point or two in either direction.
+    runs each model itself under one fixed harness. Each bar carries its creator's colour and mark, so the two Qwens and
+    the two Gemmas read as families rather than as four unrelated entries; the key is under the charts. The scores are
+    for the upstream weights — NRP serves the quantizations listed in the matrix above, which can move one a point or
+    two in either direction.
   </p>
 
   {
-    charts.map(({ metric, rows, max }) => (
+    charts.map(({ metric, rows, max, gutter }) => (
       <figure class="mb-card">
         <figcaption class="mb-head">
-          <h3 class="mb-title">
-            <span class="mb-swatch" aria-hidden="true" />
-            {metric.label}
-          </h3>
+          <h3 class="mb-title">{metric.label}</h3>
           <p class="mb-sub">{metric.subtitle}</p>
         </figcaption>
 
         <div class="mb-scroll">
-          <div class="mb-plot-wrap">
+          <div class="mb-plot-wrap" style={`--mb-gutter:${gutter.toFixed(2)}rem`}>
             <div class="mb-plot" role="list" aria-label={`${metric.label}: ${metric.subtitle}`}>
               {GRIDLINES.filter((g) => g <= max).map((g) => (
                 <span class="mb-gridline" style={`bottom:${(g / max) * 100}%`} />
@@ -97,7 +139,7 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
                 >
                   <div
                     class:list={['mb-bar', { 'is-estimated': r.estimated }]}
-                    style={`height:${(r.value / max) * 100}%`}
+                    style={`height:${(r.value / max) * 100}%;--mb-fill:${r.brand.color}`}
                   >
                     <span class="mb-value" aria-hidden="true">{`${Math.round(r.value)}${metric.unit}`}</span>
                   </div>
@@ -108,6 +150,9 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
             <div class="mb-axis" aria-hidden="true">
               {rows.map((r) => (
                 <div class="mb-axis-cell">
+                  <svg class="mb-mark" viewBox="0 0 24 24" width="18" height="18" role="presentation">
+                    <path d={r.brand.mark.d} fill="currentColor" fill-rule={r.brand.mark.fillRule} />
+                  </svg>
                   <a class="mb-axis-label" href={`#${r.model.id}`} title={r.aaVariant}>
                     <code>{r.model.displayName}</code>
                     {r.estimated && <sup>*</sup>}
@@ -122,6 +167,27 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
       </figure>
     ))
   }
+
+  <ul class="mb-legend">
+    {
+      legend.map((c) => (
+        <li class="mb-legend-item">
+          <svg
+            class="mb-legend-mark"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            role="presentation"
+            style={`color:${c.color}`}
+          >
+            <path d={c.mark.d} fill="currentColor" fill-rule={c.mark.fillRule} />
+          </svg>
+          <a href={c.url}>{c.name}</a>
+          <span class="mb-legend-models">{c.models.join(', ')}</span>
+        </li>
+      ))
+    }
+  </ul>
 
   <details class="mb-details">
     <summary>Exact scores, and what was measured</summary>
@@ -185,11 +251,9 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
 <style>
   .mb-set {
     margin-block: 1.5rem 2rem;
-    /* DESIGN.md §2 brand ramp, restated because the docs app does not load the
-       `--nrp-*` tokens. White on teal-700 is 6.13:1, on teal-600 4.26:1; the value
-       labels sit over the darker two thirds of the gradient. */
-    --mb-bar-top: #1785a4; /* teal-600 */
-    --mb-bar-bottom: #136a85; /* teal-700 */
+    /* Bars are flat, not gradient: the fill is a lookup key for a creator, and a
+       ramp would make two adjacent bars' colours ambiguous at the join. Every fill
+       in `model-creators.ts` clears 4.5:1 against this ink, in both themes. */
     --mb-bar-ink: #ffffff;
   }
 
@@ -232,20 +296,11 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
   }
 
   .mb-title {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
     margin: 0;
     font-size: 1.35rem;
     line-height: 1.2;
     font-weight: 600;
-  }
-
-  .mb-swatch {
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 0.15rem;
-    background: linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+    letter-spacing: -0.01em;
   }
 
   .mb-sub {
@@ -262,10 +317,9 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
 
   .mb-plot-wrap {
     min-width: 34rem;
-    /* A -45° label runs down and to the LEFT of its bar, so the first column's
-       label would otherwise spill past the card edge. Wide enough for the longest
-       handle in the catalog. */
-    padding-inline-start: 4.5rem;
+    /* Room for whatever the leftmost handles overhang; see `gutterRem` above. The
+       quarter-rem is slack against font-metric drift. */
+    padding-inline-start: calc(var(--mb-gutter, 4.5rem) + 0.25rem);
   }
 
   .mb-plot {
@@ -297,14 +351,12 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
     /* Keeps the value label inside the bar even for the shortest one. */
     min-height: 1.9rem;
     border-radius: 0.2rem 0.2rem 0 0;
-    background: linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+    background-color: var(--mb-fill);
   }
 
   /* An AA-estimated score is drawn as provisional rather than measured. */
   .mb-bar.is-estimated {
-    background-image:
-      repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.3) 0 4px, transparent 4px 9px),
-      linear-gradient(180deg, var(--mb-bar-top), var(--mb-bar-bottom));
+    background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.3) 0 4px, transparent 4px 9px);
   }
 
   .mb-value {
@@ -320,9 +372,19 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
   .mb-axis {
     display: flex;
     gap: 0.5rem;
-    /* Tall enough for the longest handle at -45°; `.mb-scroll` clips vertically,
-       so a label that does not fit here is silently cut in half. */
-    height: 8rem;
+    /* Tall enough for the mark plus the longest handle at -45°; `.mb-scroll` clips
+       vertically, so a label that does not fit here is silently cut in half. */
+    height: 9.5rem;
+  }
+
+  /* The mark identifies the creator without spending colour on it — the bar above
+     already carries that. Two channels, one job each. */
+  .mb-mark {
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--sl-color-gray-2);
   }
 
   .mb-axis-cell {
@@ -332,9 +394,11 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
 
   /* Anchor the end of the label under the centre of its bar and swing it down and
      left, so the text reads up into the column it belongs to. */
-  .mb-axis-label {
+  /* Qualified past `.mb-set a` above: the handle is a jump link, but a row of nine
+     accent-blue labels would out-shout the bars they belong to. */
+  .mb-axis .mb-axis-label {
     position: absolute;
-    top: 0.5rem;
+    top: 2.1rem;
     right: 50%;
     transform-origin: 100% 0;
     transform: rotate(-45deg);
@@ -346,12 +410,12 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
     text-decoration: none;
   }
 
-  .mb-axis-label:hover code,
-  .mb-axis-label:focus-visible code {
+  .mb-axis .mb-axis-label:hover code,
+  .mb-axis .mb-axis-label:focus-visible code {
     text-decoration: underline;
   }
 
-  .mb-axis-label code {
+  .mb-axis .mb-axis-label code {
     font-size: inherit;
   }
 
@@ -367,6 +431,37 @@ const fmt = (v: number | null, unit: string) => (v == null ? '—' : `${v.toFixe
 
   .mb-source {
     margin: 1rem 0 0;
+  }
+
+  /* The colour key. It also answers the question the chart raises on its own —
+     why two bars share a colour — by naming the models under each creator. */
+  .mb-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 0.4rem 1.25rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8rem;
+  }
+
+  .mb-legend-item {
+    display: grid;
+    grid-template-columns: 1rem auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.5rem;
+    align-items: center;
+  }
+
+  .mb-legend-mark {
+    grid-row: 1 / span 2;
+  }
+
+  .mb-legend-models {
+    grid-column: 2;
+    font-family: var(--sl-font-system-mono);
+    font-size: 0.72rem;
+    color: var(--sl-color-gray-3);
   }
 
   .mb-details {

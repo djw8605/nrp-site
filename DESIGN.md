@@ -631,6 +631,17 @@ back to the main site, so a visitor arriving from a search engine is stranded.
 Unifying it means feeding these tokens into Starlight's `--sl-color-*` variables and overriding its
 `Header`/`SiteTitle` components. Worth doing; it is simply not part of this pass.
 
+**One deliberate exception to the teal-ramp rule lives here.** The benchmark chart on
+`/documentation/userdocs/ai/llm-managed/models` colours each bar by the model's creator, from a
+seven-hue palette in [`src/data/model-creators.ts`](src/data/model-creators.ts). That is not a
+missed migration and it should not be collapsed onto the ramp: the colour encodes a category, and a
+single-hue ramp cannot say "these two bars are both Alibaba's" — which is the one thing the chart
+needs colour for. The palette is built the way §2's is, not by eye: each hue comes from the
+creator's own brand colour, then luminance is pinned into the window where a white label clears
+4.5:1 and the bar clears 3:1 against the docs' dark canvas, in one palette serving both themes. The
+measured ratios are in that file's header. Colour is never the only code there — every bar also
+carries its creator's mark, its printed score, and its rank.
+
 ---
 
 ## 12. Naming
