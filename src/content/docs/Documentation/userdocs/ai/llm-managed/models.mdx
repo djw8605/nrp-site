@@ -7,6 +7,7 @@ import { Badge } from '@astrojs/starlight/components';
 import { getCollection } from 'astro:content';
 import ModelCard from '~/components/ai/ModelCard.astro';
 import ModelFeatureMatrix from '~/components/ai/ModelFeatureMatrix.astro';
+import ModelBenchmarkChart from '~/components/ai/ModelBenchmarkChart.astro';
 
 export const allModels = (await getCollection('models')).sort(
   (a, b) => a.data.sortOrder - b.data.sortOrder
@@ -14,7 +15,7 @@ export const allModels = (await getCollection('models')).sort(
 export const main = allModels.filter((m) => m.data.status === 'main');
 export const evaluating = allModels.filter((m) => m.data.status === 'evaluating');
 
-A side-by-side comparison of every active NRP-managed LLM, followed by a card per model with strengths, trade-offs, and recommended uses. Click any model name in the matrix to jump to its card; click the HuggingFace link on any card to open the upstream model page.
+A side-by-side comparison of every active NRP-managed LLM, how they score against each other on public benchmarks, and then a card per model with strengths, trade-offs, and recommended uses. Click any model name in the matrix or chart to jump to its card; click the HuggingFace link on any card to open the upstream model page.
 
 ## Feature Matrix
 
@@ -37,6 +38,12 @@ A side-by-side comparison of every active NRP-managed LLM, followed by a card pe
     margin: 0.35rem 0;
   }
 `}</style>
+
+## Benchmarks
+
+<ModelBenchmarkChart />
+
+Benchmarks rank models on the tasks somebody else chose to measure, which is rarely your task. Use the chart to shorten the shortlist, then try the top two or three on your own prompts — a model that loses by four points on an index can still be the right one once context window, latency, GPU cost, and image or audio input are in play.
 
 If your group needs a model marked for active research (so removal is communicated rather than automatic), please reach out via the [Nautilus AI/ML channel in Natilus Support](/contact). New-model suggestions are also discussed there.
 

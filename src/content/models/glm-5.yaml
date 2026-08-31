@@ -1,7 +1,7 @@
 id: glm-5
 displayName: glm-5
-huggingfaceId: nvidia/GLM-5.2-NVFP4
-huggingfaceUrl: https://huggingface.co/nvidia/GLM-5.2-NVFP4
+huggingfaceId: Inferact/GLM-5.3-NVFP4
+huggingfaceUrl: https://huggingface.co/Inferact/GLM-5.3-NVFP4
 status: evaluating
 badges:
   tool: true
@@ -9,14 +9,15 @@ badges:
   multimodal: false
   research: false
 contextTokens: 300000
-parameters: 744B
-quantization: NVFP4 (NVIDIA)
+parameters: 753B
+quantization: NVFP4
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
 preserveReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": true, "clear_thinking": false}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.2
+toolCallingDocsUrl: https://recipes.vllm.ai/zai-org/GLM-5.3
 sortOrder: 70
-summary: Zhipu's 744B frontier coding model with NVIDIA NVFP4 weights.
+summary: Z.ai's 753B frontier coding model with NVFP4 weights — the catalog's top scorer on Artificial Analysis.
 strengths:
+  - Highest Artificial Analysis Intelligence Index and Terminal-Bench v2.1 score in the catalog
   - Strong agentic coding — competitive with commercial frontier models
   - NVFP4 quantization preserves quality within limited VRAM
   - 300K context covers large codebases
