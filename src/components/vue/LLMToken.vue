@@ -169,12 +169,12 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "qwen3",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 1010000
+				contextWindow: 1000000
 			},
 			{
 				modelId: "qwen3-small",
 				capabilities: ["reasoning", "vision", "tool_use"],
-				contextWindow: 1010000
+				contextWindow: 1000000
 			},
 			{
 				modelId: "gpt-oss",

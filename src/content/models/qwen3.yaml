@@ -1,34 +1,40 @@
 id: qwen3
 displayName: qwen3
-huggingfaceId: Qwen/Qwen3.5-397B-A17B-FP8
-huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8
+huggingfaceId: Qwen/Qwen3.8-Flash-Next-FP8
+huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.8-Flash-Next-FP8
 status: main
 badges:
   tool: true
   reasoning: true
   multimodal: true
   research: true
-contextTokens: 1010000
-parameters: 397B
+contextTokens: 1000000
+parameters: 180B (6B active)
 quantization: FP8 (official)
 multimodalKinds:
   - image
   - video
 disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/Qwen/Qwen3.5-397B-A17B
+reasoningEffortSnippet: 'reasoning_effort="low"  # or "medium"; "xhigh" is the default'
+toolCallingDocsUrl: https://recipes.vllm.ai/Qwen/Qwen3.8-Flash-Next
 sortOrder: 10
-summary: Flagship frontier multimodal MoE — Claude/Gemini-level performance, active research model.
+summary: Flagship frontier multimodal MoE — a Qwen4-architecture preview, and the catalog's strongest agentic coder.
 strengths:
-  - Frontier-class reasoning and instruction following
+  - Highest Terminal-Bench v2.1 score in the catalog — 86.1%, ahead of glm-5
   - Multimodal (image + video) alongside text
-  - High-throughput despite large model size
-  - Sparse MoE keeps per-token compute low despite 397B total parameters
-  - Official FP8 quantization preserves model quality
-  - Capacity may be split across multiple GPU pools (A100 + H200) for throughput
+  - 1M context (262K native, YaRN-extended) for whole-repo and long-document work
+  - Only 6B of 180B parameters active per token, so throughput stays high for a frontier model
+  - Reasoning depth is tunable per request with reasoning_effort (low, medium, xhigh)
+  - Thinking from earlier turns is preserved by default, which keeps agents consistent and improves prefix-cache reuse
+  - Official FP8 quantization (fine-grained, block size 128) preserves model quality
 weaknesses:
-  - Reasoning mode on by default — adds latency for simple queries
-  - One of the higher GPU footprint in the catalog
+  - Reasoning is on at xhigh by default — the most expensive setting; lower reasoning_effort or disable thinking for simple queries
+  - Very verbose even for a reasoning model, so a request costs more tokens than its parameter count suggests
+  - Preserved thinking grows the prompt over a long conversation; pass preserve_thinking false to keep only the latest turn's reasoning
+  - Experimental preview of the Qwen4 architecture — needs recent vLLM/SGLang builds, and its tool-calling and reasoning parsers are newer than the rest of the catalog's
+  - Reaching the full 1M context needs YaRN scaling; 262K is the native window
 bestFor:
   - Frontier-quality text and multimodal reasoning
+  - Agentic coding and long-horizon tool use
   - Long-context document and repository analysis
   - Research workflows requiring reproducibility

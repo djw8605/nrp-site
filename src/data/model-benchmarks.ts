@@ -64,7 +64,7 @@ export const BENCHMARK_SOURCE = {
   /** Per-model pages live at `${modelUrlBase}/${aaSlug}`. */
   modelUrlBase: 'https://artificialanalysis.ai/models',
   /** Date the figures below were last read off AA. */
-  retrieved: '2026-08-30',
+  retrieved: '2026-08-31',
 } as const;
 
 export const BENCHMARK_METRICS: BenchmarkMetric[] = [
@@ -110,6 +110,14 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     terminalBench: 83.9,
   },
   {
+    modelId: 'qwen3',
+    aaVariant: 'Qwen3.8-Flash-Next',
+    aaSlug: 'qwen3-8-flash-next',
+    creator: 'alibaba',
+    intelligenceIndex: 55.8,
+    terminalBench: 86.1,
+  },
+  {
     modelId: 'qwen3-small',
     aaVariant: 'Qwen3.8 27B (xhigh)',
     aaSlug: 'qwen3-8-27b',
@@ -140,14 +148,6 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     creator: 'minimax',
     intelligenceIndex: 38.9,
     terminalBench: 55.4,
-  },
-  {
-    modelId: 'qwen3',
-    aaVariant: 'Qwen3.5 397B A17B (Reasoning)',
-    aaSlug: 'qwen3-5-397b-a17b',
-    creator: 'alibaba',
-    intelligenceIndex: 34.3,
-    terminalBench: 51.3,
   },
   {
     modelId: 'gemma',
