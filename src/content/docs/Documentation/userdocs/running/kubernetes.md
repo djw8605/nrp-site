@@ -1,6 +1,6 @@
 ---
 title: Python k8s API
-description: Python k8s API
+description: "Drive Nautilus programmatically from inside the cluster with the Python Kubernetes client."
 ---
 
 Kubernetes offers API clients that allow you to build integrations under-the-hood of applications.
@@ -26,18 +26,18 @@ def test():
         ret = v1.list_namespaced_pod('ncmir-mm')
     except:
         ValueError('Could not connect to kube cluster')
-    
+
 class Constants(object):
     NAMESPACE = YOUR_NAMESPACE
-    
+
 class KubernetesApiClient(object):
     def __init__(self):
-        # load 
+        # load
         print("\n Loading Nautilus Client... \n")
     def create_batch_api_client(self):
         return client.BatchV1Api(client.ApiClient())
-       
-    def create_job_object(self, job_name, container_image, args=[],cmd = ['/bin/bash'], 
+
+    def create_job_object(self, job_name, container_image, args=[],cmd = ['/bin/bash'],
                           min_cpu=1, min_ram = 4, max_cpu=2, max_ram=12):
             res = client.V1ResourceRequirements(
                 requests={"cpu":"1","memory":"8Gi","ephemeral-storage": "4Gi"},
@@ -63,10 +63,10 @@ class KubernetesApiClient(object):
             volume_1 = client.V1Volume(
                 name='data'
             )
-            
+
             flex_2 = client.V1FlexVolumeSource(
-                driver='ceph.rook.io/rook', 
-                fs_type='ceph', 
+                driver='ceph.rook.io/rook',
+                fs_type='ceph',
                 options = {'fsName': 'nautilusfs',
                             'clusterNamespace': 'rook',
                             'path': 'YOUR_CEPHFS_MOUNT',
@@ -77,10 +77,10 @@ class KubernetesApiClient(object):
                 name = 'ceph',
                 flex_volume=flex_2
             )
-            
+
             template = client.V1PodTemplateSpec(
                         metadata=client.V1ObjectMeta(labels={"app": "sample"}),
-                        spec=client.V1PodSpec(restart_policy="Never", 
+                        spec=client.V1PodSpec(restart_policy="Never",
                                               containers=[container],
                                               volumes=[volume_1,volume_2])
             )
@@ -94,12 +94,12 @@ class KubernetesApiClient(object):
                         metadata=client.V1ObjectMeta(name=job_name),
                         spec=spec)
             return job
- 
-def submit_job(jobname, image = 'YOUR_IMAGE',args = []):   
+
+def submit_job(jobname, image = 'YOUR_IMAGE',args = []):
     api_client = KubernetesApiClient()
     job_api_client = api_client.create_batch_api_client()
     job = api_client.create_job_object(jobname, image, args)
-    try: 
+    try:
         api_response = job_api_client.create_namespaced_job(
             namespace=Constants.NAMESPACE,
             body=job)

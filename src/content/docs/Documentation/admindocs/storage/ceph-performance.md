@@ -1,6 +1,6 @@
 ---
 title: Ceph Performance
-description: Ceph Performance
+description: "Admin notes on tuning Ceph performance for the mix of PLP NVMe and spinning drives common at NRP sites."
 ---
 
 ## Ceph performance

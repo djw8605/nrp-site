@@ -2,19 +2,26 @@
 /**
  * Starlight `PageTitle` override.
  *
- * Renders the stock page title, then — on pages under `admindocs/` — a quiet
- * orientation label naming which part of the documentation the reader is in.
+ * Renders two orientation layers above the title:
  *
- * This replaces a `:::caution` block that was pasted into 51 of the 59
- * admindocs pages (and missing from the other 8). That block was amber, so it
- * read as a warning; it carried no page-specific information, so 51 consecutive
- * repetitions trained readers to skip amber — including the amber that says
- * "do not continue until the Ceph cluster is healthy". It also told campus IT
- * staff evaluating a hardware contribution that the page they had just opened
- * "may not be relevant" to them.
+ * 1. A breadcrumb built from Starlight's own generated sidebar tree. On a
+ *    four-level tree (`User Guide › Running › Intermediate › …`) the sidebar
+ *    highlight alone never told a visitor who arrived from a search engine
+ *    where they were, and there is no structural position to announce to a
+ *    screen reader without it. Deriving the trail from the `sidebar` prop —
+ *    the same data the sidebar itself renders from — keeps it impossible for
+ *    the breadcrumb to drift from the actual tree.
  *
- * Keeping it here means it is stated once, applies uniformly, and can say
- * something different to the two audiences that share this branch.
+ * 2. On pages under `admindocs/`, a quiet audience label naming which part of
+ *    the documentation the reader is in.
+ *
+ * The label in (2) replaces a `:::caution` block that was pasted into 51 of
+ * the 59 admindocs pages (and missing from the other 8). That block was amber,
+ * so it read as a warning; it carried no page-specific information, so 51
+ * consecutive repetitions trained readers to skip amber — including the amber
+ * that says "do not continue until the Ceph cluster is healthy". It also told
+ * campus IT staff evaluating a hardware contribution that the page they had
+ * just opened "may not be relevant" to them.
  */
 import type { Props } from '@astrojs/starlight/props';
 
@@ -24,7 +31,37 @@ import type { Props } from '@astrojs/starlight/props';
 // target that id.
 const PAGE_TITLE_ID = '_top';
 
-const { entry } = Astro.props;
+const { entry, sidebar } = Astro.props;
+
+// The `Group` type is not from Starlight's public exports, so the tree is
+// typed structurally; `Astro.props.sidebar` is assignable to it.
+type TrailNode =
+  | { type: 'link'; label: string; href: string; isCurrent: boolean }
+  | { type: 'group'; label: string; entries: TrailNode[] };
+
+const groupsOnTrail: string[] = [];
+
+function findCurrentTrail(nodes: TrailNode[]): boolean {
+  for (const node of nodes) {
+    if (node.type === 'link') {
+      if (node.isCurrent) return true;
+      continue;
+    }
+    groupsOnTrail.push(node.label);
+    if (findCurrentTrail(node.entries)) return true;
+    groupsOnTrail.pop();
+  }
+  return false;
+}
+
+findCurrentTrail((sidebar ?? []) as TrailNode[]);
+
+// Hide the top group when it adds nothing the adjacent title bar does not
+// already say ("NRP Documentation" and "User Guide" are the same fact twice).
+const isUserGuide = entry.id.startsWith('userdocs/');
+const crumbGroups = groupsOnTrail.filter(
+  (label, i) => !(i === 0 && label === 'User Guide' && groupsOnTrail.length > 1 && isUserGuide)
+);
 
 // `slug` is the lowercased route path; `id` is the file path within the
 // collection. Either identifies the section, so normalize and check both.
@@ -41,7 +78,36 @@ const section = path.includes('admindocs/participating')
         detail: 'Reference for the administrators and operators who run Nautilus.',
       }
     : null;
+
+const showTrail = crumbGroups.length > 0;
 ---
+
+{
+  showTrail && (
+    <nav aria-label="Breadcrumb">
+      <ol class="docs-crumbs">
+        <li>
+          <a href="/documentation/">Documentation</a>
+        </li>
+        {crumbGroups.map((label) => (
+          <li>
+            <span class="docs-crumbs__sep" aria-hidden="true">
+              ›
+            </span>
+            {label}
+          </li>
+        ))}
+        <li aria-current="page">
+          <span class="docs-crumbs__sep" aria-hidden="true">
+            ›
+          </span>
+          <span class="sr-only">Page: </span>
+          {entry.data.title}
+        </li>
+      </ol>
+    </nav>
+  )
+}
 
 <h1 id={PAGE_TITLE_ID}>{entry.data.title}</h1>
 
@@ -60,8 +126,76 @@ const section = path.includes('admindocs/participating')
 }
 
 <style>
+  /**
+   * The `.sr-only` utility is Tailwind's (inherited via astro:components.css)
+   * and is inert on the "documentation" routes, which load Tailwind's `base`
+   * and `utilities` layers but not the `utilities` definitions for every class
+   * in existence. Carry the utility here so the visually-hidden "Page:"
+   * announcement for the current breadcrumb is a real hide on every page.
+   */
+  nav :global(.sr-only) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Starlight's global `nav ol` reset (reset.css) ships display:flex with a
+     1rem gap and 1.5rem padding — it fights the spacing set here unless every
+     axis is pinned explicitly. Pin them all, then own the rhythm here. */
+  .docs-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin: 0;
+    padding: 0;
+    gap: 0.125rem 0;
+    list-style: none;
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+    color: var(--sl-color-gray-3);
+  }
+
+  .docs-crumbs li {
+    display: inline-flex;
+    align-items: baseline;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* Uniform separator rhythm: fixed inline padding around the glyph, not gaps
+     between flex children, so every › carries identical air at any wrap. */
+  .docs-crumbs__sep {
+    padding-inline: 0.5rem;
+    color: var(--sl-color-gray-4);
+  }
+
+  /* Only segments with a destination look clickable. Starlight 0.29 sidebar
+     groups (User Guide, Running, …) have no landing page — linking them to
+     some arbitrary member would be a crumb that lies. Real links take the
+     accent color plus an underline; a gray-on-gray underline alone read as
+     static text and made the whole trail look inert. */
+  .docs-crumbs a {
+    color: var(--sl-color-text-accent);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 1px;
+  }
+
+  .docs-crumbs a:hover,
+  .docs-crumbs a:focus-visible {
+    color: var(--sl-color-text-accent);
+    text-decoration-color: currentColor;
+  }
+
   h1 {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-size: var(--sl-text-h1);
     line-height: var(--sl-line-height-headings);
     font-weight: 600;

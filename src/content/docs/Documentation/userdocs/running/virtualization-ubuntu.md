@@ -1,6 +1,6 @@
 ---
 title: Virtualization - Ubuntu
-description: Virtualization - Ubuntu
+description: "Boot an Ubuntu virtual machine on KubeVirt with cloud-init, an SSH key, and scratch storage."
 ---
 
 Guide: <https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html>
@@ -19,12 +19,12 @@ spec:
   template:
     spec:
       accessCredentials:
-      - sshPublicKey:
-          propagationMethod:
-            configDrive: {}
-          source:
-            secret:
-              secretName: pub-keys
+        - sshPublicKey:
+            propagationMethod:
+              configDrive: {}
+            source:
+              secret:
+                secretName: pub-keys
       architecture: amd64
       domain:
         cpu:
@@ -33,16 +33,16 @@ spec:
           autoattachGraphicsDevice: true
           autoattachSerialConsole: true
           disks:
-          - disk:
-              bus: virtio
-            name: harddrive
-          - disk:
-              bus: virtio
-            name: virtiocontainerdisk
-            bootOrder: 1
-          - disk:
-              bus: virtio
-            name: cloudinit
+            - disk:
+                bus: virtio
+              name: harddrive
+            - disk:
+                bus: virtio
+              name: virtiocontainerdisk
+              bootOrder: 1
+            - disk:
+                bus: virtio
+              name: cloudinit
         machine:
           type: q35
         resources:
@@ -53,27 +53,27 @@ spec:
             cpu: 800m
             memory: 8Gi
       volumes:
-      - containerDisk:
-          image: quay.io/containerdisks/ubuntu:22.04
-        name: virtiocontainerdisk
-      - emptyDisk:
-          capacity: 16Gi
-        name: harddrive
-      - cloudInitConfigDrive:
-          userData: |-
-            #cloud-config
-            disk_setup:
-              /dev/vda:
-                table_type: gpt
-                layout: True
-                overwrite: True
-            fs_setup:
-              - device: /dev/vda
-                partition: 1
-                filesystem: xfs
-            mounts:
-             - [ vda, /opt/data ]
-        name: cloudinit
+        - containerDisk:
+            image: quay.io/containerdisks/ubuntu:22.04
+          name: virtiocontainerdisk
+        - emptyDisk:
+            capacity: 16Gi
+          name: harddrive
+        - cloudInitConfigDrive:
+            userData: |-
+              #cloud-config
+              disk_setup:
+                /dev/vda:
+                  table_type: gpt
+                  layout: True
+                  overwrite: True
+              fs_setup:
+                - device: /dev/vda
+                  partition: 1
+                  filesystem: xfs
+              mounts:
+               - [ vda, /opt/data ]
+          name: cloudinit
 ```
 
 You also need to create the secret with your SSH key to login with:
@@ -110,38 +110,38 @@ metadata:
   name: ubuntu-vm
 spec:
   dataVolumeTemplates:
-  - metadata:
-      name: ubuntu-2204
-    spec:
-      source:
-        registry:
-          url: "docker://quay.io/containerdisks/ubuntu:22.04"
-      pvc:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 150Gi
-        storageClassName: linstor-igrok
+    - metadata:
+        name: ubuntu-2204
+      spec:
+        source:
+          registry:
+            url: 'docker://quay.io/containerdisks/ubuntu:22.04'
+        pvc:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 150Gi
+          storageClassName: linstor-igrok
   running: true
   template:
     metadata:
       creationTimestamp: null
     spec:
       accessCredentials:
-      - sshPublicKey:
-          source:
-            secret:
-              secretName: pub-keys
+        - sshPublicKey:
+            source:
+              secret:
+                secretName: pub-keys
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/region
-                operator: In
-                values:
-                - us-west
+              - matchExpressions:
+                  - key: topology.kubernetes.io/region
+                    operator: In
+                    values:
+                      - us-west
       architecture: amd64
       domain:
         cpu:
@@ -150,10 +150,10 @@ spec:
           autoattachGraphicsDevice: true
           autoattachSerialConsole: true
           disks:
-          - bootOrder: 1
-            disk:
-              bus: virtio
-            name: datavolumedisk1
+            - bootOrder: 1
+              disk:
+                bus: virtio
+              name: datavolumedisk1
         machine:
           type: q35
         resources:
@@ -166,13 +166,13 @@ spec:
             memory: 8Gi
             cpu: 8
       volumes:
-      - dataVolume:
-          name: ubuntu-2204
-        name: datavolumedisk1
-      - cloudInitConfigDrive:
-          userData: |-
-            #cloud-config
-        name: cloudinit
+        - dataVolume:
+            name: ubuntu-2204
+          name: datavolumedisk1
+        - cloudInitConfigDrive:
+            userData: |-
+              #cloud-config
+          name: cloudinit
 ```
 
 ## Fixing the network issue

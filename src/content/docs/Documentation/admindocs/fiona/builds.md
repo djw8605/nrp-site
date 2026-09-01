@@ -1,6 +1,6 @@
 ---
 title: Builds
-description: Builds
+description: "Component specs and pricing for FIONA appliance builds, with links to the per-generation build sheets."
 ---
 
 <div class="border">
@@ -9,9 +9,9 @@ description: Builds
 
 Hardware specs and pricing of specific components.
 
-| 2023 | 2021 | 2020 | 2019 | 2018 | 2017 | 2016 | 2015 |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| [Fall][2023fa] | [Winter][2021w] |[Winter][2020w] | [Spring][2019sp] | [Fall][2018fa]/[Spring][2018sp] | [Spring][2017su] | [Summer][2016su] | [Fall][2015fa] | 
+| 2023           | 2021            | 2020            | 2019             | 2018                            | 2017             | 2016             | 2015           |
+| -------------- | --------------- | --------------- | ---------------- | ------------------------------- | ---------------- | ---------------- | -------------- |
+| [Fall][2023fa] | [Winter][2021w] | [Winter][2020w] | [Spring][2019sp] | [Fall][2018fa]/[Spring][2018sp] | [Spring][2017su] | [Summer][2016su] | [Fall][2015fa] |
 
 [2023fa]: https://docs.google.com/spreadsheets/d/1cithioO4OzvhO_Ua-72p57Wj30OtVdsJq3-CtMAJ_FY/edit#gid=1006783245
 [2021w]: https://docs.google.com/spreadsheets/d/18LFUNQir2H0hwCJ1lJIsHBBl4jTnagJ7Cd9u0TojrKQ/edit#gid=1637428606

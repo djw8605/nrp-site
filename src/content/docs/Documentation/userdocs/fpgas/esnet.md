@@ -1,11 +1,11 @@
 ---
 title: ESnet SmartNIC
-description: ESnet SmartNIC
+description: "Use Xilinx Alveo FPGAs as high-performance SmartNICs with the ESnet framework on Nautilus."
 ---
 
 ## ESnet SmartNIC Tools on Coder
 
-The **ESnet FPGA SmartNIC template** enables the utilization of Xilinx Alveo FPGAs as SmartNICs, integrating seamlessly within the ESnet framework. This setup allows for high-performance networking tailored for scientific research.
+The **ESnet FPGA SmartNIC template** enables the utilization of Xilinx Alveo FPGAs as SmartNICs within the ESnet framework. This setup allows for high-performance networking tailored for scientific research.
 
 ### Overview of the ESnet SmartNIC Framework
 

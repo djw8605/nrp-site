@@ -1,9 +1,9 @@
 ---
 title: Exposing HTTP
-description: Exposing HTTP
+description: "Expose a pod HTTP service at a public nrp-nautilus.io address with an Ingress."
 ---
 
-While pods are not accessible from outside the cluster, you can expose the http services provided by pods by using the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controllers.  In general we don't allow exposing non-http applications via TCP ports, but if you really need to do that, contact us on [Nautilus Support](/contact).
+While pods are not accessible from outside the cluster, you can expose the http services provided by pods by using the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controllers. In general we don't allow exposing non-http applications via TCP ports, but if you really need to do that, contact us on [Nautilus Support](/contact).
 
 For a complete example see the ([Tutorial](/documentation/userdocs/tutorial/basic2/))
 
@@ -20,8 +20,8 @@ metadata:
     k8s-app: test-http
 spec:
   containers:
-  - name: mypod
-    image: nginxdemos/hello:plain-text
+    - name: mypod
+      image: nginxdemos/hello:plain-text
 ```
 
 The service might look like:
@@ -35,15 +35,15 @@ metadata:
   name: test-svc
 spec:
   ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 80
+    - port: 8080
+      protocol: TCP
+      targetPort: 80
   selector:
     k8s-app: test-http
   type: ClusterIP
 ```
 
-Where `spec.selector.<label>` should match the label of the target pod (`k8s-app: test-http`), and `targetPort` should match the port you want to expose.  You can test the pod/service by creating a tunnel (`kubectl port-forward service/test-svc 8080:8080`) and querying service (`curl http://localhost:8080/`).
+Where `spec.selector.<label>` should match the label of the target pod (`k8s-app: test-http`), and `targetPort` should match the port you want to expose. You can test the pod/service by creating a tunnel (`kubectl port-forward service/test-svc 8080:8080`) and querying service (`curl http://localhost:8080/`).
 
 After that you can create the Ingress object:
 
@@ -55,22 +55,22 @@ metadata:
 spec:
   ingressClassName: haproxy
   rules:
-  - host: test-service.nrp-nautilus.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: test-svc
-            port:
-              number: 8080
+    - host: test-service.nrp-nautilus.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: test-svc
+                port:
+                  number: 8080
   tls:
-  - hosts:
-    - test-service.nrp-nautilus.io
+    - hosts:
+        - test-service.nrp-nautilus.io
 ```
 
-You can choose the host subdomain to be whatever you want (`<whatever>.nrp-nautilus.io`). This is enough to have your pod served under `test-service.nrp-nautilus.io`.  You can test this example via curl (`curl https://test-service.nrp-nautilus.io`)
+You can choose the host subdomain to be whatever you want (`<whatever>.nrp-nautilus.io`). This is enough to have your pod served under `test-service.nrp-nautilus.io`. You can test this example via curl (`curl https://test-service.nrp-nautilus.io`)
 
 ## Using my own domain name
 
@@ -98,20 +98,20 @@ metadata:
 spec:
   ingressClassName: haproxy
   rules:
-  - host: my-own-hostname.com
-    http:
-      paths:
-      - backend:
-          service:
-            name: test-svc
-            port:
-              number: 8080
-        path: /
-        pathType: Prefix
+    - host: my-own-hostname.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: test-svc
+                port:
+                  number: 8080
+            path: /
+            pathType: Prefix
   tls:
-  - hosts:
-    - my-own-hostname.com
-    secretName: my-own-hostname-tls
+    - hosts:
+        - my-own-hostname.com
+      secretName: my-own-hostname-tls
 ```
 
 Create the CNAME DNS record for your domain pointing to `nrp-nautilus.io` (for geo-balanced multi-region DNS record) or `east.nrp-nautilus.io` (just the eastern region).
@@ -128,19 +128,19 @@ metadata:
 spec:
   acme:
     email: <your_email>
-    preferredChain: ""
+    preferredChain: ''
     privateKeySecretRef:
       name: issuer-account-key
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
-    - http01:
-        ingress:
-          class: haproxy
-          ingressTemplate:
-            metadata:
-              annotations:
-                ingress.kubernetes.io/ssl-redirect: "false"
-          serviceType: ClusterIP
+      - http01:
+          ingress:
+            class: haproxy
+            ingressTemplate:
+              metadata:
+                annotations:
+                  ingress.kubernetes.io/ssl-redirect: 'false'
+            serviceType: ClusterIP
 ```
 
 And then request the new certificate:
@@ -154,7 +154,7 @@ metadata:
 spec:
   commonName: my-own-hostname.com
   dnsNames:
-  - my-own-hostname.com
+    - my-own-hostname.com
   issuerRef:
     kind: Issuer
     name: letsencrypt

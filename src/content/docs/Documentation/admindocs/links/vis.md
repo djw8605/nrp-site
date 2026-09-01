@@ -1,6 +1,6 @@
 ---
 title: NRP Visualization Tools
-description: NRP Visualization Tools
+description: "Direct links to NRP visualization and telemetry tools, including Grafana and the cluster traceroute service."
 ---
 
 <div class="border">

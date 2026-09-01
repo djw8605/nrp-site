@@ -1,6 +1,6 @@
 ---
 title: Postgres Cluster
-description: Postgres Cluster
+description: "Deploy a PostgreSQL cluster in your namespace with the Zalando Postgres operator."
 ---
 
 ## Using Zalando Postgres Operator in Kubernetes
@@ -16,34 +16,36 @@ Postgres is the right pick for transactional and relational workloads (rows, for
 You can deploy your PostgreSQL cluster by creating a `Postgresql` custom resource (CR).
 
 ### Example: `postgres-cluster.yaml`
+
 ```yaml
-apiVersion: "acid.zalan.do/v1"
-kind: "postgresql"
+apiVersion: 'acid.zalan.do/v1'
+kind: 'postgresql'
 metadata:
-  name: "my-postgres-cluster"
+  name: 'my-postgres-cluster'
 spec:
-  teamId: "my-team"
+  teamId: 'my-team'
   volume:
     size: 10Gi
   numberOfInstances: 3
   users:
-    myapp:  # database users
+    myapp: # database users
       - superuser
       - createdb
   databases:
-    mydatabase: myapp  # database name: owner
+    mydatabase: myapp # database name: owner
   postgresql:
-    version: "14"  # Postgres version
+    version: '14' # Postgres version
   resources:
     requests:
-      cpu: "500m"
-      memory: "500Mi"
+      cpu: '500m'
+      memory: '500Mi'
     limits:
-      cpu: "1"
-      memory: "1Gi"
+      cpu: '1'
+      memory: '1Gi'
 ```
 
 ### Apply the Cluster Manifest:
+
 ```bash
 kubectl apply -n default -f postgres-cluster.yaml
 ```
@@ -57,7 +59,6 @@ This command will create a PostgreSQL cluster with the following configuration:
 - 10Gi of storage per instance
 - Resource requests and limits configured for each instance
 - PostgreSQL version 14
-
 
 ## 2. Accessing the PostgreSQL Cluster
 
@@ -82,7 +83,6 @@ psql -h my-postgres-cluster -U postgres
 
 The user for your created database (`mydatabase`) will have a different password stored in `myapp.my-postgres-cluster.credentials.postgresql.acid.zalan.do`.
 
-
 ## 3. Scaling the PostgreSQL Cluster
 
 To scale the cluster, you can modify the `numberOfInstances` field in your `postgres-cluster.yaml` file. For example, to scale to 5 instances:
@@ -98,7 +98,6 @@ kubectl apply -f postgres-cluster.yaml
 ```
 
 The operator will handle scaling up or down the number of PostgreSQL instances automatically.
-
 
 ## 4. Monitoring the Cluster
 
@@ -121,8 +120,8 @@ Linstor storageClass is preferred as it provides the best performance for postgr
 
 ```yaml
 volume:
-    size: 10Gi
-    storageClass: linstor-igrok
+  size: 10Gi
+  storageClass: linstor-igrok
 ```
 
 This is how you can manage and deploy a PostgreSQL cluster using the Zalando Postgres Operator in Kubernetes. For more advanced configurations, refer to the [full documentation of the operator](https://postgres-operator.readthedocs.io/en/latest/user/).
@@ -153,11 +152,11 @@ spec:
       owner: myapp
   resources:
     requests:
-      cpu: "500m"
-      memory: "1Gi"
+      cpu: '500m'
+      memory: '1Gi'
     limits:
-      cpu: "2"
-      memory: "2Gi"
+      cpu: '2'
+      memory: '2Gi'
   storage:
     size: 10Gi
     storageClass: linstor-igrok

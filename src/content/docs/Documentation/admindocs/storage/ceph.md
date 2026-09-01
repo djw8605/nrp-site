@@ -1,6 +1,6 @@
 ---
 title: Ceph Recover
-description: Ceph Recover
+description: "Ceph cluster recovery steps run through the kubectl-rook-ceph plugin."
 ---
 
 ## Finding lost objects

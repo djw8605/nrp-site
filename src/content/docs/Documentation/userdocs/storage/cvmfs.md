@@ -1,6 +1,6 @@
 ---
 title: CVMFS
-description: CVMFS
+description: "Mount ready-made scientific software and datasets distributed over CVMFS, including the NRP origins."
 ---
 
 [CVMFS](https://cernvm.cern.ch/fs/) is a distributed filesystem that allows you to mount software repositories and datasets on your local machine. It is used to distribute software and data across the grid, and is widely used in the High Energy Physics community.
@@ -27,7 +27,7 @@ new Runtime().module(define, name => {
 
 ## Using OSG caches and origins data via CVMFS
 
-To attach the  CVMFS volume which can mount all repos, create the PVC (taken from [https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example](https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example) ):
+To attach the CVMFS volume which can mount all repos, create the PVC (taken from [https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example](https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example) ):
 
 ```yaml
 apiVersion: v1
@@ -36,7 +36,7 @@ metadata:
   name: cvmfs
 spec:
   accessModes:
-  - ReadOnlyMany
+    - ReadOnlyMany
   resources:
     requests:
       # Volume size value has no effect and is ignored
@@ -54,57 +54,57 @@ metadata:
   name: cvmfs-all-repos
 spec:
   containers:
-   - name: idle
-     image: busybox
-     imagePullPolicy: IfNotPresent
-     command: [ "/bin/sh", "-c", "trap : TERM INT; (while true; do sleep 1000; done) & wait" ]
-     volumeMounts:
-       - name: my-cvmfs
-         mountPath: /my-cvmfs
-         # CVMFS automount volumes must be mounted with HostToContainer mount propagation.
-         mountPropagation: HostToContainer
+    - name: idle
+      image: busybox
+      imagePullPolicy: IfNotPresent
+      command: ['/bin/sh', '-c', 'trap : TERM INT; (while true; do sleep 1000; done) & wait']
+      volumeMounts:
+        - name: my-cvmfs
+          mountPath: /my-cvmfs
+          # CVMFS automount volumes must be mounted with HostToContainer mount propagation.
+          mountPropagation: HostToContainer
   volumes:
-   - name: my-cvmfs
-     persistentVolumeClaim:
-       claimName: cvmfs
+    - name: my-cvmfs
+      persistentVolumeClaim:
+        claimName: cvmfs
 ```
 
 If you need to mount a specific repo, add the subPath to the pod mount:
 
 ```yaml
-     volumeMounts:
-       - name: my-cvmfs
-         # It is possible to mount a single CVMFS repository by specifying subPath.
-         subPath: alice.cern.ch
-         mountPath: /my-alice-cvmfs
-         mountPropagation: HostToContainer
+volumeMounts:
+  - name: my-cvmfs
+    # It is possible to mount a single CVMFS repository by specifying subPath.
+    subPath: alice.cern.ch
+    mountPath: /my-alice-cvmfs
+    mountPropagation: HostToContainer
 ```
 
 ### Existing subPaths
 
-* ams.cern.ch
-* atlas.cern.ch
-* belle.cern.ch
-* clicdp.cern.ch
-* cms.cern.ch
-* config-osg.opensciencegrid.org
-* connect.opensciencegrid.org
-* cvmfs-config.cern.ch
-* eic.opensciencegrid.org
-* gluex.osgstorage.org
-* gwosc.osgstorage.org
-* icecube.opensciencegrid.org
-* icecube.osgstorage.org
-* larsoft-ib.opensciencegrid.org
-* larsoft.opensciencegrid.org
-* nexo.opensciencegrid.org
-* oasis.opensciencegrid.org
-* **sdsc-nrp-osdf-origin.osgstorage.org**
-* sft.cern.ch
-* singularity.opensciencegrid.org
-* snoplus.egi.eu
-* sphenix.opensciencegrid.org
-* spt.opensciencegrid.org
-* stash.osgstorage.org
-* unpacked.cern.ch
-* veritas.opensciencegrid.org
+- ams.cern.ch
+- atlas.cern.ch
+- belle.cern.ch
+- clicdp.cern.ch
+- cms.cern.ch
+- config-osg.opensciencegrid.org
+- connect.opensciencegrid.org
+- cvmfs-config.cern.ch
+- eic.opensciencegrid.org
+- gluex.osgstorage.org
+- gwosc.osgstorage.org
+- icecube.opensciencegrid.org
+- icecube.osgstorage.org
+- larsoft-ib.opensciencegrid.org
+- larsoft.opensciencegrid.org
+- nexo.opensciencegrid.org
+- oasis.opensciencegrid.org
+- **sdsc-nrp-osdf-origin.osgstorage.org**
+- sft.cern.ch
+- singularity.opensciencegrid.org
+- snoplus.egi.eu
+- sphenix.opensciencegrid.org
+- spt.opensciencegrid.org
+- stash.osgstorage.org
+- unpacked.cern.ch
+- veritas.opensciencegrid.org

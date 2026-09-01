@@ -1,6 +1,6 @@
 ---
 title: Cert-manager
-description: Cert-manager
+description: "Upgrade cert-manager on Nautilus using its static manifest upgrade path."
 ---
 
 ## Upgrading Cert-manager

@@ -1,23 +1,20 @@
 ---
 title: Scheduling and Exposing
-description: Scheduling and Exposing
+description: "Take a service from one pod to several with scheduling and horizontal scaling, then expose it."
 ---
 
 In a Kubernetes cluster, orchestration refers to the automated coordination, deployment, scaling, and management of containerized applications and their associated workloads.
 
-
-
 Horizontal scaling is crucial for services hosted on a Kubernetes cluster for several reasons, and it aligns with the fundamental principles of container orchestration and cloud-native architectures.
 
-
 Horizontal scaling in Nautilus allows you increase the overall workload of your jobs, improve reliability and availability, use resources more efficiently, load balance across replicas, and it increases fault tolerance (no single instance failing disrupts your work). Horizontal scaling is common practice for cloud-native applications.
-
 
 ## Prerequisites
 
 This section builds on skills from both the [Quickstart](/documentation/userdocs/start/getting-started/) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
+
 1. You will learn how to deploy a basic Apache service across multiple replicas.
 2. You will learn how to load balance between replicas.
 3. You understand how to expose services running inside of your pods to the public internet.
@@ -28,8 +25,7 @@ In this exercise, we will launch multiple Web servers.
 
 To make distinguishing the two servers easier, we will force the nodename into their homepages. Using stock images, we achieve this by using an [init container](/documentation/userdocs/start/glossary).
 
-You can copy-and-paste the lines below into a new file called ``http2.yaml`` (using the ``cat`` command to redirect the standard input).
-
+You can copy-and-paste the lines below into a new file called `http2.yaml` (using the `cat` command to redirect the standard input).
 
 ```yaml
 apiVersion: apps/v1
@@ -49,38 +45,42 @@ spec:
         k8s-app: test-http
     spec:
       initContainers:
-      - name: myinit
-        image: busybox
-        command: ["sh", "-c", "echo '<html><body><h1>I am ' `hostname` '</h1></body></html>' > /usr/local/apache2/htdocs/index.html"]
-        volumeMounts:
-        - name: dataroot
-          mountPath: /usr/local/apache2/htdocs
+        - name: myinit
+          image: busybox
+          command:
+            [
+              'sh',
+              '-c',
+              "echo '<html><body><h1>I am ' `hostname` '</h1></body></html>' > /usr/local/apache2/htdocs/index.html",
+            ]
+          volumeMounts:
+            - name: dataroot
+              mountPath: /usr/local/apache2/htdocs
       containers:
-      - name: mypod
-        image: httpd:alpine
-        resources:
-           limits:
-             memory: 200Mi
-             cpu: 1
-           requests:
-             memory: 50Mi
-             cpu: 50m
-        volumeMounts:
-        - name: dataroot
-          mountPath: /usr/local/apache2/htdocs
+        - name: mypod
+          image: httpd:alpine
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 1
+            requests:
+              memory: 50Mi
+              cpu: 50m
+          volumeMounts:
+            - name: dataroot
+              mountPath: /usr/local/apache2/htdocs
       volumes:
-      - name: dataroot
-        emptyDir: {}
+        - name: dataroot
+          emptyDir: {}
 ```
 
-Examine the above text and try to identify what makes this different than the other YAML files we've encountered so far. Some new fields can be found under the ``initContainers`` tag.
+Examine the above text and try to identify what makes this different than the other YAML files we've encountered so far. Some new fields can be found under the `initContainers` tag.
 
 :::note[Question?]
 **What's different about the image you are running in this pod?** Previously, we ran versions of Ubuntu, and in one instance, we had to install additional software manually. How could we avoid that in the future? You might look up "[busybox](https://hub.docker.com/_/busybox)" to understand better what that image is and what it does.
 :::
 
 What happens if you want to scale beyond just two replicas? Feel free to change the number of replicas (within reason) and the text it is shown in home page of each server, if so desired.
-
 
 :::caution
 Note that the "httpd" container defines the `command` to run, which is the web server in this case. If you're running some other container that does not define the command, you'd have to specify it in the `command` field (instead of `sleep infinity` in previous examples). This ensures that the container does what you expect every time it starts.
@@ -95,7 +95,7 @@ kubectl create -f http2.yaml
 ```
 
 :::caution
-Since we know that containers running in Nautilus aren't exposed to the broader internet, but it's critical to remember that they *are* exposed to other pods running in our namespace.  This is feature is beneficial when thinking about deploying complex software or services in Kubernetes.
+Since we know that containers running in Nautilus aren't exposed to the broader internet, but it's critical to remember that they _are_ exposed to other pods running in our namespace. This is feature is beneficial when thinking about deploying complex software or services in Kubernetes.
 :::
 
 In order for us to examine what's happening in our deployment, we'll need to access it via another pod running within our namespace.
@@ -115,17 +115,18 @@ metadata:
   name: test-pod
 spec:
   containers:
-  - name: mypod
-    image: ubuntu
-    resources:
-      limits:
-        memory: 100Mi
-        cpu: 100m
-      requests:
-        memory: 100Mi
-        cpu: 100m
-    command: ["sh", "-c", "echo 'Im a new pod' && sleep infinity"]
+    - name: mypod
+      image: ubuntu
+      resources:
+        limits:
+          memory: 100Mi
+          cpu: 100m
+        requests:
+          memory: 100Mi
+          cpu: 100m
+      command: ['sh', '-c', "echo 'Im a new pod' && sleep infinity"]
 ```
+
 :::note[Question?]
 What resources are we requesting in this example? Are the resources requested for this pod capable of much?
 :::
@@ -138,7 +139,6 @@ In Kubernetes, the base unit for describing memory resources is the `byte`. Howe
 - ...and so on
 
 In Kubernetes, the base unit for describing CPU resources is the "millicore" which represents one thousandth of a CPU core. The term "millicore" is often abbreviated as "mCPU" or simply "m" (as above). For example, a CPU value of "100m" means 100 millicores, which is equivalent to 0.1 CPU core. Similarly, "500m" represents 500 millicores or 0.5 CPU core.
-
 
 ### A Container that has curl
 
@@ -157,16 +157,16 @@ metadata:
   name: test-curl-pod
 spec:
   containers:
-  - name: mycurlpod
-    image: curlimages/curl:latest
-    resources:
-      limits:
-        memory: 200Mi
-        cpu: 200m
-      requests:
-        memory: 200Mi
-        cpu: 200m
-    command: ["sh", "-c", "echo 'Im a new curl pod' && sleep infinity"]
+    - name: mycurlpod
+      image: curlimages/curl:latest
+      resources:
+        limits:
+          memory: 200Mi
+          cpu: 200m
+        requests:
+          memory: 200Mi
+          cpu: 200m
+      command: ['sh', '-c', "echo 'Im a new curl pod' && sleep infinity"]
 ```
 
 Notice that we've increased our resources and requests for memory and CPU.
@@ -212,9 +212,9 @@ metadata:
   name: test-svc
 spec:
   ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
+    - port: 80
+      protocol: TCP
+      targetPort: 80
   selector:
     k8s-app: test-http
   type: ClusterIP
@@ -249,7 +249,7 @@ Note that you can also use the local DNS name for this (from pod1)
 `curl http://test-svc.<namespace>.svc.cluster.local`
 
 :::note[Namespaces?]
-Do you remember what namespace you are using?  Be sure to note your namespace in order to access the service.
+Do you remember what namespace you are using? Be sure to note your namespace in order to access the service.
 :::
 
 ## Exposing public services
@@ -268,19 +268,19 @@ metadata:
 spec:
   ingressClassName: haproxy
   rules:
-  - host: test-service.nrp-nautilus.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: test-svc
-            port:
-              number: 80
-        path: /
-        pathType: ImplementationSpecific
+    - host: test-service.nrp-nautilus.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: test-svc
+                port:
+                  number: 80
+            path: /
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - test-service.nrp-nautilus.io
+    - hosts:
+        - test-service.nrp-nautilus.io
 ```
 
 Launch the new ingress
@@ -291,7 +291,7 @@ kubectl create -f ingress.yaml
 
 You should now be able to fetch the Web pages from your browser by opening <https://test-service.nrp-nautilus.io>.
 
-:::note[HTTPS and SSL] 
+:::note[HTTPS and SSL]
 Note that SSL termination is already provided for you. More information is available in [Ingress section](/documentation/userdocs/running/ingress).
 :::
 
@@ -303,4 +303,3 @@ kubectl delete -f svc2.yaml
 kubectl delete -f ingress.yaml
 kubectl delete -f pod-curl.yaml
 ```
-

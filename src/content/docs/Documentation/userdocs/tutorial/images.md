@@ -1,23 +1,23 @@
 ---
 title: Docker Images
-description: Docker Images
+description: "Find, pull, and build the container images your Nautilus workloads run on."
 ---
 
 Images are fundamental components in Nautilus as they package the application code, dependencies, and runtime environment required to run containers within Kubernetes clusters. Images serve as the building blocks for containerized applications, allowing developers to deploy their software in a consistent and portable manner.
 
-
-
 ## Learning Objectives
+
 1. By reviewing these materials, you will have a basic understanding of how to locate standard software packages to run on Nautilus.
 2. You will have a basic understanding of how to modify those packages using Docker.
 
 ## Prerequisites
+
 In order to complete this tutorial, you should have the following:
+
 1. An account on [Docker Hub](https://hub.docker.com/signup).
 2. [Docker Desktop](https://www.docker.com/get-started/) installed on your local machine.
 3. An account on [Nautilus GitLab repository](https://gitlab.nrp-nautilus.io/users/sign_up).
 4. You should be familiar with the concept of software container images, Kubernetes and have completed the basic Kubernetes tutorials.
-
 
 ## Finding container images and building your own
 

@@ -1,6 +1,6 @@
 ---
 title: Kubeflow Training
-description: Kubeflow Training
+description: "Run distributed training with the Kubeflow Training Operator: setup, roles, and example jobs."
 ---
 
 The Kubeflow Training Operator simplifies the management of distributed training jobs on Kubernetes. It allows users to define training jobs as Kubernetes custom resources, making it easy to scale and monitor machine learning models within a Kubernetes environment.
@@ -23,7 +23,7 @@ This guide explains how to use the Kubeflow Training Operator to submit, manage,
 To submit a training job, you need to create a YAML manifest file that describes the job. Below is an example YAML file for a TensorFlow training job.
 
 ```yaml
-apiVersion: "kubeflow.org/v1"
+apiVersion: 'kubeflow.org/v1'
 kind: TFJob
 metadata:
   name: example-tfjob
@@ -37,15 +37,15 @@ spec:
           containers:
             - name: tensorflow
               image: tensorflow/tensorflow:2.17.0
-              command: ["python", "/app/train.py"]
-              args: ["--epochs", "5"]
+              command: ['python', '/app/train.py']
+              args: ['--epochs', '5']
               resources:
                 requests:
-                  memory: "4Gi"
-                  cpu: "2"
+                  memory: '4Gi'
+                  cpu: '2'
                 limits:
-                  memory: "4Gi"
-                  cpu: "2"
+                  memory: '4Gi'
+                  cpu: '2'
     Worker:
       replicas: 2
       restartPolicy: OnFailure
@@ -54,15 +54,15 @@ spec:
           containers:
             - name: tensorflow
               image: tensorflow/tensorflow:2.17.0
-              command: ["python", "/app/train.py"]
-              args: ["--epochs", "5"]
+              command: ['python', '/app/train.py']
+              args: ['--epochs', '5']
               resources:
                 requests:
-                  memory: "4Gi"
-                  cpu: "2"
+                  memory: '4Gi'
+                  cpu: '2'
                 limits:
-                  memory: "4Gi"
-                  cpu: "2"
+                  memory: '4Gi'
+                  cpu: '2'
 ```
 
 Common options for `kind` are TFJob for TensorFlow and PyTorchJob for PyTorch.

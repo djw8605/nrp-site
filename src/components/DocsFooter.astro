@@ -33,6 +33,18 @@ export type Props = StarlightFooterProps;
     <slot />
   </Default>
 
+  <!-- Wayfinding back out. Docs entries overwhelmingly arrive from search and
+       land mid-tree; until now the only clue that this surface belonged to
+       nrp.ai was the header title, which linked "home" without saying so.
+       These links name every exit by what it is. -->
+  <nav class="docs-sitelinks" aria-label="More from the National Research Platform">
+    <a href="/">NRP home</a>
+    <a href="/documentation/">Documentation home</a>
+    <a href="/documentation/userdocs/start/faq/">FAQ</a>
+    <a href="/documentation/userdocs/start/support/">Asking for support</a>
+    <a href="/contact/">Contact</a>
+  </nav>
+
   <!-- NSF Acknowledgment Section -->
   <div class="nsf-ack">
     <Image
@@ -59,6 +71,30 @@ export type Props = StarlightFooterProps;
     margin-block-start: 2.5rem;
     padding-block-start: 1.5rem;
     border-block-start: 1px solid var(--sl-color-hairline);
+  }
+
+  .docs-sitelinks {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.5rem;
+    row-gap: 0.375rem;
+    align-items: center;
+    margin-block-start: 2rem;
+    padding-block-end: 1.25rem;
+    font-size: var(--sl-text-sm);
+    line-height: 1.5;
+  }
+
+  .docs-sitelinks a {
+    color: var(--sl-color-text);
+    text-decoration: none;
+    border-block-end: 1px solid transparent;
+  }
+
+  .docs-sitelinks a:hover,
+  .docs-sitelinks a:focus-visible {
+    color: var(--sl-color-text-accent);
+    border-block-end-color: currentColor;
   }
 
   /* Explicit box so the flex sibling cannot crush the seal: the previous

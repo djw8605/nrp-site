@@ -1,6 +1,6 @@
 ---
 title: CPU Throttling
-description: CPU Throttling
+description: "Why CPU limits throttle workloads through cgroups, and how to set requests and limits to avoid it."
 ---
 
 The jobs are running in linux cgroups, and CPU limits are enforced by those. There's a number of issues still pending that result in decreased performance if limits are not set right.

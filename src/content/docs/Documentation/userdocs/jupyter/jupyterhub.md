@@ -1,6 +1,6 @@
 ---
 title: Deploy JupyterHub
-description: Deploy JupyterHub
+description: "Deploy your own JupyterHub for a class or group: shared resources, standardized images, and access control."
 ---
 
 ## Why Deploy Your Own JupyterHub?
@@ -82,7 +82,6 @@ The [template values file](../values) provides a comprehensive starting point wi
 - **Authentication settings** for CILogon integration
 - **HTTPRoute configuration** for external access
 
-
 :::note
 The Nautilus cluster is in the process of migrating from Ingresses to Gateway API HTTPRoute, and services will be exposed on ports 50080 and 50443. (your-name.nrp-nautilus.io will be accessible at your-name.nrp-nautilus.io:50443) for JupyterHub while we finalize migration. You can temporarily proceed to use Ingress for now as provided in the values.yaml example.
 :::
@@ -91,6 +90,7 @@ The Nautilus cluster is in the process of migrating from Ingresses to Gateway AP
 For better support, debugging, and faster turnaround when issues arise, we **strongly recommend adding the NRP admins as admins in your JupyterHub Helm values** when deploying or customizing JupyterHub.
 
 Please include the following admin users:
+
 - `mfsada@ucsd.edu`
 - `d4diaz@ucsd.edu`
 - `dmishin@ucsd.edu`
@@ -100,20 +100,20 @@ If your deployment uses an **institution / IdP allowlist**, make sure **UCSD is 
 Granting admin access enables NRP administrators to inspect hub and user pod state, review logs, and provide effective assistance via the NRP support channels.
 :::
 
-
 ### Adding Your Own Container Image
 
 To add your own custom container image to JupyterHub, you need to modify the `profileList` section in your `values.yaml`:
 
 ```yaml
 profileList:
-  - display_name: "My Custom Environment"
+  - display_name: 'My Custom Environment'
     kubespawner_override:
-      image_spec: "your-registry.com/your-org/your-image:tag"
-    default: false  # Set to true if you want this as the default
+      image_spec: 'your-registry.com/your-org/your-image:tag'
+    default: false # Set to true if you want this as the default
 ```
 
 **Key fields to modify:**
+
 - **`display_name`**: What users see in the profile selector
 - **`image_spec`**: Full path to your container image
 - **`default`**: Whether this profile is selected by default
@@ -191,14 +191,15 @@ docker push your-registry.com/your-org/your-image:tag
 ```
 
 **Available registries on NRP:**
+
 - **GitLab Container Registry**: `gitlab-registry.nrp-nautilus.io/your-project/your-image:tag`
 - **Docker Hub**: `your-username/your-image:tag`
 - **Quay.io**: `quay.io/your-org/your-image:tag`
 
 ### Extending Existing Images
 
-The first method to create your own custom software environment for the JupyterHub instance is to create your own Docker image to be used with the instance. 
-The easiest way to get started is to use a pre-existing image, such as `jupyter/minimal-notebook:latest` for a minimal Jupyter image or using a [Scientific Image](https://nrp.ai/documentation/userdocs/running/sci-img/), then extending either image with the packages you need. If you have an existing image that you would like to make usable within JupyterHub, you will need to install the `jupyterhub` and `notebook` Python packages in your image. 
+The first method to create your own custom software environment for the JupyterHub instance is to create your own Docker image to be used with the instance.
+The easiest way to get started is to use a pre-existing image, such as `jupyter/minimal-notebook:latest` for a minimal Jupyter image or using a [Scientific Image](https://nrp.ai/documentation/userdocs/running/sci-img/), then extending either image with the packages you need. If you have an existing image that you would like to make usable within JupyterHub, you will need to install the `jupyterhub` and `notebook` Python packages in your image.
 
 The general format would be:
 
@@ -209,8 +210,9 @@ FROM <registry_url>/<organization>/<your_project>:<optional_tag>
 pip install --no-cache-dir <packages>
 ```
 
-An example of this would be: 
-``` yaml
+An example of this would be:
+
+```yaml
 FROM jupyter/minimal-notebook:latest
 
 # Install packages
@@ -223,23 +225,24 @@ Once you create your Dockerfile, you can build your image locally and push it to
 
 Sometimes you may want to be able to create custom environments on the fly in your JupyterHub instance and allow them to persist across sessions. This can be useful for development, lab workflows, or exploration assignments in classes.
 
-For this, you will need to complete two steps. 
+For this, you will need to complete two steps.
 
-1. Make sure your Jupyter image has `nb_conda_kernels` installed in the environment. 
-2. Create `.condarc` file in your `$HOME` path and add the config below. 
-    ```yaml
-    envs_dirs:
-      - /home/jovyan/my-conda-envs/
-    ```
+1. Make sure your Jupyter image has `nb_conda_kernels` installed in the environment.
+2. Create `.condarc` file in your `$HOME` path and add the config below.
+   ```yaml
+   envs_dirs:
+     - /home/jovyan/my-conda-envs/
+   ```
 
-After those steps are complete, Anaconda environments can be created within the Jupyter session and persist across sessions after they close. 
+After those steps are complete, Anaconda environments can be created within the Jupyter session and persist across sessions after they close.
 
 ### Adding images to your configuration
 
-In other cases, you may want to set specific environments to use for different tasks, assignments, or labs to avoid many redundent environments. 
+In other cases, you may want to set specific environments to use for different tasks, assignments, or labs to avoid many redundent environments.
 
-The [example values](../values) from earlier in this guide already has a few environments defined that provide a broad range of applications to use. 
+The [example values](../values) from earlier in this guide already has a few environments defined that provide a broad range of applications to use.
 To add your image to the list of available images, you will need to add the values below to your `profileList:`
+
 ```yaml
 - display_name: Name To Show
     kubespawner_override:
@@ -250,30 +253,30 @@ If it is to be the default image, add `default: True`.
 
 ### Shared Storage
 
-If you are working with others on the same project or distributing data out for a class, you can add a `PersisitentVolumeClaim` as a shared location across all of the pods in the JupyterHub instance. 
+If you are working with others on the same project or distributing data out for a class, you can add a `PersisitentVolumeClaim` as a shared location across all of the pods in the JupyterHub instance.
 
 For example, using the example from the [Zero to JupyterHub guide](https://z2jh.jupyter.org/en/stable/jupyterhub/customizing/user-storage.html), we can example the `storage:` section of our example values to:
 
 ```yaml
-  storage:
-    type: dynamic
-    extraLabels: {}
-    # Change starts here
-    extraVolumes:
-      - name: jupyterhub-shared
-        persistentVolumeClaim:
-          claimName: jupyterhub-shared-volume
-    extraVolumeMounts:
-      - name: jupyterhub-shared
-        mountPath: /home/shared
-    # Change Ends
-    capacity: 5Gi
-    homeMountPath: /home/jovyan
-    dynamic:
-      storageClass: rook-ceph-block
-      pvcNameTemplate: claim-{username}{servername}
-      volumeNameTemplate: volume-{username}{servername}
-      storageAccessModes: [ReadWriteOnce]
+storage:
+  type: dynamic
+  extraLabels: {}
+  # Change starts here
+  extraVolumes:
+    - name: jupyterhub-shared
+      persistentVolumeClaim:
+        claimName: jupyterhub-shared-volume
+  extraVolumeMounts:
+    - name: jupyterhub-shared
+      mountPath: /home/shared
+  # Change Ends
+  capacity: 5Gi
+  homeMountPath: /home/jovyan
+  dynamic:
+    storageClass: rook-ceph-block
+    pvcNameTemplate: claim-{username}{servername}
+    volumeNameTemplate: volume-{username}{servername}
+    storageAccessModes: [ReadWriteOnce]
 ```
 
 This would mount the shared storage to `/home/shared` using the `jupyterhub-shared-volume` PVC. Please note, that for the PVC to be used across multiple pods, the volume would need to have an appropriate access mode such as `ReadOnlyMany` or `ReadWriteMany`.
@@ -281,7 +284,7 @@ This would mount the shared storage to `/home/shared` using the `jupyterhub-shar
 ### Authentication
 
 :::note
-This section will be referencing the [example values](../values) for a JupyterHub deployment. 
+This section will be referencing the [example values](../values) for a JupyterHub deployment.
 :::
 
 #### Limit access to your University
@@ -300,18 +303,21 @@ Admin users can be set in the `admin_users` list under `JupyterHub`. Admins are 
 
 ```yaml
 JupyterHub:
-      admin_access: true
-      admin_users: ["admin1_email@domain.com","admin2_email@domain.com"]
+  admin_access: true
+  admin_users: ['admin1_email@domain.com', 'admin2_email@domain.com']
 ```
+
 With the example config, admin users can access another user's notebooks. If you want to disable this, set `admin_access` to `false`
 
 #### Allowed Users
 
 Allowed users can be set in the `allowed_users` list under `JupyterHub`. Admins are identified by their email address used to log into Nautilus.
+
 ```yaml
 JupyterHub:
-      allowed_users: ["admin1_email@domain.com","admin2_email@domain.com"]
+  allowed_users: ['admin1_email@domain.com', 'admin2_email@domain.com']
 ```
+
 With the example config, admin users can access another user's notebooks. If you want to disable this, set `admin_access` to `false`
 
 ## Culling Configuration
@@ -327,10 +333,10 @@ cull:
   enabled: true
   users: false
   removeNamedServers: false
-  timeout: 3600      # 1 hour in seconds - Must be ≤ 21600 (6 hours)
-  every: 600         # Check every 10 minutes
-  concurrency: 10    # Number of parallel culling operations
-  maxAge: 0          # No maximum age limit
+  timeout: 3600 # 1 hour in seconds - Must be ≤ 21600 (6 hours)
+  every: 600 # Check every 10 minutes
+  concurrency: 10 # Number of parallel culling operations
+  maxAge: 0 # No maximum age limit
 ```
 
 ### Culling Parameters
@@ -355,21 +361,19 @@ You should see periodic messages about culling operations.
 
 ## Good Practices
 
-When setting up a custom JupyterHub there are a couple of good practices you can implement to help keep the environment sustainable and secure. 
+When setting up a custom JupyterHub there are a couple of good practices you can implement to help keep the environment sustainable and secure.
 
 ### Limit who has access
 
-When deploying a JupyterHub instance, you should lock down the service to who should have access rather than leaving the instance open. 
+When deploying a JupyterHub instance, you should lock down the service to who should have access rather than leaving the instance open.
 
 At minimum, it should be [limited to your University](#limit-access-to-your-university).Further steps can be taken to limit it to [specific individuals](#allowed-users), which is recommended for labs and small classes.
 
-
 ### Use Git
 
-While developing your configuration, Git will be a useful tool to keep track of any changes you make. 
-If something goes wrong with your configuration, using the history in Git will help revert any changes made that caused the issues. 
+While developing your configuration, Git will be a useful tool to keep track of any changes you make.
+If something goes wrong with your configuration, using the history in Git will help revert any changes made that caused the issues.
 When working with the Nautilus cluster, you can use the [hosted Gitlab instance](https://gitlab.nrp-nautilus.io/) to keep track of the changes and then [automatically deploy the changes](#automatic-deployment).
-
 
 ### Documentation
 

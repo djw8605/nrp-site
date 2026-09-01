@@ -1,12 +1,12 @@
 ---
 title: Getting Certs
-description: Getting Certs
+description: "The cert-manager Issuer and Certificate definitions services need to pull credentials from Vault."
 ---
 
 ## Using cert-manager to generate a certificate from Vault (NSI example)
 
-1. Use [the Vault guide](https://www.vaultproject.io/docs/auth/approle) to generate the approle token for your namespace
-2. Create the Issuer in the namespace to generate the certificate from Vault:
+1.  Use [the Vault guide](https://www.vaultproject.io/docs/auth/approle) to generate the approle token for your namespace
+2.  Create the Issuer in the namespace to generate the certificate from Vault:
 
         apiVersion: cert-manager.io/v1
         kind: Issuer
@@ -34,7 +34,7 @@ description: Getting Certs
           name: cert-manager-vault-approle
         type: Opaque
 
-3. Create the Certificate to retrieve one:
+3.  Create the Certificate to retrieve one:
 
         apiVersion: cert-manager.io/v1
         kind: Certificate

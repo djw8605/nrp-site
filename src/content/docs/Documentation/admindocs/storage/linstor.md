@@ -1,6 +1,6 @@
 ---
-title: Broken Drives
-description: Broken Drives
+title: Linstor Broken Drives
+description: "How to list, detach, and re-attach faulty Linstor storage resources after a drive fails."
 ---
 
 ## Using the linstor console

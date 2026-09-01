@@ -1,6 +1,6 @@
 ---
 title: Long Idle Pods
-description: Long Idle Pods
+description: "Keep an idle but occasionally-used service up past the pod lifetime limit by running it as a Deployment."
 ---
 
 ## Running an idle deployment
@@ -9,7 +9,7 @@ In case you need to have an idle pod in the cluster, that might ocassionally do 
 
 Please don't run such pods as Jobs, since those are not purged by the cleaning daemon and will stay in the cluster forever if you forget to remove those.
 
-Such a deployment **can not request a GPU**. You can use the 
+Such a deployment **can not request a GPU**. You can use the
 
 ```
 command:

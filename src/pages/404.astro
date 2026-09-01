@@ -2,23 +2,39 @@
 import Layout from '~/layouts/Layout.astro';
 import { getHomePermalink } from '~/utils/permalinks';
 
-const title = `Error 404`;
+const title = `Page not found`;
 ---
 
 <Layout metadata={{ title }}>
   <section class="flex items-center h-full p-16">
     <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
       <div class="max-w-md text-center">
-        <h2 class="mb-8 font-bold text-9xl">
-          <span class="sr-only">Error</span>
-          <span class="text-primary">404</span>
-        </h2>
-        <p class="text-3xl font-semibold md:text-3xl">Sorry, we couldn't find this page.</p>
-        <p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
-          But dont worry, you can find plenty of other things on our homepage.
+        <p class="sr-only">Error 404</p>
+        <h1 class="text-h1">Not found</h1>
+        <p class="mt-4 text-lead">
+          But don't worry — <span id="where">plenty of other things are a click away.</span>
         </p>
-        <a rel="noopener noreferrer" href={getHomePermalink()} class="btn ml-4">Back to homepage</a>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a id="home-link" class="btn btn-secondary" href={getHomePermalink()}>Back to nrp.ai</a>
+          <a id="docs-link" class="btn btn-primary" href="/documentation/">Go to the documentation</a>
+        </div>
       </div>
     </div>
   </section>
 </Layout>
+
+<script is:inline>
+  // /documentation/* 404s land here (Starlight's own 404 route is disabled, so there is
+  // only ever one error page). Someone who mistyped a docs URL wants docs back, not the
+  // marketing home — name the address that failed and make Documentation the primary
+  // action, with a Pagefind search to jump straight to what they were after.
+  if (window.location.pathname.startsWith('/documentation')) {
+    const where = document.getElementById('where');
+    if (where) where.textContent = `nothing lives at ${window.location.pathname}.`;
+    const docs = document.getElementById('docs-link');
+    if (docs) {
+      docs.textContent = 'Search the docs';
+      docs.href = '/documentation/';
+    }
+  }
+</script>

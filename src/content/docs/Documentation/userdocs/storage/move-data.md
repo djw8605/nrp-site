@@ -1,6 +1,6 @@
 ---
 title: Moving Data
-description: Moving Data
+description: "Choose how to move data into and out of Nautilus by transfer size, file count, and endpoint."
 ---
 
 ## Into the cluster
@@ -32,17 +32,17 @@ This is the most scalable way, and you can transfer the largest volume and numbe
 Using our [Nextcloud](/documentation/userdocs/storage/nextcloud/) provides a convenient way to sync the data from your local machine, but this way is not too scalable and fast. Also you'll still have to copy the data to the pod from Nextcloud to use it. (The page provides a setup example for rclone which uses the Nextcloud WebDAV interface).
 
 ### Pulling data from inside the pod
- 
- If your data is located in a storage which can be accessed from outside (any cloud provider, a server, etc.), it might be easier to pull the data into your pod. Depending on the data size, you can either:
- 
- * Run an [idle pod](/documentation/userdocs/running/long-idle/), `kubectl exec` into it and manually run a command. You'll have to set up the credentials to access the remote storage.
- * Or, run a [batch job](/documentation/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
 
- The tools you can use include [scp](https://en.wikipedia.org/wiki/Secure_copy) (needs you to set up an ssh key or type the password by hand), [rclone](https://rclone.org/) (supports MANY data storages, and you can copy the config file generated locally), wget/curl (for pulling data from HTTP servers), any other tool for accessing your dataset you might find.
+If your data is located in a storage which can be accessed from outside (any cloud provider, a server, etc.), it might be easier to pull the data into your pod. Depending on the data size, you can either:
+
+- Run an [idle pod](/documentation/userdocs/running/long-idle/), `kubectl exec` into it and manually run a command. You'll have to set up the credentials to access the remote storage.
+- Or, run a [batch job](/documentation/userdocs/running/jobs/) which will do this for you. In this case the pod should have credentials set up at the time it starts. This should be better for large datasets, since you don't have to keep your shell open, and will auto restart if the pod is killed for some reason.
+
+The tools you can use include [scp](https://en.wikipedia.org/wiki/Secure_copy) (needs you to set up an ssh key or type the password by hand), [rclone](https://rclone.org/) (supports MANY data storages, and you can copy the config file generated locally), wget/curl (for pulling data from HTTP servers), any other tool for accessing your dataset you might find.
 
 #### Using secrets
 
- If you need to provide credentials to your data puller as a file, the best way is to use the [kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/). Create a secret in your namespace from a file:
+If you need to provide credentials to your data puller as a file, the best way is to use the [kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/). Create a secret in your namespace from a file:
 
 ```
 kubectl create -n my_namespace secret generic my-secret --from-file=secret.key
@@ -86,7 +86,7 @@ kubectl create -n my_namespace secret generic my-secret --from-literal=pass=my-s
 ```
 
 ```yaml
-  - env:
+- env:
     - name: DB_PASS
       valueFrom:
         secretKeyRef:
@@ -109,25 +109,25 @@ spec:
   template:
     spec:
       containers:
-      - image: gitlab-registry.nrp-nautilus.io/prp/gsutil:latest
-        command:
-        - bash
-        - -c
-        - "gsutil -m rsync -e -r -P /from /to/"
-        imagePullPolicy: Always
-        name: backup
-        volumeMounts:
-        - mountPath: /from
-          name: source
-        - mountPath: /to
-          name: target
-        resources:
-          limits:
-            cpu: "4"
-            memory: 4G
-          requests:
-            cpu: "4"
-            memory: 4G
+        - image: gitlab-registry.nrp-nautilus.io/prp/gsutil:latest
+          command:
+            - bash
+            - -c
+            - 'gsutil -m rsync -e -r -P /from /to/'
+          imagePullPolicy: Always
+          name: backup
+          volumeMounts:
+            - mountPath: /from
+              name: source
+            - mountPath: /to
+              name: target
+          resources:
+            limits:
+              cpu: '4'
+              memory: 4G
+            requests:
+              cpu: '4'
+              memory: 4G
       nodeSelector:
         topology.kubernetes.io/region: us-central
       restartPolicy: Never
@@ -141,7 +141,6 @@ spec:
             readOnly: true
   backoffLimit: 1
 ```
-
 
 For moving data directly between two PersistentVolumeClaims (PVCs), you can also use tools such as [pv-migrate](https://github.com/utkuozdemir/pv-migrate). `pv-migrate` creates temporary Kubernetes resources to copy data from one PVC to another, which can be useful when you need to migrate volumes without manually creating a copy pod.
 

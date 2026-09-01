@@ -1,20 +1,22 @@
 ---
 title: Building in Gitlab
-description: Building in Gitlab
+description: "Build container images with CI pipelines on the platform GitLab instance."
 ---
 
 To learn how to use containers and :fontawesome-brands-docker:Docker on your local machine, refer to our [tutorial section](/documentation/userdocs/tutorial/docker/).
 
-We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source Code Management, [Continuous Integration automation][3], 
+We use our own installation of [:fontawesome-brands-gitlab:GitLab][1] for Source Code Management, [Continuous Integration automation][3],
 containers registry and other development lifecycle tasks. It fully uses Nautilus Cluster resources, which provides our users plenty of storage and fast builds.
-All data from our GitLab except container images are backed up nightly to Google storage, which means there's almost zero chance that you might lose your code in our repository. 
+All data from our GitLab except container images are backed up nightly to Google storage, which means there's almost zero chance that you might lose your code in our repository.
 
 ## Step 1: Create a Git repo
+
 1. To use our GitLab installation, register at [https://gitlab.nrp-nautilus.io][4]
 1. Use GitLab for storing your code like any git repository. Here's [GitLab basics guide][5].
-1. [Create a new project][project] in your GitLab account 
+1. [Create a new project][project] in your GitLab account
 
 ## Step 2: Use Containers Registry
+
 What makes GitLab especially useful for kubernetes cluster in integration with
 Containers Registry. You can store your containers directly in our cluster and
 avoid slow downloads from [DockerHub][dockerhub] (although you're still free to do that as well).
@@ -22,6 +24,7 @@ avoid slow downloads from [DockerHub][dockerhub] (although you're still free to 
 If you wish to use our registry, in your <https://gitlab.nrp-nautilus.io> project go to `Deploy -> Container Registry` menu and read instructions on how to use one.
 
 ## Step 3: Continuous Integration automation
+
 To fully unleash the GitLab powers, introduce yourself to [Continuous Integration automation][3] and more advanced [DevOps article][6].
 
 1. Create the `.gitlab-ci.yml` file in your project, see [Quick start guide][quickstart]. The runners are already configured.  
@@ -32,15 +35,15 @@ To fully unleash the GitLab powers, introduce yourself to [Continuous Integratio
 image: ghcr.io/osscontainertools/kaniko:debug
 
 stages:
-- build-and-push
+  - build-and-push
 
 build-and-push-job:
   stage: build-and-push
   variables:
-    GODEBUG: "http2client=0"
+    GODEBUG: 'http2client=0'
   script:
-  - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-  - /kaniko/executor --cache=true --push-retry=10 --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:latest
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --cache=true --push-retry=10 --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --destination $CI_REGISTRY_IMAGE:latest
 ```
 
 The above Kaniko builder [has severe speed problems pushing to GitLab](https://gitlab.com/gitlab-org/gitlab/-/issues/241996#note_1524123148), which is resolved by setting the environment variable `GODEBUG="http2client=0"`.
@@ -52,30 +55,30 @@ image: docker:dind
 
 default:
   tags:
-  - docker
+    - docker
   before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - docker buildx create --driver docker-container --bootstrap --use
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker buildx create --driver docker-container --bootstrap --use
 
 stages:
-- build-and-push
+  - build-and-push
 
 build-and-push-job:
   stage: build-and-push
   script:
-  - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
 ```
 
-   [More advanced example][portal_example]
+[More advanced example][portal_example]
 
-1. Go to `CI / CD -> Jobs` tab to see in amazement your job running and image being uploaded to your registry. 
+1. Go to `CI / CD -> Jobs` tab to see in amazement your job running and image being uploaded to your registry.
 1. From the `Packages -> Containers Registry` tab get the URL of your image to be included in your pod definition:
 
 ```yaml
 spec:
   containers:
-  - name: my-container
-    image: gitlab-registry.nrp-nautilus.io/<your_group>/<your_project>:<optional_tag>
+    - name: my-container
+      image: gitlab-registry.nrp-nautilus.io/<your_group>/<your_project>:<optional_tag>
 ```
 
 ## Multiarch builds
@@ -93,18 +96,18 @@ image: docker:dind
 
 default:
   tags:
-  - docker
+    - docker
   before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - docker buildx create --driver docker-container --bootstrap --use
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker buildx create --driver docker-container --bootstrap --use
 
 stages:
-- build-and-push
+  - build-and-push
 
 build-and-push-job:
   stage: build-and-push
   script:
-  - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
+    - cd $CI_PROJECT_DIR && docker buildx build -f Dockerfile --push --provenance=false --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest .
 ```
 
 ## Build better containers

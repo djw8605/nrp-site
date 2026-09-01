@@ -1,13 +1,13 @@
 ---
 title: K8s Gitlab Integration
-description: K8s Gitlab Integration
+description: "Give GitLab CI deploy access to your namespace on Nautilus with a service account and RBAC role."
 ---
 
 This page covers integrating GitLab with the Nautilus cluster to automatically deploy from GitLab to Kubernetes via CI/CD jobs.
 
-1. In your project, go to `Operate -> Kubernetes clusters`, click the dropdown in the top right and select `Connect a cluster (certificate - deprecated)`
-1. In the namespace create a GitLab service account: `kubectl create sa gitlab -n <your_namespace>`
-1. Create the rolebinding for the service account:
+1.  In your project, go to `Operate -> Kubernetes clusters`, click the dropdown in the top right and select `Connect a cluster (certificate - deprecated)`
+1.  In the namespace create a GitLab service account: `kubectl create sa gitlab -n <your_namespace>`
+1.  Create the rolebinding for the service account:
 
         kubectl create -f - << EOF
         apiVersion: rbac.authorization.k8s.io/v1
@@ -25,7 +25,7 @@ This page covers integrating GitLab with the Nautilus cluster to automatically d
           namespace: <your_namespace>
         EOF
 
-1. Create a secret for the service account:
+1.  Create a secret for the service account:
 
         kubectl -n <your_namespace> apply -f - << EOF
         apiVersion: v1
@@ -37,20 +37,20 @@ This page covers integrating GitLab with the Nautilus cluster to automatically d
         type: kubernetes.io/service-account-token
         EOF
 
-1. Get the secret and Certificate Authority (CA) for the service account:
+1.  Get the secret and Certificate Authority (CA) for the service account:
 
-      `kubectl get secret -n your_namespace | grep gitlab`
+    `kubectl get secret -n your_namespace | grep gitlab`
 
-      `kubectl get secret -n your_namespace <gitlab-secret-...> -o yaml`
+    `kubectl get secret -n your_namespace <gitlab-secret-...> -o yaml`
 
-      `echo <the token value> | base64 -d` - this will give you the service token field value
-      
-      `echo <the CA value> | base64 -d` - CA
+    `echo <the token value> | base64 -d` - this will give you the service token field value
 
-      API URL - get from your cluster config file (`https://67.58.53.148:443`)
+    `echo <the CA value> | base64 -d` - CA
 
-1. Uncheck `GitLab-managed cluster`, enter the namespace into `Project namespace prefix (optional, unique)`
+    API URL - get from your cluster config file (`https://67.58.53.148:443`)
 
-1. Click `Add kubernetes cluster`
+1.  Uncheck `GitLab-managed cluster`, enter the namespace into `Project namespace prefix (optional, unique)`
+
+1.  Click `Add kubernetes cluster`
 
 Now your cluster config will be available to tools like `kubectl` and `helm` to access your namespace. You can use [this project](https://gitlab.nrp-nautilus.io/prp/jupyterlab-west) as an example of how to automatically deploy a Helm application to your namespace and [this one](https://gitlab.nrp-nautilus.io/prp/nautilus-admission/-/blob/master/.gitlab-ci.yml#L28-39) to automatically update the deployment image.

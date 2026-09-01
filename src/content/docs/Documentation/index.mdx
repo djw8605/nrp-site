@@ -1,62 +1,104 @@
 ---
-title: Getting Started with Nautilus Cluster
-description: Learn how to get access to the Nautilus cluster, run work on it, and find the services the National Research Platform provides.
+title: Getting Started with the National Research Platform
+description: 'Orientation to the NRP: how to get access, what you can run, and where to find the services the National Research Platform provides.'
 ---
-import { LinkCard, CardGrid } from '@astrojs/starlight/components';
 
+import { LinkCard, CardGrid, Steps } from '@astrojs/starlight/components';
+
+The **National Research Platform (NRP)** is an NSF-funded computing
+platform spanning more than 70 research sites. **Nautilus** is its main
+Kubernetes cluster, and most of these pages describe it: you get access,
+work inside a project namespace, then run GPU pods, batch jobs, or
+notebooks on it.
 
 <CardGrid>
-  <LinkCard 
-    title="Get Access" 
+  <LinkCard
+    title="Getting access"
     href="/documentation/userdocs/start/getting-started/"
-    description="Learn how to get access to the Nautilus cluster." />
-    <LinkCard 
-    title="Tutorials" 
-    href="/documentation/userdocs/tutorial/basic/"
-    description="Learn how to use the cluster." />
+    description="Log in through CILogon, join a namespace, and install the tools." />
   <LinkCard
-    title="Cluster Policies" 
+    title="Tutorials"
+    href="/documentation/userdocs/tutorial/introduction/"
+    description="A guided path through containers, pods, jobs, and storage." />
+  <LinkCard
+    title="Cluster Policies"
     href="/documentation/userdocs/start/policies/"
-    description="Learn about the policies of the Nautilus cluster."
-  />
+    description="Acceptable use and access policies for the platform." />
   <LinkCard
-    title="FAQ" 
+    title="FAQ"
     href="/documentation/userdocs/start/faq/"
-    description="Frequently asked questions about the Nautilus cluster."
-    />
-
+    description="Quick answers to the questions we get most often." />
 </CardGrid>
 
+## Your first job, step by step
 
-{/*
-This is a comment in mdx
-- 🚀 [Get access to Nautilus](/documentation/userdocs/start/getting-started/)
-- 📖 [Learn to use the cluster](/documentation/userdocs/tutorial/basic/)
-- 🖥️ [Install tools](/documentation/userdocs/start/getting-started/)
-- 🛡️ [Cluster policies](/documentation/userdocs/start/policies/)
-- ❓ [FAQ](/documentation/userdocs/start/faq/)
-- 📇 [Contact us](/contact/)
-- 🆘 [Asking for support](/documentation/userdocs/start/support/)
--->
-*/}
+<Steps>
 
-## Disclaimers
+1.  [Getting access](/documentation/userdocs/start/getting-started/) —
+    sign in through CILogon and install `kubectl`.
 
-<p style={{ fontWeight: 'bold' }}>
-  The National Research Platform currently has no storage that is suitable for <strong>HIPAA</strong>, <strong>PID</strong>, <strong>FISMA</strong>, <strong>FERPA</strong>, or protected data of any kind. Users are not permitted to store such data on NRP machines.
-</p>
+2.  Join a project. Work runs inside a namespace your
+    [Group Administrator](/documentation/userdocs/start/hierarchy/)
+    creates; getting-started shows how to request one if you do not
+    yet have it.
 
-## Start using the cluster
+3.  Start with a [GPU pod](/documentation/userdocs/running/gpu-pods/)
+    for interactive work, or a
+    [batch job](/documentation/userdocs/running/jobs/) for runs that
+    finish on their own.
 
-- 🔍 [Best ways of using the NRP](/documentation/userdocs/start/using-nautilus/)
-- 🎛️ [Run GPU pod](/documentation/userdocs/running/gpu-pods/)
-- 🎴 [Run batch jobs](/documentation/userdocs/running/jobs/) (**Don't use "sleep" in those**); 🚀 [make them run fast](/documentation/userdocs/running/io-jobs/)
-- 🐳 [Explore the images we provide](/documentation/userdocs/running/sci-img/)
-- 💾 [Use persistent storage](/documentation/userdocs/storage/ceph/) and ☁️ [move your data in and out](/documentation/userdocs/storage/move-data/)
-- 🤖 [Use LLMs we provide](/documentation/userdocs/ai/llm-managed/) or run yours 🧠 [in JupyterHub](/documentation/userdocs/jupyter/jupyter-pod/)
+4.  Keep your results on
+    [persistent storage](/documentation/userdocs/storage/ceph/) and
+    [move data in and out](/documentation/userdocs/storage/move-data/)
+    when you are done.
 
-## Other links
+</Steps>
 
-- 💎 [Services you can use](/documentation/userdocs/start/resources/) (many require separate registration)
-- 🗺️ [Cluster nodes map](https://elastic-igrok.nrp-nautilus.io/login?next=%2Fapp%2Fdashboards%3Fauth_provider_hint%3Danonymous1&auth_provider_hint=anonymous1#/view/76b9b030-81d5-11eb-ad7c-1f5ec373b923?_g=(filters%3A!())) and 🔗 [Busy cluster map with all connections](https://traceroute.nrp-nautilus.io)
-- 📊 [Dashboard](https://dash.nrp-nautilus.io/)
+:::caution[Data policy]
+The National Research Platform currently has no storage that is
+suitable for **HIPAA**, **PID**, **FISMA**, **FERPA**, or protected
+data of any kind. Users are not permitted to store such data on NRP
+machines. Unsure whether your data counts as protected?
+[Ask us](/documentation/userdocs/start/support/) before you store it.
+:::
+
+## Beyond your first job
+
+Everything linked here complements the steps above — not repeats of them.
+
+**Ways of working**
+
+- [Best ways of using the NRP](/documentation/userdocs/start/using-nautilus/) —
+  recommended patterns for everyday use.
+- [Run CPU-only jobs](/documentation/userdocs/running/cpu-only/) —
+  batch work that does not need GPUs.
+- [Run a notebook](/documentation/userdocs/jupyter/jupyter-pod/) —
+  Jupyter inside a pod on your own resources.
+
+**Apps and data**
+
+- [Expose an app over HTTP](/documentation/userdocs/running/ingress/) —
+  give your service a public URL.
+- [Find a base image](/documentation/userdocs/running/sci-img/) —
+  scientific images the NRP maintains.
+- [Use the managed LLM endpoints](/documentation/userdocs/ai/llm-managed/) —
+  models the NRP hosts for you.
+- [Deployed services](/documentation/userdocs/start/resources/) —
+  data sources and tools; many require separate registration.
+
+## Live cluster status
+
+Where the cluster stands right now:
+
+<CardGrid>
+  <LinkCard
+    title="Cluster resources"
+    href="/viz/resources/"
+    description="Current availability across the platform's clusters." />
+  <LinkCard
+    title="NRP site map"
+    href="https://dash.nrp-nautilus.io/map"
+    target="_blank"
+    rel="noopener"
+    description="Every NRP site and its current state." />
+</CardGrid>

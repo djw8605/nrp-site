@@ -1,6 +1,6 @@
 ---
 title: Faster Image Download
-description: Faster Image Download
+description: "Speed up pod starts with spegel peer image caching, and notes on the deprecated Uber Kraken setup."
 ---
 
 ## Spegel image cache

@@ -1,13 +1,14 @@
 ---
 title: Container images on CVMFS
-description: Container images on CVMFS
+description: "Use the NRP software repository on CVMFS for reproducible, shareable command-line environments."
 ---
 
 [CVMFS](https://cernvm.cern.ch/fs/) is a distributed filesystem that allows you to mount software repositories and datasets on your device. NRP hosts an application repository `/cvmfs/nrp-software.opensciencegrid.org` to give users access to a reproducible, ready-to-use environment to share and use data through CVMFS. In this tutorial, we'll go through steps distributing and using container images to the CVMFS repo hosted by NRP.
 
-**Access to container images distributed to CVMFS is available globally.  For example, the CVMFS data repository is also availabale on the [OSG OSPool](https://osg-htc.org/services/ospool/), not just limited to the NRP environment. And other repositories in CVMFS can also be accessed from NRP environment.**
+**Access to container images distributed to CVMFS is available globally. For example, the CVMFS data repository is also availabale on the [OSG OSPool](https://osg-htc.org/services/ospool/), not just limited to the NRP environment. And other repositories in CVMFS can also be accessed from NRP environment.**
 
 ## Learning Objectives
+
 1. How to create your own data images.
 2. How to distribute images into CVMFS.
 3. How to use the images distributed in CVMFS
@@ -15,6 +16,7 @@ description: Container images on CVMFS
 ## Prerequisites
 
 In order to complete this tutorial, you should have gone through the [Quickstart](/documentation/userdocs/start/getting-started/), and finished these tutorials:
+
 1. [Basic Kubernetes](/documentation/userdocs/tutorial/basic)
 2. [Storage](/documentation/userdocs/tutorial/storage)
 3. [Docker Images](/documentation/userdocs/tutorial/images)
@@ -26,25 +28,29 @@ You will also need knowlege regarding [Creating a pull request from a fork](http
 Here we focus on how to create a customized data container image. We suppose that you have setup your enviroment according to the [Docker Images](/documentation/userdocs/tutorial/images) tutorial.
 
 ### 1. Put installation instructions in a `Dockerfile`
-A `Dockerfile` is a plain text file with keywords and commands that can be used to create a new container image. Here is an example to build an image based on [python:3](https://hub.docker.com/_/python) with the `jupyter` package, and a data file called `data.txt`. 
+
+A `Dockerfile` is a plain text file with keywords and commands that can be used to create a new container image. Here is an example to build an image based on [python:3](https://hub.docker.com/_/python) with the `jupyter` package, and a data file called `data.txt`.
 
 ```
 FROM python:3
-RUN pip install jupyter 
+RUN pip install jupyter
 ADD data.txt /data.txt
 ```
 
-* `FROM`, indicates which container image we’re starting with. We use [python:3](https://hub.docker.com/_/python) as the base image.
-* `RUN`, indicates installation commands we want to run while building the image. Here we use `pip` to install the `jupyter` package.
-* `ADD`, indicates the local or remote files or directories to be included in the image. Here we include a local file `data.txt` in the image.
+- `FROM`, indicates which container image we’re starting with. We use [python:3](https://hub.docker.com/_/python) as the base image.
+- `RUN`, indicates installation commands we want to run while building the image. Here we use `pip` to install the `jupyter` package.
+- `ADD`, indicates the local or remote files or directories to be included in the image. Here we include a local file `data.txt` in the image.
 
 ### 2. Build the image
+
 Run the following command to build the image in the same directory with the `Dockerfile` and `data.txt` files:
+
 ```sh
 docker build . -t my-data-container:latest
 ```
 
-### 3. Push the image to a container registry 
+### 3. Push the image to a container registry
+
 In Step 2, we built a local image. If you have an account on [Docker Hub](https://docs.docker.com/docker-hub/), you can run the following commands to tag the image and push it there:
 
 ```sh
@@ -72,7 +78,7 @@ If new versions of images have been pushed to the registry, they will be detecte
 
 ## Accessing unpacked container images
 
-### Creating a PVC volume with the spec `storageClassName: cvmfs` 
+### Creating a PVC volume with the spec `storageClassName: cvmfs`
 
 To access images distributed in CVMFS, you need to attach the CVMFS volume which can mount all repos. First, create the PVC (taken from [https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example](https://github.com/cvmfs-contrib/cvmfs-csi/tree/master/example) ):
 
@@ -83,7 +89,7 @@ metadata:
   name: cvmfs
 spec:
   accessModes:
-  - ReadOnlyMany
+    - ReadOnlyMany
   resources:
     requests:
       # Volume size value has no effect and is ignored
@@ -95,6 +101,7 @@ spec:
 ### Using the `cvmfs` PVC in pods
 
 #### Option 1, mount the entire CVMFS
+
 Create a pod with the following yaml file:
 
 ```yaml
@@ -104,50 +111,54 @@ metadata:
   name: cvmfs-all-repos
 spec:
   containers:
-   - name: idle
-     image: busybox
-     imagePullPolicy: IfNotPresent
-     command: [ "/bin/sh", "-c", "trap : TERM INT; (while true; do sleep 1000; done) & wait" ]
-     volumeMounts:
-       - name: my-cvmfs
-         mountPath: /my-cvmfs
-         # CVMFS automount volumes must be mounted with HostToContainer mount propagation.
-         mountPropagation: HostToContainer
+    - name: idle
+      image: busybox
+      imagePullPolicy: IfNotPresent
+      command: ['/bin/sh', '-c', 'trap : TERM INT; (while true; do sleep 1000; done) & wait']
+      volumeMounts:
+        - name: my-cvmfs
+          mountPath: /my-cvmfs
+          # CVMFS automount volumes must be mounted with HostToContainer mount propagation.
+          mountPropagation: HostToContainer
   volumes:
-   - name: my-cvmfs
-     persistentVolumeClaim:
-       claimName: cvmfs
+    - name: my-cvmfs
+      persistentVolumeClaim:
+        claimName: cvmfs
 ```
 
-In this example, the `nrp-software.opensciencegrid.org` repo is accessible at `/my-cvmfs/nrp-software.opensciencegrid.org` in the pod. Notice that repo is mounted unless the mount point is accessed. 
+In this example, the `nrp-software.opensciencegrid.org` repo is accessible at `/my-cvmfs/nrp-software.opensciencegrid.org` in the pod. Notice that repo is mounted unless the mount point is accessed.
 
 #### Option 2, mount the `nrp-software.opensciencegrid.org` repo specifically
+
 If you need to mount the `nrp-software.opensciencegrid.org` repo specifically, add the `subPath` key to the pod's `volumeMounts` section:
 
 ```yaml
-     volumeMounts:
-       - name: my-cvmfs
-         # It is possible to mount a single CVMFS repository by specifying subPath.
-         subPath: nrp-software.opensciencegrid.org
-         mountPath: /my-nrp-software-cvmfs
-         mountPropagation: HostToContainer
+volumeMounts:
+  - name: my-cvmfs
+    # It is possible to mount a single CVMFS repository by specifying subPath.
+    subPath: nrp-software.opensciencegrid.org
+    mountPath: /my-nrp-software-cvmfs
+    mountPropagation: HostToContainer
 ```
+
 In this example, the repo is accessible at `/my-nrp-software-cvmfs`, but other repos in CVMFS are not available in the pod.
 
 ### Mount the `cvmfs` PVC in customized JupyterHub deployment
+
 If you have a [customized JupyterHub deployment](/documentation/userdocs/jupyter/jupyterhub), you can make CVMFS available in user spawned instances. Suppose a `cvmfs` PVC has been created in the namespace where the Jupyterhub is depoloyed, and you want to mount the CVMFS repo `nrp-software.openscience.org` at /nrp-software in every user's pod, you can insert the following example into the JupyterHub's value template (e.g. config.yaml):
 
 ```yaml
 singleuser:
   storage:
-    extraVolumes: 
+    extraVolumes:
       - name: nrp-software
         persistentVolumeClaim:
           claimName: cvmfs
-    extraVolumeMounts: 
+    extraVolumeMounts:
       - name: nrp-software
         mountPath: /nrp-software
         subPath: nrp-software.opensciencegrid.org
         mountPropagation: HostToContainer
 ```
+
 And then update the helm chart by command `helm upgrade --cleanup-on-fail --install jhub jupyterhub/jupyterhub --namespace <namespace> --version=<version> --values config.yaml`. When the JupyterHub is deployed, the images in `nrp-software.opensciencegrid.org` CVMFS repo is mounted as /nrp-software when users spawn new pods.

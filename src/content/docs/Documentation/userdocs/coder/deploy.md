@@ -1,6 +1,6 @@
 ---
 title: Deploying Coder
-description: Deploying Coder
+description: "Deploy your own Coder instance in a namespace, with admin control over templates and users."
 ---
 
 This guide walks you through deploying a Coder instance in your own namespace on Nautilus, where you can have admin control, customize templates, and manage users. The instructions here are based on Coder's official [Kubernetes installation guide](https://coder.com/docs/install/kubernetes) with some adjustments for Nautilus.
@@ -29,7 +29,7 @@ If Helm is not already installed, follow the [official Helm installation guide](
 
 Create a PostgreSQL instance in your namespace by following the [PostgreSQL setup guide](https://nrp.ai/documentation/userdocs/running/postgres/).
 
-- **Requirements**: 
+- **Requirements**:
   - Namespace: Your project namespace
   - Username: `coder`
   - Database: `coder`
@@ -67,49 +67,49 @@ Create a `values.yaml` file with the configuration settings:
 ```yaml
 coder:
   env:
-  - name: CODER_ACCESS_URL
-    value: https://your_name.nrp-nautilus.io
-  - name: CODER_WILDCARD_ACCESS_URL
-    value: '*.your_name.nrp-nautilus.io'
-  - name: CODER_PG_CONNECTION_URL
-    valueFrom:
-      secretKeyRef:
-        key: url
-        name: coder-db-url
-#  - name: CODER_OIDC_ISSUER_URL
-#    value: https://cilogon.org
-#  - name: CODER_OIDC_CLIENT_ID
-#    valueFrom:
-#      secretKeyRef:
-#        key: client
-#        name: coder-cilogon
-#  - name: CODER_OIDC_CLIENT_SECRET
-#    valueFrom:
-#      secretKeyRef:
-#        key: secret
-#        name: coder-cilogon
-#  - name: CODER_GITAUTH_0_ID
-#    value: gitlab
-#  - name: CODER_GITAUTH_0_TYPE
-#    value: gitlab
-#  - name: CODER_GITAUTH_0_CLIENT_ID
-#    valueFrom:
-#      secretKeyRef:
-#        key: client
-#        name: coder-gitlab
-#  - name: CODER_GITAUTH_0_CLIENT_SECRET
-#    valueFrom:
-#      secretKeyRef:
-#        key: secret
-#        name: coder-gitlab
-#  - name: CODER_GITAUTH_0_AUTH_URL
-#    value: https://gitlab.nrp-nautilus.io/oauth/authorize
-#  - name: CODER_GITAUTH_0_TOKEN_URL
-#    value: https://gitlab.nrp-nautilus.io/oauth/token
-#  - name: CODER_GITAUTH_0_VALIDATE_URL
-#    value: https://gitlab.nrp-nautilus.io/oauth/token/info
-#  - name: CODER_OIDC_ALLOW_SIGNUPS
-#    value: "false"
+    - name: CODER_ACCESS_URL
+      value: https://your_name.nrp-nautilus.io
+    - name: CODER_WILDCARD_ACCESS_URL
+      value: '*.your_name.nrp-nautilus.io'
+    - name: CODER_PG_CONNECTION_URL
+      valueFrom:
+        secretKeyRef:
+          key: url
+          name: coder-db-url
+  #  - name: CODER_OIDC_ISSUER_URL
+  #    value: https://cilogon.org
+  #  - name: CODER_OIDC_CLIENT_ID
+  #    valueFrom:
+  #      secretKeyRef:
+  #        key: client
+  #        name: coder-cilogon
+  #  - name: CODER_OIDC_CLIENT_SECRET
+  #    valueFrom:
+  #      secretKeyRef:
+  #        key: secret
+  #        name: coder-cilogon
+  #  - name: CODER_GITAUTH_0_ID
+  #    value: gitlab
+  #  - name: CODER_GITAUTH_0_TYPE
+  #    value: gitlab
+  #  - name: CODER_GITAUTH_0_CLIENT_ID
+  #    valueFrom:
+  #      secretKeyRef:
+  #        key: client
+  #        name: coder-gitlab
+  #  - name: CODER_GITAUTH_0_CLIENT_SECRET
+  #    valueFrom:
+  #      secretKeyRef:
+  #        key: secret
+  #        name: coder-gitlab
+  #  - name: CODER_GITAUTH_0_AUTH_URL
+  #    value: https://gitlab.nrp-nautilus.io/oauth/authorize
+  #  - name: CODER_GITAUTH_0_TOKEN_URL
+  #    value: https://gitlab.nrp-nautilus.io/oauth/token
+  #  - name: CODER_GITAUTH_0_VALIDATE_URL
+  #    value: https://gitlab.nrp-nautilus.io/oauth/token/info
+  #  - name: CODER_OIDC_ALLOW_SIGNUPS
+  #    value: "false"
   ingress:
     className: haproxy
     enable: true
@@ -158,18 +158,17 @@ Visit `https://your_name.nrp-nautilus.io` to access your Coder instance.
 
 You can add your own templates or use the examples we have at [NRP Coder Templates](https://gitlab.nrp-nautilus.io/prp/coder-templates).
 
-
 :::note
 For better support, debugging, and faster turnaround when issues arise, we **strongly recommend adding the NRP admins as admins in your Coder instance** when deploying or customizing Coder.
 
 Please include the following admin users:
+
 - `mfsada@ucsd.edu`
 - `d4diaz@ucsd.edu`
 - `dmishin@ucsd.edu`
 
 Granting admin access enables NRP administrators to inspect Coder from within and provide effective assistance via the NRP support channels.
 :::
-
 
 ---
 

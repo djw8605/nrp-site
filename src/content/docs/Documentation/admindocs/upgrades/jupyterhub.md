@@ -1,6 +1,6 @@
 ---
 title: JupyterHub
-description: JupyterHub
+description: "Keep the hosted JupyterHub current: update image versions and the West profiles list."
 ---
 
 ## Updating external images definitions

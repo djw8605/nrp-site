@@ -1,6 +1,6 @@
 ---
 title: Basic Kubernetes (k8s) Tutorial
-description: Basic Kubernetes (k8s) Tutorial
+description: "Hands-on basics: first kubectl commands, a pod, a deployment, and querying cluster status."
 ---
 
 In this tutorial, you will be introduced to basic k8s commands, how to launch simple pods and deployments, as well as interact with the cluster to query its status and the status of your processes running in the cluster. You will also see your first example of a YAML file.
@@ -10,9 +10,11 @@ Throughout these tutorials, you may see a "Question?". This is an opportunity fo
 :::
 
 ## Prerequisites
+
 This section assumes you've completed the [quickstart](/documentation/userdocs/start/getting-started/) section.
 
 ## Learning Objectives
+
 1. You will understand the basic format of k8s commands.
 2. You will be able to use k8s commands to interact with the cluster.
 3. You will have a basic understanding of YAML and you will be able to use that to create a simple pod.
@@ -40,19 +42,22 @@ The Nautilus Cluster is widely geographically distributed and highly heterogenou
 ```bash
 kubectl get nodes
 ```
+
 **Please note**: You likely won't have access to all the nodes listed, as some are reserved.
 
 ### List processes running in your namespace
+
 There are three categories of processes we will examine:
+
 - [pods](/documentation/userdocs/start/glossary)
 - [deployments](/documentation/userdocs/start/glossary)
 - [services](/documentation/userdocs/start/glossary)
 
 Listing the categories running in k8s follows a similar format.
 
-  ```bash
-  kubectl get <category>
-  ```
+```bash
+kubectl get <category>
+```
 
 Right now you probably don't have anything running in the namespace, and these commands will return `No resources found in ... <namespace>.` but you will revisit these commands as we step through the tutorials as a way of checking on status.
 
@@ -63,13 +68,17 @@ List all the pods in your namespace
 ```bash
 kubectl get pods
 ```
+
 #### List deployments
+
 List all the deployments in your namespace
 
 ```bash
 kubectl get deployments
 ```
+
 #### List services
+
 List all the services in your namespace
 
 ```bash
@@ -80,10 +89,9 @@ kubectl get services
 
 Let’s create a simple generic pod, and then login into it.
 
- ### A simple YAML file <a id="pod1"></a>
+### A simple YAML file <a id="pod1"></a>
 
 Create the `pod1.yaml` file with the following contents by copy-pasting:
-
 
 ```yaml
 // pod1.yaml
@@ -104,6 +112,7 @@ spec:
         cpu: 200m
     command: ["sh", "-c", "echo 'Im a new pod' && sleep infinity"]
 ```
+
 **Reminder**: Indentation is important in YAML, just like in Python
 
 :::tip[A simple way to create a file un Unix]
@@ -114,10 +123,11 @@ There are many ways to create a file and put data into it in Unix. One of the ea
 cat > <name_of_new_file>
 ```
 
-You can then paste any copied text or type directly into the command line interface. Once you are done, you can ``control-c`` out of the input stream. This will do the job without leaving the command line interface. Try it by copying the ``pod1.yaml`` sample above, and then pasting it into a new file using the Unix `cat` command.
+You can then paste any copied text or type directly into the command line interface. Once you are done, you can `control-c` out of the input stream. This will do the job without leaving the command line interface. Try it by copying the `pod1.yaml` sample above, and then pasting it into a new file using the Unix `cat` command.
 :::
 
 ### Creating YAML files dynamically
+
 Alternatively, if you don't want to create a file and are using Unix-like system, you can create YAML files dynamically like this:
 
 ```bash
@@ -127,6 +137,7 @@ EOF
 ```
 
 ### Launch a simple pod
+
 Making sure you are in the same file directory as your `pod1.yaml` file, type the following command:
 
 ```bash
@@ -152,8 +163,8 @@ Events and other useful information about the pod can be seen in `describe`:
 ```bash
 kubectl describe pod test-pod
 ```
-:question: Where did the name *test-pod* come from? Examine the `pod1.yaml` file to find the answer.
 
+:question: Where did the name _test-pod_ come from? Examine the `pod1.yaml` file to find the answer.
 
 If the pod is in Running state, we can check it's logs
 
@@ -166,6 +177,7 @@ Let’s log into it
 ```bash
 kubectl exec -it test-pod -- /bin/bash
 ```
+
 :::tip[There's a relationship between the operating system and the command line interpreter]
 
 The last part of this command, specifying `bash` can change, depending on the operating system we choose. Keep this in mind when you deploy operating systems other than Ubuntu.
@@ -182,7 +194,7 @@ If yes, you are now inside the (container in the) pod!
 Does it feel any different than a regular, dedicated node?
 :::
 
-Try to create some directories and some files with content (using the ``cat`` command, if you like). "Hello world" will do, but feel free to be creative.
+Try to create some directories and some files with content (using the `cat` command, if you like). "Hello world" will do, but feel free to be creative.
 
 ### Let's examine the pod's networking
 
@@ -202,16 +214,19 @@ First, let's make sure our installation tools are updated.
 ```bash
 apt update
 ```
+
 Now, we can use apt to install the necessary network tools.
 
 ```bash
 apt install net-tools
 ```
+
 Now check the networking:
 
 ```bash
 ifconfig -a
 ```
+
 :::note[Question?]
 What did you discover? Does the output look like you'd expect?
 :::
@@ -244,8 +259,8 @@ If yes, let’s create it again:
 ```bash
 kubectl create -f pod1.yaml
 ```
-:::
 
+:::
 
 :::tip[Accessing prior commands from the CLI]
 
@@ -256,7 +271,7 @@ Most command line interfaces store the most recent commands you have entered. Yo
 
 Give the system a moment to create the new pod.
 
-:::note[Question?] 
+:::note[Question?]
 
 Does it have the same IP? We can check by using the following command:
 
@@ -269,11 +284,12 @@ Log back into the pod:
 ```
 kubectl exec -it test-pod -- /bin/bash
 ```
+
 :::
 
 Now, let's look for the files you created with the `cat` command. Are they where you left them? What is the status of the files your created?
 
-:::note[Question?] 
+:::note[Question?]
 
 How does this exercise demonstrate "statelessness" and what are the implications for how I prepare for the inevitable and normal restarting of a pod?
 :::
@@ -295,8 +311,6 @@ You saw that when a pod was terminated, it was gone. While above we did it by ou
 In order to specify to the cluster your "desired state", the use of Deployments is recommended.
 
 You can copy-and-paste the lines below into a new file on your local system (using the `cat` command, if you like).
-
-
 
 ```yaml title="Deployment 1"
 // dep1.yaml
@@ -343,7 +357,7 @@ kubectl get deployments
 
 :::tip[The Deployment is just a conceptual service]
 
-It describes to the cluster the *ideal state* of your pods. It doesn't actually do more than that. In this case, the *ideal state* is a single replica of the container called "mypod".
+It describes to the cluster the _ideal state_ of your pods. It doesn't actually do more than that. In this case, the _ideal state_ is a single replica of the container called "mypod".
 :::
 
 See if you can find the associated pod:
@@ -362,6 +376,7 @@ kubectl exec -it test-dep-<hash> -- /bin/bash
 You are now inside the (container in the) pod!
 
 ### Testing statelessness with deployments
+
 Create directories and files as before.
 
 Try various commands as before.
@@ -420,5 +435,3 @@ kubectl get pods
 ## Next steps
 
 In the next [tutorial](../basic2), we will explore how to run a simple web server in a pod, and how to expose it to the outside world and scale it.
-
-

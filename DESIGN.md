@@ -605,16 +605,16 @@ by `common/AnnouncementBar.astro`.)
 
 **Still legacy**:
 
-| Component                                        | Notes                                                |
-| ------------------------------------------------ | ---------------------------------------------------- |
-| `widgets/MatrixFeed.astro`, `MatrixList.astro`   | live chat feed                                       |
-| `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                |
-| `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                  |
-| `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset |
+| Component                                        | Notes                                                                                 |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `widgets/MatrixFeed.astro`, `MatrixList.astro`   | live chat feed                                                                        |
+| `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                                                 |
+| `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                                                   |
+| `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset                                  |
 | `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the docs model catalogue, not `/llms`' grid; `--sl-*` styled for the Starlight island |
-| `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp       |
-| `layouts/MarkdownLayout.astro`                   | see below — two pages left                           |
-| `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`         |
+| `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp                                        |
+| `layouts/MarkdownLayout.astro`                   | see below — two pages left                                                            |
+| `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`                                          |
 
 `MarkdownLayout.astro` is the one still worth calling out, because everything it renders inherits the
 problems rather than declaring them: a `max-w-4xl` container on a `max-w-6xl` site, an `<h1>` at
@@ -624,16 +624,41 @@ is now an `.astro` page; `get-access.md` and `7nrp-travel-support.md` are what r
 
 ---
 
-## 11. Out of scope: the Starlight docs
+## 11. The Starlight docs bridge
 
-`/documentation` is a separate Starlight app and is **deliberately not covered** by this system. It
-currently uses the system-ui font stack rather than the brand faces, a background of `#17181c` rather
-than `#0a1118`, a different accent blue (`hsl(224 100% 60%)`), a 42px `<h1>` against the marketing
-site's 60px, and a header reading "NRP Nautilus" as text rather than the logo — with no navigation
-back to the main site, so a visitor arriving from a search engine is stranded.
+`/documentation` is a separate Starlight app, but it is no longer a separate visual world.
+[`extra.css`](src/content/docs/Documentation/styles/extra.css) (the `customCss` entry) retargets
+Starlight's own token layer onto this system — and because the docs bundle never loads
+`CustomStyles.astro`, it does so with **literal values that mirror §2**. If a ramp value changes
+there, change it here; the comment in the file says the same.
 
-Unifying it means feeding these tokens into Starlight's `--sl-color-*` variables and overriding its
-`Header`/`SiteTitle` components. Worth doing; it is simply not part of this pass.
+What the bridge feeds in:
+
+- **Surfaces.** Dark page `#0a1118`, header/sidebar rail `#101a24` (surface-1), inline-code plates
+  `#17242f` (surface-2). Light page `#ffffff`, header `#f7f9fb`. Text roles map to the `--nrp-text-*`
+  values for each mode.
+- **Accent.** Links and current-page markers use the mode-paired picks from §2 — `teal-300` text on
+  dark, `teal-700` on white (6.13:1, better than the AstroWind blue the marketing site replaced).
+  The legacy default `hsl(224 …)` blues are gone from chrome; note-asides ride the same axis via
+  `--sl-hue-blue: 193`, while caution/danger sematics keep Starlight's hues.
+- **Type.** The three faces load right there (`@import '@fontsource-variable/*'`) and bind to
+  `--sl-font` / `--sl-font-mono`; headings select Space Grotesk by rule. Starlight's own scale
+  (h1…h5 within a 1.5:1 range) was widened to ~1.2 ratio steps over the 16px body, up to a 46px
+  desktop h1.
+- **Header identity.** `logo` in the Starlight config renders the gradient wordmark beside the
+  title; the title reads "NRP Documentation", never a compound "NRP Nautilus" name (§12).
+- **Wayfinding.** `DocsPageTitle.astro` renders a trail (Documentation › group › group … › page)
+  computed from Starlight's own generated sidebar data, so it cannot drift from the tree.
+  `DocsFooter.astro` carries named exits to the main site (NRP home, Documentation home, FAQ,
+  asking-for-support, contact). `/documentation/*` 404s land on the single site 404, whose inline
+  script names the failed path and makes Documentation the primary action.
+- **Search-engine arrival.** Docs frontmatter `description` is a one-sentence capability promise
+  ("Request GPUs in a pod spec, including …"), never a parroting of `title` — this audience arrives
+  from Google snippets first.
+
+What is deliberately **not** bridged: Starlight's component chrome (sidebar geometry, aside shapes,
+pagination) stays Stock, because reimplementing a docs framework is not the same as coloring one —
+and §5's geometry and §4's container rules are Tailwind-coupled and apply to marketing pages only.
 
 **One deliberate exception to the teal-ramp rule lives here.** The benchmark chart on
 `/documentation/userdocs/ai/llm-managed/models` colours each bar by the model's creator, from a

@@ -1,6 +1,6 @@
 ---
 title: Scientific Images
-description: Scientific Images
+description: "Pick a ready scientific Python, R, or notebook image for a pod or JupyterHub from the stacks we mirror."
 ---
 
 This page is mostly related to our [Official JupyterHub](https://jupyterhub-west.nrp-nautilus.io), but all images can be also used in other pods deployed directly on the cluster.

@@ -1,15 +1,11 @@
 ---
 title: Running Batch Jobs
-description: Running Batch Jobs
+description: "Package a finite piece of computation as a Kubernetes batch job and let it run unattended."
 ---
 
-The Nautilus Cluster is designed specifically to support high-throughput batch jobs.  
-
-
+The Nautilus Cluster is designed specifically to support high-throughput batch jobs.
 
 In Kubernetes, a batch job is a type of workload designed to run a finite number of tasks to completion, as opposed to continuously running or long-lived services. Batch jobs are ideal for executing tasks such as data processing, data analysis, batch data updates, backups, or any other task that needs to be performed periodically or on-demand.
-
-
 
 A batch job (or simply, a job) is a daemon which watches your pod and makes sure it exited with exit status 0. If it did not for any reason, it will be restarted up to `backoffLimit` number of times.
 
@@ -24,6 +20,7 @@ A Job is a higher-level abstraction that manages a Pod. A Job will ensure that t
 This section builds on skills from both the [Quickstart](/documentation/userdocs/start/getting-started/) and the tutorial on [Basic Kubernetes](/documentation/userdocs/tutorial/basic).
 
 ## Learning Objectives
+
 1. You will learn how to create a simple job that will execute a command, then run to completion.
 2. You will have a preliminary understanding of job states, such as "Completed" or "Error".
 3. You will understand how to set limits to jobs
@@ -47,16 +44,16 @@ spec:
   template:
     spec:
       containers:
-      - name: pi
-        image: perl
-        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-        resources:
-           limits:
-             memory: 200Mi
-             cpu: 1
-           requests:
-             memory: 50Mi
-             cpu: 50m
+        - name: pi
+          image: perl
+          command: ['perl', '-Mbignum=bpi', '-wle', 'print bpi(2000)']
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 1
+            requests:
+              memory: 50Mi
+              cpu: 50m
       restartPolicy: Never
   backoffLimit: 4
 ```
@@ -73,10 +70,10 @@ When job is finished, your pod will stay in Completed state, and Job will have C
 :::tip[How would you diagnose and fix a Job that exited with the code "error"?]
 
 You could view the logs of the job with the logs command:
-  
-  ```bash
-  kubectl logs pi-<hash>
-  ```
+
+```bash
+kubectl logs pi-<hash>
+```
 
 :::
 

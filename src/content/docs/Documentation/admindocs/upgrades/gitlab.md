@@ -1,6 +1,6 @@
 ---
 title: GitLab
-description: GitLab
+description: "Upgrade the platform GitLab instance, including the notes on CI runners and GitLab agents."
 ---
 
 ## Upgrading GitLab

@@ -1,6 +1,6 @@
 ---
 title: GUI Desktop
-description: GUI Desktop
+description: "Deploy a browser-based GUI desktop pod in your own namespace; Coder and JupyterHub are the preferred routes."
 ---
 
 **Note that Coder (<https://coder.nrp-nautilus.io>) and JupyterHub West (<https://jupyterhub-west.nrp-nautilus.io/>) are currently the preferred methods to deploy the GUI Desktop containers. Use the below instructions if you want to deploy in your own namespace.**
@@ -33,12 +33,12 @@ Add GPU resources to your deployment by modifying the `resources` section:
 resources:
   limits:
     memory: 64Gi
-    cpu: "16"
-    nvidia.com/gpu: 1  # Request 1 GPU
+    cpu: '16'
+    nvidia.com/gpu: 1 # Request 1 GPU
   requests:
     memory: 100Mi
     cpu: 100m
-    nvidia.com/gpu: 1  # Request 1 GPU
+    nvidia.com/gpu: 1 # Request 1 GPU
 ```
 
 ### Hardware Encoding
@@ -47,11 +47,12 @@ For NVIDIA GPUs, you can use hardware-accelerated encoding by setting the encode
 
 ```yaml
 env:
-- name: SELKIES_ENCODER
-  value: "nvh264enc"  # Use NVIDIA hardware encoding
+  - name: SELKIES_ENCODER
+    value: 'nvh264enc' # Use NVIDIA hardware encoding
 ```
 
 **Note:** Hardware encoding requires:
+
 - NVIDIA GPU with NVENC support
 - Proper NVIDIA drivers installed on the node
 - The `nvidia.com/gpu` resource request
@@ -80,13 +81,14 @@ If you are using the Nautilus coTURN server for other WebRTC workloads, make sur
 dnsPolicy: None
 dnsConfig:
   nameservers:
-  - 8.8.8.8
-  - 8.8.4.4
+    - 8.8.8.8
+    - 8.8.4.4
 ```
 
 #### Usage
 
 The below is a reference configuration `xgl.yml` for [docker-nvidia-glx-desktop](https://github.com/selkies-project/docker-nvidia-glx-desktop):
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -104,124 +106,124 @@ spec:
     spec:
       hostname: xgl
       containers:
-      - name: xgl
-        # Change tag `latest` to Ubuntu versions such as `24.04`, use a persistent tag such as `24.04-20210101010101` to persist a certain container version
-        image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
-        env:
-        - name: TZ
-          value: "UTC"
-        - name: DISPLAY_SIZEW
-          value: "1920"
-        - name: DISPLAY_SIZEH
-          value: "1080"
-        - name: DISPLAY_REFRESH
-          value: "60"
-        - name: DISPLAY_DPI
-          value: "96"
-        - name: DISPLAY_CDEPTH
-          value: "24"
-        # With driver versions lower than 550, change to `DP-0` or any other `DP-*` port for larger resolution support if NOT using datacenter GPUs
-        - name: VIDEO_PORT
-          value: "DFP"
-        # Choose either `value:` or `secretKeyRef:` but not both at the same time
-        - name: PASSWD
-#          value: "mypasswd"
-          valueFrom:
-            secretKeyRef:
-              name: my-pass
-              key: my-pass
-        # Uncomment to enable KasmVNC instead of Selkies-GStreamer, `SELKIES_BASIC_AUTH_PASSWORD` is used for authentication with KasmVNC, defaulting to `PASSWD` if not provided
-        # Uses: `SELKIES_ENABLE_BASIC_AUTH`, `SELKIES_BASIC_AUTH_USER`, `SELKIES_BASIC_AUTH_PASSWORD`, `SELKIES_ENABLE_RESIZE`, `SELKIES_ENABLE_HTTPS`, `SELKIES_HTTPS_CERT`, `SELKIES_HTTPS_KEY`
-#        - name: KASMVNC_ENABLE
-#          value: "true"
-        # Number of threads for encoding frames with KasmVNC, default value is all threads
-#        - name: KASMVNC_THREADS
-#          value: "0"
-        ###
-        # Selkies-GStreamer parameters, for additional configurations see `selkies-gstreamer --help`
-        ###
-        # Change `SELKIES_ENCODER` to `nvh264enc` for GPU-accelerated encoding, or use `vp8enc`/`vp9enc` as alternatives
-        - name: SELKIES_ENCODER
-          value: "x264enc"
-        # Do NOT set to `true` if physical monitor is connected to video port
-        - name: SELKIES_ENABLE_RESIZE
-          value: "false"
-        # Initial video bitrate in kilobits per second, may be changed later within web interface
-        - name: SELKIES_VIDEO_BITRATE
-          value: "8000"
-        # Initial frames per second, may be changed later within web interface
-        - name: SELKIES_FRAMERATE
-          value: "60"
-        # Initial audio bitrate in bits per second, may be changed later within web interface
-        - name: SELKIES_AUDIO_BITRATE
-          value: "128000"
-        # Uncomment if network conditions rapidly fluctuate
-#        - name: SELKIES_CONGESTION_CONTROL
-#          value: "true"
-        # Enable Basic Authentication from the web interface
-        - name: SELKIES_ENABLE_BASIC_AUTH
-          value: "true"
-        # Defaults to `PASSWD` if unspecified, choose either `value:` or `secretKeyRef:` but not both at the same time
-#        - name: SELKIES_BASIC_AUTH_PASSWORD
-#          value: "mypasswd"
-#          valueFrom:
-#            secretKeyRef:
-#              name: my-pass
-#              key: my-pass
-        - name: SELKIES_TURN_REST_URI
-          value: "http://turn-rest.nrp-nautilus.io"
-        # Change to `tcp` if the UDP protocol is throttled or blocked in your client network, or when the TURN server does not support UDP
-        - name: SELKIES_TURN_PROTOCOL
-          value: "udp"
-        # You need a valid hostname and a certificate from authorities such as ZeroSSL or Let's Encrypt with your TURN server to enable TURN over TLS (Works for NRP TURN)
-        - name: SELKIES_TURN_TLS
-          value: "false"
-        stdin: true
-        tty: true
-        ports:
-        - name: http
-          containerPort: 8080
-          protocol: TCP
-        resources:
-          limits:
-            memory: 64Gi
-            cpu: "16"
-          requests:
-            memory: 100Mi
-            cpu: 100m
-        volumeMounts:
-        - mountPath: /dev/shm
-          name: dshm
-        - mountPath: /cache
-          name: xgl-cache-vol
-        - mountPath: /home/ubuntu
-          name: xgl-root-vol
+        - name: xgl
+          # Change tag `latest` to Ubuntu versions such as `24.04`, use a persistent tag such as `24.04-20210101010101` to persist a certain container version
+          image: ghcr.io/selkies-project/nvidia-glx-desktop:latest
+          env:
+            - name: TZ
+              value: 'UTC'
+            - name: DISPLAY_SIZEW
+              value: '1920'
+            - name: DISPLAY_SIZEH
+              value: '1080'
+            - name: DISPLAY_REFRESH
+              value: '60'
+            - name: DISPLAY_DPI
+              value: '96'
+            - name: DISPLAY_CDEPTH
+              value: '24'
+            # With driver versions lower than 550, change to `DP-0` or any other `DP-*` port for larger resolution support if NOT using datacenter GPUs
+            - name: VIDEO_PORT
+              value: 'DFP'
+            # Choose either `value:` or `secretKeyRef:` but not both at the same time
+            - name: PASSWD
+              #          value: "mypasswd"
+              valueFrom:
+                secretKeyRef:
+                  name: my-pass
+                  key: my-pass
+            # Uncomment to enable KasmVNC instead of Selkies-GStreamer, `SELKIES_BASIC_AUTH_PASSWORD` is used for authentication with KasmVNC, defaulting to `PASSWD` if not provided
+            # Uses: `SELKIES_ENABLE_BASIC_AUTH`, `SELKIES_BASIC_AUTH_USER`, `SELKIES_BASIC_AUTH_PASSWORD`, `SELKIES_ENABLE_RESIZE`, `SELKIES_ENABLE_HTTPS`, `SELKIES_HTTPS_CERT`, `SELKIES_HTTPS_KEY`
+            #        - name: KASMVNC_ENABLE
+            #          value: "true"
+            # Number of threads for encoding frames with KasmVNC, default value is all threads
+            #        - name: KASMVNC_THREADS
+            #          value: "0"
+            ###
+            # Selkies-GStreamer parameters, for additional configurations see `selkies-gstreamer --help`
+            ###
+            # Change `SELKIES_ENCODER` to `nvh264enc` for GPU-accelerated encoding, or use `vp8enc`/`vp9enc` as alternatives
+            - name: SELKIES_ENCODER
+              value: 'x264enc'
+            # Do NOT set to `true` if physical monitor is connected to video port
+            - name: SELKIES_ENABLE_RESIZE
+              value: 'false'
+            # Initial video bitrate in kilobits per second, may be changed later within web interface
+            - name: SELKIES_VIDEO_BITRATE
+              value: '8000'
+            # Initial frames per second, may be changed later within web interface
+            - name: SELKIES_FRAMERATE
+              value: '60'
+            # Initial audio bitrate in bits per second, may be changed later within web interface
+            - name: SELKIES_AUDIO_BITRATE
+              value: '128000'
+            # Uncomment if network conditions rapidly fluctuate
+            #        - name: SELKIES_CONGESTION_CONTROL
+            #          value: "true"
+            # Enable Basic Authentication from the web interface
+            - name: SELKIES_ENABLE_BASIC_AUTH
+              value: 'true'
+            # Defaults to `PASSWD` if unspecified, choose either `value:` or `secretKeyRef:` but not both at the same time
+            #        - name: SELKIES_BASIC_AUTH_PASSWORD
+            #          value: "mypasswd"
+            #          valueFrom:
+            #            secretKeyRef:
+            #              name: my-pass
+            #              key: my-pass
+            - name: SELKIES_TURN_REST_URI
+              value: 'http://turn-rest.nrp-nautilus.io'
+            # Change to `tcp` if the UDP protocol is throttled or blocked in your client network, or when the TURN server does not support UDP
+            - name: SELKIES_TURN_PROTOCOL
+              value: 'udp'
+            # You need a valid hostname and a certificate from authorities such as ZeroSSL or Let's Encrypt with your TURN server to enable TURN over TLS (Works for NRP TURN)
+            - name: SELKIES_TURN_TLS
+              value: 'false'
+          stdin: true
+          tty: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Gi
+              cpu: '16'
+            requests:
+              memory: 100Mi
+              cpu: 100m
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /cache
+              name: xgl-cache-vol
+            - mountPath: /home/ubuntu
+              name: xgl-root-vol
       dnsPolicy: None
       dnsConfig:
         nameservers:
-        - 8.8.8.8
-        - 8.8.4.4
+          - 8.8.8.8
+          - 8.8.4.4
       volumes:
-      - name: dshm
-        emptyDir:
-          medium: Memory
-      - name: xgl-cache-vol
-        emptyDir: {}
-#        persistentVolumeClaim:
-#          claimName: xgl-cache-vol
-      - name: xgl-root-vol
-        emptyDir: {}
-#        persistentVolumeClaim:
-#          claimName: xgl-root-vol
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        - name: xgl-cache-vol
+          emptyDir: {}
+        #        persistentVolumeClaim:
+        #          claimName: xgl-cache-vol
+        - name: xgl-root-vol
+          emptyDir: {}
+      #        persistentVolumeClaim:
+      #          claimName: xgl-root-vol
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: NotIn
-                values:
-                - ucsd-suncave
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: NotIn
+                    values:
+                      - ucsd-suncave
 #              - key: topology.kubernetes.io/region
 #                operator: In
 #                values:
@@ -229,6 +231,7 @@ spec:
 ```
 
 The below is a reference configuration `egl.yml` for [docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop):
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -395,11 +398,11 @@ The above command should be used in conjunction to the below `xgl.yml`/`egl.yml`
 
 ```yaml
 env:
-- name: PASSWD
-  valueFrom:
-    secretKeyRef:
-      name: my-name
-      key: my-key
+  - name: PASSWD
+    valueFrom:
+      secretKeyRef:
+        name: my-name
+        key: my-key
 ```
 
 ##### Container Start
@@ -419,6 +422,7 @@ kubectl create -f egl.yml
 The below reference configuration `xgl-ingress.yml` is to expose your [docker-nvidia-glx-desktop](https://github.com/selkies-project/docker-nvidia-glx-desktop) container to the `*.nrp-nautilus.io` endpoint. Replace `YOUR_ENDPOINT` to the subdomain you want to use.
 
 Modify the configuration as in [Scaling and exposing](/documentation/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/xgl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -427,19 +431,19 @@ metadata:
 spec:
   ingressClassName: haproxy
   rules:
-  - host: YOUR_ENDPOINT.nrp-nautilus.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: xgl
-            port:
-              name: http
-        path: /
-        pathType: ImplementationSpecific
+    - host: YOUR_ENDPOINT.nrp-nautilus.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: xgl
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - YOUR_ENDPOINT.nrp-nautilus.io
+    - hosts:
+        - YOUR_ENDPOINT.nrp-nautilus.io
 ---
 apiVersion: v1
 kind: Service
@@ -451,14 +455,15 @@ spec:
   selector:
     app: xgl
   ports:
-  - name: http
-    protocol: TCP
-    port: 8080
+    - name: http
+      protocol: TCP
+      port: 8080
 ```
 
 If you are deploying multiple instances in one namespace, you must change `backend:`, `selector:`, and `labels:` to the name of your `Deployment` and `Service`.
 
 Run the below command after saving the changed reference configuration file:
+
 ```bash
 kubectl create -f xgl-ingress.yml
 ```
@@ -470,6 +475,7 @@ Access `YOUR_ENDPOINT.nrp-nautilus.io` with your web browser.
 The below reference configuration `egl-ingress.yml` is to expose your [docker-nvidia-egl-desktop](https://github.com/selkies-project/docker-nvidia-egl-desktop) container to the `*.nrp-nautilus.io` endpoint. Replace `YOUR_ENDPOINT` to the subdomain you want to use.
 
 Modify the configuration as in [Scaling and exposing](/documentation/userdocs/tutorial/basic2) to customize when there are multiple desktop deployments in a namespace. You can just use `kubectl port-forward deployment/egl 8080:8080` and access localhost:8080, but this will likely have higher latency and subpar performance.
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -478,19 +484,19 @@ metadata:
 spec:
   ingressClassName: haproxy
   rules:
-  - host: YOUR_ENDPOINT.nrp-nautilus.io
-    http:
-      paths:
-      - backend:
-          service:
-            name: egl
-            port:
-              name: http
-        path: /
-        pathType: ImplementationSpecific
+    - host: YOUR_ENDPOINT.nrp-nautilus.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: egl
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - YOUR_ENDPOINT.nrp-nautilus.io
+    - hosts:
+        - YOUR_ENDPOINT.nrp-nautilus.io
 ---
 apiVersion: v1
 kind: Service
@@ -502,14 +508,15 @@ spec:
   selector:
     app: egl
   ports:
-  - name: http
-    protocol: TCP
-    port: 8080
+    - name: http
+      protocol: TCP
+      port: 8080
 ```
 
 If you are deploying multiple instances in one namespace, you must change `backend:`, `selector:`, and `labels:` to the name of your `Deployment` and `Service`.
 
 Run the below command after saving the changed reference configuration file:
+
 ```bash
 kubectl create -f egl-ingress.yml
 ```

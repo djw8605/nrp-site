@@ -1,6 +1,6 @@
 ---
 title: Storage
-description: Storage
+description: "Request and attach persistent storage to your workloads with Persistent Volume Claims."
 ---
 
 In Kubernetes, a Persistent Volume Claim (PVC) is a resource that allows a user to request storage from a storage class defined in the cluster. StorageClasses enable the cluster to abstract the details of storage provisioning and management, allowing users to request storage without needing to know the specifics of the underlying infrastructure.
@@ -17,7 +17,6 @@ This section builds on skills from the tutorial on [Basic Kubernetes](/documenta
 
 ## Storage Types
 
-
 In a Kubernetes cluster, there are several types of storage options available to manage data persistence for applications and services:
 
 - **Local Storage**: Kubernetes allows pods to use storage directly attached to the node where they are scheduled. This is typically in the form of local disks. While local storage is fast, it is not portable across nodes and will be subject to data loss if the node fails.
@@ -25,12 +24,9 @@ In a Kubernetes cluster, there are several types of storage options available to
 - **Persistent Volume Claim** (PVC): PVCs are requests for storage by applications. They are used by developers to request specific storage resources (size, access mode, etc.) without needing to know the underlying storage implementation.
 - **Object Storage**: Kubernetes can also integrate with object storage systems like Amazon S3, Google Cloud Storage, and others using plugins or external solutions like MinIO. These provide scalable and durable storage for various types of data.
 
-
-
 There are other types of storage options in other Kubernetes clusters, but they are not implemented in Nautilus.
 
 ## Create an emptyDir
-
 
 In Kubernetes, an `emptyDir` is a type of volume that is initially empty and created when a Pod is assigned to a node. It's intended to be used as temporary storage within a pod. An `emptyDir` volume exists as long as the Pod that uses it is running on a node. When the Pod is removed from the node for any reason, the data in the emptyDir is deleted permanently.
 
@@ -58,22 +54,22 @@ spec:
         k8s-app: test-storage
     spec:
       containers:
-      - name: mypod
-        image: alpine
-        resources:
-           limits:
-             memory: 100Mi
-             cpu: 100m
-           requests:
-             memory: 100Mi
-             cpu: 100m
-        command: ["sh", "-c", "apk add dumb-init && dumb-init -- sleep 100000"]
-        volumeMounts:
-        - name: mydata
-          mountPath: /mnt/myscratch
+        - name: mypod
+          image: alpine
+          resources:
+            limits:
+              memory: 100Mi
+              cpu: 100m
+            requests:
+              memory: 100Mi
+              cpu: 100m
+          command: ['sh', '-c', 'apk add dumb-init && dumb-init -- sleep 100000']
+          volumeMounts:
+            - name: mydata
+              mountPath: /mnt/myscratch
       volumes:
-      - name: mydata
-        emptyDir: {}
+        - name: mydata
+          emptyDir: {}
 ```
 
 :question: Examine the sample `yaml`code above. Why do you think we specified a "deployment" instead of a simple pod? Are there other things that are different about this deployment? ❗ Hint: examine the `image` we are using? :question: What image is it? Would we expect this image to behave like other images?
@@ -96,14 +92,9 @@ If you used the command:
 
 ❗ In fact, the `yaml` file is using the Linux distribution known as "Alpine".
 
-
 The Alpine Linux distribution is a lightweight and security-oriented Linux distribution commonly used in containerized environments, including Kubernetes. Alpine Linux is known for its minimalistic design, small footprint, and focus on security. It provides a simple and efficient base for containerized applications, offering a smaller attack surface and reduced resource usage compared to other Linux distributions.
 
-
-
 But instead of the full-featured `bash`shell (aka Command Line Interpreter or CLI), Alpine uses a lightweight version called `ash` (short for Almquist Shell).
-
-
 
 It aims to provide essential shell functionalities while keeping its codebase small and efficient. It lacks some of the advanced features found in Bash but offers POSIX compliance and basic scripting capabilities.
 
@@ -131,11 +122,7 @@ You can now delete the deployment.
 
 In addition to the computing cluster we've been exploring, Nautilus also has a distributed storage system (a Ceph Storage Cluster). This storage cluster provides persistent storage for Nautilus.
 
-
-
 Integrating a Ceph storage cluster with a Kubernetes cluster offers several advantages for managing storage in containerized environments, such as scaleability, high availability, fault tolerance, dynamic provisioning, performance and data mobility for containerized applications.
-
-
 
 To get storage, we need to create an abstraction called `PersistentVolumeClaim`. By doing so, we "claim" some storage space and a "Persistent Volume" is created dynamically. PVCs are scoped to a particular namespace in Kubernetes. This means that PVCs created within one namespace are not directly accessible or visible to other namespaces by default.
 
@@ -149,7 +136,7 @@ metadata:
 spec:
   storageClassName: rook-ceph-block
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -168,19 +155,19 @@ metadata:
   name: test-pod
 spec:
   containers:
-  - name: mypod
-    image: ubuntu:latest
-    command: ["sh", "-c", "sleep infinity"]
-    resources:
-      limits:
-        memory: 100Mi
-        cpu: 100m
-      requests:
-        memory: 100Mi
-        cpu: 100m
-    volumeMounts:
-    - mountPath: /examplevol
-      name: examplevol
+    - name: mypod
+      image: ubuntu:latest
+      command: ['sh', '-c', 'sleep infinity']
+      resources:
+        limits:
+          memory: 100Mi
+          cpu: 100m
+        requests:
+          memory: 100Mi
+          cpu: 100m
+      volumeMounts:
+        - mountPath: /examplevol
+          name: examplevol
   volumes:
     - name: examplevol
       persistentVolumeClaim:

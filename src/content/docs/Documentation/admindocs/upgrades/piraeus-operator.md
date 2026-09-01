@@ -1,6 +1,6 @@
 ---
 title: Linstor
-description: Linstor
+description: "Upgrade the Piraeus/Linstor operator, including the local manifests and patched resource limits."
 ---
 
 Official way:
@@ -9,7 +9,7 @@ Official way:
 
 NRP way:
 
-* Get all manifests in the local file
+- Get all manifests in the local file
 
 `kustomize build "https://github.com/piraeusdatastore/piraeus-operator//config/default?ref=v2.9.0" > piraeus-2.9.0.yaml`
 

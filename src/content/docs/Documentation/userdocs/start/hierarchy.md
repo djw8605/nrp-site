@@ -5,7 +5,7 @@ banner:
   content: |
     This page explains <strong>how</strong> the NRP organizes resources. For the steps to get an
     account and reach the cluster, follow
-    <a href="/documentation/userdocs/start/getting-started/">Getting access to Nautilus</a>.
+    <a href="/documentation/userdocs/start/getting-started/">Getting access</a>.
 ---
 
 The National Research Platform (NRP) is using a novel way for managing computational resources. This new model allows managing the team's access and resources without needing to contact the NRP core team for every change, enabling everyone to get their work done faster and more efficiently.
@@ -43,7 +43,7 @@ objects seen from two angles:
 Access to the NRP is managed through **Authentik**, our single-sign-on authentication system. It connects to your existing university or institutional account via [CILogon](https://www.cilogon.org).
 
 1. The first time you log in, you will be required to read and accept the [NRP Acceptable Use Policy (AUP)](/NRP-AUP.pdf).
-2. Accepting the AUP registers your account. It does **not**, on its own, give you compute — you get that once a Group Administrator adds you to one of their Projects. [Getting access to Nautilus](/documentation/userdocs/start/getting-started/) walks through both halves, including how to request administrator rights if you are starting a new group.
+2. Accepting the AUP registers your account. It does **not**, on its own, give you compute — you get that once a Group Administrator adds you to one of their Projects. [Getting access](/documentation/userdocs/start/getting-started/) walks through both halves, including how to request administrator rights if you are starting a new group.
 
 Some [NRP services and resources](/documentation/userdocs/start/resources/) require their own separate registration; each one says so on its own page.
 

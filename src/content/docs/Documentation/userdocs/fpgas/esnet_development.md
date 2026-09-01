@@ -6,6 +6,7 @@ description: ESnet SmartNIC FPAG Tutorial - Notebook 1/3
 **For video recording, please see: [youtube.](https://youtu.be/tdxe0jsRZVk)**
 
 **For the ipynb notebooks and slides, please see: [the tutorial respository.](https://github.com/nrp-nautilus/esnet-smartnic)**
+
 ## Development (Notebook 1/3): Writing and Testing a P4 Program
 
 This notebook is **Part 1** of the **ESnet SmartNIC Tutorial on NRP** series. It provides an example of cloning the `esnet-smartnic-hw` repository, and writing and testing a simple P4 program.
@@ -42,6 +43,7 @@ For more documentation, please refer to some other documentations that we have a
 <h2 style="font-size: 24px; color: #4CAF50;">3. The video tutorial on my <a href="https://www.youtube.com/watch?v=fiZMPPW_oRk&list=PL5Ght4QkHL8QK75R3ThqU7vzob5f65_Zi&ab_channel=MohammadFirasSada" style="color: #007bff;">YouTube</a></h2>
 
 ---
+
 ### Technical Information for Reproducing This Experiment in a Different Environment
 
 1. **ESnet SmartNIC Tool Stack**
@@ -92,25 +94,21 @@ The ESnet SmartNIC stack performs privileged tasks (e.g., binding and unbinding 
 
 ---
 
-
-The ESnet SmartNIC framework provides an entire workflow to program AMD/Xilinx Alveo FPGA cards using P4. The ESnet framework is open-source and available on GitHub. ESnet is a high-performance network that supports scientific research. The ESnet team created the framework that seamlessly integrates AMD/Xilinx tools along with various tools like DPDK to provide an easy way of programming Alveo cards as SmartNICs. The framework runs in docker containers as demonstrated in this Jupyter Notebook.
+The ESnet SmartNIC framework provides an entire workflow to program AMD/Xilinx Alveo FPGA cards using P4. The ESnet framework is open-source and available on GitHub. ESnet is a high-performance network that supports scientific research. The ESnet team created the framework that integrates AMD/Xilinx tools with DPDK and related libraries to provide an easy way of programming Alveo cards as SmartNICs. The framework runs in docker containers as demonstrated in this Jupyter Notebook.
 
 ### Step 1: Set up environment
 
 Remove any pre-existing clones of the tutorial repo.
 
-
 ```bash
 rm -rf ~/esnet-smartnic/esnet-smartnic-hw
 ```
-
 
 ```bash
 echo "$BASH_VERSION"
 ```
 
 If the above command doesn't show a bash version, **you may be running with a Python kernel. Please switch to a Bash kernel.**
-
 
 ```bash
 mkdir -p ~/esnet-smartnic
@@ -122,9 +120,8 @@ Checkout at the latest tested commit.
 
 ### Step 2: Clone the reposirtory
 
-
 ```bash
-git clone https://github.com/esnet/esnet-smartnic-hw.git 
+git clone https://github.com/esnet/esnet-smartnic-hw.git
 cd esnet-smartnic-hw
 git checkout d3782445ce5f090ca955693a98ce68f96b68943c
 git submodule update --init --recursive
@@ -135,16 +132,14 @@ ls
 
 You can see the contents of the repository. The examples directory has multiple examples to show.
 
-
 ```bash
 cd examples/p4_only
 ls
 ```
 
-Running `make` in the p4_only directory will build the *artifacts*, which is a **zip package** containing the compiled bitstream and all other necessary files to run on the FPGA.
+Running `make` in the p4_only directory will build the _artifacts_, which is a **zip package** containing the compiled bitstream and all other necessary files to run on the FPGA.
 
 The `sim` directory has the simulation-related files.
-
 
 ```bash
 cd p4
@@ -153,29 +148,24 @@ ls
 
 ### Step 3: P4 Experiments
 
-
 ```bash
 cat p4_only.p4
 ```
-
 
 ```bash
 cp ../../../../assets/p4_only.p4 .
 cat p4_only.p4
 ```
 
-
 ```bash
 source /tools/Xilinx/Vivado/2023.1/settings64.sh
 export XILINXD_LICENSE_FILE=2100@xilinxd.xilinx-dev
 ```
 
-
 ```bash
 cd sim
 head test-fwd-p0/packets_in.user
 ```
-
 
 ```bash
 cp -r test-fwd-p0 test-fwd-p1
@@ -183,23 +173,19 @@ sed -i 's/^P4BM_DIRS = test-fwd-p0$/P4BM_DIRS = test-fwd-p0 test-fwd-p1/' Makefi
 sed -i 's/^\(P4BM_DIR = test-fwd-p0\)/# \1/' Makefile
 ```
 
-
 ```bash
 env | grep XILINXD_LICENSE_FILE
 ```
-
 
 ```bash
 make
 ls test-fwd-p1
 ```
 
-
 ```bash
 head test-fwd-p1/packets_in.user
 head test-fwd-p1/packets_out.user
 ```
-
 
 ```bash
 python3 - <<EOF
@@ -215,25 +201,21 @@ print("PCAP file 'test-fwd-p1/packets_in.pcap' created with 10 Ethernet+IPv4 pac
 EOF
 ```
 
-
 ```bash
 make clean
 rm -rf test-fwd-p1/packets_in.user
 ls test-fwd-p1
 ```
 
-
 ```bash
 tshark -r test-fwd-p1/packets_in.pcap -T tabs
 ```
-
 
 ```bash
 make
 tshark -r test-fwd-p1/packets_in.pcap -T tabs
 tshark -r test-fwd-p1/packets_in.pcap -T fields -e ip.ttl
 ```
-
 
 ```bash
 tshark -r test-fwd-p1/packets_out.pcap -T tabs
@@ -242,23 +224,25 @@ tshark -r test-fwd-p1/packets_out.pcap -T fields -e ip.ttl
 
 ### Step 4: Control Plane Table Entries
 
-
 ```bash
 cat test-fwd-p1/packets_in.meta
 ```
-
 
 ```bash
 cat test-fwd-p1/packets_out.meta
 ```
 
 ---
+
 ---
+
 ---
+
 Now we reach the end of writing a P4 program and testing it against custom PCAP files.
 In the next notebook, we will be building the artifacts from the P4 logic.
 
 ---
+
 This notebook is part 1 out of 3 in the **ESnet SmartNIC Tutorial on NRP** series.
 
 This was last modified on March 4th, 2025.

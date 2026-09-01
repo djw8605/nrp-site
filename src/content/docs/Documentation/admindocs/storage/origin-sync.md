@@ -1,6 +1,6 @@
 ---
 title: Origin SyncThing
-description: Origin SyncThing
+description: "How an admin connects the origin datanode SyncThing instance to a user device for large data loads."
 ---
 
 ## Syncing user data to an origin
@@ -36,7 +36,7 @@ spec:
           name: syncthing
           resources:
             limits:
-              cpu: "2"
+              cpu: '2'
               memory: 2G
             requests:
               cpu: 100m

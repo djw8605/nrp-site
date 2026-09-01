@@ -1,6 +1,6 @@
 ---
 title: Calico
-description: Calico
+description: "Upgrade Calico, the cluster networking plugin, following the official manifest-based procedure."
 ---
 
 ## Upgrading Calico

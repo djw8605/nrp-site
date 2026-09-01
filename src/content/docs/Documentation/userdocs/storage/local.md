@@ -1,6 +1,6 @@
 ---
 title: Local Scratch
-description: Local Scratch
+description: "Request node-local NVMe scratch storage when your workload needs I/O faster than the shared filesystem."
 ---
 
 Most nodes in the cluster have local NVMe drives, which provide faster I/O than shared filesystems. These can be used for workloads that require very intensive I/O operations ([see recommendations and an example for running these](/documentation/userdocs/running/io-jobs/)).
@@ -16,30 +16,30 @@ spec:
   template:
     spec:
       containers:
-      - name: demo
-        image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp
-        command:
-        - "python"
-        args:
-        - "/home/my_script.py"
-        - "--data=/mnt/data/..."
-        volumeMounts:
-        - name: data
-          mountPath: /mnt/data
-        resources:
-          limits:
-            memory: 8Gi
-            cpu: "6"
-            nvidia.com/gpu: "1"
-            ephemeral-storage: 100Gi
-          requests:
-            memory: 4Gi
-            cpu: "1"
-            nvidia.com/gpu: "1"    
-            ephemeral-storage: 100Gi
+        - name: demo
+          image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp
+          command:
+            - 'python'
+          args:
+            - '/home/my_script.py'
+            - '--data=/mnt/data/...'
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/data
+          resources:
+            limits:
+              memory: 8Gi
+              cpu: '6'
+              nvidia.com/gpu: '1'
+              ephemeral-storage: 100Gi
+            requests:
+              memory: 4Gi
+              cpu: '1'
+              nvidia.com/gpu: '1'
+              ephemeral-storage: 100Gi
       volumes:
-      - name: data
-        emptyDir: {}
+        - name: data
+          emptyDir: {}
       restartPolicy: Never
   backoffLimit: 5
 ```

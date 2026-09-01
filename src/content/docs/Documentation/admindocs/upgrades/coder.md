@@ -1,6 +1,6 @@
 ---
 title: Coder
-description: Coder
+description: "Upgrade the hosted Coder deployment via its Helm chart."
 ---
 
 ## Upgrading Coder

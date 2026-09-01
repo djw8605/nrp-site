@@ -1,6 +1,6 @@
 ---
 title: High I/O Jobs
-description: High I/O Jobs
+description: "Structural tricks for high I/O jobs: parallel streams, archive packing, and local scratch on top of Ceph."
 ---
 
 If you hit the Ceph speed bottleneck, especially if you have many small files, don't try to push it more.
@@ -24,47 +24,47 @@ spec:
   template:
     spec:
       containers:
-      - name: demo
-        image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp
-        command:
-        - "python"
-        args:
-        - "/home/my_script.py"
-        - "--data=/mnt/data/..."
-        volumeMounts:
-        - name: data
-          mountPath: /mnt/data
-        resources:
-          limits:
-            memory: 8Gi
-            cpu: "6"
-            nvidia.com/gpu: "1"
-            ephemeral-storage: 100Gi
-          requests:
-            memory: 4Gi
-            cpu: "1"
-            nvidia.com/gpu: "1"    
-            ephemeral-storage: 100Gi
+        - name: demo
+          image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp
+          command:
+            - 'python'
+          args:
+            - '/home/my_script.py'
+            - '--data=/mnt/data/...'
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/data
+          resources:
+            limits:
+              memory: 8Gi
+              cpu: '6'
+              nvidia.com/gpu: '1'
+              ephemeral-storage: 100Gi
+            requests:
+              memory: 4Gi
+              cpu: '1'
+              nvidia.com/gpu: '1'
+              ephemeral-storage: 100Gi
       initContainers:
-      - name: init-data
-        image: gitlab-registry.nrp-nautilus.io/prp/gsutil
-        args:
-          - gsutil
-          - "-m"
-          - rsync
-          - "-erP"
-          - /mnt/source/
-          - /mnt/dest/
-        volumeMounts:
-          - name: source
-            mountPath: /mnt/source
-          - name: data
-            mountPath: /mnt/dest
+        - name: init-data
+          image: gitlab-registry.nrp-nautilus.io/prp/gsutil
+          args:
+            - gsutil
+            - '-m'
+            - rsync
+            - '-erP'
+            - /mnt/source/
+            - /mnt/dest/
+          volumeMounts:
+            - name: source
+              mountPath: /mnt/source
+            - name: data
+              mountPath: /mnt/dest
       volumes:
-      - name: data
-        emptyDir: {}
-      - name: source
-        persistentVolumeClaim:
+        - name: data
+          emptyDir: {}
+        - name: source
+          persistentVolumeClaim:
             claimName: examplevol
       restartPolicy: Never
   backoffLimit: 5
@@ -97,5 +97,5 @@ If you have a large dataset (>100 GB) and need to sample data from it at a high 
   - A good approach to doing this is to run a separate process which manages download files and deleting previous files in a rolling window. Since linux allows you to safely delete files which have open file pointers (the file remains until all file pointers are closed, e.g. any process reading a file that is deleted won't have an issue) this process can be fully independent of other processes and thus easy to manage.
   - One thing to consider with a windowed sampling approach is that there may be an optimal ordering to download your data files such that you maintain the best distribution of samples across your local window of the dataset. Consider this if your data files have imbalanced classes.
 - Spawn one or more processes to sample data from available local files. If you are running Python and Tensorflow you want these processes separate from your main training loop, otherwise you will encounter problems with the Python GIL being slowed down by the deserialization process.
-- *If you run Python/Tensorflow* your sampling processes should create a RAM Disk and write the samples to the standard Tensorflow TF Records format files, then hand those file names off to `tf.data.TFRecordDataset`. If you try to pass the data to the main process via say `multiprocessing` you will lock up the Python GIL in deserialization and it will negatively impact your training loop. By writing TF Records files, the deserialization of the data happens in Tensorflow, which is in C, not in Python and thus doesn't negatively impact your training loop due to the limitations of the Python GIL. 
+- _If you run Python/Tensorflow_ your sampling processes should create a RAM Disk and write the samples to the standard Tensorflow TF Records format files, then hand those file names off to `tf.data.TFRecordDataset`. If you try to pass the data to the main process via say `multiprocessing` you will lock up the Python GIL in deserialization and it will negatively impact your training loop. By writing TF Records files, the deserialization of the data happens in Tensorflow, which is in C, not in Python and thus doesn't negatively impact your training loop due to the limitations of the Python GIL.
 - Each of the processes described here (Downloading, Sampling , and Training loop) can be written in a nicely decoupled manner, making them fairly easy to write and debug. Try to avoid a lot of dependencies between the code that handles downloading data vs. code that handle sampling vs. code that runs the training loop. Write them as independent classes and processes. This approach allows an application to sample data at a rate higher than it can access directly from S3, which avoids difficult to avoid bottlenecks.

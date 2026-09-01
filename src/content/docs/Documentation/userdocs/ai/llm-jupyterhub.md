@@ -1,6 +1,6 @@
 ---
 title: LLM in JupyterHub
-description: LLM in JupyterHub
+description: "Work with LLMs inside a JupyterHub notebook, hosted or self-run, and size your volume for model weights."
 ---
 
 You can easily experiment with LLMs in JupyterHub. We provide the [managed one](/documentation/userdocs/jupyter/jupyterhub-service/), or you can [run your own](/documentation/userdocs/jupyter/jupyterhub-service/).
@@ -24,8 +24,8 @@ pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float
 pipe = pipe.to("cuda")
 
 prompt = "An astronaut riding a horse, painting in Dali style"
-image = pipe(prompt).images[0]  
-    
+image = pipe(prompt).images[0]
+
 image.save("astronaut_rides_horse.png")
 ```
 

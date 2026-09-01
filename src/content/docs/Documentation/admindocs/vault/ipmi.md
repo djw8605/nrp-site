@@ -1,6 +1,6 @@
 ---
 title: Updating IPMI info
-description: Updating IPMI info
+description: "How to update the node IPMI credential file stored in Vault and keep the Ansible inventory in sync."
 ---
 
 Login to Vault from your local computer:

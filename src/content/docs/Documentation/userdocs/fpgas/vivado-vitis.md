@@ -1,6 +1,6 @@
 ---
 title: AMD/Xilinx FPGAs
-description: AMD/Xilinx FPGAs
+description: "Program an AMD/Xilinx U55C FPGA with Vivado and Vitis using the Coder U55C workflow template."
 ---
 
 For users looking to work with FPGAs, the **U55C FPGA Vitis Workflow template** in our Coder environment provides an efficient setup with all necessary tools, including **Vivado** and **Vitis**. This guide covers key steps and specific configurations needed to get started. For general setup instructions, workspace management, and other workspace templates, see the [Coder Environment Documentation](/documentation/userdocs/coder/coder).

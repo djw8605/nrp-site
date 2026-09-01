@@ -12,6 +12,7 @@ import compress from 'astro-compress';
 import type { AstroIntegration } from 'astro';
 
 import starlight from '@astrojs/starlight';
+import nrpLogo from './src/assets/images/NRP_Horizontal_Logo.png.webp';
 
 import astrowind from './vendor/integration';
 
@@ -43,6 +44,15 @@ export default defineConfig({
       // "NRP" is the platform, "Nautilus" is the cluster it runs on; the two must
       // never be merged into a compound name. See DESIGN.md §12.
       title: 'NRP Documentation',
+      // The brand faces and ramp reach the docs surface through --sl-* token
+      // overrides in customCss (DESIGN.md §11); the logo finishes the header so
+      // the docs read as the same project as nrp.ai instead of a separate one.
+      // Starlight 0.29 types `src` as string; the bundler swaps this import for
+      // the hashed asset URL before the config runs.
+      // Logo only: "NRP Documentation" next to a wordmark that already reads NRP
+      // is the same name twice. `replacesTitle` keeps the title as the accessible
+      // name of the header link instead of visible text.
+      logo: { src: nrpLogo as unknown as string, alt: 'National Research Platform', replacesTitle: true },
       // Surfaces a per-page freshness signal, so a page describing a component
       // that is still rolling out is visibly dated rather than silently stale.
       lastUpdated: true,
@@ -124,7 +134,7 @@ export default defineConfig({
               collapsed: true,
               items: [
                 {
-                  label: 'Beginner start',
+                  label: 'Run your first job',
                   collapsed: true,
                   items: [
                     { label: 'GPU pods', link: 'documentation/userdocs/running/gpu-pods' },
@@ -135,14 +145,12 @@ export default defineConfig({
                   ],
                 },
                 {
-                  label: 'Intermediate',
+                  label: 'Advanced patterns',
                   collapsed: true,
                   items: [
                     { label: 'Scheduling', link: 'documentation/userdocs/running/scheduling' },
                     { label: 'Opportunistic Use', link: 'documentation/userdocs/running/priority-classes' },
                     { label: 'Client scripts', link: 'documentation/userdocs/running/scripts' },
-                    { label: 'Exposing HTTP', link: 'documentation/userdocs/running/ingress' },
-                    { label: 'GatewayAPI', link: 'documentation/userdocs/running/gateway' },
                     { label: 'Special use', link: 'documentation/userdocs/running/special' },
                     { label: 'Faster images download', link: 'documentation/userdocs/running/fast-img-download' },
                     { label: 'Globus-connect', link: 'documentation/userdocs/running/globus-connect' },
@@ -150,6 +158,20 @@ export default defineConfig({
                     { label: 'Federation', link: 'documentation/userdocs/running/federation' },
                     { label: 'GUI Desktop', link: 'documentation/userdocs/running/gui-desktop' },
                     { label: 'Scientific images', link: 'documentation/userdocs/running/sci-img' },
+                  ],
+                },
+                {
+                  label: 'Exposing apps',
+                  collapsed: true,
+                  items: [
+                    { label: 'Exposing HTTP', link: 'documentation/userdocs/running/ingress' },
+                    { label: 'GatewayAPI', link: 'documentation/userdocs/running/gateway' },
+                  ],
+                },
+                {
+                  label: 'Databases',
+                  collapsed: true,
+                  items: [
                     { label: 'Postgres cluster', link: 'documentation/userdocs/running/postgres' },
                     { label: 'ClickHouse cluster', link: 'documentation/userdocs/running/clickhouse' },
                   ],
@@ -190,6 +212,9 @@ export default defineConfig({
                 { label: 'JupyterHub Service', link: 'documentation/userdocs/jupyter/jupyterhub-service' },
                 { label: 'ML/Jupyter Pod', link: 'documentation/userdocs/jupyter/jupyter-pod' },
                 { label: 'Deploy JupyterHub', link: 'documentation/userdocs/jupyter/jupyterhub' },
+                // Was reachable by URL for months but listed nowhere, so no reader
+                // could find it. It is the values reference for the page above.
+                { label: 'JupyterHub Helm Values', link: 'documentation/userdocs/jupyter/values' },
               ],
             },
             {
@@ -239,7 +264,7 @@ export default defineConfig({
                 { label: 'Vivado and Vitis', link: 'documentation/userdocs/fpgas/vivado-vitis' },
                 { label: 'ESnet SmartNIC', link: 'documentation/userdocs/fpgas/esnet' },
                 { label: 'SmartNIC: Development', link: 'documentation/userdocs/fpgas/esnet_development' },
-                { label: 'SmartNIC: Building ', link: 'documentation/userdocs/fpgas/esnet_building' },
+                { label: 'SmartNIC: Building', link: 'documentation/userdocs/fpgas/esnet_building' },
                 { label: 'SmartNIC: Running', link: 'documentation/userdocs/fpgas/esnet_running' },
               ],
             },
@@ -394,27 +419,27 @@ export default defineConfig({
                   label: 'Upgrades',
                   collapsed: true,
                   items: [
-                    { label: 'intro', link: 'documentation/admindocs/upgrades/intro' },
-                    { label: 'calico', link: 'documentation/admindocs/upgrades/calico' },
-                    { label: 'cert-manager', link: 'documentation/admindocs/upgrades/cert-manager' },
-                    { label: 'coder', link: 'documentation/admindocs/upgrades/coder' },
-                    { label: 'elasticsearch', link: 'documentation/admindocs/upgrades/elasticsearch' },
-                    { label: 'gitlab', link: 'documentation/admindocs/upgrades/gitlab' },
-                    { label: 'jupyterhub', link: 'documentation/admindocs/upgrades/jupyterhub' },
-                    { label: 'k8s', link: 'documentation/admindocs/upgrades/k8s' },
-                    { label: 'kubevirt', link: 'documentation/admindocs/upgrades/kubevirt' },
-                    { label: 'nextcloud', link: 'documentation/admindocs/upgrades/nextcloud' },
-                    { label: 'overleaf', link: 'documentation/admindocs/upgrades/overleaf' },
-                    { label: 'nodes', link: 'documentation/admindocs/upgrades/nodes' },
-                    { label: 'prometheus', link: 'documentation/admindocs/upgrades/prometheus' },
-                    { label: 'postgres', link: 'documentation/admindocs/upgrades/postgres-operator' },
-                    { label: 'clickhouse', link: 'documentation/admindocs/upgrades/clickhouse-operator' },
+                    { label: 'Introduction', link: 'documentation/admindocs/upgrades/intro' },
+                    { label: 'Calico', link: 'documentation/admindocs/upgrades/calico' },
+                    { label: 'Cert-manager', link: 'documentation/admindocs/upgrades/cert-manager' },
+                    { label: 'Coder', link: 'documentation/admindocs/upgrades/coder' },
+                    { label: 'Elasticsearch', link: 'documentation/admindocs/upgrades/elasticsearch' },
+                    { label: 'Gitlab', link: 'documentation/admindocs/upgrades/gitlab' },
+                    { label: 'JupyterHub', link: 'documentation/admindocs/upgrades/jupyterhub' },
+                    { label: 'Kubernetes', link: 'documentation/admindocs/upgrades/k8s' },
+                    { label: 'KubeVirt', link: 'documentation/admindocs/upgrades/kubevirt' },
+                    { label: 'Nextcloud', link: 'documentation/admindocs/upgrades/nextcloud' },
+                    { label: 'Overleaf', link: 'documentation/admindocs/upgrades/overleaf' },
+                    { label: 'Nodes', link: 'documentation/admindocs/upgrades/nodes' },
+                    { label: 'Prometheus', link: 'documentation/admindocs/upgrades/prometheus' },
+                    { label: 'Postgres operators', link: 'documentation/admindocs/upgrades/postgres-operator' },
+                    { label: 'ClickHouse operator', link: 'documentation/admindocs/upgrades/clickhouse-operator' },
                     {
                       label: 'Storage',
                       collapsed: true,
                       items: [
-                        { label: 'rook/ceph', link: 'documentation/admindocs/upgrades/rook' },
-                        { label: 'linstor', link: 'documentation/admindocs/upgrades/piraeus-operator' },
+                        { label: 'Rook/Ceph', link: 'documentation/admindocs/upgrades/rook' },
+                        { label: 'Linstor', link: 'documentation/admindocs/upgrades/piraeus-operator' },
                       ],
                     },
                   ],

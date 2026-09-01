@@ -1,6 +1,6 @@
 ---
 title: Ceph FS / RBD
-description: Ceph FS / RBD
+description: "Mount and share CephFS home storage well: the rules that keep the shared filesystem usable for everyone."
 ---
 
 :::danger[No Conda or PIP on CephFS]
@@ -32,7 +32,6 @@ When using CephFS, it is crucial not to open the same file for write from multip
 **Locking Mechanisms:** Utilize designated locking mechanisms to control access to shared resources if required for specific applications.
 
 **Coordination Among Clients:** Use coordination protocols or systems to manage write access among different clients.
-
 
 ## Ceph filesystems data use
 
@@ -195,9 +194,9 @@ new Runtime().module(define, name => {
   </tbody>
 </table>
 
-Ceph shared filesystem ([**CephFS**](https://docs.ceph.com/en/latest/cephfs/)) is the primary way of storing data in nautilus and allows mounting same volumes from multiple PODs in parallel (*ReadWriteMany*).
+Ceph shared filesystem ([**CephFS**](https://docs.ceph.com/en/latest/cephfs/)) is the primary way of storing data in nautilus and allows mounting same volumes from multiple PODs in parallel (_ReadWriteMany_).
 
-Ceph block storage allows [**RBD** (Rados Block Devices)](https://docs.ceph.com/docs/master/rbd/) to be attached to a **single pod** at a time (*ReadWriteOnce*). Provides fastest access to the data, and **is preferred for all datasets not needing shared access from multiple pods**.
+Ceph block storage allows [**RBD** (Rados Block Devices)](https://docs.ceph.com/docs/master/rbd/) to be attached to a **single pod** at a time (_ReadWriteOnce_). Provides fastest access to the data, and **is preferred for all datasets not needing shared access from multiple pods**.
 
 ## UCSD NVMe CephFS filesystem policy
 

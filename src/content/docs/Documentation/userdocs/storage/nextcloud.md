@@ -1,6 +1,6 @@
 ---
 title: Nextcloud
-description: Nextcloud
+description: "Stage, sync, and share files with the platform Nextcloud instance backed by CephFS."
 ---
 
 We provide access to the [Nextcloud][1] [instance][2] running in our cluster and using our CephFS storage.
@@ -138,7 +138,7 @@ type = webdav
 url = https://nextcloud.nrp-nautilus.io/remoremote.php/dav/files/USERNAME/
 vendor = nextcloud
 user = {YOURUSER}
-pass =  ENCRYPTED 
+pass =  ENCRYPTED
 --------------------
 y) Yes this is OK
 e) Edit this remote

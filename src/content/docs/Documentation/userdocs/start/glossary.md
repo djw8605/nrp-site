@@ -1,6 +1,6 @@
 ---
 title: Glossary
-description: Glossary
+description: "Definitions of the Kubernetes, container, and storage terms used throughout these docs."
 ---
 
 ## Nautilus Glossary
@@ -21,7 +21,7 @@ This is an abridged list of terminology that Nautilus users may find useful. The
 
 - <a id="directory"></a> **Directory** In Unix-like operating systems, a directory is a file system container that holds files and other directories. It serves as a way to organize and structure the file system hierarchy. Directories are sometimes referred to as folders in other operating systems.
 
-- <a id="forceDelete"></a> **Force Delete** In computer science, the term "force delete" typically refers to a method of deleting files or directories (folders) that cannot be removed through the usual or standard deletion process. It's important to exercise caution when using force delete commands, as they bypass certain safety checks and can result in the loss of important data. In [Kubernetes](#kubernetes), when you want to stop or delete a running pod (and its associated containers), you typically use the ```kubectl delete``` command.
+- <a id="forceDelete"></a> **Force Delete** In computer science, the term "force delete" typically refers to a method of deleting files or directories (folders) that cannot be removed through the usual or standard deletion process. It's important to exercise caution when using force delete commands, as they bypass certain safety checks and can result in the loss of important data. In [Kubernetes](#kubernetes), when you want to stop or delete a running pod (and its associated containers), you typically use the `kubectl delete` command.
 
 - <a id="graphicalUserInterface"></a> **Graphical User Interface** or **GUI** is a type of user interface that allows users to interact with electronic devices or software through graphical elements such as icons, buttons, and windows. In a GUI, users can manipulate and control the system or application by using visual elements, typically with the help of a pointing device such as a mouse or a touchpad.
 
@@ -51,6 +51,6 @@ This is an abridged list of terminology that Nautilus users may find useful. The
 
 - <a id="softwareContainer"></a> **Software Container** A software container is a lightweight, standalone, and executable package that includes everything needed to run a piece of software, including the code, runtime, system tools, libraries, and settings. Containers provide a consistent and reproducible environment, ensuring that the software runs consistently across different computing environments.
 
-- **Stateless** In computer engineering and software development, the term *stateless* refers to a system or application that does not retain information about the state or status of a user or entity between sessions or interactions. In the case of Nautilus, [pods](#pod) are stateless - each request to instance a pod is treated as an independent and self-contained transaction, and the cluster does not store any information about the previous pod or its characteristics.
+- **Stateless** In computer engineering and software development, the term _stateless_ refers to a system or application that does not retain information about the state or status of a user or entity between sessions or interactions. In the case of Nautilus, [pods](#pod) are stateless - each request to instance a pod is treated as an independent and self-contained transaction, and the cluster does not store any information about the previous pod or its characteristics.
 
 - <a id="unix"></a> **Unix** is a powerful and versatile multiuser, multitasking operating system originally developed in the 1960s and 1970s at Bell Labs (AT&T). It is known for its stability, security, and support for a wide range of applications and services. Unix has had a significant impact on the development of operating systems and has influenced many modern operating systems, including Linux and MacOS.

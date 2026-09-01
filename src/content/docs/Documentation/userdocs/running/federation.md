@@ -1,6 +1,6 @@
 ---
 title: Federation
-description: Federation
+description: "Extend a namespace to your own cluster with Kubernetes federation so jobs can run on both."
 ---
 
 ## Before Start
@@ -44,14 +44,14 @@ my-sa-token-qfz8b                 kubernetes.io/service-account-token   3      1
 First get the name of the secret:
 
 ```bash
-TOKENNAME=`kubectl get serviceaccount/my-sa -o jsonpath='{.secrets[0].name}'` 
+TOKENNAME=`kubectl get serviceaccount/my-sa -o jsonpath='{.secrets[0].name}'`
 echo $TOKENNAME
 ```
 
 Then get the secret using the `TOKENNAME` we found:
 
 ```bash
-TOKEN=`kubectl get secret $TOKENNAME -o jsonpath='{.data.token}'| base64 --decode` 
+TOKEN=`kubectl get secret $TOKENNAME -o jsonpath='{.data.token}'| base64 --decode`
 echo $TOKEN
 ```
 
@@ -83,23 +83,23 @@ The resulting `config_sa` file looks like:
 ```yaml
 apiVersion: v1
 clusters:
-- cluster:
-    certificate-authority-data: DATA+OMITTED
-    server: <nautilus-apiserver>
-  name: nautilus
+  - cluster:
+      certificate-authority-data: DATA+OMITTED
+      server: <nautilus-apiserver>
+    name: nautilus
 contexts:
-- context:
-    cluster: nautilus
-    namespace: <your-namespace>
-    user: my-sa
-  name: nautilus
+  - context:
+      cluster: nautilus
+      namespace: <your-namespace>
+      user: my-sa
+    name: nautilus
 current-context: nautilus
 kind: Config
 preferences: {}
 users:
-- name: my-sa
-  user:
-    token: REDACTED
+  - name: my-sa
+    user:
+      token: REDACTED
 ```
 
 ### Create a `Source` object in the same namespace. Use the same service account name you used in the previous step
@@ -184,20 +184,20 @@ apiVersion: v1
 kind: Pod
 metadata:
   annotations:
-    multicluster.admiralty.io/elect: ""
+    multicluster.admiralty.io/elect: ''
   name: test-pod
 spec:
   containers:
-  - name: mypod
-    image: centos:centos7
-    resources:
-      limits:
-        memory: 100Mi
-        cpu: 100m
-      requests:
-        memory: 100Mi
-        cpu: 100m
-    command: ["sh", "-c", "echo 'Im a new pod' && sleep infinity"]
+    - name: mypod
+      image: centos:centos7
+      resources:
+        limits:
+          memory: 100Mi
+          cpu: 100m
+        requests:
+          memory: 100Mi
+          cpu: 100m
+      command: ['sh', '-c', "echo 'Im a new pod' && sleep infinity"]
 ```
 
 ```bash

@@ -1,6 +1,107 @@
 /* Docs-only styles. Loaded via `customCss` in astro.config.ts.
    Docs routes do not load Tailwind (see applyBaseStyles in astro.config.ts),
-   so Starlight's own list and prose styles apply unmodified. */
+   so Starlight's own list and prose styles apply unmodified.
+
+   The brand bridge (DESIGN.md §11). Everything below feeds the marketing
+   site's design system into Starlight's own token layer: the three brand
+   faces, the logo-sampled teal ramp, and the surface ladder, retargeted from
+   the default blue chrome. The literal colors here MIRROR DESIGN.md §2 — if a
+   ramp value changes there, change it here too. They are repeated rather than
+   referenced because the docs bundle never loads CustomStyles.astro. */
+
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+
+:root {
+  /* Surfaces, dark mode: the marketing ladder (DESIGN.md §2).
+     page #0a1118 · sunken below it · rail and hover steps above. */
+  --sl-color-black: #0a1118; /* the page */
+  --sl-color-white: #f2f6fa; /* headings and inverted fg (text-heading dark) */
+  --sl-color-gray-1: #e2e8ee;
+  --sl-color-gray-2: #e2e8ee; /* body (text-body dark) */
+  --sl-color-gray-3: #9aa8b8; /* muted (text-muted dark) */
+  --sl-color-gray-4: #74869a; /* dimmed decoration, not body text */
+  --sl-color-gray-5: #17242f; /* surface-2: inline code, hover fills */
+  --sl-color-gray-6: #101a24; /* surface-1: header bar and sidebar rail */
+  --sl-color-hairline-light: #1f303d; /* surface-3 divider on dark */
+
+  /* Accent ramp, dark: links and current-page markers are cyan-teal, the same
+     picks as the marketing dark mode — teal-300 as text (10.96:1 on this
+     page color), teal-400 as accent fill (8.90:1), teal-950 as the plate
+     under bright fills (7.48:1 for its text). */
+  --sl-color-accent: #56bfd9;
+  --sl-color-accent-high: #6fd3e5;
+  --sl-color-accent-low: #082e3c;
+
+  /* "note" asides ride the brand axis: --sl-hue-blue only ever builds the
+     note color trio, so retuning the hue away from default indigo recolors
+     notes without touching caution/danger semantics. */
+  --sl-hue-blue: 193;
+}
+
+:root[data-theme='light'] {
+  --sl-color-black: #ffffff; /* page */
+  --sl-color-white: #0b1620; /* text-heading light */
+  --sl-color-gray-1: #1c2b38; /* text-body light */
+  --sl-color-gray-2: #1c2b38; /* body (text token: gray-2 feeds --sl-color-text) */
+  --sl-color-gray-3: #4f6072; /* text-muted light */
+  --sl-color-gray-4: #66788a;
+  --sl-color-gray-5: #d7dfe7; /* the hairline light uses for card frames */
+  --sl-color-gray-6: #eef2f6; /* surface-2 */
+  --sl-color-gray-7: #f7f9fb; /* surface-1: header bar on the white page */
+  --sl-color-hairline-light: #d7dfe7;
+
+  /* Accent ramp, light: teal-700 as text on white (6.13:1 — better than the
+     AstroWind blue it replaces per DESIGN.md §2), teal-800 on hover, teal-50
+     as the selected-item tint teal-800 sits on (6.98:1). */
+  --sl-color-accent: #136a85;
+  --sl-color-accent-high: #14566c;
+  --sl-color-accent-low: #eefafd;
+  --sl-color-text-accent: #136a85;
+}
+
+/* Type: the three faces, three jobs (DESIGN.md §3). Starlight's font hook is
+   --sl-font / --sl-font-mono; the heading family has no token, so it is set
+   by selector. Space Grotesk for titles, Inter for prose, JetBrains Mono for
+   anything a user pastes somewhere. */
+:root {
+  --sl-font: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --sl-font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:is(h1, h2, h3, h4, h5, h6),
+.site-title,
+starlight-toc summary,
+starlight-menu-button {
+  font-family: 'Space Grotesk Variable', var(--sl-font);
+  letter-spacing: -0.01em;
+}
+
+/* Scale: break 1.5:1. Starlight's defaults packed h1…h5 into 35/29/24/20/18,
+   a 1.25-overall spread the type detector read as a flat two-step ramp on
+   143 of 146 pages. These stop values keep Starlight's own
+   `h1: 4xl / h2: 3xl …` assignments (including its ≥50em media query) but
+   widen each step to a ~1.2 ratio: 16 base, 19, 22, 27, 33, 40 with the
+   desktop h1 at 46px. */
+:root {
+  --sl-text-lg: 1.1875rem; /* 19px */
+  --sl-text-xl: 1.375rem; /* 22px */
+  --sl-text-2xl: 1.6875rem; /* 27px */
+  --sl-text-3xl: 2.0625rem; /* 33px */
+  --sl-text-4xl: 2.5rem; /* 40px */
+  --sl-text-5xl: 2.875rem; /* 46px */
+}
+
+/* Browser surfaces Starlight leaves at their defaults: selection tinted from
+   the accent instead of platform blue, and scrollbars themed per mode. */
+::selection {
+  background-color: color-mix(in srgb, var(--sl-color-accent) 30%, transparent);
+}
+
+* {
+  scrollbar-color: var(--sl-color-gray-5) transparent;
+}
 
 /* Compatibility shim. Four legacy admin pages wrap link lists in
    <div class="border">, which used to resolve to Tailwind's `border` utility
@@ -25,4 +126,24 @@
 .sl-banner a {
   text-decoration: underline;
   text-underline-offset: 0.15em;
+}
+
+/*
+ * The browser focus ring is system blue — the one confirmation a keyboard
+ * user gets, and the least themed thing on the page. Token it to the accent
+ * ramp (DESIGN.md §4) without out-specifying component focus styles.
+ */
+:where(a[href], button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * Starlight's table of contents paints its item labels at 1.25 leading,
+ * below the 1.3 floor multi-line labels want. Both TOC rails, attribute
+ * hooks so the scoped component rule is out-prioritized without !important.
+ */
+starlight-toc a[class] > span[class],
+mobile-starlight-toc a[class] > span[class] {
+  line-height: 1.45;
 }

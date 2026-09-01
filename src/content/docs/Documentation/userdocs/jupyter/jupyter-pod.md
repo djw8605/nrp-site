@@ -1,6 +1,6 @@
 ---
 title: ML/Jupyter pod
-description: ML/Jupyter pod
+description: "Run JupyterLab as a single dedicated pod when the shared JupyterHub service does not fit."
 ---
 
 **Do you need to run your own Jupyter pod? Probably not!**
@@ -17,7 +17,7 @@ This topic assumes that you have basic knowledge of Kubernetes, or you have comp
 
 A Jupyter container in Nautilus [will be automatically destroyed in 6 hours](/documentation/userdocs/start/policies/#interactive-use-vs-batch). Use the [examples for Jobs](/documentation/userdocs/running/jobs/) once you're done with interactive debugging and ready to run a bigger job.<br>
 
-### <a name="step1"></a>Step 1: Set context  
+### <a name="step1"></a>Step 1: Set context
 
 Let's set the default namespace to avoid typing it for every command.
 Use your own namespace in the following command:
@@ -32,12 +32,12 @@ Check the default context with command and check your own namespace is listed un
 
 ### <a name="step2"></a>Step 2: Create Tensorflow pod
 
-1. **Create a tensorflow pod**<br>
+1.  **Create a tensorflow pod**<br>
     You can copy and paste the following text in your terminal window:
 
     ```
     cat << EOF | kubectl create -f -
-    apiVersion: v1        
+    apiVersion: v1
     kind: Pod
     metadata:
       name: gpu-pod-example
@@ -73,7 +73,7 @@ Check the default context with command and check your own namespace is listed un
 
         kubectl create -f tensorflow-pod.yaml
 
-1. **Check the pod is running**<br>
+1.  **Check the pod is running**<br>
 
         $ kubectl get pods
         NAME                                 READY     STATUS    RESTARTS   AGE
@@ -81,8 +81,8 @@ Check the default context with command and check your own namespace is listed un
 
     The output should give you the list of pods running or pending in your namespace, including "gpu-pod-example".
 
-1. **Login into your tensorflow pod** <br>
-    If the ```kubectl get pods``` command lists the pod's status as "Running", run the ```kubectl``` command listed below. In the command, the **-i** flag asks for bash to be executed interactively and **-t** flag allocates an access to a terminal.
+1.  **Login into your tensorflow pod** <br>
+    If the `kubectl get pods` command lists the pod's status as "Running", run the `kubectl` command listed below. In the command, the **-i** flag asks for bash to be executed interactively and **-t** flag allocates an access to a terminal.
     That is to say you want to have an interactive shell login on your pod.
 
         kubectl exec -it gpu-pod-example -- bash
@@ -99,7 +99,7 @@ Check the default context with command and check your own namespace is listed un
 
 ### <a name="step3"></a>Step 3: Run Jupyter notebook
 
-1. **Start Jupyter notebook**<br>
+1.  **Start Jupyter notebook**<br>
     In the newly running bash prompt running on the nautilus kubernetes container:
 
         jovyan@gpu-pod-example:~$ jupyter notebook --ip='0.0.0.0'
@@ -121,9 +121,9 @@ Check the default context with command and check your own namespace is listed un
             Or copy and paste one of these URLs:
                 http://(gpu-pod-example or 127.0.0.1):8888/?token=1143648a7edaeca023b1234563d20edcf596a789c9b5c6e1
 
-    Take note of the token at the end of the output. We will use it to login Jupyter Notebook. Do not close this terminal window or type ```Ctrl - C``` to terminate the process.
+    Take note of the token at the end of the output. We will use it to login Jupyter Notebook. Do not close this terminal window or type `Ctrl - C` to terminate the process.
 
-1. **Setup port forwarding**<br>
+1.  **Setup port forwarding**<br>
     In a separate terminal window on your local machine run port-forward to
     access the pod. Here we tell kubectl to forward any request to your local host
     port 8888 from a remote host (container) port 8888.
@@ -135,14 +135,14 @@ Check the default context with command and check your own namespace is listed un
         Forwarding from 127.0.0.1:8888 -> 8888
         Forwarding from [::1]:8888 -> 8888
 
-1. **Connect to Jupyter**<br>
+1.  **Connect to Jupyter**<br>
     In a new web browser window connect to an address **localhost:8888**, you should see the
     following page:
 
     ![The Jupyter sign-in page, asking for a password or token](../../../../assets/images/jupyter-login.png)
 
     Enter the previously saved token on the **Password or Token** line at the top
-    of the page.  Optionally, to set a password follow direcitons on the page.  Click
+    of the page. Optionally, to set a password follow direcitons on the page. Click
     appropriate **Log in** button.
 
     You get a Jupyter notebook with access to tensorflow:
@@ -155,11 +155,11 @@ Check the default context with command and check your own namespace is listed un
 
 It is important to tear down everything once we are done with the Jupyter to free up resources for others.
 
-1. **Close your web browser window** with Jupyter notebook once you are finished.
-1. **Shutdown the proxy** <br>
+1.  **Close your web browser window** with Jupyter notebook once you are finished.
+1.  **Shutdown the proxy** <br>
     In the terminal window where you executed port forwarding command, press `Ctrl-C`.
     This will stop local machine connection to the remote container.
-1. **Shutdown the Jupyter Server**<br>
+1.  **Shutdown the Jupyter Server**<br>
     Press `Ctrl-C` twice on the terminal window where you are logged in on a
     container and where jupyter server is running. You should see something along:
 
@@ -171,13 +171,13 @@ It is important to tear down everything once we are done with the Jupyter to fre
 
     This will stop the running `jupyter notebook`, but will not free up the resources taken by our Pod.
 
-1. **Logout form your container**<br>
+1.  **Logout form your container**<br>
     Exit the current container shell and you should be back on your machine:
 
         jovyan@gpu-pod-example:~$ exit
         exit
 
-1. **Delete the pod**<br>
+1.  **Delete the pod**<br>
     Check the pod is still running
 
         $ kubectl get pods
@@ -203,4 +203,3 @@ It is important to tear down everything once we are done with the Jupyter to fre
     This will free up the resources taken by our Pod.
 
 So far you have created an instance of Jupyter Notebook for personal use, if you prefer to create a full stack multi-user JupyterHub, proceed to [Deploy jupyterhub](/documentation/userdocs/jupyter/jupyterhub).
-
