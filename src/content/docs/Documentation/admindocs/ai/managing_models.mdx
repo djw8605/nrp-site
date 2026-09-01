@@ -143,8 +143,9 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        - name: PYTORCH_CUDA_ALLOC_CONF
-          value: "expandable_segments:True"
+        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
+        #- name: PYTORCH_CUDA_ALLOC_CONF
+        #  value: "expandable_segments:True"
         # Add environment variables when the Hugging Face or vLLM documentation specifies as beneficial
         #- name: SAFETENSORS_FAST_GPU
         #  value: "1"
@@ -340,8 +341,9 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        - name: PYTORCH_CUDA_ALLOC_CONF
-          value: "expandable_segments:True"
+        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
+        #- name: PYTORCH_CUDA_ALLOC_CONF
+        #  value: "expandable_segments:True"
         - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
           value: "true"
         - name: OTEL_SERVICE_NAME
@@ -885,8 +887,9 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        - name: PYTORCH_CUDA_ALLOC_CONF
-          value: "expandable_segments:True"
+        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
+        #- name: PYTORCH_CUDA_ALLOC_CONF
+        #  value: "expandable_segments:True"
         - name: NCCL_DEBUG
           value: "INFO"
         - name: NCCL_IB_DISABLE
@@ -1098,8 +1101,9 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        - name: PYTORCH_CUDA_ALLOC_CONF
-          value: "expandable_segments:True"
+        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
+        #- name: PYTORCH_CUDA_ALLOC_CONF
+        #  value: "expandable_segments:True"
         - name: NCCL_DEBUG
           value: "INFO"
         - name: NCCL_IB_DISABLE
