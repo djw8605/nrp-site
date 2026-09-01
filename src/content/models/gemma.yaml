@@ -2,6 +2,8 @@ id: gemma
 displayName: gemma
 huggingfaceId: google/gemma-4-31B-it-qat-w4a16-ct
 huggingfaceUrl: https://huggingface.co/google/gemma-4-31B-it-qat-w4a16-ct
+logo: gemma.png
+
 status: main
 badges:
   tool: true

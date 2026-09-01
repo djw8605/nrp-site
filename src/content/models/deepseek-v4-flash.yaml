@@ -2,6 +2,8 @@ id: deepseek-v4-flash
 displayName: deepseek-v4-flash
 huggingfaceId: deepseek-ai/DeepSeek-V4-Flash-0731
 huggingfaceUrl: https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731
+logo: deepseek.png
+
 status: evaluating
 badges:
   tool: true

@@ -2,6 +2,8 @@ id: gpt-oss
 displayName: gpt-oss
 huggingfaceId: openai/gpt-oss-120b
 huggingfaceUrl: https://huggingface.co/openai/gpt-oss-120b
+logo: gpt-oss.png
+
 status: main
 badges:
   tool: true

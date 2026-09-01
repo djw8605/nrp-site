@@ -2,6 +2,8 @@ id: minimax-m2
 displayName: minimax-m2
 huggingfaceId: MiniMaxAI/MiniMax-M2.7
 huggingfaceUrl: https://huggingface.co/MiniMaxAI/MiniMax-M2.7
+logo: minimax.png
+
 status: evaluating
 badges:
   tool: true

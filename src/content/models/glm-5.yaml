@@ -2,6 +2,8 @@ id: glm-5
 displayName: glm-5
 huggingfaceId: Inferact/GLM-5.3-NVFP4
 huggingfaceUrl: https://huggingface.co/Inferact/GLM-5.3-NVFP4
+logo: glm.png
+
 status: evaluating
 badges:
   tool: true

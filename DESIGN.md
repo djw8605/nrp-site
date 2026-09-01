@@ -331,7 +331,9 @@ If you add motion, it replaces this moment or serves a state change. It does not
 Stat figures use `--nrp-font-display` at `font-variant-numeric: tabular-nums`. Identifiers, commands,
 and anything a user might copy use `--nrp-font-mono`. That includes the model names on `/llms`
 (`qwen3`, `gpt-oss`, `minimax-m2`) — they are the literal strings a user pastes into a client config,
-not prose.
+not prose. The `/llms` model grid renders `src/content/models/*.yaml` — the same collection as the
+docs feature matrix and the live `/v1/models` listing — so the marketing page cannot drift from what
+the platform serves; `status: evaluating` renders as a neutral chip, never a hidden model.
 
 ### The endpoint readout
 
@@ -353,7 +355,9 @@ Three decisions in it generalise:
   not they are logged in, and anything placed below the island arrives after hydration and shifts.
 
 The host itself is data, in [`src/data/llm-endpoint.ts`](src/data/llm-endpoint.ts) — shared with the
-Chatbox config the same page generates.
+Chatbox config the same page generates. `/llms` carries a one-row version of the plate (base URL +
+its `border-current` copy chip) under the client wall, because every client shown there is pointed at
+this URL; the three-fact sequence stays on `/llmtoken`, where a key actually exists to pair with it.
 
 ### The office-hours strip
 
@@ -589,7 +593,7 @@ The `--aw-*` aliases exist so this can proceed incrementally. Update this table 
 `widgets/Hero.astro` · `widgets/HeroWide.astro` · `widgets/Features.astro` ·
 `widgets/Features2.astro` · `widgets/FAQs.astro` · `widgets/CallToAction.astro` ·
 `widgets/BlogLatestPosts.astro` · `widgets/Header.astro` · `widgets/Footer.astro` ·
-`widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` ·
+`widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` · `ui/Timeline.astro` ·
 `common/AnnouncementBar.astro` · `widgets/People.astro` · `blog/GridItem.astro` ·
 `ai/EndpointPanel.astro` · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
 `pages/distributed-infrastructure.astro` · `pages/about.astro` · `pages/contact.astro`
@@ -607,7 +611,7 @@ by `common/AnnouncementBar.astro`.)
 | `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                |
 | `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                  |
 | `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset |
-| `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the `/llms` catalogue                                |
+| `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the docs model catalogue, not `/llms`' grid; `--sl-*` styled for the Starlight island |
 | `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp       |
 | `layouts/MarkdownLayout.astro`                   | see below — two pages left                           |
 | `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`         |

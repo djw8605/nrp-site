@@ -3,6 +3,7 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Timeline from '~/components/ui/Timeline.astro';
 import Headline from '~/components/ui/Headline.astro';
 import Image from '~/components/common/Image.astro';
+import Button from '~/components/ui/Button.astro';
 import type { Steps as Props } from '~/types';
 
 const {
@@ -11,6 +12,7 @@ const {
   tagline = await Astro.slots.render('tagline'),
   titleAs,
   items = [],
+  callToAction,
   image = await Astro.slots.render('image'),
   isReversed = false,
 
@@ -51,6 +53,14 @@ const {
         }}
       />
       <Timeline items={items} classes={classes?.items as Record<string, never>} />
+      {
+        /* Types.Steps declares callToAction; the widget used to drop it. */
+        callToAction && typeof callToAction !== 'string' && callToAction.href && (
+          <div class="mt-8">
+            <Button variant="link" {...callToAction} />
+          </div>
+        )
+      }
     </div>
     {
       image && (

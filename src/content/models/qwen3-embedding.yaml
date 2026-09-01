@@ -2,6 +2,8 @@ id: qwen3-embedding
 displayName: qwen3-embedding
 huggingfaceId: Qwen/Qwen3-VL-Embedding-8B
 huggingfaceUrl: https://huggingface.co/Qwen/Qwen3-VL-Embedding-8B
+logo: qwen.png
+
 status: main
 badges:
   tool: false

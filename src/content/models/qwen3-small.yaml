@@ -2,6 +2,8 @@ id: qwen3-small
 displayName: qwen3-small
 huggingfaceId: Qwen/Qwen3.8-27B
 huggingfaceUrl: https://huggingface.co/Qwen/Qwen3.8-27B
+logo: qwen.png
+
 status: main
 badges:
   tool: true

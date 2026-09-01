@@ -2,58 +2,53 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Steps from '~/components/widgets/Steps.astro';
-import Features2 from '~/components/widgets/Features2.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
+import { Icon } from 'astro-icon/components';
+import { getCollection } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import { LLM_ENDPOINT } from '~/data/llm-endpoint';
 
 const metadata = {
   title: 'Hosted LLMs',
 };
 
-const featuredModels = [
-  {
-    name: 'qwen3',
-    src: (await import('~/assets/images/models/qwen.png')).default,
-    description:
-      "Alibaba's 180B multimodal MoE with only 6B active per token and a million-token context. The catalog's strongest agentic coder.",
-  },
-  {
-    name: 'kimi',
-    src: (await import('~/assets/images/models/kimi.png')).default,
-    description:
-      "Moonshot's 1T-parameter frontier coding model with multimodal inputs. Best for agentic coding workflows.",
-  },
-  {
-    name: 'gemma',
-    src: (await import('~/assets/images/models/gemma.png')).default,
-    description:
-      "Google's Gemma 4: multimodal, efficient frontier performance. A lighter-weight model that still handles images.",
-  },
-  {
-    name: 'glm-5',
-    src: (await import('~/assets/images/models/glm.png')).default,
-    description: "Zhipu's 753B frontier coding model with NVFP4 weights. Strong on code and reasoning tasks.",
-  },
-  {
-    name: 'deepseek-v4-flash',
-    src: (await import('~/assets/images/models/deepseek.png')).default,
-    description:
-      "DeepSeek's 304B MoE with a full million-token context window. Best for whole-repository and long-document work.",
-  },
-  {
-    name: 'minimax-m2',
-    src: (await import('~/assets/images/models/minimax.png')).default,
-    description: 'Efficient frontier coding model: 230B in native FP8, fits comfortably on four A100s.',
-  },
-  {
-    name: 'gpt-oss',
-    src: (await import('~/assets/images/models/gpt-oss.png')).default,
-    description: "OpenAI's open-weights agentic model: tiny GPU footprint, strong tool use, LTS candidate.",
-  },
-];
+/* Catalog truth lives in src/content/models/*.yaml -- the same collection the
+   docs feature matrix and the live /v1/models listing draw from. This grid used
+   to hand-maintain seven of ten models and carried none of the status that
+   distinguishes them, so it drifted from what the platform actually serves. */
+const catalog = (await getCollection('models'))
+  .filter((model) => model.data.status !== 'deprecated')
+  .sort((a, b) => a.data.sortOrder - b.data.sortOrder);
+
+const logoModules = import.meta.glob('../assets/images/models/*.png', {
+  eager: true,
+  import: 'default',
+}) as Record<string, ImageMetadata>;
+const logos = new Map(Object.entries(logoModules).map(([path, src]) => [path.split('/').pop(), src]));
+
+/* A model's window is a round nominal ("1M") even when the server reports the
+   binary count (1048576), so M values round to one decimal and shed the .0 --
+   `1.048576M` on a marketing card is an artifact, not information. */
+const formatContext = (tokens: number) =>
+  tokens >= 1_000_000
+    ? `${(tokens / 1_000_000).toFixed(1).replace(/\.0$/, '')}M ctx`
+    : `${Math.round(tokens / 1_000)}K ctx`;
+
+/* Copy-chip boundary is border-current, never border-hairline: a control's edge
+   needs 3:1 contrast and the hairline only measures ~1.4:1. The chip inherits
+   text-muted, which passes in both modes. EndpointPanel.astro records the full
+   reasoning; this is the same register. ring-offset is deliberately absent --
+   the default offset color is white, which would halo on dark cards. */
+const chipClass = [
+  'relative z-10 inline-flex shrink-0 items-center gap-1.5 rounded-md border border-current px-2.5 py-1.5',
+  'text-xs font-medium text-muted transition-colors hover:border-teal-600 hover:bg-surface-3 hover:text-teal-700',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:hover:border-teal-400',
+  'dark:hover:text-teal-300',
+].join(' ');
 
 const featuredClients = [
   { name: 'Open WebUI', src: (await import('~/assets/images/docs/openwebui-logo.png')).default },
@@ -65,6 +60,42 @@ const featuredClients = [
   { name: 'Kimi CLI', src: (await import('~/assets/images/clients/kimi-cli.png')).default },
   { name: 'Copilot CLI', src: (await import('~/assets/images/clients/copilot-cli.png')).default },
 ];
+
+const useCases = [
+  {
+    icon: 'tabler:file-analytics',
+    title: 'Document understanding and sentiment',
+    body: 'Researchers can parse and summarize large document collections, then extract signals such as sentiment from sources like securities filings.',
+  },
+  {
+    icon: 'tabler:terminal-2',
+    title: 'Agentic coding for classrooms and research groups',
+    body: 'Classrooms and research groups can use coding agents with NRP-hosted models to develop, review, and iterate on software projects.',
+  },
+  {
+    /* Claim taken from the fair-use policy as written: concurrency is gated,
+       volume and billing are not. */
+    icon: 'tabler:stack-2',
+    title: 'Batch LLM processing',
+    body: 'No per-token billing and no cap on how many requests you send: point a script at the API and work through whole document corpora, eval sweeps, or synthetic-data jobs. <a class="link" href="/documentation/userdocs/ai/llm-managed/fair-use">Fair use</a> governs how many requests run at once — never how many you make.',
+  },
+];
+
+/* The three merged operational practices, named by the surface each one reads. */
+const operationsSurfaces = [
+  {
+    key: 'nodes',
+    value: 'Query and diagnose failing infrastructure in the context of the cluster it runs.',
+  },
+  {
+    key: 'pods',
+    value: 'Inspect logs, events, and related pod details to troubleshoot a workload.',
+  },
+  {
+    key: 'accounting',
+    value: 'An MCP server connects models to the NRP accounting system to surface usage insights.',
+  },
+];
 ---
 
 <Layout metadata={metadata}>
@@ -72,7 +103,7 @@ const featuredClients = [
     align="left"
     split={true}
     title="Frontier open-weight LLMs, hosted on the NRP"
-    subtitle="Free access for researchers and educators to a rotating catalog of frontier open-weight models, through a hosted chat interface, an OpenAI-compatible API, and ready-made configs for the major coding CLIs."
+    subtitle="Free access for researchers and educators to a rotating catalog of frontier open-weight models — through a hosted chat interface, ready-made coding-CLI configs, and an OpenAI-compatible API with no per-token billing, from single chats to batch runs over whole corpora."
     actions={[
       { variant: 'primary', text: 'Get started', href: '/contact' },
       { text: 'Try Open WebUI', href: 'https://nrp-openwebui.nrp-nautilus.io', target: '_blank' },
@@ -105,8 +136,78 @@ const featuredClients = [
     </Fragment>
   </Hero>
 
+  {
+    /* The value proposition, placed where a first-time reader meets it. Three
+      user-facing practices side by side -- documents, coding, batch -- with
+      operations as the wide record beneath, its three merged surfaces
+      rendered as a sunken readout in the page's instrument register. The
+      batch card states the platform's actual policy: concurrency is governed,
+      volume and billing are not. */
+  }
+  <WidgetWrapper surface={1}>
+    <Headline
+      title="What you can use them for"
+      subtitle="The same endpoint carries a chat window, a coding agent, the platform's own operations, and corpus-scale batch jobs — none of it billed by the token."
+    />
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        useCases.map((u) => (
+          <div class="card p-6 md:p-8">
+            <Icon
+              name={u.icon}
+              class="mb-5 h-11 w-11 rounded-md bg-teal-700 p-2.5 text-white dark:bg-teal-400 dark:text-teal-950"
+            />
+            <h3 class="font-display text-h3 font-semibold text-heading">{u.title}</h3>
+            <p class="mt-3 text-body" set:html={u.body} />
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="card mt-6 p-6 md:p-8">
+      <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+        <div>
+          <Icon
+            name="tabler:settings-automation"
+            class="mb-5 h-11 w-11 rounded-md bg-teal-700 p-2.5 text-white dark:bg-teal-400 dark:text-teal-950"
+          />
+          <h3 class="font-display text-h3 font-semibold text-heading">Agentic operations</h3>
+          <p class="mt-3 max-w-xl text-body">
+            The platform turns its own operations over to the models it hosts: operators question failing nodes, users
+            untangle problem pods, and the accounting system answers in plain language.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+            <a class="link-quiet" href="/diagnose">Diagnose running pods&nbsp;&rarr;</a>
+            <a
+              class="link-quiet"
+              href="https://grafana.nrp-nautilus.io/d/nrp-user-explorer/nrp-accounting"
+              target="_blank"
+              rel="noopener noreferrer">View NRP accounting&nbsp;&rarr;</a
+            >
+          </div>
+        </div>
+        <figure class="overflow-hidden rounded-lg border border-hairline bg-sunken">
+          <figcaption class="flex items-center gap-2 px-4 py-2.5 font-mono text-xs text-muted">
+            <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+            connected surfaces
+          </figcaption>
+          <dl class="text-sm">
+            {
+              operationsSurfaces.map((s) => (
+                <div class="grid gap-x-4 gap-y-1 border-t border-hairline px-4 py-3.5 sm:grid-cols-[7.5rem_minmax(0,1fr)]">
+                  <dt class="font-mono text-xs text-muted sm:pt-0.5">{s.key}</dt>
+                  <dd class="text-body">{s.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </figure>
+      </div>
+    </div>
+  </WidgetWrapper>
+
   <Steps
-    surface={1}
+    surface="page"
     title="How to get access"
     items={[
       {
@@ -123,7 +224,7 @@ const featuredClients = [
       {
         title: 'Step 3: <span class="font-medium">Generate your LLM API key</span>',
         description:
-          'Use the LLM API Keys page to create a personal API key, then plug it into Open WebUI, Chatbox, or any OpenAI-compatible client.',
+          'Use the <a class="link" href="/llmtoken">LLM API Keys</a> page to create a personal API key, then plug it into Open WebUI, Chatbox, or any OpenAI-compatible client.',
         icon: 'tabler:key',
       },
     ]}
@@ -134,7 +235,9 @@ const featuredClients = [
     }}
     image={{
       src: '~/assets/images/NRP_globe.jpg',
-      alt: 'NRP globe',
+      /* Pure decoration beside prose that already says what it is -- empty alt,
+        per DESIGN.md section 7. */
+      alt: '',
     }}
   />
 
@@ -144,34 +247,77 @@ const featuredClients = [
       visibly off against the site's cool #17242f. Now `.card` and text tokens.
       DESIGN.md hard rule 1. */
   }
-  <WidgetWrapper surface="page">
+  <WidgetWrapper surface={1}>
     <Headline
       title="Models we host"
       subtitle="Frontier open-weight models with strong reasoning, coding, and multimodal capabilities. Pick the one that fits your task."
     />
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {
-        featuredModels.map((m) => (
-          <div class="card flex flex-col gap-4 p-6">
-            <div class="flex items-center gap-4">
-              <div class="logo-plate h-14 w-14 shrink-0">
-                <Image
-                  src={m.src}
-                  alt=""
-                  width={56}
-                  height={56}
-                  widths={[56, 112]}
-                  sizes="56px"
-                  class="max-h-full w-auto object-contain"
-                />
+        catalog.map((model) => {
+          const d = model.data;
+          const logo = d.logo ? logos.get(d.logo) : undefined;
+          const idRef = `llms-model-id-${d.id}`;
+          const facts = [d.parameters, d.contextTokens ? formatContext(d.contextTokens) : null]
+            .filter(Boolean)
+            .join(' · ');
+          return (
+            <div class="card relative flex flex-col gap-3 p-6">
+              <div class="flex items-center gap-4">
+                {logo && (
+                  <div class="logo-plate h-14 w-14 shrink-0">
+                    <Image
+                      src={logo}
+                      alt=""
+                      width={56}
+                      height={56}
+                      widths={[56, 112]}
+                      sizes="56px"
+                      class="max-h-full w-auto object-contain"
+                    />
+                  </div>
+                )}
+                <div class="min-w-0">
+                  {/* Mono is on the identifier only: it is the literal string
+                    users paste into a client config. DESIGN.md section 3. */}
+                  <h3 class="truncate font-mono text-base font-semibold text-heading">
+                    <code id={idRef}>{d.displayName}</code>
+                  </h3>
+                  <div class="mt-1 flex flex-wrap items-center gap-2">
+                    {facts && <p class="font-mono text-xs text-muted">{facts}</p>}
+                    {d.status === 'evaluating' && (
+                      <span class="rounded-full bg-surface-3 px-2 py-0.5 text-xs font-medium text-muted">
+                        evaluating
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-              {/* Model names are the literal API identifiers users paste into a
-                  client config, so they get the mono face. DESIGN.md section 3. */}
-              <h3 class="font-mono text-base font-semibold text-heading">{m.name}</h3>
+              <p class="text-sm text-muted">{d.summary}</p>
+              <div class="mt-auto flex items-center justify-between gap-3 pt-1">
+                <a
+                  class="link-quiet text-sm after:absolute after:inset-0"
+                  href={`/documentation/userdocs/ai/llm-managed/models#${d.id}`}
+                >
+                  Details<span aria-hidden="true">&nbsp;&rarr;</span>
+                  <span class="sr-only">: {d.displayName} in the models feature matrix</span>
+                </a>
+                <button
+                  type="button"
+                  data-copy-from={idRef}
+                  data-copy-what={`the ${d.displayName} model ID`}
+                  aria-label={`Copy the model ID for ${d.displayName}`}
+                  class={chipClass}
+                >
+                  <Icon name="tabler:copy" class="h-3.5 w-3.5" data-copy-icon="idle" aria-hidden="true" />
+                  <Icon name="tabler:check" class="hidden h-3.5 w-3.5" data-copy-icon="done" aria-hidden="true" />
+                  <span data-copy-label>Copy</span>
+                </button>
+                <span class="sr-only text-xs" role="status" data-copy-status />
+              </div>
             </div>
-            <p class="text-sm text-muted">{m.description}</p>
-          </div>
-        ))
+          );
+        })
       }
     </div>
     <div class="mt-8 flex justify-center">
@@ -181,7 +327,7 @@ const featuredClients = [
     </div>
   </WidgetWrapper>
 
-  <WidgetWrapper surface={1}>
+  <WidgetWrapper surface="page">
     <Headline
       title="Use the client you already have"
       subtitle="Hosted chat interfaces, desktop apps, and coding CLIs all work with NRP-hosted LLMs through the OpenAI-compatible endpoint."
@@ -206,6 +352,43 @@ const featuredClients = [
         ))
       }
     </div>
+
+    {
+      /* The endpoint is the other half of "use the client you already have":
+        every client below is pointed at this URL. Same instrument-plate chrome
+        as the /llmtoken readout, one row instead of three: on this page the
+        auth header and verify command belong to the key, not to the
+        introduction. DESIGN.md section 6. */
+    }
+    <figure class="mx-auto mt-12 w-full max-w-2xl overflow-hidden rounded-lg border border-hairline bg-sunken">
+      <figcaption class="flex items-center gap-2 border-b border-hairline px-4 py-2.5 font-mono text-xs text-muted">
+        <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-teal-500"></span>
+        endpoint
+      </figcaption>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3.5">
+        <code id="llms-endpoint-base-url" class="min-w-0 break-all font-mono text-base font-medium text-heading"
+          >{LLM_ENDPOINT.baseUrl}</code
+        >
+        <button
+          type="button"
+          data-copy-from="llms-endpoint-base-url"
+          data-copy-what="the base URL"
+          aria-label={`Copy the base URL, ${LLM_ENDPOINT.baseUrl}`}
+          class={chipClass}
+        >
+          <Icon name="tabler:copy" class="h-3.5 w-3.5" data-copy-icon="idle" aria-hidden="true" />
+          <Icon name="tabler:check" class="hidden h-3.5 w-3.5" data-copy-icon="done" aria-hidden="true" />
+          <span data-copy-label>Copy</span>
+        </button>
+        <span class="sr-only text-xs" role="status" data-copy-status></span>
+      </div>
+    </figure>
+    <p class="mx-auto mt-4 max-w-xl text-center text-sm text-muted">
+      Requests authenticate with a personal API key as a bearer token — mint one on the
+      <a class="link" href="/llmtoken"> LLM API Keys </a>
+      page once your namespace has LLM access enabled.
+    </p>
+
     <div class="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
       <Button variant="link" href="/documentation/userdocs/ai/llm-managed/chat-interfaces">
         Chat interface guides &rarr;
@@ -215,52 +398,6 @@ const featuredClients = [
       </Button>
     </div>
   </WidgetWrapper>
-
-  <Features2
-    surface="page"
-    title="How LLMs are being used on the NRP"
-    subtitle="Researchers, educators, and NRP operators are using hosted LLMs to analyze documents, build software, diagnose workloads, and understand platform usage."
-    items={[
-      {
-        title: 'Diagnosing failed nodes',
-        description:
-          'NRP infrastructure is connected to LLM-based tooling so operators can query and diagnose failing nodes using cluster context.',
-        icon: 'tabler:server-bolt',
-      },
-      {
-        title: 'Diagnosing user pods',
-        description:
-          'Users can diagnose problematic pods by inspecting logs, events, and related pod details through NRP-assisted workflows.',
-        icon: 'tabler:container',
-        callToAction: {
-          text: 'Diagnose running pods',
-          href: 'https://nrp.ai/diagnose/',
-        },
-      },
-      {
-        title: 'Document understanding and sentiment',
-        description:
-          'Researchers can parse and summarize large document collections, then extract signals such as sentiment from sources like securities filings.',
-        icon: 'tabler:file-analytics',
-      },
-      {
-        title: 'Agentic coding for classrooms and research groups',
-        description:
-          'Classrooms and research groups can use coding agents with NRP-hosted models to develop, review, and iterate on software projects.',
-        icon: 'tabler:school',
-      },
-      {
-        title: 'Building MCP servers for accounting insights',
-        description:
-          'NRP develops MCP servers that plug into the NRP accounting system to help teams understand platform usage and surface operational insights.',
-        icon: 'tabler:database-search',
-        callToAction: {
-          text: 'View NRP accounting',
-          href: 'https://grafana.nrp-nautilus.io/d/nrp-user-explorer/nrp-accounting',
-        },
-      },
-    ]}
-  />
 
   <CallToAction
     surface={1}
@@ -276,3 +413,97 @@ const featuredClients = [
     ]}
   />
 </Layout>
+
+<style>
+  /* Copied state: label and check icon carry it, the border confirms it. Same
+     treatment the /llmtoken readout gave the interaction. */
+  button[data-copy-state='copied'] {
+    border-color: var(--nrp-ring);
+    color: var(--nrp-link);
+  }
+</style>
+
+<script>
+  // Same clipboard ladder as EndpointPanel: execCommand fallback, and failing
+  // that, the value is selected so the reader copies it by hand. The panel's
+  // own copy script never runs here (its source ids only exist on /llmtoken),
+  // so this page binds any [data-copy-from] button generically. The bound
+  // guard keeps dev-server HMR from doubling listeners.
+  const write = async (text: string): Promise<boolean> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      /* fall through */
+    }
+    try {
+      const scratch = document.createElement('textarea');
+      scratch.value = text;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.top = '0';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      const ok = document.execCommand('copy');
+      scratch.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-from]').forEach((button) => {
+    if (button.dataset.copyBound) return;
+    button.dataset.copyBound = 'true';
+
+    const source = document.getElementById(button.dataset.copyFrom ?? '');
+    if (!source) return;
+    const what = button.dataset.copyWhat ?? 'the value';
+
+    const idle = button.querySelector<SVGElement>('[data-copy-icon="idle"]');
+    const done = button.querySelector<SVGElement>('[data-copy-icon="done"]');
+    const label = button.querySelector<HTMLElement>('[data-copy-label]');
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    let reset: number | undefined;
+
+    // sr-only positions the span absolutely; `w-full` only joins while a
+    // failure message is on screen, or it overflows the document at 375px.
+    const showStatus = (visible: boolean) => {
+      status?.classList.toggle('sr-only', !visible);
+      status?.classList.toggle('w-full', visible);
+    };
+
+    button.addEventListener('click', async () => {
+      const value = source.textContent?.trim() ?? '';
+      const ok = await write(value);
+
+      if (ok) {
+        button.dataset.copyState = 'copied';
+        if (label) label.textContent = 'Copied';
+        idle?.classList.add('hidden');
+        done?.classList.remove('hidden');
+        showStatus(false);
+        if (status) status.textContent = `${what} copied to the clipboard.`;
+      } else {
+        const range = document.createRange();
+        range.selectNodeContents(source);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        showStatus(true);
+        if (status) status.textContent = `The browser blocked the clipboard. ${what} is selected — copy it now.`;
+      }
+
+      window.clearTimeout(reset);
+      reset = window.setTimeout(() => {
+        delete button.dataset.copyState;
+        if (label) label.textContent = 'Copy';
+        idle?.classList.remove('hidden');
+        done?.classList.add('hidden');
+        showStatus(false);
+        if (status) status.textContent = '';
+      }, 2400);
+    });
+  });
+</script>

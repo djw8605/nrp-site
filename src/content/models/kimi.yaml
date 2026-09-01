@@ -2,6 +2,8 @@ id: kimi
 displayName: kimi
 huggingfaceId: moonshotai/Kimi-K2.7-Code
 huggingfaceUrl: https://huggingface.co/moonshotai/Kimi-K2.7-Code
+logo: kimi.png
+
 status: evaluating
 badges:
   tool: true

@@ -81,6 +81,7 @@ const modelsCollection = defineCollection({
     contextTokens: z.number().optional(),
     parameters: z.string().optional(),
     quantization: z.string().optional(),
+    logo: z.string().optional(),
     multimodalKinds: z.array(z.enum(['image', 'video', 'audio'])).optional(),
     disableReasoningSnippet: z.string().optional(),
     enableReasoningSnippet: z.string().optional(),
