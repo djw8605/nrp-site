@@ -208,7 +208,7 @@ var chatboxConfigTemplate = {
 			},
 			{
 				modelId: "deepseek-v4-flash",
-				capabilities: ["reasoning", "tool_use"],
+				capabilities: ["reasoning", "vision", "tool_use"],
 				contextWindow: 1048576
 			},
 		]

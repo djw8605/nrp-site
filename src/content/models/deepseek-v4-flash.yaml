@@ -1,32 +1,38 @@
 id: deepseek-v4-flash
 displayName: deepseek-v4-flash
-huggingfaceId: deepseek-ai/DeepSeek-V4-Flash-0731
-huggingfaceUrl: https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731
+huggingfaceId: deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
+huggingfaceUrl: https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
 logo: deepseek.png
 
 status: evaluating
 badges:
   tool: true
   reasoning: true
-  multimodal: false
+  multimodal: true
   research: false
 contextTokens: 1048576
+multimodalKinds:
+  - image
 parameters: 304B
 quantization: FP8 (deepseek_v4_fp8)
-disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"enable_thinking": false}}'
-toolCallingDocsUrl: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Flash
+disableReasoningSnippet: 'extra_body={"chat_template_kwargs": {"thinking": false}}'
+reasoningEffortSnippet: 'extra_body={"chat_template_kwargs": {"reasoning_effort": "low"}}  # or "high"; "max" is the default'
+toolCallingDocsUrl: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp
 sortOrder: 80
-summary: DeepSeek's 304B MoE with a full million-token context window.
+summary: DeepSeek's 304B MoE, served from the experimental vision checkpoint — image input with a full million-token context window.
 strengths:
   - 1M context — the largest window in the catalog, for whole-codebase and long-document work
+  - Image input alongside that context — screenshots, figures, and scanned pages
   - MoE routing keeps latency low relative to total parameter count
   - FP8 weights plus an FP8 KV cache leave room for high concurrency at full context
   - Strong reasoning and tool calling
 weaknesses:
-  - Text-only — no image, video, or audio input
-  - Evaluating — availability and configuration may shift
+  - Images only — no video or audio input
+  - Experimental vision checkpoint on an evaluating model; availability and configuration may shift
+  - Thinking is on by default at max effort; lower reasoning_effort, or disable thinking, for simple queries
   - Long-context requests are memory-hungry; expect slower first-token latency near the limit
 bestFor:
   - Whole-repository code understanding
   - Long-document analysis and summarization
+  - Documents that mix long text with figures, screenshots, or scanned pages
   - Reasoning tasks that need the full context window
