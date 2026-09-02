@@ -21,7 +21,7 @@ toolCallingDocsUrl: https://recipes.vllm.ai/deepseek-ai/DeepSeek-V4-Flash-Vision
 sortOrder: 80
 summary: DeepSeek's 304B MoE, served from the experimental vision checkpoint — image input with a full million-token context window.
 strengths:
-  - 1M context — the largest window in the catalog, for whole-codebase and long-document work
+  - 1M context — tied with glm-5 for the largest window in the catalog, for whole-codebase and long-document work
   - Image input alongside that context — screenshots, figures, and scanned pages
   - MoE routing keeps latency low relative to total parameter count
   - FP8 weights plus an FP8 KV cache leave room for high concurrency at full context

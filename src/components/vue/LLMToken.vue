@@ -199,7 +199,7 @@ var chatboxConfigTemplate = {
 			{
 				modelId: "glm-5",
 				capabilities: ["reasoning", "tool_use"],
-				contextWindow: 300000
+				contextWindow: 1048576
 			},
 			{
 				modelId: "minimax-m2",

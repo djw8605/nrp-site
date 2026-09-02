@@ -10,7 +10,7 @@ badges:
   reasoning: true
   multimodal: false
   research: false
-contextTokens: 300000
+contextTokens: 1048576
 parameters: 753B
 quantization: NVFP4
 reasoningEffortSnippet: 'extra_body={"chat_template_kwargs": {"reasoning_effort": "low"}}  # or "high"; "max" is the default'
@@ -21,7 +21,7 @@ strengths:
   - Highest Artificial Analysis Intelligence Index in the catalog; second on Terminal-Bench v2.1, behind qwen3
   - Strong agentic coding — competitive with commercial frontier models
   - NVFP4 quantization preserves quality within limited VRAM
-  - 300K context covers large codebases
+  - 1M context covers whole codebases and long-document work
 weaknesses:
   - Text-only — no multimodal input
   - Evaluating — configuration may shift
