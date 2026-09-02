@@ -67,6 +67,29 @@ Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${inp
 }
 ```
 
+## omp
+
+https://omp.sh (https://github.com/can1357/oh-my-pi)
+
+Contents of `~/.omp/agent/models.yml`:
+
+```yaml
+providers:
+  nrp:
+    baseUrl: https://ellm.nrp-nautilus.io/v1
+    api: openai-completions
+    apiKey: <YOUR_API_KEY>
+    models:
+      - id: kimi
+        name: kimi
+        contextWindow: 131072
+        maxTokens: 32768
+      - id: qwen3-small
+        name: qwen3-small
+        contextWindow: 2048576
+        maxTokens: 64000
+```
+
 ## OpenCode
 
 https://github.com/anomalyco/opencode
