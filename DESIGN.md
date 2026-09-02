@@ -660,6 +660,35 @@ What is deliberately **not** bridged: Starlight's component chrome (sidebar geom
 pagination) stays Stock, because reimplementing a docs framework is not the same as coloring one —
 and §5's geometry and §4's container rules are Tailwind-coupled and apply to marketing pages only.
 
+### The folded client configs
+
+`/documentation/userdocs/ai/llm-managed/client-configs` carries nine ready-to-paste configs for
+eight coding clients. Unfolded they measured **14,298px — 17.9 screens** — so a reader who came for
+Crush scrolled past 200 lines of somebody else's OpenCode JSON to reach it. Two components fold it
+to 3.7 screens:
+[`ai/ConfigDrawer.astro`](src/components/ai/ConfigDrawer.astro) puts each config in a `<details>`
+whose summary is **the file the reader is about to edit**, and
+[`ai/ClientPicker.astro`](src/components/ai/ClientPicker.astro) is the chip row above them, which
+jumps to a client _and_ opens its drawer (a fragment alone would leave it folded).
+
+Folding, not hiding: the content stays in the DOM, so Pagefind indexes it, Ctrl+F finds it, and
+`#crush` still resolves. The chips are the `border-current` control idiom from §6, quiet at
+`gray-3` and accented on hover — never eight accent chips in a row.
+
+**The trap here is specificity, and it fails silently.** Starlight styles bare `<summary>` and
+`<details>` inside markdown content at `.sl-markdown-content summary:not(:where(.not-content *))`
+— (0,1,1) — which outranks any Astro-scoped class, because Astro wraps the scope in `:where()`.
+Three of those rules fight a drawer: `display: block` stacks the summary's children (a 44px row
+renders 90px), a negative inline-start margin pulls the marker out of the frame, and a 2px
+`border-inline-start` puts a heavier edge on one side of a 1px box. Restate them behind
+`:global(.sl-markdown-content)` — writing the ancestor _ungloballed_ scopes it too, producing
+`.sl-markdown-content:where(.astro-xxx)`, which matches nothing and looks like a no-op.
+
+**Do not draw a disclosure caret.** Starlight's `summary::before` already is one: a masked chevron
+that rotates on open, follows `currentcolor`, and flips under RTL. An authored SVG beside it gives
+every row two arrows — which shipped here once before it was caught, and is the same lesson as the
+paragraph above this one: color the framework, don't reimplement it.
+
 **One deliberate exception to the teal-ramp rule lives here.** The benchmark chart on
 `/documentation/userdocs/ai/llm-managed/models` colours each bar by the model's creator, from a
 seven-hue palette in [`src/data/model-creators.ts`](src/data/model-creators.ts). That is not a

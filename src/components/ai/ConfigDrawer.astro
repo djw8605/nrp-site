@@ -1,0 +1,172 @@
+---
+/**
+ * One folded configuration on the client-configs page.
+ *
+ * The page is a reference: a reader arrives knowing which client they use, and
+ * every other client's config is noise to them. Nine configs unfolded ran to
+ * 527 lines — one of them 209 lines of JSON on its own — so the reader scrolled
+ * past thousands of tokens of somebody else's settings to reach theirs.
+ *
+ * Folding is progressive disclosure, not hiding: <details> keeps the content in
+ * the DOM, so Pagefind still indexes it, Ctrl+F still finds it (browsers with
+ * find-in-page expansion open the drawer), and the anchor still resolves.
+ *
+ * The summary is the file the reader is about to edit. That is the most useful
+ * label a closed drawer can carry — it answers "where does this go?" before the
+ * config is even visible — and it is a field on a record, not a kicker.
+ */
+interface Props {
+  /** The path being edited, or — with kind="text" — where the config goes. */
+  label: string;
+  /**
+   * `path` renders the label as mono, which is what a file path, an env var,
+   * or any other literal string the reader will type deserves. `text` renders
+   * it as prose, for the two clients that have no file to name: mono on an
+   * English phrase is a costume, not a signal.
+   */
+  kind?: 'path' | 'text';
+  /** Optional short qualifier: how many models, what the block adds. */
+  note?: string;
+}
+
+const { label, kind = 'path', note } = Astro.props;
+---
+
+<details class="config-drawer">
+  <summary class="config-drawer-summary">
+    {
+      kind === 'path' ? (
+        <code class="config-drawer-label">{label}</code>
+      ) : (
+        <span class="config-drawer-label config-drawer-label-text">{label}</span>
+      )
+    }
+    {note && <span class="config-drawer-note">{note}</span>}
+  </summary>
+  <div class="config-drawer-body">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .config-drawer {
+    margin-block: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: var(--sl-color-gray-6);
+  }
+
+  :root[data-theme='light'] .config-drawer {
+    background: var(--sl-color-gray-7);
+  }
+
+  .config-drawer-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: var(--sl-color-white);
+  }
+
+  .config-drawer-summary:hover {
+    background: var(--sl-color-gray-5);
+  }
+
+  :root[data-theme='light'] .config-drawer-summary:hover {
+    background: var(--sl-color-gray-6);
+  }
+
+  .config-drawer-summary:focus-visible {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: -2px;
+  }
+
+  .config-drawer-label {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--sl-text-sm);
+    color: inherit;
+  }
+
+  .config-drawer-label-text {
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  .config-drawer-note {
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+
+  .config-drawer-body {
+    padding: 0 0.875rem 0.25rem;
+    border-top: 1px solid var(--sl-color-gray-5);
+    margin-top: -1px;
+  }
+
+  /* Starlight's own code block sits inside the drawer; it brings its own
+     frame, so it only needs the drawer's rhythm, not a second border. */
+  .config-drawer-body :global(.expressive-code) {
+    margin-block: 0.875rem;
+  }
+
+  .config-drawer-body :global(p:first-child) {
+    margin-top: 0.875rem;
+  }
+
+  /* Starlight styles bare <details>/<summary> inside markdown content, and
+     those selectors (`.sl-markdown-content summary:not(:where(.not-content *))`)
+     outrank a scoped class, so the rules above lose to them silently. Three of
+     them fight this component and have to be restated at matching weight:
+     `display: block` on the summary, which stacked the marker, path and note on
+     three lines and made a 44px row 90px tall; a negative inline-start margin
+     that pulled the marker out of the frame; and a 2px inline-start border on
+     the details, which put a second, heavier edge on one side of a 1px box.
+
+     The disclosure marker itself is Starlight's — a ::before that already
+     rotates on open, follows currentcolor, and flips under RTL. Drawing one
+     here put two chevrons on every row, and §11 keeps Starlight's component
+     chrome stock anyway. It only needs the flex row's spacing rather than the
+     block layout's negative margins. */
+  :global(.sl-markdown-content) .config-drawer {
+    border-inline-start: 1px solid var(--sl-color-gray-5);
+  }
+
+  :global(.sl-markdown-content) .config-drawer-summary {
+    display: flex;
+    margin-inline-start: 0;
+    padding-inline-start: 0.875rem;
+    font-weight: 500;
+  }
+
+  :global(.sl-markdown-content) .config-drawer-summary::before {
+    margin-inline: 0;
+    flex-shrink: 0;
+    color: var(--sl-color-gray-3);
+  }
+
+  /* On a phone the path and the note compete for ~287px, so a path one
+     character too long wraps and the row lands anywhere between 43px and
+     102px — nine drawers, no two the same height. Give the note its own line
+     and the path the whole width, and every row is the same two lines. */
+  @media (max-width: 40rem) {
+    :global(.sl-markdown-content) .config-drawer-summary {
+      align-items: flex-start;
+      row-gap: 0.125rem;
+    }
+
+    .config-drawer-label {
+      font-size: var(--sl-text-xs);
+      line-height: 1.5;
+    }
+
+    .config-drawer-note {
+      flex-basis: 100%;
+      padding-inline-start: 1.75rem;
+    }
+  }
+</style>

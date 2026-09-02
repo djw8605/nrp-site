@@ -3,31 +3,46 @@ title: Client Configurations
 description: Configuration recipes for CLI coding tools using NRP-managed LLMs
 ---
 import { Aside } from '@astrojs/starlight/components';
+import ClientPicker from '~/components/ai/ClientPicker.astro';
+import ConfigDrawer from '~/components/ai/ConfigDrawer.astro';
 
-Pre-built configurations for popular coding CLIs. The endpoint and token setup is covered on [API Access](/documentation/userdocs/ai/llm-managed/api-access) — start there if you don't have a token yet.
+Pre-built configurations for popular coding CLIs. Every config here assumes:
 
-Use the right-hand "On this page" navigation to jump to your client. Every config below assumes:
+- **Endpoint:** `https://ellm.nrp-nautilus.io/v1`, Anthropic-compatible at `/anthropic`
+- **Token:** the value from the [LLM token page](/llmtoken), passed in `Authorization: Bearer …` or whatever the client's API-key field expects
 
-- **Endpoint:** `https://ellm.nrp-nautilus.io/v1` (Anthropic-compatible at `/anthropic`)
-- **Token:** the value from the [LLM token page](/llmtoken), passed in `Authorization: Bearer …` or whatever the client's API-key field expects.
-- For `cache_salt`, this needs to be on the same level as `chat_template_kwargs`, but not inside. Example: `{"cache_salt": "YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXphYmNkZWZnaGlqa2xtbm9wcQ==", "chat_template_kwargs": {"enable_thinking": true, "thinking": true, "preserve_thinking": true, "clear_thinking": false}}`
+[API Access](/documentation/userdocs/ai/llm-managed/api-access) covers getting a token, and `cache_salt` for tenants whose prompts should not be cached across users.
 
 <Aside type="tip" title="Picking a model">
 Run `curl -H "Authorization: Bearer <TOKEN>" https://ellm.nrp-nautilus.io/v1/models` to list active model IDs, or browse the [Available Models](/documentation/userdocs/ai/llm-managed/models) feature matrix to pick one.
 </Aside>
 
+<ClientPicker
+  clients={[
+    { name: 'VS Code', anchor: 'vs-code' },
+    { name: 'omp', anchor: 'omp' },
+    { name: 'OpenCode', anchor: 'opencode' },
+    { name: 'Crush', anchor: 'crush' },
+    { name: 'pi', anchor: 'pi' },
+    { name: 'Kimi CLI', anchor: 'kimi-cli' },
+    { name: 'Claude Code', anchor: 'claude-code' },
+    { name: 'Copilot CLI', anchor: 'copilot-cli' },
+  ]}
+/>
+
 ## VS Code
 
 https://code.visualstudio.com
 
-VS Code can use NRP-managed LLMs through the **Chat: Manage Language Models** command. This lets you pick NRP models from the model selector in Copilot Chat.
+VS Code reaches NRP models through **Chat: Manage Language Models**, which adds them to the Copilot Chat model picker.
 
-1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and run **Chat: Manage Language Models**.
-2. Click **Add Models**.
-3. Choose **Custom Endpoint**.
-4. Enter your endpoint URL: `https://ellm.nrp-nautilus.io/v1/chat/completions`
+1. Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) → **Chat: Manage Language Models**
+2. **Add Models** → **Custom Endpoint**
+3. Endpoint URL: `https://ellm.nrp-nautilus.io/v1/chat/completions`
 
-Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${input:...}`](https://code.visualstudio.com/docs/devtools/variables-reference) substitution, so you'll be asked for your LLM token the first time you use the model — the token is then stored securely by VS Code.
+The `apiKey` below uses VS Code's [`${input:...}`](https://code.visualstudio.com/docs/devtools/variables-reference) substitution, so VS Code asks for your token the first time you use a model and stores it securely from then on.
+
+<ConfigDrawer label="Paste into the Add Models prompt" kind="text" note="3 models">
 
 ```json
 {
@@ -67,11 +82,13 @@ Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${inp
 }
 ```
 
+</ConfigDrawer>
+
 ## omp
 
-https://omp.sh (https://github.com/can1357/oh-my-pi)
+https://omp.sh ([oh-my-pi](https://github.com/can1357/oh-my-pi)), whose [custom-model reference](https://omp.sh/docs/custom-models) covers the fields below.
 
-Contents of `~/.omp/agent/models.yml` (https://omp.sh/docs/custom-models for more information):
+<ConfigDrawer label="~/.omp/agent/models.yml" note="2 models">
 
 ```yaml
 providers:
@@ -100,23 +117,70 @@ providers:
         omitMaxOutputTokens: true
 ```
 
+</ConfigDrawer>
+
 ## OpenCode
 
 https://github.com/anomalyco/opencode
 
-After applying the configuration below, search for `NRP` in the list of models (`Ctrl+P` → _Switch models_, and to select a variant, use `Ctrl+P` → _Switch model variant_).
+`Ctrl+P` → _Switch models_ finds `NRP`; _Switch model variant_ picks a thinking level. Either set `OPENAI_API_KEY` or replace `{env:OPENAI_API_KEY}` with the key itself.
 
-Either set the `OPENAI_API_KEY` environment variable or replace `{env:OPENAI_API_KEY}` with the actual API key.
+<ConfigDrawer label="~/.config/opencode/opencode.jsonc" note="qwen3 as the default model">
 
-The configuration below carries the whole [model catalog](/documentation/userdocs/ai/llm-managed/models) and makes `qwen3` the default. What to adjust:
+`"model"` takes a `provider/model` id, so the default is `NRP/qwen3`. `"small_model"` is what OpenCode uses for side tasks such as session titles — `qwen3-small` keeps those off the largest GPUs. An editor validating against `opencode.ai/config.json` underlines both values, because the schema autocompletes from the models.dev catalog and cannot know about a custom provider; OpenCode resolves them from the `provider` block.
 
-- **`"model"`** takes a `provider/model` id — `NRP/qwen3` here. **`"small_model"`** is what OpenCode uses for side tasks such as session titles; pointing it at `qwen3-small` keeps those off the largest GPUs. An editor validating against `opencode.ai/config.json` will underline both values, because the schema autocompletes from the models.dev catalog and cannot know about a custom provider. OpenCode itself resolves them from the `provider` block.
-- **`"limit.output"`** caps a single response; it is not the context window. Never set it close to or above `"context"` — the values below are roughly a quarter of context, capped at 65,536.
-- **`"variants"`** carry the per-model thinking controls, selected with `Ctrl+P` → _Switch model variant_. The key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, which is the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, which is the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place.
-- `gemma` and `gemma-small` use `enable_thinking`. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
-- `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "NRP/qwen3",
+  "small_model": "NRP/qwen3-small",
+  "provider": {
+    "NRP": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "NRP",
+      "options": {
+        "baseURL": "https://ellm.nrp-nautilus.io/v1",
+        "apiKey": "{env:OPENAI_API_KEY}"
+      },
+      "models": {
+        "qwen3": {
+          "name": "qwen3",
+          "limit": {
+            "context": 1000000,
+            "output": 65536
+          },
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true
+        },
+        "qwen3-small": {
+          "name": "qwen3-small",
+          "limit": {
+            "context": 1000000,
+            "output": 65536
+          },
+          "tool_call": true,
+          "reasoning": true
+        }
+      }
+    }
+  }
+}
+```
 
-Contents of `~/.config/opencode/opencode.jsonc`:
+`"limit.output"` caps a single response, not the context window. Never set it close to or above `"context"`.
+
+</ConfigDrawer>
+
+<ConfigDrawer label="~/.config/opencode/opencode.jsonc" note="every model in the catalog">
+
+Nine models, each with its context window, modalities, and thinking controls. `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
+
+Thinking is selected per model with `Ctrl+P` → _Switch model variant_, and the key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
 
 ```jsonc
 {
@@ -330,7 +394,7 @@ Contents of `~/.config/opencode/opencode.jsonc`:
 }
 ```
 
-To pin options that should apply on every request to a model — `cache_salt`, `preserve_thinking`, or a fixed effort — add an `"options"` block alongside `"name"`. Anything in `"options"` is sent with each request; anything in `"variants"` is sent only while that variant is selected:
+To pin options that should apply on every request to a model — `cache_salt`, `preserve_thinking`, or a fixed effort — add an `"options"` block alongside `"name"`. Anything in `"options"` is sent with each request; anything in `"variants"` only while that variant is selected:
 
 ```jsonc
         "deepseek-v4-flash": {
@@ -345,15 +409,17 @@ To pin options that should apply on every request to a model — `cache_salt`, `
         },
 ```
 
+</ConfigDrawer>
+
 ## Crush
 
-https://github.com/charmbracelet/crush 
+https://github.com/charmbracelet/crush
 
-After applying the configuration below, search for `NRP` in the list of models. Adjust `"default_max_tokens"` as needed; never push it close to or above `"context_window"`.
+Search for `NRP` in the model list once the config is in place. See also Andrea Zonca's writeup, [Configure NRP LLM with OpenCode and Crush](https://www.zonca.dev/posts/2026-01-29-configure-nrp-llm-opencode-crush).
 
-See also Andrea Zonca's writeup: [Configure NRP LLM with OpenCode and Crush](https://www.zonca.dev/posts/2026-01-29-configure-nrp-llm-opencode-crush).
+<ConfigDrawer label="~/.config/crush/crush.json" note="1 model — repeat the block per model">
 
-Contents of `~/.config/crush/crush.json` (use `"enable_thinking"` or `"thinking"` as required by the model):
+Adjust `"default_max_tokens"` as needed; never push it close to or above `"context_window"`. Use `"enable_thinking"` or `"thinking"` as the model requires.
 
 ```json
 {
@@ -392,7 +458,7 @@ Contents of `~/.config/crush/crush.json` (use `"enable_thinking"` or `"thinking"
 }
 ```
 
-For changing the `"chat_template_kwargs"` configuration or setting additional `"extra_body"` parameters, use the below configuration within each model (in the same level as `"models"`):
+For `"chat_template_kwargs"` or other `"extra_body"` parameters, add this within each model, at the same level as `"models"`:
 
 ```json
       "extra_body": {
@@ -403,15 +469,17 @@ For changing the `"chat_template_kwargs"` configuration or setting additional `"
       },
 ```
 
+</ConfigDrawer>
+
 ## pi
 
 https://pi.dev
 
-Press `Ctrl-L` to switch models and search for `NRP` (or type `/model modelname`).
+`Ctrl-L` switches models — search for `NRP`, or type `/model modelname`.
+
+<ConfigDrawer label="~/.pi/agent/models.json" note="2 models">
 
 `apiKey` accepts the literal key, an environment variable name (`OPENAI_API_KEY`), or a shell command (`!decrypt_key NRP`).
-
-Contents of `~/.pi/agent/models.json`:
 
 ```json
 {
@@ -445,11 +513,13 @@ Contents of `~/.pi/agent/models.json`:
 }
 ```
 
+</ConfigDrawer>
+
 ## Kimi CLI
 
 https://github.com/MoonshotAI/kimi-cli
 
-Contents of `~/.kimi/config.toml`:
+<ConfigDrawer label="~/.kimi/config.toml" note="1 model">
 
 ```toml
 default_model = "kimi"
@@ -477,11 +547,15 @@ keep_alive_on_exit = false
 agent_task_timeout_s = 3600
 ```
 
+</ConfigDrawer>
+
 ## Claude Code
 
 https://github.com/anthropics/claude-code
 
-Claude Code talks to NRP through the Anthropic-compatible endpoint at `/anthropic`. Set the file `~/.claude/settings.json`:
+Claude Code talks to NRP through the Anthropic-compatible endpoint at `/anthropic`.
+
+<ConfigDrawer label="~/.claude/settings.json" note="any model, by name">
 
 ```json
 {
@@ -508,6 +582,8 @@ Claude Code talks to NRP through the Anthropic-compatible endpoint at `/anthropi
 }
 ```
 
+</ConfigDrawer>
+
 <Aside type="caution">
 The `Web Search Tool` is Anthropic-specific and is only generated by Claude models — open-weights models hosted by NRP cannot produce it. Use MCP servers or custom commands instead. Also note that not all NRP models route cleanly through the Anthropic-compatible endpoint; consult the [vLLM ↔ Claude Code guide](https://docs.vllm.ai/en/stable/serving/integrations/claude_code/) and the per-model docs.
 </Aside>
@@ -516,7 +592,9 @@ The `Web Search Tool` is Anthropic-specific and is only generated by Claude mode
 
 https://github.com/github/copilot-cli
 
-Set `COPILOT_PROVIDER_MAX_PROMPT_TOKENS` to the model's context length and `COPILOT_PROVIDER_MAX_OUTPUT_TOKENS` to a smaller value (roughly 1/16 to 1/4 of the context, depending on the task).
+<ConfigDrawer label="Environment variables" kind="text" note="any model, by name">
+
+Set `COPILOT_PROVIDER_MAX_PROMPT_TOKENS` to the model's context length and `COPILOT_PROVIDER_MAX_OUTPUT_TOKENS` to a smaller value — roughly 1/16 to 1/4 of the context, depending on the task.
 
 ```bash
 COPILOT_PROVIDER_BASE_URL="https://ellm.nrp-nautilus.io/v1"
@@ -525,3 +603,5 @@ COPILOT_MODEL="<name-of-nrp-model>"
 COPILOT_PROVIDER_MAX_PROMPT_TOKENS="<context-length>"
 COPILOT_PROVIDER_MAX_OUTPUT_TOKENS="<max-output>"
 ```
+
+</ConfigDrawer>
