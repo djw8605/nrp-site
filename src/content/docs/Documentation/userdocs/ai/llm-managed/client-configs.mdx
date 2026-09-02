@@ -82,10 +82,14 @@ providers:
     models:
       - id: kimi
         name: kimi
+        reasoning: true
+        input: [text, image]
         contextWindow: 131072
         maxTokens: 32768
       - id: qwen3-small
         name: qwen3-small
+        reasoning: true
+        input: [text, image]
         contextWindow: 2048576
         maxTokens: 64000
 ```
