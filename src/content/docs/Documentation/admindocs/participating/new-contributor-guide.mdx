@@ -6,7 +6,7 @@ description: Contribute hardware to the National Research Platform, keep priorit
 import { Steps } from '@astrojs/starlight/components';
 import ContribResponsibilities from '../../../../../components/docs/ContribResponsibilities.astro';
 
-Contributing a node to the NRP is a trade. You supply the hardware, the rack space, and the network path. The NRP installs the operating system, joins the node to the Nautilus cluster, and runs it from there — patching, monitoring, and upgrades included. In return your researchers get a share of the entire pool, not only the machine you bought.
+Contributing a node to the NRP is a trade. You supply the hardware, the rack space, and the network path. The NRP installs Ubuntu Server 24.04 as the base operating system, joins the node to the Nautilus cluster, and runs it from there — patching, monitoring, and upgrades included. In return your researchers get a share of the entire pool, not only the machine you bought.
 
 **You keep priority on your own hardware.** When your people want the nodes you contributed, they get them. When those nodes are idle, the rest of the community runs opportunistic work on them. That is the whole mechanism: nothing sits unused, and every contributor draws on far more capacity than they put in.
 
@@ -65,7 +65,10 @@ The split is deliberately lopsided. You own the physical plant and the network p
   nrp={{
     title: 'NRP',
     required: [
-      { term: 'Firmware and OS', detail: 'BIOS updates, OS installation, and lifecycle management.' },
+      {
+        term: 'Firmware and OS',
+        detail: 'BIOS updates, Ubuntu Server 24.04 installation, and lifecycle management.',
+      },
       { term: 'Security from the OS up', detail: 'Patching, package updates, and host hardening.' },
       { term: 'Monitoring and response', detail: '24/7 alerting, health checks, and incident handling.' },
       {
