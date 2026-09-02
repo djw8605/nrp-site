@@ -96,7 +96,7 @@ providers:
           defaultLevel: xhigh
         supportsTools: true
         input: [text, image]
-        contextWindow: 1048576
+        contextWindow: 1000000
         omitMaxOutputTokens: true
 ```
 
@@ -106,13 +106,23 @@ https://github.com/anomalyco/opencode
 
 After applying the configuration below, search for `NRP` in the list of models (`Ctrl+P` → _Switch models_, and to select a variant, use `Ctrl+P` → _Switch model variant_).
 
-Either set the `OPENAI_API_KEY` environment variable or replace `{env:OPENAI_API_KEY}` with the actual API key. Adjust `"output"` as needed, but never set it close to or larger than `"context"`.
+Either set the `OPENAI_API_KEY` environment variable or replace `{env:OPENAI_API_KEY}` with the actual API key.
 
-Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"thinking"` as required by the model):
+The configuration below carries the whole [model catalog](/documentation/userdocs/ai/llm-managed/models) and makes `qwen3` the default. What to adjust:
+
+- **`"model"`** takes a `provider/model` id — `NRP/qwen3` here. **`"small_model"`** is what OpenCode uses for side tasks such as session titles; pointing it at `qwen3-small` keeps those off the largest GPUs. An editor validating against `opencode.ai/config.json` will underline both values, because the schema autocompletes from the models.dev catalog and cannot know about a custom provider. OpenCode itself resolves them from the `provider` block.
+- **`"limit.output"`** caps a single response; it is not the context window. Never set it close to or above `"context"` — the values below are roughly a quarter of context, capped at 65,536.
+- **`"variants"`** carry the per-model thinking controls, selected with `Ctrl+P` → _Switch model variant_. The key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, which is the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, which is the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place.
+- `gemma` and `gemma-small` use `enable_thinking`. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
+- `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
+
+Contents of `~/.config/opencode/opencode.jsonc`:
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "NRP/qwen3",
+  "small_model": "NRP/qwen3-small",
   "provider": {
     "NRP": {
       "npm": "@ai-sdk/openai-compatible",
@@ -122,6 +132,116 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
         "apiKey": "{env:OPENAI_API_KEY}"
       },
       "models": {
+        "qwen3": {
+          "name": "qwen3",
+          "limit": {
+            "context": 1000000,
+            "output": 65536
+          },
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "variants": {
+            "low": {
+              "reasoning_effort": "low"
+            },
+            "medium": {
+              "reasoning_effort": "medium"
+            },
+            "instruct": {
+              "chat_template_kwargs": {
+                "enable_thinking": false
+              }
+            }
+          }
+        },
+        "qwen3-small": {
+          "name": "qwen3-small",
+          "limit": {
+            "context": 1000000,
+            "output": 65536
+          },
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "variants": {
+            "low": {
+              "reasoning_effort": "low"
+            },
+            "medium": {
+              "reasoning_effort": "medium"
+            },
+            "instruct": {
+              "chat_template_kwargs": {
+                "enable_thinking": false
+              }
+            }
+          }
+        },
+        "glm-5": {
+          "name": "glm-5",
+          "limit": {
+            "context": 1048576,
+            "output": 65536
+          },
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "variants": {
+            "low": {
+              "chat_template_kwargs": {
+                "reasoning_effort": "low"
+              }
+            },
+            "high": {
+              "chat_template_kwargs": {
+                "reasoning_effort": "high"
+              }
+            }
+          }
+        },
+        "deepseek-v4-flash": {
+          "name": "deepseek-v4-flash",
+          "limit": {
+            "context": 1048576,
+            "output": 65536
+          },
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "variants": {
+            "low": {
+              "chat_template_kwargs": {
+                "reasoning_effort": "low"
+              }
+            },
+            "high": {
+              "chat_template_kwargs": {
+                "reasoning_effort": "high"
+              }
+            },
+            "instruct": {
+              "chat_template_kwargs": {
+                "thinking": false
+              }
+            }
+          }
+        },
         "kimi": {
           "name": "kimi",
           "limit": {
@@ -131,6 +251,77 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
           "modalities": {
             "input": ["text", "image", "video"],
             "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true
+        },
+        "minimax-m2": {
+          "name": "minimax-m2",
+          "limit": {
+            "context": 204800,
+            "output": 32768
+          },
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true
+        },
+        "gpt-oss": {
+          "name": "gpt-oss",
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          },
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true
+        },
+        "gemma": {
+          "name": "gemma",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "variants": {
+            "instruct": {
+              "chat_template_kwargs": {
+                "enable_thinking": false
+              }
+            }
+          }
+        },
+        "gemma-small": {
+          "name": "gemma-small",
+          "limit": {
+            "context": 262144,
+            "output": 32768
+          },
+          "modalities": {
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "variants": {
+            "instruct": {
+              "chat_template_kwargs": {
+                "enable_thinking": false
+              }
+            }
           }
         }
       }
@@ -139,23 +330,19 @@ Contents of `~/.config/opencode/opencode.jsonc` (use `"enable_thinking"` or `"th
 }
 ```
 
-For changing the `"chat_template_kwargs"` configuration or setting additional variants (on allowed models), use the below configuration within each model (in the same level as `"name"`):
+To pin options that should apply on every request to a model — `cache_salt`, `preserve_thinking`, or a fixed effort — add an `"options"` block alongside `"name"`. Anything in `"options"` is sent with each request; anything in `"variants"` is sent only while that variant is selected:
 
 ```jsonc
+        "deepseek-v4-flash": {
+          "name": "deepseek-v4-flash",
           "options": {
             "chat_template_kwargs": {
               "thinking": true,
               "preserve_thinking": true
             }
           },
-          "variants": {
-            "instruct": {
-              "chat_template_kwargs": {
-                "thinking": false,
-                "preserve_thinking": false
-              }
-            }
-          },
+          // ...
+        },
 ```
 
 ## Crush
