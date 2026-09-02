@@ -71,7 +71,7 @@ Paste the configuration below when prompted. The `apiKey` uses VS Code's [`${inp
 
 https://omp.sh (https://github.com/can1357/oh-my-pi)
 
-Contents of `~/.omp/agent/models.yml`:
+Contents of `~/.omp/agent/models.yml` (https://omp.sh/docs/custom-models for more information):
 
 ```yaml
 providers:
@@ -83,15 +83,21 @@ providers:
       - id: kimi
         name: kimi
         reasoning: true
-        input: [text, image]
+        supportsTools: true
+        input: [text, image]        
         contextWindow: 131072
-        maxTokens: 32768
+        omitMaxOutputTokens: true
       - id: qwen3-small
         name: qwen3-small
         reasoning: true
+        thinking:
+          mode: effort
+          efforts: [low, medium, xhigh]
+          defaultLevel: xhigh
+        supportsTools: true
         input: [text, image]
-        contextWindow: 2048576
-        maxTokens: 64000
+        contextWindow: 1048576
+        omitMaxOutputTokens: true
 ```
 
 ## OpenCode
