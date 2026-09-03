@@ -14,7 +14,20 @@
  * The summary is the file the reader is about to edit. That is the most useful
  * label a closed drawer can carry — it answers "where does this go?" before the
  * config is even visible — and it is a field on a record, not a kicker.
+ *
+ * A file path in a sticky place is also a file path the reader drags to copy,
+ * and a stock <summary> answers that gesture as a toggle: dragging the path
+ * opened and closed the drawer while the selection happened. So the disclosure
+ * responds only to toggle _requests_ — a click that ends a drag-selection, or
+ * lands inside a live selection (the word-select double-click), is consumed
+ * without folding anything, and a double-click that selected a word restores
+ * the state the first of its two clicks changed. A copy chip on the end of the
+ * row carries the whole path in one press anyway, with the same clipboard
+ * fallback as EndpointPanel's copy chip: a blocked clipboard selects the path
+ * rather than failing silently.
  */
+import { Icon } from 'astro-icon/components';
+
 interface Props {
   /** The path being edited, or — with kind="text" — where the config goes. */
   label: string;
@@ -22,7 +35,8 @@ interface Props {
    * `path` renders the label as mono, which is what a file path, an env var,
    * or any other literal string the reader will type deserves. `text` renders
    * it as prose, for the two clients that have no file to name: mono on an
-   * English phrase is a costume, not a signal.
+   * English phrase is a costume, not a signal. The copy chip is a path-row
+   * affordance; prose nothing would type deserves no button.
    */
   kind?: 'path' | 'text';
   /** Optional short qualifier: how many models, what the block adds. */
@@ -42,6 +56,20 @@ const { label, kind = 'path', note } = Astro.props;
       )
     }
     {note && <span class="config-drawer-note">{note}</span>}
+    {
+      kind === 'path' && (
+        <button
+          type="button"
+          class="config-drawer-copy"
+          aria-label={`Copy the file path, ${label}`}
+          title="Copy the file path"
+        >
+          <Icon name="tabler:copy" data-copy-icon="idle" aria-hidden="true" />
+          <Icon name="tabler:check" data-copy-icon="done" aria-hidden="true" />
+        </button>
+      )
+    }
+    <span class="config-drawer-copy-status" role="status"></span>
   </summary>
   <div class="config-drawer-body">
     <slot />
@@ -102,6 +130,86 @@ const { label, kind = 'path', note } = Astro.props;
     color: var(--sl-color-gray-3);
   }
 
+  /* The picker chips' control idiom (DESIGN.md §11): quiet at gray-3 with a
+     `border-current` boundary, accented on hover and while confirming a copy
+     — the hairline alternative measures ~1.4:1 against these surfaces. */
+  .config-drawer-copy {
+    margin-inline-start: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1875rem 0.375rem;
+    border: 1px solid currentcolor;
+    border-radius: 0.375rem;
+    background: none;
+    color: var(--sl-color-gray-3);
+    cursor: pointer;
+    transition:
+      color 150ms ease-out,
+      border-color 150ms ease-out;
+  }
+
+  .config-drawer-copy:hover {
+    color: var(--sl-color-text-accent);
+  }
+
+  .config-drawer-copy:focus-visible {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 1px;
+  }
+
+  .config-drawer-copy svg {
+    display: block;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* The chip's two svgs are icon states, not prose blocks, but Starlight's
+     content styles treat every svg inside markdown as content:
+     `:not(a, strong, em, del, span, input, code, br) + :not(…)` gives the
+     check icon a 1rem top margin for merely following the copy icon, and it
+     is computed-but-harmless under `display: none` until the copied state
+     flips it to `block` — the chip then wraps to two lines (22px → 38px) at
+     the exact moment the reader glances over to confirm the copy. `svg` also
+     gets `display: block; height: auto` from the media rule above it.
+     Restate at the framework's own weight, in the same zone as the summary
+     overrides: the swap is the one glyph per frame this control promises. */
+  :global(.sl-markdown-content) .config-drawer-copy svg {
+    margin: 0;
+    height: 0.875rem;
+  }
+
+  .config-drawer-copy[data-copy-state='copied'] {
+    color: var(--sl-color-text-accent);
+  }
+
+  /* And the state swap itself — exactly one glyph per frame. Whether an icon
+     is visible is the one property the prose rules must never hold an opinion
+     about, so all three display rules sit at the framework's weight next to
+     the sibling they outrank, rather than as bare-class rules that happen to
+     win on source order. */
+  :global(.sl-markdown-content) .config-drawer-copy [data-copy-icon='done'] {
+    display: none;
+  }
+
+  :global(.sl-markdown-content) .config-drawer-copy[data-copy-state='copied'] [data-copy-icon='idle'] {
+    display: none;
+  }
+
+  :global(.sl-markdown-content) .config-drawer-copy[data-copy-state='copied'] [data-copy-icon='done'] {
+    display: block;
+  }
+
+  .config-drawer-copy-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   .config-drawer-body {
     padding: 0 0.875rem 0.25rem;
     border-top: 1px solid var(--sl-color-gray-5);
@@ -155,6 +263,7 @@ const { label, kind = 'path', note } = Astro.props;
      and the path the whole width, and every row is the same two lines. */
   @media (max-width: 40rem) {
     :global(.sl-markdown-content) .config-drawer-summary {
+      position: relative;
       align-items: flex-start;
       row-gap: 0.125rem;
     }
@@ -162,11 +271,186 @@ const { label, kind = 'path', note } = Astro.props;
     .config-drawer-label {
       font-size: var(--sl-text-xs);
       line-height: 1.5;
+      /* For the rare literal too long for one line even here: break inside it
+         rather than let the whole label fall to its own line orphaning the
+         disclosure marker. */
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
+    /* The note owns the second line, so its trailing pad is where the copy
+       chip — pinned to the bottom-right corner over that pad — can never sit
+       on text. The padding applies to every fragment of the note, so even a
+       hypothetical wrapping note keeps the chip's corner clear. This keeps
+       every drawer exactly path-line + note-line tall at any path or note
+       length; in-flow, the chip rode the end of a line and pushed long ones
+       into the 43–118px scatter this breakpoint exists to remove. */
     .config-drawer-note {
       flex-basis: 100%;
-      padding-inline-start: 1.75rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      padding-inline: 1.75rem 2.75rem;
+    }
+
+    .config-drawer-copy {
+      position: absolute;
+      bottom: 0.3125rem;
+      inset-inline-end: 0.5rem;
+      margin-inline-start: 0;
+      padding: 0.4375rem 0.5rem;
     }
   }
 </style>
+
+<script>
+  /**
+   * The summary toggles <details> as the default action of its click, so
+   * telling a selection gesture from a toggle request means cancelling that
+   * click before the default runs. Delegated on the document because the page
+   * renders nine drawers from one component and Astro runs this script once.
+   *
+   * Progressive enhancement: with JS off the disclosure still works and every
+   * copy chip is absent — selection simply costs a toggle, which is the status
+   * quo, not a regression.
+   */
+  const DRAG_LIMIT = 5; // px of pointer travel that stops being a click
+
+  interface Press {
+    summary: HTMLElement;
+    x: number;
+    y: number;
+    moved: boolean;
+    hadSelection: boolean;
+  }
+
+  let press: Press | null = null;
+  let lastToggle: { summary: HTMLElement; details: HTMLDetailsElement; open: boolean; at: number } | null = null;
+  const copyResets = new WeakMap<HTMLButtonElement, number>();
+
+  const summaryOf = (target: EventTarget | null): HTMLElement | null =>
+    target instanceof Element ? target.closest<HTMLElement>('.config-drawer-summary') : null;
+
+  const selectionInside = (summary: HTMLElement): boolean => {
+    const sel = document.getSelection();
+    return (
+      !!sel &&
+      !sel.isCollapsed &&
+      sel.toString().trim().length > 0 &&
+      summary.contains(sel.anchorNode) &&
+      summary.contains(sel.focusNode)
+    );
+  };
+
+  const write = async (text: string): Promise<boolean> => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      /* fall through */
+    }
+    try {
+      const scratch = document.createElement('textarea');
+      scratch.value = text;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.top = '0';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      const ok = document.execCommand('copy');
+      scratch.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  const copyPath = async (button: HTMLButtonElement, summary: HTMLElement) => {
+    const label = summary.querySelector('.config-drawer-label');
+    const status = summary.querySelector('.config-drawer-copy-status');
+    const text = label?.textContent?.trim() ?? '';
+    if (!text) return;
+
+    if (await write(text)) {
+      button.dataset.copyState = 'copied';
+      if (status) status.textContent = 'File path copied to the clipboard.';
+    } else {
+      // The recovery is the same one the drag always had: select the text and
+      // let the keyboard finish the job.
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      const sel = document.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+      if (status) status.textContent = 'The browser blocked the clipboard. The path is selected — copy it manually.';
+    }
+
+    window.clearTimeout(copyResets.get(button));
+    copyResets.set(
+      button,
+      window.setTimeout(() => {
+        delete button.dataset.copyState;
+        if (status) status.textContent = '';
+      }, 2400)
+    );
+  };
+
+  document.addEventListener('pointerdown', (event) => {
+    const summary = summaryOf(event.target);
+    press =
+      summary && event.button === 0
+        ? { summary, x: event.clientX, y: event.clientY, moved: false, hadSelection: selectionInside(summary) }
+        : null;
+  });
+
+  document.addEventListener('pointermove', (event) => {
+    if (press && !press.moved && Math.hypot(event.clientX - press.x, event.clientY - press.y) > DRAG_LIMIT) {
+      press.moved = true;
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    const summary = summaryOf(event.target);
+    if (!summary) return;
+
+    // The copy chip copies; it is never a second way to fold the drawer.
+    if (event.target instanceof Element && event.target.closest<HTMLButtonElement>('.config-drawer-copy')) {
+      event.preventDefault();
+      void copyPath(event.target.closest('button') as HTMLButtonElement, summary);
+      return;
+    }
+
+    // Selection gestures arrive as clicks too. A drag that moved across the
+    // row is selecting, not toggling; so is a click that FORMED a selection on
+    // this press (the word-select double-click) or beyond (triple = line). A
+    // selection merely present from an EARLIER gesture is stale — Chrome sets
+    // the new caret on mouseup, so it can't excuse the click away: deliberate
+    // quick-fire toggling after a drag must still toggle.
+    const dragged = !!press && press.summary === summary && press.moved;
+    const formed = !!press && !press.hadSelection && selectionInside(summary);
+    press = null;
+    if (dragged || formed || event.detail > 2) {
+      event.preventDefault();
+      return;
+    }
+
+    // A real toggle request: remember where things stood, in case the
+    // double-click restore below decides the reader only wanted the word, and
+    // drop stale selections so the next click reads as a click.
+    const details = summary.closest('details');
+    if (details) lastToggle = { summary, details, open: details.open, at: Date.now() };
+    document.getSelection()?.removeAllRanges();
+  });
+
+  // Word-select on double-click: the first click already toggled before the
+  // second could be recognised. Undo it, but only when a selection actually
+  // landed on the row — a deliberate double-dab elsewhere keeps its toggle.
+  document.addEventListener('dblclick', (event) => {
+    const summary = summaryOf(event.target);
+    if (!summary || !lastToggle || lastToggle.summary !== summary) return;
+    const { details, open, at } = lastToggle;
+    lastToggle = null;
+    if (Date.now() - at > 800 || !selectionInside(summary)) return;
+    details.open = open;
+  });
+</script>

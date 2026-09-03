@@ -671,6 +671,20 @@ whose summary is **the file the reader is about to edit**, and
 [`ai/ClientPicker.astro`](src/components/ai/ClientPicker.astro) is the chip row above them, which
 jumps to a client _and_ opens its drawer (a fragment alone would leave it folded).
 
+That editable-file summary is also editable text, which is the conflict: a stock `<summary>` toggles
+on the click that ends a drag, so selecting the path flipped the drawer under the cursor and a
+word-select double-click spent both its clicks folding and unfolding. `ConfigDrawer.astro` answers
+toggle **requests** only — it cancels the click default when the pointer travelled more than 5px
+before release, when the press itself **formed** a selection on that summary (the word-select
+double-click), or at triple-click-and-beyond (the line-select), and it restores the drawer a
+word-select double-click moved; a selection merely left over from an earlier gesture does not excuse
+a click, because Chrome sets the new caret on mouseup, so a selection that outlives its own drag is
+indistinguishable from a deliberate quick second click. The path copy chip is the one-way door it replaces: `border-current` idiom, quiet at `gray-3`, accent on hover and for the
+2.4s the check icon confirms, and it selects the path itself when the clipboard is blocked. The chip
+appears on `kind="path"` rows only — mono on an English phrase is a costume, and so is a copy button
+on one. The whole enhancement is delegated on `document` (nine copies of one component, one script
+run) and inert without JS.
+
 Folding, not hiding: the content stays in the DOM, so Pagefind indexes it, Ctrl+F finds it, and
 `#crush` still resolves. The chips are the `border-current` control idiom from §6, quiet at
 `gray-3` and accented on hover — never eight accent chips in a row.
@@ -683,6 +697,15 @@ renders 90px), a negative inline-start margin pulls the marker out of the frame,
 `border-inline-start` puts a heavier edge on one side of a 1px box. Restate them behind
 `:global(.sl-markdown-content)` — writing the ancestor _ungloballed_ scopes it too, producing
 `.sl-markdown-content:where(.astro-xxx)`, which matches nothing and looks like a no-op.
+
+**A third-party `svg` is content too, and it bites twice.** The prose rules give every bare `<svg>`
+`display: block; height: auto`, and — the one that shipped broken — the `:not(a, strong, em, …) +
+:not(…)` sibling rhythm grants the check icon a `margin-top: 1rem` for sitting behind another
+element. Both are computed-but-inert while a state icon keeps `display: none`, then activate the
+frame the copy chip swaps to checked: the chip grew 22px→38px to make room for a line break at the
+exact moment the reader glanced over to confirm the copy. Any icon swap inside markdown content is
+therefore written at `:global(.sl-markdown-content)` weight, including the hidden state — `margin: 0`
+and all three `display` rules, or source order decides who wins.
 
 **Do not draw a disclosure caret.** Starlight's `summary::before` already is one: a masked chevron
 that rotates on open, follows `currentcolor`, and flips under RTL. An authored SVG beside it gives
