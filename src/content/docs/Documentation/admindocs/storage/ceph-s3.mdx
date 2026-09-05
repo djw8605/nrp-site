@@ -4,7 +4,7 @@ description: 'Administering Ceph S3 from the Rook tools pod: adding users, delet
 ---
 
 :::caution
-Everything written here is for non Multi-site S3, which at this point is true for NRP S3.
+Everything on this page is for the single-site stores (`nautiluss3`, `centrals3`, `easts3`). The multisite `ha` realm is covered in [Multisite HA realm](#multisite-ha-realm).
 :::
 
 To log into the Ceph control pod:
@@ -43,6 +43,11 @@ radosgw-admin --rgw-realm=easts3 --rgw-zone=easts3 --rgw-zonegroup=easts3 user c
 Central Pool:
 ```bash title="Central Pool"
 radosgw-admin --rgw-realm=centrals3 --rgw-zone=centrals3 --rgw-zonegroup=centrals3 user create --uid <uid> --display-name "<name>" --email "<email>"
+```
+
+HA realm (from the **West** control pod; the user replicates to all zones):
+```bash title="HA realm"
+radosgw-admin --rgw-realm=ha --rgw-zonegroup=ha --rgw-zone=ha-west user create --uid <uid> --display-name "<name>" --email "<email>"
 ```
 
 The `access_key` and `secret_key` is in the output from the above command.
@@ -181,3 +186,13 @@ rados -p nautiluss3.rgw.buckets.data stat object_id
 ```bash
 cat <marker_from_above>.from.rados.intermediate | xargs -I{} -P16 rados rm -p nautiluss3.rgw.buckets.data "{}"
 ```
+
+## Multisite HA realm
+
+A fourth RGW realm, `ha`, spans all three Ceph clusters as one zonegroup with three zones: `ha-west` in `rook` (master), `ha-central` in `rook-central`, `ha-east` in `rook-east`. Every bucket in it replicates to all three sites, and `s3-ha.nrp-nautilus.io` fails over across them, west first; the endpoints are listed on the [user page](/documentation/userdocs/storage/ceph-s3/#s3-regions-settings). It is for mission-critical NRP services: the [S3 token portal](/s3token/) does not issue keys for it, so admins create its users ([Adding Users](#adding-users)).
+
+- `nautiluss3`, `centrals3` and `easts3` are untouched. The realm shares only the RADOS clusters and `.rgw.root`; its users, buckets, pools (`ha-<zone>.rgw.*`) and daemons are separate.
+- Each zone stores 3+2 erasure-coded data and all three keep a copy, so every byte costs about 5x raw capacity. The ceiling is the smallest free data pool of the three (west, about 127 TiB in September 2026). There are no quotas; gate by credential issuance.
+- Bucket and user create/delete go to the master zone. If west is down, object reads and writes fail over, but those metadata operations fail until west returns or another zone is promoted.
+
+From the West control pod, `radosgw-admin sync status --rgw-realm=ha` shows sync state, and `radosgw-admin zonegroup get --rgw-realm=ha --rgw-zonegroup=ha` must show `sync_from_all: true` on every zone.

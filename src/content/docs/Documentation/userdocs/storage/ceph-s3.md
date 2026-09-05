@@ -36,8 +36,11 @@ Use the appropriate endpoint URL for your S3 client or library.
 | _East pool_           | http://rook-ceph-rgw-easts3.rook-east       | https://s3-east.nrp-nautilus.io    |
 | _HaoSu pool_          | http://rook-ceph-rgw-haosu.rook-haosu       | https://s3-haosu.nrp-nautilus.io   |
 | _Tide pool_           | http://rook-ceph-rgw-tide.rook-tide         | https://s3-tide.nrp-nautilus.io    |
+| _HA pool_             | http://rook-ceph-rgw-ha.rook:7480           | https://s3-ha.nrp-nautilus.io      |
 
 Note that the inside endpoint is **http** (without SSL) and the outside endpoint is **https** (with SSL). You can use the outside endpoint within the kubernetes cluster but it will end up going through a load balancer. By using the inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate storage servers (called Object Storage Devices (OSD) in ceph) and therefore achieve very large training set bandwidth.
+
+The HA pool replicates every bucket to the west, central and east clusters, and its outside endpoint fails over between them. Inside the cluster you can also use the central or east zone directly at `http://rook-ceph-rgw-ha.rook-central:7480` or `http://rook-ceph-rgw-ha.rook-east:7480`. It is reserved for mission-critical services; the portal does not issue its credentials, so ask the admins if your service needs it.
 
 ## Using Rclone
 
