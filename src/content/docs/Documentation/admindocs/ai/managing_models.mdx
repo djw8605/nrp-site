@@ -1519,7 +1519,7 @@ spec:
       consecutiveGatewayErrors: 2
       consecutiveLocalOriginFailures: 2
       splitExternalLocalOriginErrors: true
-  # 200,000 input tokens per minute per API token and model
+  # 200,000 output tokens per minute per API token and model (input is not counted)
   rateLimit:
     type: Global
     global:
@@ -1540,7 +1540,7 @@ spec:
               from: Metadata
               metadata:
                 namespace: io.envoy.ai_gateway
-                key: llm_input_token
+                key: llm_output_token
           limit:
             requests: 200000
             unit: Minute

@@ -5,7 +5,7 @@ description: Fair use limits for NRP-managed LLM models
 
 The restrictions below are current fair usage limitations for each of the managed LLM models, in order to make the LLM usage experience stable for everyone.
 
-The LLM gateway enforces one limit automatically: **200,000 input tokens per minute** per API token and model, beyond which requests receive HTTP 429. The concurrency limits below are not enforced automatically. Please report to the [Nautilus Artificial Intelligence/Machine Learning channel in Natilus Support](/contact) if you observe lagging requests and high request volume in [**Grafana**](https://grafana.nrp-nautilus.io/d/ad8bzhl/envoy-llms).
+The LLM gateway enforces one limit automatically: **200,000 output tokens per minute** per API token and model, beyond which requests receive HTTP 429. Input tokens are not counted. The concurrency limits below are not enforced automatically. Please report to the [Nautilus Artificial Intelligence/Machine Learning channel in Natilus Support](/contact) if you observe lagging requests and high request volume in [**Grafana**](https://grafana.nrp-nautilus.io/d/ad8bzhl/envoy-llms).
 
 :::caution
 All requests that utilize at least **35% of the context length** of the model are limited to only `1` concurrent request per user. The table below applies to shorter requests, and all concurrent requests combined should not exceed 35% of the model's context length in total.
