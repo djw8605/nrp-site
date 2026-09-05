@@ -31,7 +31,7 @@ weaknesses:
   - Reasoning is on at xhigh by default — the most expensive setting; lower reasoning_effort or disable thinking for simple queries
   - Preserved thinking grows the prompt over a long conversation; pass preserve_thinking false to keep only the latest turn's reasoning
   - Lower throughput compared to the model size (dense model)
-  - Lower reasoning ceiling than the 397B qwen3 on the hardest tasks
+  - Lower reasoning ceiling than qwen3 on the hardest tasks
 bestFor:
   - Latency-sensitive multimodal tasks
   - Agentic coding and tool use

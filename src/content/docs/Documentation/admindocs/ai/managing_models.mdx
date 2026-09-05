@@ -499,12 +499,9 @@ For managed LLMs, scavenging capacity should be deployed as **replicas of an exi
 
 Use a **negative priority class** for scavenging workloads so they are preempted before normal managed replicas when higher-priority workloads need capacity.
 
-For managed scavenging replicas on this cluster, use `priorityClassName: nice` (`value: -10`).
+Two negative priority classes exist: `nice` (`value: -10`) and `opportunistic` (`value: -2000000000`, preempted first). Current scavenging replicas: `qwen3-27b-h200` and `gemma-bw-vllm-inference` run as `opportunistic`; `glm-5-vllm-inference-h100`, on a partner-owned node, runs as `nice`.
 
-Current managed scavenging example:
-
-- Model: `Qwen/Qwen3.8-27B`
-- Pattern: scavenging instances are additional replicas of the normal managed deployment, not a separate model endpoint
+- Pattern: scavenging instances are additional replicas of the normal managed deployment (same served model id, same pool label or service group), not a separate model endpoint
 
 Example priority class setting in a scavenging StatefulSet/Deployment:
 
@@ -1331,7 +1328,7 @@ scraped (rule 1). A container appearing in neither, while its pod is `Running`, 
 :::
 
 :::caution
-When changing the NRP-provided models, also change the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue) and the [LLM List Page](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/pages/llms.astro) for the model.
+When changing the NRP-provided models, also update the [model catalog](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main/src/content/models) (`src/content/models/`, one YAML per model), the [Chatbox config template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue), the [client configurations](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/content/docs/Documentation/userdocs/ai/llm-managed/client-configs.mdx) and the [changelog](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/content/docs/Documentation/userdocs/ai/llm-managed/lifecycle.mdx).
 :::
 
 This document describes the steps to configure the [Envoy AI Gateway](https://aigateway.envoyproxy.io).
@@ -1391,10 +1388,12 @@ On this level, you can also set up load-balancing between multiple models. Havin
 
 **Make sure to delete the `rules:` and update the `AIGatewayRoute` with `kubectl apply -f <file>` if a model is removed. If all models under `rules:` were deleted, make sure to delete the `AIGatewayRoute` resource manually.**
 
+`backendRefs` point at an [AIServiceBackend](#aiservicebackend) for a single endpoint, or at an `InferencePool` (`group: inference.networking.k8s.io`) for a pooled model, whose endpoint picker in `inference-pool/inferencepool-<model>.yaml` routes on queue depth, KV-cache usage and prefix-cache locality. `modelNameOverride` must be a name every pod in the pool advertises with `--served-model-name`, or that pod answers 404.
+
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/gatewayroute):
 
 ```yaml
-apiVersion: aigateway.envoyproxy.io/v1alpha1
+apiVersion: aigateway.envoyproxy.io/v1beta1
 kind: AIGatewayRoute
 metadata:
   name: envoy-ai-gateway-nrp-qwen
@@ -1412,14 +1411,29 @@ spec:
       kind: Gateway
       group: gateway.networking.k8s.io
   rules:
+    # A pooled model: the EPP behind InferencePool/qwen3 picks the pod
     - matches:
         - headers:
             - type: Exact
               name: x-ai-eg-model
               value: qwen3
       backendRefs:
-        - name: envoy-ai-gateway-nrp-qwen
-          modelNameOverride: Qwen/Qwen3-235B-A22B-Thinking-2507-FP8
+        - group: inference.networking.k8s.io
+          kind: InferencePool
+          name: qwen3
+          modelNameOverride: Qwen/Qwen3.8-Flash-Next-FP8
+      timeouts:
+        request: 1200s
+      modelsOwnedBy: "NRP"
+    # A single endpoint: AIServiceBackend -> Backend -> Service
+    - matches:
+        - headers:
+            - type: Exact
+              name: x-ai-eg-model
+              value: qwen3-embedding
+      backendRefs:
+        - name: envoy-ai-gateway-nrp-qwen3-embedding
+          modelNameOverride: Qwen/Qwen3-VL-Embedding-8B
       timeouts:
         request: 1200s
       modelsOwnedBy: "NRP"
@@ -1427,24 +1441,12 @@ spec:
         - headers:
             - type: Exact
               name: x-ai-eg-model
-              value: qwen3-nairr
+              value: qwen3-small
       backendRefs:
-        - name: envoy-ai-gateway-sdsc-nairr-qwen3
-          modelNameOverride: Qwen/Qwen3-235B-A22B-Thinking-2507-FP8
-      timeouts:
-        request: 1200s
-      modelsOwnedBy: "SDSC"
-    # Multiple backendRefs do round-robin; must add BackendTrafficPolicy for failover
-    - matches:
-        - headers:
-            - type: Exact
-              name: x-ai-eg-model
-              value: qwen3-combined
-      backendRefs:
-        - name: envoy-ai-gateway-nrp-qwen
-          modelNameOverride: Qwen/Qwen3-235B-A22B-Thinking-2507-FP8
-        - name: envoy-ai-gateway-sdsc-nairr-qwen3
-          modelNameOverride: Qwen/Qwen3-235B-A22B-Thinking-2507-FP8
+        - group: inference.networking.k8s.io
+          kind: InferencePool
+          name: qwen3-small
+          modelNameOverride: Qwen/Qwen3.8-27B
       timeouts:
         request: 1200s
       modelsOwnedBy: "NRP"
@@ -1477,9 +1479,12 @@ spec:
       name: envoy-ai-gateway-nrp-test-pool
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
-      name: envoy-ai-gateway-nrp-testing
+      name: envoy-ai-gateway-nrp-deepseek-v4-flash
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: envoy-ai-gateway-nrp-gemma-4-12b
   retry:
-    numRetries: 5  # Total retry attempts across all backendRefs
+    numRetries: 2  # Total retry attempts across all backendRefs; 404 is not retried
     perRetry:
       backOff:
         baseInterval: 100ms
@@ -1487,7 +1492,6 @@ spec:
       timeout: 1200s
     retryOn:
       httpStatusCodes:
-        - 429
         - 500
         - 502
         - 503
@@ -1503,9 +1507,10 @@ spec:
       http:
         path: /health
       interval: 10s
+      timeout: 5s
       healthyThreshold: 1
       unhealthyThreshold: 3
-    panicThreshold: 0
+    panicThreshold: 50
     passive:
       baseEjectionTime: 30s
       interval: 5s
@@ -1514,6 +1519,31 @@ spec:
       consecutiveGatewayErrors: 2
       consecutiveLocalOriginFailures: 2
       splitExternalLocalOriginErrors: true
+  # 200,000 input tokens per minute per API token and model
+  rateLimit:
+    type: Global
+    global:
+      rules:
+        - clientSelectors:
+            - headers:
+                - name: authorization
+                  type: Distinct
+                  invert: false
+                - name: x-ai-eg-model
+                  type: Distinct
+                  invert: false
+          cost:
+            request:
+              from: Number
+              number: 1
+            response:
+              from: Metadata
+              metadata:
+                namespace: io.envoy.ai_gateway
+                key: llm_input_token
+          limit:
+            requests: 200000
+            unit: Minute
 ```
 
 ### AIServiceBackend
@@ -1525,16 +1555,16 @@ Now, start defining the [AIServiceBackend](https://aigateway.envoyproxy.io/docs/
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-config/servicebackend):
 
 ```yaml
-apiVersion: aigateway.envoyproxy.io/v1alpha1
+apiVersion: aigateway.envoyproxy.io/v1beta1
 kind: AIServiceBackend
 metadata:
-  name: envoy-ai-gateway-nrp-qwen
+  name: envoy-ai-gateway-nrp-kimi
   namespace: nrp-llm
 spec:
   schema:
     name: OpenAI
   backendRef:
-    name: envoy-ai-gateway-nrp-qwen
+    name: envoy-ai-gateway-nrp-kimi
     kind: Backend
     group: gateway.envoyproxy.io
 ```
@@ -1559,12 +1589,13 @@ Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/tree/main/models-c
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: Backend
 metadata:
-  name: envoy-ai-gateway-nrp-qwen
+  name: envoy-ai-gateway-nrp-kimi
   namespace: nrp-llm
 spec:
+  type: Endpoints
   endpoints:
     - fqdn:
-        hostname: qwen-vllm-inference.nrp-llm.svc.cluster.local
+        hostname: kimi-vllm-inference.nrp-llm.svc.cluster.local
         port: 5000
 ```
 
@@ -1572,14 +1603,14 @@ spec:
 
 If your model has a newly added API access key, you can add a [BackendSecurityPolicy](https://aigateway.envoyproxy.io/docs/api/#backendsecuritypolicy) to https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml. It will point to an existing secret in the cluster containing your ApiKey.
 
-It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BackendSecurityPolicies. The `BackendSecurityPolicy` should target an existing AIServiceBackend.
+It's easier if you reuse one of existing keys and simply add your backend to the list in one of existing BackendSecurityPolicies. The `BackendSecurityPolicy` targets an existing `AIServiceBackend` or `InferencePool`; `envoy-ai-gateway-nrp-apikey` carries the `VLLM_API_KEY` every NRP vLLM pod starts with.
 
 **Make sure to delete the `targetRefs:` section and update the `BackendSecurityPolicy` with `kubectl apply -f <file>` if a model is removed. Make sure to delete the `BackendSecurityPolicy` resource manually if all models under `targetRefs:` are removed.**
 
 Example (under https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/models-config/securitypolicy.yaml):
 
 ```yaml
-apiVersion: aigateway.envoyproxy.io/v1alpha1
+apiVersion: aigateway.envoyproxy.io/v1beta1
 kind: BackendSecurityPolicy
 metadata:
   name: envoy-ai-gateway-nrp-apikey
@@ -1591,9 +1622,33 @@ spec:
       name: openai-apikey
       namespace: nrp-llm
   targetRefs:
-    - name: envoy-ai-gateway-nrp-qwen
+    - name: envoy-ai-gateway-nrp-kimi
       kind: AIServiceBackend
       group: aigateway.envoyproxy.io
+    - name: envoy-ai-gateway-nrp-minimax
+      kind: AIServiceBackend
+      group: aigateway.envoyproxy.io
+    - name: envoy-ai-gateway-nrp-qwen3-embedding
+      kind: AIServiceBackend
+      group: aigateway.envoyproxy.io
+    - name: glm-5
+      kind: InferencePool
+      group: inference.networking.k8s.io
+    - name: qwen3-small
+      kind: InferencePool
+      group: inference.networking.k8s.io
+    - name: deepseek-v4-flash-h100
+      kind: InferencePool
+      group: inference.networking.k8s.io
+    - name: gemma-4-12b
+      kind: InferencePool
+      group: inference.networking.k8s.io
+    - name: qwen3
+      kind: InferencePool
+      group: inference.networking.k8s.io
+    - name: gemma-4-31b
+      kind: InferencePool
+      group: inference.networking.k8s.io
 ```
 
 ### Role Bindings
@@ -1675,4 +1730,4 @@ roleRef:
 
 ### Required Updates
 
-Finally, update the [Chatbox Config Template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue) and the [LLM List Page](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/pages/llms.astro) for the model.
+Finally, update the site: the [model catalog](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/tree/main/src/content/models), the [Chatbox Config Template](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/components/vue/LLMToken.vue), the [client configurations](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/content/docs/Documentation/userdocs/ai/llm-managed/client-configs.mdx) and the [changelog](https://gitlab.nrp-nautilus.io/prp/nrp-site/-/blob/main/src/content/docs/Documentation/userdocs/ai/llm-managed/lifecycle.mdx).
