@@ -36,11 +36,11 @@ Use the appropriate endpoint URL for your S3 client or library.
 | _East pool_           | http://rook-ceph-rgw-easts3.rook-east       | https://s3-east.nrp-nautilus.io    |
 | _HaoSu pool_          | http://rook-ceph-rgw-haosu.rook-haosu       | https://s3-haosu.nrp-nautilus.io   |
 | _Tide pool_           | http://rook-ceph-rgw-tide.rook-tide         | https://s3-tide.nrp-nautilus.io    |
-| _HA pool_             | http://rook-ceph-rgw-ha.rook:7480           | https://s3-ha.nrp-nautilus.io      |
+| _HA pool_             | https://s3-ha.nrp-nautilus.io               | https://s3-ha.nrp-nautilus.io      |
 
 Note that the inside endpoint is **http** (without SSL) and the outside endpoint is **https** (with SSL). You can use the outside endpoint within the kubernetes cluster but it will end up going through a load balancer. By using the inside endpoint it is possible for multiple parallel requests from one or many machines to hit multiple separate storage servers (called Object Storage Devices (OSD) in ceph) and therefore achieve very large training set bandwidth.
 
-The HA pool replicates every bucket to the west, central and east clusters. Only `https://s3-ha.nrp-nautilus.io` fails over between them (within about 15 seconds, from inside the cluster too); the zone URLs `http://rook-ceph-rgw-ha.rook:7480`, `http://rook-ceph-rgw-ha.rook-central:7480` and `http://rook-ceph-rgw-ha.rook-east:7480` do not, and objects written while a zone was down show up there shortly after it returns. It is reserved for mission-critical services; the portal does not issue its credentials, so ask the admins if your service needs it.
+The HA pool replicates every bucket to the west, central and east clusters. Use `https://s3-ha.nrp-nautilus.io` from inside the cluster as well: it is the only endpoint that fails over (within about 15 seconds). The per-zone URLs `http://rook-ceph-rgw-ha.rook:7480`, `http://rook-ceph-rgw-ha.rook-central:7480` and `http://rook-ceph-rgw-ha.rook-east:7480` serve one zone only and stop with it. Objects written while a zone was down show up there shortly after it returns. It is reserved for mission-critical services; the portal does not issue its credentials, so ask the admins if your service needs it.
 
 ## Using Rclone
 

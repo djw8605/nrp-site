@@ -195,6 +195,8 @@ A fourth RGW realm, `ha`, spans all three Ceph clusters as one zonegroup with th
 - Each zone stores 3+2 erasure-coded data and all three keep a copy, so every byte costs about 5x raw capacity. The ceiling is the smallest free data pool of the three (west, about 127 TiB in September 2026). There are no quotas; gate by credential issuance.
 - Bucket and user create/delete go to the master zone. If west is down, object reads and writes fail over, but those metadata operations fail until west returns or another zone is promoted.
 - `s3-ha.nrp-nautilus.io` probes `GET /healthcheck/ok` on every zone (a public object in bucket `healthcheck`, owned by user `healthcheck`, replicated like any other); a zone whose data pool cannot serve it is dropped within 15 seconds. Do not delete that bucket or user.
+- The probe reads one object, so it catches a zone whose storage is gone, not a partial OSD outage that leaves that object's PG active. The per-zone `rook-ceph-rgw-ha.<namespace>:7480` URLs are single-zone; only `s3-ha` fails over.
+- To test failover or hold west out of rotation, delete west's RADOS copy of the probe head (`rados -p ha-west.rgw.buckets.data rm <healthcheck bucket marker>_ok`); a new PUT of `healthcheck/ok` through `s3-ha` lands on the active zone and syncs back.
 - The `resharding` zonegroup feature is enabled, so dynamic resharding works; each zone's two RGWs have a PodDisruptionBudget `rook-ceph-rgw-ha` (`minAvailable: 1`).
 
 From the West control pod, `radosgw-admin sync status --rgw-realm=ha` shows sync state, and `radosgw-admin zonegroup get --rgw-realm=ha --rgw-zonegroup=ha` must show `sync_from_all: true` on every zone.
