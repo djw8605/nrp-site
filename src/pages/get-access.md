@@ -29,7 +29,7 @@ To get access to the Nautilus cluster:
 namespace, you will get access to all namespace resources. 
 
 1. If you're starting a new project and would like to have your own namespace,
-either for yourself or for your group, you can request to be promoted to the **admin** in [Nautilus Support chat](/contact). 
+either for yourself or for your group, request one by filling out the [namespace request form](https://get-started.nrp-nautilus.io) (students should have their advisor submit it). If you have questions, ask in the [Nautilus Support chat](/contact).
 This will give you permission to create any number of namespaces and invite other users to your namespace(s). 
 Please note, you'll be the one responsible for all activity happening in your namespaces.
 
