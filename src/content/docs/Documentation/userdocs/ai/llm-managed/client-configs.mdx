@@ -180,7 +180,7 @@ https://github.com/anomalyco/opencode
 
 Nine models, each with its context window, modalities, and thinking controls. `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
 
-Thinking is selected per model with `Ctrl+P` → _Switch model variant_, and the key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
+Thinking is selected per model with `Ctrl+P` → _Switch model variant_, and the key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` — `low`, `high`, or `max` (the default) on `glm-5`, and on `deepseek-v4-flash` also `xhigh` or any integer 1-100 — and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
 
 ```jsonc
 {

@@ -21,6 +21,14 @@
  * public JSON feed, and AA's terms do not permit redistributing their dataset —
  * this is a small quotation of published figures with attribution, kept in sync by
  * hand.
+ *
+ * Every Intelligence Index below was re-read on 2026-09-11 from a single AA
+ * leaderboard snapshot. AA rebaselined the index between the previous refresh and
+ * that one — every model moved down (glm-5.3 59.5 -> 44.9, gpt-oss-120b 24.1 ->
+ * 12.3), and the shift is not a constant factor, so it is a methodology change and
+ * not a rescale. Refresh the whole table from one snapshot or not at all: mixing
+ * index generations across rows makes the chart compare two different metrics.
+ * Terminal-Bench v2.1 was unaffected — all nine values were unchanged.
  */
 
 import type { CreatorKey } from './model-creators';
@@ -106,7 +114,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     aaVariant: 'GLM-5.3 (max)',
     aaSlug: 'glm-5-3',
     creator: 'zai',
-    intelligenceIndex: 59.5,
+    intelligenceIndex: 44.9,
     terminalBench: 83.9,
   },
   {
@@ -114,31 +122,31 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     aaVariant: 'Qwen3.8-Flash-Next',
     aaSlug: 'qwen3-8-flash-next',
     creator: 'alibaba',
-    intelligenceIndex: 55.8,
+    intelligenceIndex: 39.9,
     terminalBench: 86.1,
+  },
+  {
+    modelId: 'deepseek-v4-flash',
+    aaVariant: 'DeepSeek V4.1 Flash (Reasoning, Max Effort)',
+    aaSlug: 'deepseek-v4-1-flash',
+    creator: 'deepseek',
+    intelligenceIndex: 39.5,
+    terminalBench: null,
   },
   {
     modelId: 'qwen3-small',
     aaVariant: 'Qwen3.8 27B (xhigh)',
     aaSlug: 'qwen3-8-27b',
     creator: 'alibaba',
-    intelligenceIndex: 52.0,
+    intelligenceIndex: 33.9,
     terminalBench: 79.8,
-  },
-  {
-    modelId: 'deepseek-v4-flash',
-    aaVariant: 'DeepSeek V4 Flash Vision (Reasoning, Max Effort)',
-    aaSlug: 'deepseek-v4-flash-vision',
-    creator: 'deepseek',
-    intelligenceIndex: 51.5,
-    terminalBench: 74.2,
   },
   {
     modelId: 'kimi',
     aaVariant: 'Kimi K2.7 Code',
     aaSlug: 'kimi-k2-7-code',
     creator: 'moonshot',
-    intelligenceIndex: 43.0,
+    intelligenceIndex: 26.3,
     terminalBench: 67.4,
   },
   {
@@ -146,7 +154,7 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     aaVariant: 'MiniMax-M2.7',
     aaSlug: 'minimax-m2-7',
     creator: 'minimax',
-    intelligenceIndex: 38.9,
+    intelligenceIndex: 23.2,
     terminalBench: 55.4,
   },
   {
@@ -154,24 +162,24 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
     aaVariant: 'Gemma 4 31B (Reasoning)',
     aaSlug: 'gemma-4-31b',
     creator: 'google',
-    intelligenceIndex: 29.7,
+    intelligenceIndex: 15.4,
     terminalBench: 43.4,
-  },
-  {
-    modelId: 'gpt-oss',
-    aaVariant: 'gpt-oss-120b (high)',
-    aaSlug: 'gpt-oss-120b',
-    creator: 'openai',
-    intelligenceIndex: 24.1,
-    terminalBench: 26.2,
   },
   {
     modelId: 'gemma-small',
     aaVariant: 'Gemma 4 12B (Reasoning)',
     aaSlug: 'gemma-4-12b',
     creator: 'google',
-    intelligenceIndex: 22.2,
+    intelligenceIndex: 14.2,
     intelligenceIndexEstimated: true,
     terminalBench: 27.3,
+  },
+  {
+    modelId: 'gpt-oss',
+    aaVariant: 'gpt-oss-120b (high)',
+    aaSlug: 'gpt-oss-120b',
+    creator: 'openai',
+    intelligenceIndex: 12.3,
+    terminalBench: 26.2,
   },
 ];
