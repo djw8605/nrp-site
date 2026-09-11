@@ -127,11 +127,11 @@ export const MODEL_BENCHMARKS: ModelBenchmark[] = [
   },
   {
     modelId: 'deepseek-v4-flash',
-    aaVariant: 'DeepSeek V4.1 Flash (Reasoning, Max Effort)',
-    aaSlug: 'deepseek-v4-1-flash',
+    aaVariant: 'DeepSeek V4 Flash Vision (Reasoning, Max Effort)',
+    aaSlug: 'deepseek-v4-flash-vision',
     creator: 'deepseek',
-    intelligenceIndex: 39.5,
-    terminalBench: null,
+    intelligenceIndex: 35.0,
+    terminalBench: 74.2,
   },
   {
     modelId: 'qwen3-small',
