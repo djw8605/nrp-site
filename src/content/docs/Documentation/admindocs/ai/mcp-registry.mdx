@@ -1,0 +1,356 @@
+---
+title: MCP Registry Administration
+description: Review top-level MCP path requests, suspend live routes, and understand how the portal reconciles registrations into Envoy AI Gateway routes.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+The MCP registry lets a researcher publish a Streamable HTTP MCP server running in their own namespace at a
+public `mcp.nrp-nautilus.io` URL. The user-facing half is documented in
+[Hosting an MCP Server](/documentation/userdocs/ai/mcp-hosting). This page is the operator's half: what the portal
+writes, what you approve, and how to debug a route that will not come up.
+
+## How the registry works
+
+The portal database is the source of truth. A registration is a row in `mcp_registrations`, not a Kubernetes
+object, and a user never creates a custom resource. There is no operator and no `MCPServer` CRD.
+
+- A reconcile loop in the portal runs every 60 seconds, and every state-changing RPC also nudges it, so an
+  approval normally takes effect in seconds rather than a minute.
+- **RPC handlers never touch the cluster.** They write the database row and nudge the loop. Only the loop talks to
+  the API server, in one goroutine, so runs never overlap.
+- For each row with status `approved`, the loop ensures one `Backend` and one `MCPRoute` exist in the `nrp-llm`
+  namespace. Nothing is ever written into a user namespace.
+- Every object it creates carries `app.kubernetes.io/managed-by: mcp-registry` plus
+  `nrp.io/mcp-registration-id`, `nrp.io/mcp-namespace`, `nrp.io/mcp-name` and `nrp.io/mcp-tier`. The MCP
+  controller copies those labels onto the HTTPRoutes it generates, so one label selector finds the whole chain.
+- Rows that are not `approved` have no objects. Suspending, rejecting or withdrawing removes the route on the
+  next pass; the row is kept.
+
+Statuses are exactly five: `pending`, `approved`, `rejected`, `suspended`, `withdrawn`. Only `approved` is
+"desired live". `rejected` and `withdrawn` are terminal, and they free the path for someone else.
+
+## Reviewing a top-level request
+
+Namespace paths (`/<namespace>/<name>`) are granted automatically to direct members of the namespace. Only
+top-level names (`/<name>`) reach the queue, and they are a global, first-come resource, which is the whole reason
+a human looks at them.
+
+A checklist that covers most cases:
+
+1. **Is the requester a plausible steward of a global name?** Top-level names are effectively permanent in
+   practice: clients hard-code URLs. A name held by someone who leaves in three months is a future support
+   ticket.
+2. **Does the name describe the server, not the group?** `weather` is a good top-level name. `ucsd-lab` is a
+   namespace path wearing a costume.
+3. **Collisions.** The portal already refuses reserved words, existing namespace names and taken names. What it
+   cannot check is trademarks and names that will read as official NRP services when they are not.
+4. **Does the target exist?** `kubectl -n <namespace> get svc <service>` and check the port. The portal surfaces
+   this on the row too, but a missing Service on a top-level request is worth asking about before approving.
+5. **Ask.** The `Contact` field is there for this. A one-line "why not `/<namespace>/<name>`?" resolves most
+   requests one way or the other.
+
+When in doubt, reject with a reason suggesting the namespace path. It is not a refusal of the service, only of
+the global name, and the user can register the namespace path immediately without a second review.
+
+## Actions and their effects
+
+| Action        | Allowed from | Effect                                                                                                                                                         |
+| ------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Approve**   | `pending`    | Row becomes `approved`. Objects are created on the next pass. Reason optional.                                                                                 |
+| **Reject**    | `pending`    | Terminal. Reason required and shown to the owner. Frees the path.                                                                                              |
+| **Suspend**   | `approved`   | Route and Backend are deleted within a minute. The row keeps every field.                                                                                      |
+| **Resume**    | `suspended`  | Back to `approved`. Objects are recreated on the next pass.                                                                                                    |
+| **Delete**    | any          | Hard delete of the row. The loop garbage-collects its objects because the registration id is gone. Use it for spam and mistakes, not for taking a server down. |
+| **Reconcile** | any          | Nudges the loop. A debug aid; the loop runs on its own schedule anyway.                                                                                        |
+
+**Suspend is the 2 a.m. button.** It takes a server off the internet without destroying the request, the reason
+is visible to the owner, and Resume undoes it exactly. Reach for Delete only when the record itself should not
+exist.
+
+Top-level collision rules are re-checked at approve time, not only at request time, because the world may have
+changed since: a namespace with that name may have been created while the request sat in the queue.
+
+## What the portal creates
+
+Per approved registration, two objects in `nrp-llm`, both named `mcp-<namespace>-<name>` (hashed down if that
+exceeds 63 characters).
+
+```yaml
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: mcp-my-namespace-my-mcp
+  namespace: nrp-llm
+  labels:
+    app.kubernetes.io/managed-by: mcp-registry
+    nrp.io/mcp-registration-id: '42'
+    nrp.io/mcp-namespace: my-namespace
+    nrp.io/mcp-name: my-mcp
+    nrp.io/mcp-tier: namespace
+  annotations:
+    nrp.io/mcp-public-path: /my-namespace/my-mcp
+spec:
+  type: Endpoints
+  endpoints:
+    - fqdn:
+        hostname: my-mcp.my-namespace.svc.cluster.local
+        port: 8000
+```
+
+```yaml
+apiVersion: aigateway.envoyproxy.io/v1beta1
+kind: MCPRoute
+metadata:
+  name: mcp-my-namespace-my-mcp
+  namespace: nrp-llm
+  labels:
+    app.kubernetes.io/managed-by: mcp-registry
+    nrp.io/mcp-registration-id: '42'
+    nrp.io/mcp-namespace: my-namespace
+    nrp.io/mcp-name: my-mcp
+    nrp.io/mcp-tier: namespace
+  annotations:
+    nrp.io/mcp-public-path: /my-namespace/my-mcp
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-ai-gateway-mcp
+  path: /my-namespace/my-mcp
+  backendRefs:
+    - group: gateway.envoyproxy.io
+      kind: Backend
+      name: mcp-my-namespace-my-mcp
+      port: 8000
+      path: /mcp
+```
+
+Two path facts follow from that, and both are visible to users:
+
+- `spec.path` is matched **exactly**. The controller generates an HTTPRoute with `PathMatchExact`, so
+  `/my-namespace/my-mcp/` and `/my-namespace/my-mcp/anything` are not the same route.
+- `backendRefs[].path` **replaces the whole path**, via a `URLRewrite` with `ReplaceFullPath`. The gateway does
+  not strip a prefix. The user's server must serve MCP at that exact path, whatever the public path is.
+- The `Host` header is rewritten to the Backend hostname, so the server sees
+  `<service>.<namespace>.svc.cluster.local`. Servers with DNS-rebinding protection must allow it or answer
+  `421`.
+
+### Why a Backend and not a ReferenceGrant
+
+The obvious design is an MCPRoute in `nrp-llm` whose `backendRefs` points straight at the user's Service in their
+own namespace, with a ReferenceGrant in that namespace permitting it. **That design cannot work on the deployed
+controller.** Envoy AI Gateway v1.0.0 rejects any backendRef whose namespace differs from the MCPRoute's, before
+any ReferenceGrant is consulted, and the route sits at `NotAccepted` forever. The API type's own documentation
+says the same.
+
+So the portal uses an Envoy Gateway `Backend` with an FQDN endpoint instead. The Backend is a normal namespaced
+object in `nrp-llm`, it points at the in-cluster DNS name of the user's Service, and cross-namespace permission
+never enters into it. The same pattern already routes LLM traffic in this cluster, and the MCP controller creates
+a `Backend` of its own for the MCP proxy, so the API is enabled.
+
+This is also strictly safer on the axis that matters: **the portal never creates an object in a user namespace**,
+so a compromised or buggy portal cannot write into research namespaces through this feature.
+
+### Adoption policy
+
+The loop only ever touches objects it can prove are its own.
+
+- Not found: create.
+- Found, labelled `managed-by=mcp-registry` with a matching registration id: update in place if the spec drifted.
+- Found, labelled ours but with a **different** registration id: do not touch. The row gets
+  `LastError: object <kind>/<name> belongs to registration <other>`.
+- Found and **not labelled**: never touched, in either direction. The row gets
+  `LastError: name collision: unmanaged <kind> <namespace>/<name> exists`.
+
+There is deliberately no adopt-if-it-matches path, because nobody is supposed to hand-write these objects. That
+is also why there is no example manifest anywhere in the repo: applying one would create an unlabelled object
+that blocks its own name permanently.
+
+Garbage collection is the mirror image. Only labelled objects are listed, so only labelled objects can be
+deleted, and each delete re-checks the label and pins the object's UID. HTTPRoutes are never deleted by the
+portal; they belong to the MCP controller and disappear with their MCPRoute through ownerRef GC.
+
+## Debugging a route
+
+### The registration shows an error
+
+`LastError` is written by the reconcile loop and is the first thing to read. The three that actually happen:
+
+- **Name collision with an unmanaged object.** See below.
+- **RBAC**: the portal cannot create `backends` or `mcproutes` in `nrp-llm`. Check the portal's ClusterRole after
+  any Envoy AI Gateway upgrade that renames a resource.
+- **CRD validation**, which in practice means a `securityPolicy` the CRD's CEL rules refuse. The policy is
+  passthrough by design, so an invalid one surfaces here rather than being silently dropped.
+
+`BackendMessage` carries the cheap diagnostics the loop collects each pass: `Service <name> not found in
+namespace <ns>`, or `Service <name> has no port <port>`, with the ports it does publish. Those two cover most
+"my server is not reachable" tickets without anyone opening a terminal.
+
+### Accepted but not Programmed
+
+This is the confusing one. `Accepted` on an MCPRoute means only that **the MCP controller generated its
+HTTPRoutes**. It says nothing about whether Envoy Gateway resolved them or programmed a listener. A route can be
+`Accepted` and completely dead.
+
+Walk the chain by label, which works because the controller copies MCPRoute labels onto everything it generates:
+
+```bash
+# Everything belonging to one registration, in one shot.
+kubectl -n nrp-llm get mcproute,backend,httproute -l nrp.io/mcp-registration-id=42
+
+# The MCP controller's own verdict.
+kubectl -n nrp-llm get mcproute mcp-my-namespace-my-mcp -o yaml | yq '.status.conditions'
+
+# The real answer: what Envoy Gateway did with the generated HTTPRoutes.
+kubectl -n nrp-llm get httproute -l nrp.io/mcp-registration-id=42 -o yaml | yq '.items[].status.parents'
+
+# Does the Backend resolve?
+kubectl -n nrp-llm get backend mcp-my-namespace-my-mcp -o yaml | yq '.status.conditions'
+
+# Is the Gateway itself healthy?
+kubectl -n nrp-llm get gateway envoy-ai-gateway-mcp -o yaml | yq '.status.conditions'
+kubectl -n envoy-gateway-system get pods
+```
+
+How to read `status.parents[].conditions`:
+
+- `ResolvedRefs=False`: the Backend is missing, invalid, or the reference is malformed. Look at the Backend
+  next.
+- `Accepted=False`: the listener or Gateway refused the route. Hostname or listener mismatch, or the Gateway is
+  not `Programmed`.
+- Everything `True` and traffic still failing: the problem is below the gateway. Service selector, pod
+  readiness, or the server rejecting the rewritten `Host` with `421`.
+
+The portal mirrors all of this into `RouteMessage`, which is what the user sees on their row, so the UI and
+`kubectl` should agree. If they disagree, the loop is stuck; check the portal logs for
+`[mcp-registry] run: ...` summary lines.
+
+### Name collisions with unmanaged objects
+
+If someone hand-applied an `MCPRoute` or `Backend` named `mcp-<namespace>-<name>` in `nrp-llm`, the portal will
+refuse to touch it and the registration will sit in error forever. Resolve it by renaming or deleting the
+hand-made object:
+
+```bash
+kubectl -n nrp-llm get mcproute,backend -l '!app.kubernetes.io/managed-by'
+kubectl -n nrp-llm delete mcproute mcp-my-namespace-my-mcp   # only if it is genuinely hand-made
+```
+
+The portal creates its own replacement on the next pass. Check the labels before deleting anything: an object
+carrying `managed-by: mcp-registry` is the portal's, and deleting it by hand only makes work.
+
+## Terminology trap
+
+Envoy AI Gateway's MCP vocabulary collides with itself, and reaching for the wrong noun wastes an afternoon.
+
+- **`MCPRoute`** is both the route and the backend list. It is the only resource involved in publishing a server.
+- **"MCP server"** in Envoy's own documentation means an **element of `backendRefs[]`**, not a resource. There is
+  no `MCPServer` CRD to look for, and searching for one will find unrelated upstream proposals.
+- **`AIServiceBackend`** is the LLM-side analog that people reach for by muscle memory. It is not used here, and
+  wiring one up will not produce an MCP route.
+- The `Backend` in the YAML above is an **Envoy Gateway** resource (`gateway.envoyproxy.io`), not an Envoy AI
+  Gateway one (`aigateway.envoyproxy.io`). Two API groups, similar names.
+
+## Configuration
+
+All keys live under `portal.mcp_registry` and default to the values below. Production flips `enabled` in the
+portal ConfigMap.
+
+```toml
+[portal.mcp_registry]
+enabled = false                        # off by default; gates the RPCs and the loop
+interval_seconds = 60                  # reconcile period; nudges make it effectively immediate
+gateway_namespace = "nrp-llm"          # where Backends and MCPRoutes are written
+gateway_name = "envoy-ai-gateway-mcp"  # the Gateway the MCPRoutes attach to
+public_host = "mcp.nrp-nautilus.io"    # used to build PublicURL
+reserved_names = []                    # added to the built-in reserved list
+max_per_user = 10                      # live registrations per user
+```
+
+`enabled = false` is deliberate for a cluster-mutating feature: a portal that has never been configured for this
+cluster should not start writing gateway objects. With it off, every RPC answers "MCP registry is not enabled on
+this portal" and the page renders a single explanatory message.
+
+`public_host` must match the Gateway's listener hostname and the site's `src/data/mcp-endpoint.ts`. Those are the
+two places the host is written down.
+
+## Manual operations
+
+```bash
+# Everything the registry owns, across all registrations.
+kubectl -n nrp-llm get mcproute,backend -l app.kubernetes.io/managed-by=mcp-registry
+
+# One registration's whole chain, including generated HTTPRoutes.
+kubectl -n nrp-llm get mcproute,backend,httproute -l nrp.io/mcp-registration-id=42
+
+# Everything for one user namespace.
+kubectl -n nrp-llm get mcproute,backend -l nrp.io/mcp-namespace=my-namespace
+```
+
+Three rules for touching any of it by hand:
+
+1. **Never delete an unlabelled object** in `nrp-llm` on the assumption it is ours. It is not: the loop only ever
+   creates labelled objects.
+2. **Do not hand-edit a labelled object.** The next pass compares the live spec against the desired one and
+   reverts the difference. Change the registration instead.
+3. **Portal restarts are safe.** Object names are derived deterministically from namespace and name, so a fresh
+   replica finds the same objects by name and by label and converges without creating duplicates.
+
+The Reconcile button on the approval queue calls `admin.ReconcileMCPServers`, which only nudges the loop. It is
+safe to press repeatedly and does nothing on its own that the 60-second tick would not do.
+
+## Open question: per-server authentication
+
+**Not decided. Do not pick one of these without Derek.**
+
+v1 ships open: `mcp_registrations.security_policy` is `NULL`, which means no `securityPolicy` on the MCPRoute and
+no auth in front of a researcher's server. The column exists so that changing this is a code and data change, not
+a schema migration: a non-null value is copied verbatim into `MCPRoute.spec.securityPolicy`, which accepts
+`oauth`, `apiKeyAuth`, `extAuth` and `authorization`.
+
+<CardGrid>
+  <Card title="A. Open by default (status quo)">
+    Zero friction, and it matches the pilot decision. Any internet caller who finds the URL can invoke every tool. The
+    risk lands on researchers who do not realize their tools reach their own data and compute.
+  </Card>
+  <Card title="B. Gateway-wide extAuth">
+    One SecurityPolicy targeting the MCP Gateway, reusing the existing LLM auth service and LLM API keys. No per-route
+    work, and servers get trustworthy identity headers. Cost: the pilot server stops being open too, and every client
+    must send a bearer token.
+  </Card>
+  <Card title="C. Per-server choice">
+    `apiKeyAuth` needs a Secret per server, which makes the portal a key-management surface it is not today. `oauth`
+    cannot be the per-server default at all: the well-known paths are fixed, so only one route per listener can carry
+    it. `extAuth` per route works but duplicates B.
+  </Card>
+  <Card title="D. Default-closed with opt-out">
+    B's policy applied by default, with an explicit per-server exemption an admin approves the way a top-level name is
+    approved. Strongest posture, most review load.
+  </Card>
+</CardGrid>
+
+If the answer turns out to be B or D, the migration is: apply the gateway-level SecurityPolicy, then decide
+whether existing registrations are grandfathered. No registration data changes shape.
+
+## Unverified at ship time
+
+Nothing below has been dry-run against the API server. Worth confirming on the first real registration:
+
+- **`port` on a `kind: Backend` backendRef.** Gateway API makes port optional for non-Service kinds. The
+  controller sets one on its own Backend reference, so the portal does too. If the API server or Envoy Gateway
+  refuses it, it is removed in one place.
+- **`spec.type: Endpoints` on the Backend.** Present in the applied LLM manifests and believed to be the CRD
+  default.
+- **Condition type strings.** The controller writes `Accepted` or `NotAccepted`; the portal matches tolerantly on
+  the type containing `Accepted` plus the status, rather than on an exact string.
+- **Trailing-slash normalization.** The exact path match is confirmed in the controller. Whether Envoy normalizes
+  a trailing slash before matching is not, so the docs tell users to use the URL exactly.
+- **Tool-name prefixing.** The MCP proxy may expose tools as `<backend>__<tool>` even with a single backend. If
+  that is confirmed and unwanted, the Backend's generated name is the one place to change, and only before
+  registrations exist.
+- **Backend `status.conditions`.** Envoy Gateway is expected to set `Accepted`. If it does not, `BackendAccepted`
+  stays null and the UI shows "Waiting", which is harmless.
+
+Somebody with cluster access should `kubectl apply --dry-run=server` one generated Backend and MCPRoute pair
+before the feature is enabled in production.

@@ -1,0 +1,25 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import MCPRegistry from '~/components/vue/MCPRegistry.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'MCP Servers',
+};
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper
+    titleAs="h1"
+    containerClass="py-2 md:py-4 lg:py-6"
+    title="MCP Servers"
+    description="Host a Streamable HTTP MCP server in your namespace and publish it at a mcp.nrp-nautilus.io URL. Namespace paths go live automatically; top-level names need an admin."
+  >
+    {
+      /* No endpoint panel above the island: unlike /llmtoken there is no single
+         URL to state, because every registration has its own. The island renders
+         the per-row URL, and a live preview of the one the form would create. */
+    }
+    <MCPRegistry client:only="vue" />
+  </WidgetWrapper>
+</Layout>

@@ -109,3 +109,9 @@ Facts that appear twice, because there is no single source for them yet:
   on `/llmtoken` and by the Chatbox config that page generates. The Starlight docs under
   `userdocs/ai/llm-managed/` still carry it literally, because theirs sit inside fenced code samples
   that do not interpolate. If the host changes, grep for `ellm.nrp-nautilus.io`.
+- **The MCP gateway host**: `src/data/mcp-endpoint.ts` is the one source for site code, used by the
+  live URL preview on `/mcp`. The two Starlight pages that document the feature
+  (`userdocs/ai/mcp-hosting.mdx`, `admindocs/ai/mcp-registry.mdx`) carry it literally inside fenced
+  code samples, and the portal has its own copy in `portal.mcp_registry.public_host` (which is what
+  builds the `PublicURL` the registrations table renders). If the host changes, grep for
+  `mcp.nrp-nautilus.io` here and change the portal config in the same breath.

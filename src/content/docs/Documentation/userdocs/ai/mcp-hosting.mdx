@@ -1,0 +1,360 @@
+---
+title: Hosting an MCP Server
+description: Publish a Streamable HTTP MCP server running in your namespace at a public mcp.nrp-nautilus.io URL, registered from the portal with no extra YAML.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+You run an MCP server as an ordinary Deployment and Service in your namespace. The NRP puts a public,
+TLS-terminated URL in front of it, so anyone you share the URL with can use the server from Claude Code, an MCP
+Inspector, or any other client that speaks Streamable HTTP.
+
+<CardGrid>
+  <LinkCard
+    title="Register a server"
+    href="/mcp"
+    description="The portal page where registrations are created, edited and withdrawn."
+  />
+  <LinkCard
+    title="Accounting MCP server"
+    href="/documentation/userdocs/ai/accounting-mcp"
+    description="An NRP-operated MCP server, useful as a worked example of a FastMCP deployment."
+  />
+</CardGrid>
+
+## What you get
+
+Two path shapes are available:
+
+- `https://mcp.nrp-nautilus.io/<namespace>/<name>` for anything you run in a namespace you belong to. This is
+  granted automatically.
+- `https://mcp.nrp-nautilus.io/<name>` for a top-level name. An NRP admin reviews these, because the top level is
+  a shared space.
+
+The gateway terminates TLS, holds long-lived response streams open, and answers CORS preflight for you, so a
+browser-based client can reach the server. Your server sees plain HTTP on the port you registered.
+
+:::caution
+Registered servers are currently **open to the internet**. Anyone who knows the URL can call every tool you
+expose. Read [Exposure and authentication](#exposure-and-authentication) before you publish anything that
+touches private data or spends compute.
+:::
+
+## Requirements
+
+**Streamable HTTP transport only.** A stdio server will not work through the gateway: there is no process for the
+gateway to attach to, only an HTTP route. If your server is stdio-only, wrap it. FastMCP can serve the same tools
+over HTTP with `transport="streamable-http"`, and `mcp-proxy` puts an HTTP front end on a stdio binary.
+
+Beyond that, four things have to be true:
+
+1. **Listen on `0.0.0.0`**, not `127.0.0.1`. A server bound to loopback is unreachable from the Service.
+2. **Serve MCP at the backend path** you register (`/mcp` by default). The gateway rewrites the whole public path
+   to this one, so it does not matter what your public path looks like.
+3. **Accept the in-cluster Host header.** The gateway rewrites `Host` to
+   `<service>.<namespace>.svc.cluster.local`. Servers with DNS-rebinding protection, which includes FastMCP,
+   reject anything not in their allow-list with `421 Invalid Host header`, so add that name to the allow-list.
+4. **Offer a readiness endpoint** if you can. It is not required, but it is the difference between "the route is
+   fine and the pod is not ready" and a mystery.
+
+## Step 1: Run the server in your namespace
+
+This is the only YAML you write. Nothing about registration is a Kubernetes object you create.
+
+:::caution
+Do not add tolerations or priority classes. See [Special Use](/documentation/userdocs/running/special/).
+:::
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-mcp
+  labels:
+    app: my-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-mcp
+  template:
+    metadata:
+      labels:
+        app: my-mcp
+    spec:
+      containers:
+        - name: server
+          image: ghcr.io/example/my-mcp:1.0.0
+          args: ['--host', '0.0.0.0', '--port', '8000']
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: '200m'
+              memory: 512Mi
+            limits:
+              cpu: '1'
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mcp
+spec:
+  selector:
+    app: my-mcp
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+```
+
+```bash
+kubectl -n my-namespace apply -f my-mcp.yaml
+kubectl -n my-namespace get pods,svc -l app=my-mcp
+```
+
+A minimal FastMCP server that satisfies all four requirements above:
+
+```python
+from fastmcp import FastMCP
+
+mcp = FastMCP("my-mcp")
+
+
+@mcp.tool
+def add(a: int, b: int) -> int:
+    """Add two numbers."""
+    return a + b
+
+
+if __name__ == "__main__":
+    # host=0.0.0.0 so the Service can reach it; path=/mcp is the backend path
+    # you register in the portal.
+    mcp.run(transport="streamable-http", host="0.0.0.0", port=8000, path="/mcp")
+```
+
+If your FastMCP version enforces a host allow-list, allow the in-cluster name the gateway sends, for example by
+setting `MCP_ALLOWED_HOSTS` to `my-mcp.my-namespace.svc.cluster.local`. Otherwise every request through the
+gateway returns `421 Invalid Host header`, while a port-forward to the same pod works fine.
+
+## Step 2: Register it in the portal
+
+Go to [the MCP servers page](/mcp) and fill in the form. There is no YAML and no custom resource involved: the
+portal stores the registration in its own database and writes the gateway objects for you.
+
+| Field        | What it is                                                                        |
+| ------------ | --------------------------------------------------------------------------------- |
+| Namespace    | Where your Service runs. Only namespaces you are a direct member of are listed.   |
+| Path tier    | Namespace path or top-level name, see below.                                      |
+| Name         | The last path segment. Lowercase letters, digits and dashes, up to 40 characters. |
+| Service name | The Kubernetes Service in front of your pods, `my-mcp` in the example above.      |
+| Service port | The port on the Service, `8000` above. Not the container port, if the two differ. |
+| Backend path | What your server serves MCP on. Defaults to `/mcp`.                               |
+| Description  | Optional. What the server does, for the admin reviewing a top-level name.         |
+| Contact      | Optional. How an admin reaches you about this server.                             |
+
+The live preview under the form shows both halves of what you are about to create: the public URL, and the
+in-cluster address the gateway will forward to. If the second line does not name a Service that exists, fix it
+before submitting.
+
+### Namespace paths (automatic)
+
+A namespace path is `/<namespace>/<name>`, and it needs no review. You must be a **direct member** of the
+namespace: being an admin of a parent organization is an administration relationship, not permission to run
+workloads there, so it does not qualify. Add yourself to the namespace group first if that is the situation.
+
+Submitting approves the registration on the spot. The route is usually live within about a minute, which is one
+pass of the portal's reconcile loop.
+
+### Top-level paths (admin review)
+
+A top-level path is `/<name>`, with no namespace segment, and it lands in an admin queue as **Pending approval**.
+Three classes of name are refused outright:
+
+- **Reserved words**, such as `mcp`, `api`, `health`, `admin`, `docs`, `metrics`, `oauth` and `login`. The portal
+  ships the full list and shows it to you when a name is rejected.
+- **Names that collide with a namespace.** A top-level `/foo` sitting next to namespace `foo`'s `/foo/*` paths is
+  exactly the confusion the top level exists to avoid.
+- **Names already taken** by another live or pending top-level request.
+
+Review is a human step with no fixed turnaround. Pick a name that describes the server rather than your
+group, and expect to be asked why the namespace path is not good enough. Nothing stops you from running at
+`/<namespace>/<name>` while you wait.
+
+## Step 3: Check status
+
+The portal is the only place a registration exists. **There is no custom resource to `kubectl get`**, no MCPRoute
+of your own, and nothing in your namespace beyond the Deployment and Service you created in step 1. The status
+chips on the registrations table mean:
+
+| Chip                 | Meaning                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| **Pending approval** | A top-level request waiting for an admin. Nothing is created in the cluster yet.                    |
+| **Programming...**   | Approved, and the portal has not yet observed the gateway accepting the route. Normal for a minute. |
+| **Live**             | The gateway accepted the route. The public URL should work.                                         |
+| **Route error**      | The gateway refused the route or could not resolve it. The message beside the chip says why.        |
+| **Suspended**        | An admin took the route down. The record is kept, and the reason is shown.                          |
+| **Rejected**         | A top-level request an admin declined, with a reason.                                               |
+| **Withdrawn**        | You withdrew it. The path is free for anyone to claim.                                              |
+
+Two messages you may see under a row:
+
+- `Service <name> not found in namespace <ns>` means the registration is fine and the Service is not there. You
+  can register before you deploy; this is what that looks like until the Service exists.
+- `Service <name> has no port <port>` means the Service exists but does not publish the port you registered. The
+  message lists the ports it does publish. Edit the registration, or the Service.
+
+## Step 4: Connect a client
+
+Use the URL **exactly** as the portal shows it. The gateway matches the public path as an exact string, so a
+trailing slash or an extra segment is a different path, and a different path is a 404.
+
+Claude Code:
+
+```bash
+claude mcp add --transport http my-mcp https://mcp.nrp-nautilus.io/my-namespace/my-mcp
+```
+
+A generic client config, for anything that reads the common `mcpServers` shape:
+
+```json
+{
+  "mcpServers": {
+    "my-mcp": {
+      "type": "http",
+      "url": "https://mcp.nrp-nautilus.io/my-namespace/my-mcp"
+    }
+  }
+}
+```
+
+The MCP Inspector is the quickest way to see what a client sees:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+Choose "Streamable HTTP" and paste the URL.
+
+To check by hand, send an `initialize` call. Streamable HTTP replies with either JSON or an event stream, so the
+`Accept` header must offer both, and the session id comes back in a response header:
+
+```bash
+curl -sS -D - https://mcp.nrp-nautilus.io/my-namespace/my-mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
+```
+
+A working server answers `200` with an `mcp-session-id` header. Send that header back on subsequent calls.
+
+:::note
+Tool names may reach the client with a prefix derived from the route, in the shape `<backend>__<tool>`. This comes
+from the gateway's MCP proxy, not from your server, and it has not been confirmed on this deployment yet. If you
+see prefixed names and they cause trouble for a client, say so in a support ticket: the prefix is fixable, but
+only before registrations exist that depend on it.
+:::
+
+## Debugging: three rings
+
+Each ring adds exactly one layer. Test them in order and the first failure names the layer that is broken.
+
+### Ring 1: on your machine
+
+Run the server locally and hit it with the same `curl` as above, against `http://localhost:8000/mcp`. This proves
+the image, the transport and the backend path, with no Kubernetes involved. If this fails, nothing downstream can
+work.
+
+### Ring 2: port-forward into the cluster
+
+```bash
+kubectl -n my-namespace port-forward svc/my-mcp 8000:8000
+curl -sS -D - http://localhost:8000/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"0"}}}'
+```
+
+Forwarding to the **Service**, not the pod, is the point: it tests the Service selector and the port mapping,
+which is where most of the failures are. If ring 1 passes and ring 2 does not, the Service is not selecting your
+pods or is publishing the wrong port.
+
+### Ring 3: through the gateway
+
+Run the same request against the public URL. If ring 2 passes and ring 3 does not, the symptom names the problem:
+
+- **404**: the route is not programmed yet, or the path does not match exactly. Check the status chip, and check
+  for a trailing slash.
+- **503 or an upstream connection error**: the gateway resolved the route but could not reach the Service. Pod
+  down, Service renamed, wrong port.
+- **421 Invalid Host header**: your server rejected the rewritten `Host`. Allow
+  `<service>.<namespace>.svc.cluster.local`.
+- **Hangs or returns something that is not MCP**: the server is not speaking Streamable HTTP at the backend path.
+
+## Updating, suspending and withdrawing
+
+**Edit** changes the Service name, port, backend path, description and contact. None of these need re-approval,
+because approval is about the public name, not about what is behind it. Changes take effect on the next reconcile
+pass, within about a minute.
+
+**Namespace, name and tier are immutable.** They are the public identity of the registration. To change the path,
+withdraw and register again.
+
+**Withdraw** takes the route down immediately and frees the path for anyone else to claim. The record moves to
+`withdrawn` and stays visible to you. Re-applying afterwards creates a new registration.
+
+**Suspension** is an admin action, not something you can do. A suspended registration keeps every field but loses
+its route, and the reason the admin gave is shown on the row. An admin can resume it, which puts the route back.
+
+## Exposure and authentication
+
+Every registered server is reachable by anyone on the internet who knows its URL. There is no login, no API key,
+and no allow-list in front of it today. That is a deliberate decision for the pilot, and it is the single most
+important thing to understand before registering.
+
+Practical consequences:
+
+- Do not expose tools that read private data, write to storage, or spend cluster resources on behalf of the
+  caller.
+- Treat every tool argument as hostile input. An MCP tool is a public HTTP API with a friendlier schema.
+- If a server needs to be private, keep it unregistered and reach it with `kubectl port-forward` instead.
+
+Per-server authentication is under evaluation; the options are written up in the
+[admin guide](/documentation/admindocs/ai/mcp-registry). If your use case needs it, saying so is useful input to
+that decision.
+
+## Limits and naming rules
+
+- **Name**: lowercase letters, digits and dashes, 1 to 40 characters, no leading or trailing dash. Dotted names
+  such as `.well-known` or `favicon.ico` cannot be expressed, which is deliberate.
+- **Backend path**: must start with `/`, no query string or fragment, up to 256 characters.
+- **Service port**: 1 to 65535.
+- **Per user**: 10 live registrations by default, counting pending, approved and suspended. Withdrawn and
+  rejected rows do not count. This exists to stop path squatting, and an admin can raise it.
+- **One live registration per path**, across everyone.
+
+## Troubleshooting
+
+| Symptom                                     | Ring | Fix                                                                         |
+| ------------------------------------------- | ---- | --------------------------------------------------------------------------- |
+| `404` from the public URL                   | 3    | Check the status chip is Live. Remove any trailing slash or extra segment.  |
+| `503` or upstream connection failure        | 3    | Pod not running, Service selector wrong, or the registered port is wrong.   |
+| `421 Invalid Host header`                   | 3    | Allow `<service>.<namespace>.svc.cluster.local` in the server's allow-list. |
+| Client connects, then reports no tools      | 1    | The server is serving a different path than the registered backend path.    |
+| Client hangs on connect                     | 1    | The server is stdio or SSE-only. Switch it to Streamable HTTP.              |
+| `Service not found` on the registration row | 2    | The Service does not exist yet in that namespace, or the name is a typo.    |
+| `Service has no port` on the row            | 2    | The Service publishes different ports than the one registered.              |
+| Status stuck on Programming                 | 3    | Wait a minute, then read the route message on the row and open a ticket.    |
+
+<Card title="Still stuck?">
+  Include the public path, the namespace, the Service name and port, and whichever ring first failed. That is almost
+  everything an admin needs to answer without a round trip.
+</Card>

@@ -243,6 +243,7 @@ export default defineConfig({
                   ],
                 },
                 { label: 'Accounting MCP Server', link: 'documentation/userdocs/ai/accounting-mcp' },
+                { label: 'Hosting an MCP server', link: 'documentation/userdocs/ai/mcp-hosting' },
                 { label: 'LLM in JupyterHub', link: 'documentation/userdocs/ai/llm-jupyterhub' },
                 { label: 'Cloud AI 100 Cards', link: 'documentation/userdocs/ai/qaic' },
                 { label: 'Vector database', link: 'documentation/userdocs/ai/vector-database' },
@@ -363,7 +364,10 @@ export default defineConfig({
             {
               label: 'AI',
               collapsed: true,
-              items: [{ label: 'Managing AI Models', link: 'documentation/admindocs/ai/managing_models' }],
+              items: [
+                { label: 'Managing AI Models', link: 'documentation/admindocs/ai/managing_models' },
+                { label: 'MCP registry', link: 'documentation/admindocs/ai/mcp-registry' },
+              ],
             },
             {
               label: 'Storage',
