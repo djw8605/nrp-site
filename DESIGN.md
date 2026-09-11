@@ -596,7 +596,7 @@ The `--aw-*` aliases exist so this can proceed incrementally. Update this table 
 `widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` · `ui/Timeline.astro` ·
 `common/AnnouncementBar.astro` · `widgets/People.astro` · `blog/GridItem.astro` ·
 `ai/EndpointPanel.astro` · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
-`pages/distributed-infrastructure.astro` · `pages/about.astro` · `pages/contact.astro`
+`pages/distributed-infrastructure.astro` · `pages/about.astro` · `pages/contact.astro` · `pages/mcp.astro`
 
 **Deleted** — ten widgets reachable only from the five removed AstroWind demo pages:
 `Features3`, `Contact`, `Stats`, `Pricing`, `Announcement`, `Testimonials`, `Steps2`, `Hero2`,
@@ -605,16 +605,16 @@ by `common/AnnouncementBar.astro`.)
 
 **Still legacy**:
 
-| Component                                        | Notes                                                                                 |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| `widgets/MatrixFeed.astro`, `MatrixList.astro`   | live chat feed                                                                        |
-| `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                                                 |
-| `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                                                   |
-| `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset                                  |
-| `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the docs model catalogue, not `/llms`' grid; `--sl-*` styled for the Starlight island |
-| `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp                                        |
-| `layouts/MarkdownLayout.astro`                   | see below — two pages left                                                            |
-| `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`                                          |
+| Component                                        | Notes                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `widgets/MatrixFeed.astro`, `MatrixList.astro`   | live chat feed                                                                                                                                                                                                                                                          |
+| `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                                                                                                                                                                                                                                   |
+| `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                                                                                                                                                                                                                                     |
+| `vue/*` (13 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset. `vue/MCPRegistry.vue` is the exception: its own markup is authored on tokens (`text-muted`, `bg-sunken`, `border-hairline`, `.link`, `font-mono`, no `slate-*`), so only the PrimeVue chrome is unmigrated there. |
+| `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the docs model catalogue, not `/llms`' grid; `--sl-*` styled for the Starlight island                                                                                                                                                                                   |
+| `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp                                                                                                                                                                                                                          |
+| `layouts/MarkdownLayout.astro`                   | see below — two pages left                                                                                                                                                                                                                                              |
+| `pages/training.astro`                           | hand-rolled sections, raw `blue-*`/`slate-*`                                                                                                                                                                                                                            |
 
 `MarkdownLayout.astro` is the one still worth calling out, because everything it renders inherits the
 problems rather than declaring them: a `max-w-4xl` container on a `max-w-6xl` site, an `<h1>` at

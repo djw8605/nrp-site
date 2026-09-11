@@ -144,6 +144,10 @@ export const headerData = {
           href: getPermalink('/llmtoken'),
         },
         {
+          text: 'MCP servers',
+          href: getPermalink('/mcp'),
+        },
+        {
           text: 'S3 tokens',
           href: getPermalink('/s3token'),
         },
