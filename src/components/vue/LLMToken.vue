@@ -40,6 +40,8 @@
                     <Button label="Generate a Chatbox configuration instead" severity="secondary" text size="small" :loading="isCreatingChatboxTokenLoading" @click="createChatboxToken"/>
                     <a class="underline cursor-pointer text-primary ml-1" href="/documentation/userdocs/ai/llm-managed/chat-interfaces#chatbox">Read more about Chatbox</a>
                 </div>
+
+                <Message v-if="createTokenError" severity="error" :closable="true" @close="createTokenError = null">{{ createTokenError }}</Message>
             </div>
         </template>
     </Card>
@@ -82,6 +84,8 @@
                         <label for="adminNewAlias">Alias</label>
                     </FloatLabel>
                     <Button label="Create API key and email it to the member" :loading="isAdminCreatingToken" @click="createMemberToken"/>
+
+                    <Message v-if="adminCreateTokenError" severity="error" :closable="true" @close="adminCreateTokenError = null">{{ adminCreateTokenError }}</Message>
                 </div>
             </div>
         </template>
@@ -143,6 +147,13 @@ const isTokensLoading = ref(false);
 const isCreatingTokenLoading = ref(false);
 const isCreatingChatboxTokenLoading = ref(false);
 const isDeletingTokenLoading = ref(false);
+
+// Persistent (non-fading) inline error messages for the two "create API key"
+// flows, shown in red right under their buttons. Unlike the toast (shared
+// site-wide via the header's <Toast/>, life: a few seconds), these stay on
+// the page until the user dismisses them or tries again.
+const createTokenError = ref(null);
+const adminCreateTokenError = ref(null);
 
 // Admin: manage members' API keys
 const isAdmin = ref(false);
@@ -300,6 +311,7 @@ const getUserLLMTokens = () => {
 }
 
 const createToken = () => {
+    createTokenError.value = null;
     if (!newTokenGroup.value || !newTokenAlias.value) {
         toast.add({
             severity: 'error',
@@ -320,24 +332,21 @@ const createToken = () => {
     }).then((response) => {
         if (response.error) {
             console.error('Error creating API key:', response.error);
+            createTokenError.value = response.error.message || String(response.error);
             return;
         }
         newToken.value = response.Token;
         dialogVisible.value = true;
         getUserLLMTokens();
     }).catch((err) => {
-        toast.add({
-            severity: 'error',
-            summary: 'Error creating API key',
-            detail: err.message,
-            life: 3000
-        });
+        createTokenError.value = err.message;
     }).finally(() => {
         isCreatingTokenLoading.value = false;
     });
 };
 
 const createChatboxToken = () => {
+    createTokenError.value = null;
     if (!newTokenGroup.value || !newTokenAlias.value) {
         toast.add({
             severity: 'error',
@@ -358,6 +367,7 @@ const createChatboxToken = () => {
     }).then((response) => {
         if (response.error) {
             console.error('Error creating API key:', response.error);
+            createTokenError.value = response.error.message || String(response.error);
             return;
         }
         var token = response.Token;
@@ -366,12 +376,7 @@ const createChatboxToken = () => {
         chatboxDialogVisible.value = true;
         getUserLLMTokens();
     }).catch((err) => {
-        toast.add({
-            severity: 'error',
-            summary: 'Error creating API key',
-            detail: err.message,
-            life: 3000
-        });
+        createTokenError.value = err.message;
     }).finally(() => {
         isCreatingChatboxTokenLoading.value = false;
     });
@@ -409,6 +414,7 @@ const onAdminGroupChange = () => {
     adminTargetUser.value = null;
     adminNewAlias.value = null;
     adminMembers.value = [];
+    adminCreateTokenError.value = null;
     loadAdminTokens();
     loadAdminMembers();
 };
@@ -501,6 +507,7 @@ const deleteMemberToken = (username, tokenAlias) => {
 };
 
 const createMemberToken = () => {
+    adminCreateTokenError.value = null;
     if (!adminSelectedGroup.value || !adminTargetUser.value || !adminNewAlias.value) {
         toast.add({
             severity: 'error',
@@ -521,6 +528,7 @@ const createMemberToken = () => {
     }).then((response) => {
         if (response.error) {
             console.error('Error creating API key:', response.error);
+            adminCreateTokenError.value = response.error.message || String(response.error);
             return;
         }
         toast.add({
@@ -533,12 +541,7 @@ const createMemberToken = () => {
         adminNewAlias.value = null;
         loadAdminTokens();
     }).catch((err) => {
-        toast.add({
-            severity: 'error',
-            summary: 'Error creating API key',
-            detail: err.message,
-            life: 5000
-        });
+        adminCreateTokenError.value = err.message;
     }).finally(() => {
         isAdminCreatingToken.value = false;
     });
