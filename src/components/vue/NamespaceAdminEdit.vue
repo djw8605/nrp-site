@@ -1,5 +1,4 @@
 <template>
-    <ConfirmDialog />
     <Card class="my-8">
         <template #title>Editing {{ selectedNamespace.Name }}</template>
         <template #content>
@@ -370,14 +369,36 @@
                 <Button label="Delete the group" :loading="deleteNamespaceLoading" @click="deleteNamespace" severity="danger" />
         </template>
     </Card>
+
+    <Dialog v-model:visible="deleteDialogVisible" modal header="Danger Zone" :style="{ width: '30rem' }">
+        <p>This will permanently delete the group <strong>{{ deleteTargetNsName }}</strong>, including all its users, and cannot be undone.</p>
+        <p class="mt-3">Type <strong>{{ deleteTargetNsName }}</strong> below to confirm.</p>
+        <InputText
+            v-model="deleteConfirmInput"
+            fluid
+            class="mt-2"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            @keydown.enter="performNamespaceDelete"
+        />
+        <template #footer>
+            <Button label="Cancel" severity="secondary" outlined @click="deleteDialogVisible = false" />
+            <Button
+                label="Delete"
+                severity="danger"
+                :loading="deleteNamespaceLoading"
+                :disabled="deleteConfirmInput !== deleteTargetNsName"
+                @click="performNamespaceDelete"
+            />
+        </template>
+    </Dialog>
 </template>
 
 <script setup>
 import 'primeicons/primeicons.css'
 import {Form} from '@primevue/forms';
 import { useToast } from 'primevue/usetoast';
-import { useConfirm } from "primevue/useconfirm";
-import ConfirmDialog from 'primevue/confirmdialog';
 import AutoComplete from "primevue/autocomplete";
 import Badge from 'primevue/badge';
 import Button from "primevue/button";
@@ -385,6 +406,7 @@ import Card from 'primevue/card';
 import Checkbox from "primevue/checkbox";
 import Chip from 'primevue/chip';
 import DataView from 'primevue/dataview';
+import Dialog from 'primevue/dialog';
 import FileUpload from 'primevue/fileupload';
 import FloatLabel from "primevue/floatlabel";
 import Inplace from 'primevue/inplace';
@@ -455,13 +477,18 @@ const convertibleFeatures = computed(() => {
 const bulkUsers = ref("");
 
 const toast = useToast();
-const confirm = useConfirm();
 
 const emit = defineEmits(['onNSChanged']);
 
 const newNamespace = ref("");
 
 const namespaceValidation = ref({ valid: true, message: '' });
+
+// Delete confirmation: require typing the group's name, GitHub-repo-delete
+// style, instead of a plain Yes/No dialog.
+const deleteDialogVisible = ref(false);
+const deleteConfirmInput = ref('');
+const deleteTargetNsName = ref('');
 
 const parentNamespace = computed(() => {
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
@@ -1404,63 +1431,52 @@ const createNamespace = () => {
 };
 
 const deleteNamespace = () => {
-    
     const nsNameSplit = props["selectedNamespace"].Name.split("/");
-    const nsName = nsNameSplit[nsNameSplit.length - 1];
+    deleteTargetNsName.value = nsNameSplit[nsNameSplit.length - 1];
+    deleteConfirmInput.value = '';
+    deleteDialogVisible.value = true;
+};
 
-    confirm.require({
-        message: 'Do you want to delete this group?',
-        header: 'Danger Zone',
-        icon: 'pi pi-info-circle',
-        rejectLabel: 'Cancel',
-        rejectProps: {
-            label: 'Cancel',
-            severity: 'secondary',
-            outlined: true
-        },
-        acceptProps: {
-            label: 'Delete',
-            severity: 'danger'
-        },
-        accept: () => {
-            deleteNamespaceLoading.value = true;
-            client.request({
-                method: "admin.DeleteNamespace",
-                params: {
-                    Namespace: nsName,
-                }
-            }).then((response) => {
-                if (response.error) {
-                    toast.add({
-                        severity: 'error',
-                        summary: 'Error deleting group',
-                        detail: response.error.message,
-                        life: 3000
-                    });
-                    return;
-                }
-                
-                toast.add({
-                    severity: 'success',
-                    summary: 'Successfully deleted group '+newNamespace.value,
-                    life: 3000
-                });
-                emit('onNSChanged');
+const performNamespaceDelete = () => {
+    if (deleteConfirmInput.value !== deleteTargetNsName.value) {
+        return;
+    }
+    const nsName = deleteTargetNsName.value;
 
-            }).catch((err) => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error deleting group',
-                    detail: err,
-                    life: 3000
-                });
-            }).finally(() => {
-                deleteNamespaceLoading.value = false;
-            });
-        },
-        reject: () => {
-            toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected the deletion', life: 3000 });
+    deleteNamespaceLoading.value = true;
+    client.request({
+        method: "admin.DeleteNamespace",
+        params: {
+            Namespace: nsName,
         }
+    }).then((response) => {
+        if (response.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error deleting group',
+                detail: response.error.message,
+                life: 3000
+            });
+            return;
+        }
+
+        toast.add({
+            severity: 'success',
+            summary: 'Successfully deleted group '+nsName,
+            life: 3000
+        });
+        deleteDialogVisible.value = false;
+        emit('onNSChanged');
+
+    }).catch((err) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error deleting group',
+            detail: err,
+            life: 3000
+        });
+    }).finally(() => {
+        deleteNamespaceLoading.value = false;
     });
 };
 
