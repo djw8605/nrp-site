@@ -23,7 +23,7 @@ Please give the repositories a star!
 
 Selkies streams over WebSockets by default, which needs nothing but the web port that the Ingress below exposes. The WebRTC transport is selected with `SELKIES_MODE` or switched to from the web interface, and uses the NRP TURN server configured in the reference configurations below.
 
-The video encoder defaults to `h264enc`, which encodes on the GPU with NVENC when the pod has a GPU and with x264 on the CPU otherwise; nothing has to be set for hardware encoding. `h265enc`, `vp8enc`, `vp9enc`, and `av1enc` run on the GPU where it carries the codec and on the CPU otherwise, `h264enc-striped` and `jpeg` are CPU encoders, and a browser that cannot decode the chosen codec steps through the ones it can. The encoder, video bitrate, frame rate, and UI scaling can be changed from the web interface at any time; the reference configurations only set their initial values.
+The video encoder, video bitrate, frame rate, audio bitrate, and UI scaling are chosen from the web interface, so the reference configurations leave them alone. The default encoder `h264enc` encodes on the GPU with NVENC when the pod has a GPU and with x264 on the CPU otherwise, so nothing has to be set for hardware encoding; `h265enc`, `vp8enc`, `vp9enc`, and `av1enc` run on the GPU where it carries the codec in the same way, `h264enc-striped` and `jpeg` are CPU encoders, and a browser that cannot decode the chosen codec steps through the ones it can. Do not set `SELKIES_ENCODER`: a single value locks the encoder to that codec and takes the choice away from the web interface.
 
 ### TURN Server
 
@@ -91,16 +91,6 @@ spec:
             # Transport: WebSockets by default, `webrtc` uses the NRP TURN server configured below; both can be switched from the web interface
             # - name: SELKIES_MODE
             #   value: 'webrtc'
-            # Video encoder: `h264enc` (default, NVENC on the GPU and x264 without one), `h265enc`, `vp8enc`, `vp9enc`, `av1enc`, `h264enc-striped`, or `jpeg`
-            # - name: SELKIES_ENCODER
-            #   value: 'h264enc'
-            # Initial video bitrate in kilobits per second, frames per second, and audio bitrate in bits per second, may be changed later within the web interface
-            - name: SELKIES_VIDEO_BITRATE
-              value: '8000'
-            - name: SELKIES_FRAMERATE
-              value: '60'
-            - name: SELKIES_AUDIO_BITRATE
-              value: '128000'
             # The web login, on by default: `ubuntu` and `PASSWD` unless set here
             - name: SELKIES_ENABLE_BASIC_AUTH
               value: 'true'
@@ -220,16 +210,6 @@ spec:
             # Run the desktop on the headless Wayland backend (nested kwin) instead of the X11 framebuffer server
             # - name: SELKIES_WAYLAND
             #   value: 'true'
-            # Video encoder: `h264enc` (default, NVENC on the GPU and x264 without one), `h265enc`, `vp8enc`, `vp9enc`, `av1enc`, `h264enc-striped`, or `jpeg`
-            # - name: SELKIES_ENCODER
-            #   value: 'h264enc'
-            # Initial video bitrate in kilobits per second, frames per second, and audio bitrate in bits per second, may be changed later within the web interface
-            - name: SELKIES_VIDEO_BITRATE
-              value: '8000'
-            - name: SELKIES_FRAMERATE
-              value: '60'
-            - name: SELKIES_AUDIO_BITRATE
-              value: '128000'
             # The web login, on by default: `ubuntu` and `PASSWD` unless set here
             - name: SELKIES_ENABLE_BASIC_AUTH
               value: 'true'
