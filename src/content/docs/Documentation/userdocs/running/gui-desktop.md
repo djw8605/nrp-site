@@ -207,9 +207,9 @@ spec:
             # Transport: WebSockets by default, `webrtc` uses the NRP TURN server configured below; both can be switched from the web interface
             # - name: SELKIES_MODE
             #   value: 'webrtc'
-            # Run the desktop on the headless Wayland backend (nested kwin) instead of the X11 framebuffer server
-            # - name: SELKIES_WAYLAND
-            #   value: 'true'
+            # `true` runs the desktop on the headless Wayland backend (nested kwin) instead of the X11 framebuffer server
+            - name: SELKIES_WAYLAND
+              value: 'false'
             # The web login, on by default: `ubuntu` and `PASSWD` unless set here
             - name: SELKIES_ENABLE_BASIC_AUTH
               value: 'true'
