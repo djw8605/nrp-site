@@ -23,7 +23,7 @@ const metadata = {
 // flat. DESIGN.md section 2 records that failure mode.
 //
 // No hero, and therefore no spectrum rule: this is a utility page whose whole
-// job is four addresses, so it uses the same shape /llmtoken and /namespaces do
+// job is five addresses, so it uses the same shape /llmtoken and /namespaces do
 // -- a WidgetWrapper title block with the content directly beneath it. A hero
 // here would push every address a scroll down the page to hold copy the reader
 // did not come for. The signature is a hero element (DESIGN.md section 6), so a
@@ -39,9 +39,25 @@ const session = nextSession();
 
 const SLACK_INVITE = 'https://join.slack.com/t/nrp-chat/shared_invite/zt-48r6ommd2-g5esLpVt3nzYmTl8DISuFA';
 const SUPPORT_EMAIL = 'support@nationalresearchplatform.org';
-const MAILING_LIST = 'https://groups.google.com/a/ucsd.edu/g/prp-l/';
+// Not the group's web archive: groups.google.com/a/ucsd.edu/g/prp-l is
+// members-only, so a signed-out visitor is told to log in and a signed-in one
+// gets "You don't have permission to access this content" over an Ask to join
+// button. Neither is the ask-the-owner-to-add-you flow the old join tab had.
+// Google Workspace groups accept a +subscribe address, which needs no Google
+// account and files the request with the list owner.
+const MAILING_LIST = 'mailto:prp-l+subscribe@ucsd.edu';
 
-// Every channel is one readout rather than a grid of cards: there are four of
+// The weekly community meeting, stated as a recurring wall-clock time rather
+// than a next-occurrence date. It has no public join URL -- the invite reaches
+// you through prp-l, which is why the row below it is the mailing list -- so
+// there is nothing for a countdown to link to, and the office-hours machinery
+// would be carrying a date for its own sake. Both US zones shift on the same
+// dates, so 10:00 Pacific is 1:00 PM Eastern year-round and the pair is safe to
+// write literally. This is the only place on the site that states the schedule;
+// it used to live in the admin docs, unmaintained, beside a dead signup link.
+const COMMUNITY_MEETING = { day: 'Thursday', pacific: '10:00 AM', eastern: '1:00 PM' };
+
+// Every channel is one readout rather than a grid of cards: there are five of
 // them, they are alternatives to each other, and they are the entire point of
 // the page -- so they belong in one scannable sequence in the first screen,
 // ordered by how often each is the right answer. Same reasoning as
@@ -151,6 +167,33 @@ const shotClass = 'mt-4 w-full rounded-md border border-hairline';
         </dd>
       </div>
 
+      {
+        /* Deliberately no data-office-hours hook: OfficeHoursBar's client pass
+          rewrites every [data-office-hours] root it finds with the *office
+          hours* session, so borrowing the attribute here would relabel this row
+          with the wrong meeting a moment after load. */
+      }
+      <div class={`border-t border-hairline ${rowClass}`}>
+        <dt class={dtClass}>
+          <Icon name="tabler:users-group" class={dtIconClass} aria-hidden="true" />
+          Community meeting
+        </dt>
+        <dd class="min-w-0">
+          <p class="text-muted">
+            The weekly NRP technical call, open to anyone. The invite and the recordings go out on the mailing list
+            below.
+          </p>
+          <p class="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display text-base font-semibold text-heading">
+              Every {COMMUNITY_MEETING.day}
+            </span>
+            <span class="font-mono text-xs tabular text-muted">
+              {COMMUNITY_MEETING.pacific} Pacific · {COMMUNITY_MEETING.eastern} Eastern
+            </span>
+          </p>
+        </dd>
+      </div>
+
       <div class={`border-t border-hairline ${rowClass}`}>
         <dt class={dtClass}>
           <Icon name="tabler:bell" class={dtIconClass} aria-hidden="true" />
@@ -159,10 +202,11 @@ const shotClass = 'mt-4 w-full rounded-md border border-hairline';
         <dd class="min-w-0">
           <p class="text-muted">
             Recordings from the weekly NRP community meeting and other announcements, sent to the
-            <code class="font-mono text-sm">prp-l</code> list.
+            <code class="font-mono text-sm">prp-l</code> list. Send a blank email to ask the list owner to add you — no Google
+            account needed.
           </p>
           <p class="mt-3">
-            <a class="link-quiet text-sm" href={MAILING_LIST}>Subscribe&nbsp;→</a>
+            <a class="link-quiet text-sm" href={MAILING_LIST}>Request to join&nbsp;→</a>
           </p>
         </dd>
       </div>

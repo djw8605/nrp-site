@@ -1,6 +1,6 @@
 ---
 title: Knowledge Base
-description: "Where to find NRP community knowledge: weekly technical calls, the support chat, and campus-infrastructure mailing lists."
+description: 'Where to find NRP community knowledge: networking and cyberinfrastructure resources, and where to reach the NRP community.'
 ---
 
 ## Get involved in NRP
@@ -13,8 +13,7 @@ description: "Where to find NRP community knowledge: weekly technical calls, the
 1. Deploy [perfSONAR node][perfsonar] and participate in at least one multi-institutional perfSONAR mesh that tests network performance
 1. Engage with [Campus champions][campuschampions], CI facilitator, and/or other campus resources to identify campus scientific research and education drivers
 1. Participate in broader community conversations:
-   - Weekly NRP technical calls (open to all) every Thursday at 10:00 AM Pacific/1:00 PM Eastern. Sign up at [list info][list].
-   - check out the [NRP Support Chat][contact]
+   - The weekly NRP community meeting is open to all, every Thursday. The [NRP contact page][contact] has the time and every other NRP channel, and is kept current: the support chat, the `prp-l` list the invite and recordings go out on, office hours, and the support address.
    - Campus Cyberinfrastructure Technical community calls. Sign-up for cybinf-engr@es.net mail list hosted by Jason Zurawski at ESnet.
 
 ### Docs, blogs and other links
@@ -30,6 +29,5 @@ description: "Where to find NRP community knowledge: weekly technical calls, the
 [discover]: https://www.thequilt.net
 [perfsonar]: http://docs.perfsonar.net
 [campuschampions]: https://campuschampions.cyberinfrastructure.org/
-[list]: https://groups.google.com/a/ucsd.edu/g/prp-l
 [hpcwire]: https://www.hpcwire.com/
 [internet2events]: https://internet2.edu/upcomingevents/
