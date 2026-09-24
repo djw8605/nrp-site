@@ -121,50 +121,55 @@ providers:
 
 ## OpenCode
 
-https://github.com/anomalyco/opencode
+https://github.com/anomalyco/opencode, whose [providers guide](https://opencode.ai/v2/docs/providers) covers the fields below.
 
-`Ctrl+P` → _Switch models_ finds `NRP`; _Switch model variant_ picks a thinking level. Either set `OPENAI_API_KEY` or replace `{env:OPENAI_API_KEY}` with the key itself.
+Run `/connect`, pick `NRP`, and paste your token — or hand it to the background server with `opencode service set env NRP_API_KEY <token>`. `/models` then finds the NRP models, and `Ctrl+T` cycles a model's variants.
 
 <ConfigDrawer label="~/.config/opencode/opencode.jsonc" note="qwen3 as the default model">
 
-`"model"` takes a `provider/model` id, so the default is `NRP/qwen3`. `"small_model"` is what OpenCode uses for side tasks such as session titles — `qwen3-small` keeps those off the largest GPUs. An editor validating against `opencode.ai/config.json` underlines both values, because the schema autocompletes from the models.dev catalog and cannot know about a custom provider; OpenCode resolves them from the `provider` block.
+`"model"` takes a `provider/model` id, so the default is `NRP/qwen3`. `agents.title.model` is the model OpenCode names sessions with — `qwen3-small` keeps that off the largest GPUs.
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "NRP/qwen3",
-  "small_model": "NRP/qwen3-small",
-  "provider": {
+  "agents": {
+    "title": {
+      "model": "NRP/qwen3-small"
+    }
+  },
+  "providers": {
     "NRP": {
-      "npm": "@ai-sdk/openai-compatible",
       "name": "NRP",
-      "options": {
-        "baseURL": "https://ellm.nrp-nautilus.io/v1",
-        "apiKey": "{env:OPENAI_API_KEY}"
+      "env": ["NRP_API_KEY"],
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://ellm.nrp-nautilus.io/v1"
       },
       "models": {
         "qwen3": {
           "name": "qwen3",
-          "limit": {
-            "context": 1000000,
-            "output": 65536
-          },
-          "modalities": {
+          "capabilities": {
+            "tools": true,
             "input": ["text", "image", "video"],
             "output": ["text"]
           },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true
-        },
-        "qwen3-small": {
-          "name": "qwen3-small",
           "limit": {
             "context": 1000000,
             "output": 65536
+          }
+        },
+        "qwen3-small": {
+          "name": "qwen3-small",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image", "video"],
+            "output": ["text"]
           },
-          "tool_call": true,
-          "reasoning": true
+          "limit": {
+            "context": 1000000,
+            "output": 65536
+          }
         }
       }
     }
@@ -178,215 +183,243 @@ https://github.com/anomalyco/opencode
 
 <ConfigDrawer label="~/.config/opencode/opencode.jsonc" note="every model in the catalog">
 
-Nine models, each with its context window, modalities, and thinking controls. `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
+Nine models, each with its context window, input types, and thinking controls. `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
 
-Thinking is selected per model with `Ctrl+P` → _Switch model variant_, and the key differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Staying on a model's default variant leaves the server-side default in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
+Thinking is selected per model with `Ctrl+T`, or with `#variant` on a model id such as `NRP/qwen3#low`, and the `body` a variant sends differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Without a variant, the server-side default stays in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "NRP/qwen3",
-  "small_model": "NRP/qwen3-small",
-  "provider": {
+  "agents": {
+    "title": {
+      "model": "NRP/qwen3-small"
+    }
+  },
+  "providers": {
     "NRP": {
-      "npm": "@ai-sdk/openai-compatible",
       "name": "NRP",
-      "options": {
-        "baseURL": "https://ellm.nrp-nautilus.io/v1",
-        "apiKey": "{env:OPENAI_API_KEY}"
+      "env": ["NRP_API_KEY"],
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://ellm.nrp-nautilus.io/v1"
       },
       "models": {
         "qwen3": {
           "name": "qwen3",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1000000,
             "output": 65536
           },
-          "modalities": {
-            "input": ["text", "image", "video"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true,
-          "variants": {
-            "low": {
-              "reasoning_effort": "low"
+          "variants": [
+            {
+              "id": "low",
+              "body": {
+                "reasoning_effort": "low"
+              }
             },
-            "medium": {
-              "reasoning_effort": "medium"
+            {
+              "id": "medium",
+              "body": {
+                "reasoning_effort": "medium"
+              }
             },
-            "instruct": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
+            {
+              "id": "instruct",
+              "body": {
+                "chat_template_kwargs": {
+                  "enable_thinking": false
+                }
               }
             }
-          }
+          ]
         },
         "qwen3-small": {
           "name": "qwen3-small",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1000000,
             "output": 65536
           },
-          "modalities": {
-            "input": ["text", "image", "video"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true,
-          "variants": {
-            "low": {
-              "reasoning_effort": "low"
+          "variants": [
+            {
+              "id": "low",
+              "body": {
+                "reasoning_effort": "low"
+              }
             },
-            "medium": {
-              "reasoning_effort": "medium"
+            {
+              "id": "medium",
+              "body": {
+                "reasoning_effort": "medium"
+              }
             },
-            "instruct": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
+            {
+              "id": "instruct",
+              "body": {
+                "chat_template_kwargs": {
+                  "enable_thinking": false
+                }
               }
             }
-          }
+          ]
         },
         "glm-5": {
           "name": "glm-5",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1048576,
             "output": 65536
           },
-          "modalities": {
-            "input": ["text"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "variants": {
-            "low": {
-              "chat_template_kwargs": {
-                "reasoning_effort": "low"
+          "variants": [
+            {
+              "id": "low",
+              "body": {
+                "chat_template_kwargs": {
+                  "reasoning_effort": "low"
+                }
               }
             },
-            "high": {
-              "chat_template_kwargs": {
-                "reasoning_effort": "high"
+            {
+              "id": "high",
+              "body": {
+                "chat_template_kwargs": {
+                  "reasoning_effort": "high"
+                }
               }
             }
-          }
+          ]
         },
         "deepseek-v4-flash": {
           "name": "deepseek-v4-flash",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1048576,
             "output": 65536
           },
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true,
-          "variants": {
-            "low": {
-              "chat_template_kwargs": {
-                "reasoning_effort": "low"
+          "variants": [
+            {
+              "id": "low",
+              "body": {
+                "chat_template_kwargs": {
+                  "reasoning_effort": "low"
+                }
               }
             },
-            "high": {
-              "chat_template_kwargs": {
-                "reasoning_effort": "high"
+            {
+              "id": "high",
+              "body": {
+                "chat_template_kwargs": {
+                  "reasoning_effort": "high"
+                }
               }
             },
-            "instruct": {
-              "chat_template_kwargs": {
-                "thinking": false
+            {
+              "id": "instruct",
+              "body": {
+                "chat_template_kwargs": {
+                  "thinking": false
+                }
               }
             }
-          }
+          ]
         },
         "kimi": {
           "name": "kimi",
-          "limit": {
-            "context": 131072,
-            "output": 32768
-          },
-          "modalities": {
+          "capabilities": {
+            "tools": true,
             "input": ["text", "image", "video"],
             "output": ["text"]
           },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
         },
         "minimax-m2": {
           "name": "minimax-m2",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 204800,
             "output": 32768
-          },
-          "modalities": {
-            "input": ["text"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true
+          }
         },
         "gpt-oss": {
           "name": "gpt-oss",
-          "limit": {
-            "context": 131072,
-            "output": 32768
-          },
-          "modalities": {
+          "capabilities": {
+            "tools": true,
             "input": ["text"],
             "output": ["text"]
           },
-          "tool_call": true,
-          "reasoning": true
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
         },
         "gemma": {
           "name": "gemma",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "output": 32768
           },
-          "modalities": {
-            "input": ["text", "image", "video"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true,
-          "variants": {
-            "instruct": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
+          "variants": [
+            {
+              "id": "instruct",
+              "body": {
+                "chat_template_kwargs": {
+                  "enable_thinking": false
+                }
               }
             }
-          }
+          ]
         },
         "gemma-small": {
           "name": "gemma-small",
+          "capabilities": {
+            "tools": true,
+            "input": ["text", "image", "video"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "output": 32768
           },
-          "modalities": {
-            "input": ["text", "image", "video"],
-            "output": ["text"]
-          },
-          "tool_call": true,
-          "reasoning": true,
-          "attachment": true,
-          "variants": {
-            "instruct": {
-              "chat_template_kwargs": {
-                "enable_thinking": false
+          "variants": [
+            {
+              "id": "instruct",
+              "body": {
+                "chat_template_kwargs": {
+                  "enable_thinking": false
+                }
               }
             }
-          }
+          ]
         }
       }
     }
@@ -394,12 +427,12 @@ Thinking is selected per model with `Ctrl+P` → _Switch model variant_, and the
 }
 ```
 
-To pin options that should apply on every request to a model — `cache_salt`, `preserve_thinking`, or a fixed effort — add an `"options"` block alongside `"name"`. Anything in `"options"` is sent with each request; anything in `"variants"` only while that variant is selected:
+To pin fields that should go with every request — `cache_salt`, `preserve_thinking`, or a fixed effort — add a `"body"` block, on the provider for every model or on a model alongside `"name"`. A selected variant's `"body"` is merged over the model's, and the model's over the provider's:
 
 ```jsonc
         "deepseek-v4-flash": {
           "name": "deepseek-v4-flash",
-          "options": {
+          "body": {
             "chat_template_kwargs": {
               "thinking": true,
               "preserve_thinking": true
