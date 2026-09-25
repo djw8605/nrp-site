@@ -92,7 +92,10 @@
     </Card>
 
     <Dialog v-model:visible="dialogVisible" modal header="Please save and secure your API key. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
-        <Message severity="success">{{ newToken }}</Message>
+        <div class="flex flex-col gap-4">
+            <Message severity="success"><span ref="tokenTextRef" class="break-all">{{ newToken }}</span></Message>
+            <Button :label="copiedToken ? 'Copied' : 'Copy API key'" :icon="copiedToken ? 'pi pi-check' : 'pi pi-copy'" severity="secondary" class="self-start" @click="copyToken"/>
+        </div>
     </Dialog>
 
     <Dialog v-model:visible="chatboxDialogVisible" modal header="Please copy the config. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
@@ -137,6 +140,63 @@ const newTokenAlias = ref(null);
 
 const newToken = ref(null);
 const newChatboxConfig = ref(null);
+
+const tokenTextRef = ref(null);
+const copiedToken = ref(false);
+let copiedTokenReset = null;
+
+// Same clipboard ladder as EndpointPanel on this page: navigator.clipboard is
+// unavailable on insecure origins and can be permission-blocked, so fall back
+// to execCommand, and failing that select the key so the visitor can copy it
+// by hand -- an error that names its recovery, not a button that does nothing.
+const writeClipboard = async (text) => {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch {
+        /* fall through */
+    }
+    try {
+        const scratch = document.createElement('textarea');
+        scratch.value = text;
+        scratch.setAttribute('readonly', '');
+        scratch.style.position = 'fixed';
+        scratch.style.top = '0';
+        scratch.style.opacity = '0';
+        document.body.appendChild(scratch);
+        scratch.select();
+        const ok = document.execCommand('copy');
+        scratch.remove();
+        return ok;
+    } catch {
+        return false;
+    }
+};
+
+const copyToken = async () => {
+    const ok = await writeClipboard(newToken.value ?? '');
+    if (ok) {
+        copiedToken.value = true;
+        if (copiedTokenReset) window.clearTimeout(copiedTokenReset);
+        copiedTokenReset = window.setTimeout(() => {
+            copiedToken.value = false;
+        }, 2400);
+        return;
+    }
+    if (tokenTextRef.value) {
+        const range = document.createRange();
+        range.selectNodeContents(tokenTextRef.value);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }
+    toast.add({
+        severity: 'warn',
+        summary: 'Clipboard blocked',
+        detail: 'The API key is selected — copy it with Ctrl/Cmd+C.',
+        life: 6000
+    });
+};
 
 const toast = useToast();
 
@@ -336,6 +396,7 @@ const createToken = () => {
             return;
         }
         newToken.value = response.Token;
+        copiedToken.value = false;
         dialogVisible.value = true;
         getUserLLMTokens();
     }).catch((err) => {
