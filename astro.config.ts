@@ -310,7 +310,7 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Admin guide',
+          label: 'Admin Guide',
           collapsed: true,
           items: [
             {
@@ -415,6 +415,7 @@ export default defineConfig({
                 { label: 'SENSE/Multus', link: 'documentation/admindocs/cluster/sense-multus' },
                 { label: 'Partitioning MIG GPUs', link: 'documentation/admindocs/cluster/mig-gpus' },
                 { label: 'Security Tools', link: 'documentation/admindocs/cluster/security-tools' },
+                { label: 'CVE mitigations', link: 'documentation/admindocs/cluster/cve-mitigations' },
                 {
                   label: 'Upgrades',
                   collapsed: true,
