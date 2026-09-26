@@ -24,3 +24,5 @@ Refer to <https://gitlab.nrp-nautilus.io/nrp/scientific-images/python> for the l
 We can add more libraries to this image by requesting in [Nautilus Support](/contact).
 
 The Desktop image has the X11 Window system installed and you can launch the GUI interface in Jupyter with this image. It's based on the Minimal stack.
+
+The **Selkies Desktop** image (gitlab-registry.nrp-nautilus.io/nrp/scientific-images/desktop/selkies) streams a KDE Plasma desktop from your server with [Selkies](https://github.com/selkies-project/selkies): the **Selkies** item in the JupyterLab launcher opens it in a new tab, signed in through JupyterHub with no password of its own, and it encodes on the GPU when your server has one.
