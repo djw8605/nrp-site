@@ -123,24 +123,24 @@ providers:
 
 https://github.com/anomalyco/opencode, whose [providers guide](https://opencode.ai/v2/docs/providers) covers the fields below.
 
-Run `/connect`, pick `NRP`, and paste your token — or hand it to the background server with `opencode service set env NRP_API_KEY <token>`. `/models` then finds the NRP models, and `Ctrl+T` cycles a model's variants.
+Run `/connect`, pick `nrp`, and paste your token — or hand it to the background server with `opencode service set env NRP_API_KEY <token>`. `/models` then lists the `nrp` models, and `Ctrl+T` cycles a model's variants. Keep the provider ID and its `"name"` lowercase: `/connect` accepts a mixed-case ID, but `/models` does not list its models.
 
 <ConfigDrawer label="~/.config/opencode/opencode.jsonc" note="qwen3 as the default model">
 
-`"model"` takes a `provider/model` id, so the default is `NRP/qwen3`. `agents.title.model` is the model OpenCode names sessions with — `qwen3-small` keeps that off the largest GPUs.
+`"model"` takes a `provider/model` id, so the default is `nrp/qwen3`. `agents.title.model` is the model OpenCode names sessions with — `qwen3-small` keeps that off the largest GPUs.
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "NRP/qwen3",
+  "model": "nrp/qwen3",
   "agents": {
     "title": {
-      "model": "NRP/qwen3-small"
+      "model": "nrp/qwen3-small"
     }
   },
   "providers": {
-    "NRP": {
-      "name": "NRP",
+    "nrp": {
+      "name": "nrp",
       "env": ["NRP_API_KEY"],
       "package": "@opencode/ai/providers/openai-compatible",
       "settings": {
@@ -185,20 +185,20 @@ Run `/connect`, pick `NRP`, and paste your token — or hand it to the backgroun
 
 Nine models, each with its context window, input types, and thinking controls. `qwen3-embedding` is an embedding model rather than a chat model, so it is not listed.
 
-Thinking is selected per model with `Ctrl+T`, or with `#variant` on a model id such as `NRP/qwen3#low`, and the `body` a variant sends differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Without a variant, the server-side default stays in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
+Thinking is selected per model with `Ctrl+T`, or with `#variant` on a model id such as `nrp/qwen3#low`, and the `body` a variant sends differs by model: `qwen3` and `qwen3-small` take a top-level `reasoning_effort` (`low`, `medium`, or `xhigh`, the default) and turn thinking off through `chat_template_kwargs.enable_thinking`; `glm-5` and `deepseek-v4-flash` take `reasoning_effort` **inside** `chat_template_kwargs` (`low`, `high`, or `max`, the default), and only `deepseek-v4-flash` can turn thinking off, with `thinking: false`. Without a variant, the server-side default stays in place. `gemma-small` is served without a reasoning parser, so its thinking arrives inline in the answer rather than as a separate reasoning block.
 
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "NRP/qwen3",
+  "model": "nrp/qwen3",
   "agents": {
     "title": {
-      "model": "NRP/qwen3-small"
+      "model": "nrp/qwen3-small"
     }
   },
   "providers": {
-    "NRP": {
-      "name": "NRP",
+    "nrp": {
+      "name": "nrp",
       "env": ["NRP_API_KEY"],
       "package": "@opencode/ai/providers/openai-compatible",
       "settings": {
