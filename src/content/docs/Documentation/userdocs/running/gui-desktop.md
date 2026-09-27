@@ -75,13 +75,19 @@ spec:
                 secretKeyRef:
                   name: my-pass
                   key: my-pass
-            # The X server's initial mode, replaced by the client's size once it connects (dynamic resizing is on by default)
+            # The X server's initial mode, replaced by the client's size once it connects (dynamic resizing is on by default); the size a manual resolution locks the stream to and the frame rate the stream starts at take its place where set
             - name: DISPLAY_SIZEW
               value: '1920'
             - name: DISPLAY_SIZEH
               value: '1080'
             - name: DISPLAY_REFRESH
               value: '60'
+            # - name: SELKIES_MANUAL_WIDTH
+            #   value: '1920'
+            # - name: SELKIES_MANUAL_HEIGHT
+            #   value: '1080'
+            # - name: SELKIES_FRAMERATE
+            #   value: '60'
             # The video port the NVIDIA driver reports a monitor on: keep `DFP` on datacenter GPUs, use an empty `DP-*` port on consumer and professional GPUs for resolutions above 2560 x 1600
             - name: VIDEO_PORT
               value: 'DFP'
@@ -210,6 +216,15 @@ spec:
             # `true` runs the desktop on the headless Wayland backend (nested kwin) instead of the X11 framebuffer server
             - name: SELKIES_WAYLAND
               value: 'false'
+            # The size the X11 desktop has until a client connects and replaces it with its own (dynamic resizing is on by default); the size a manual resolution locks the stream to takes its place where set
+            # - name: DISPLAY_SIZEW
+            #   value: '1920'
+            # - name: DISPLAY_SIZEH
+            #   value: '1080'
+            # - name: SELKIES_MANUAL_WIDTH
+            #   value: '1920'
+            # - name: SELKIES_MANUAL_HEIGHT
+            #   value: '1080'
             # The web login, on by default: `ubuntu` and `PASSWD` unless set here
             - name: SELKIES_ENABLE_BASIC_AUTH
               value: 'true'
@@ -294,6 +309,8 @@ In one entry, `value:` and `valueFrom:` must not exist at the same time.
 `rook-ceph-block-[region]` or `linstor-[region]` are the recommended StorageClasses to be mounted to `/home/ubuntu`. However, if their performances are slow for sequential read/writes, you may use `rook-cephfs-[region]` but **NEVER MOUNT TO `/home/ubuntu`**. Instead mount to a different directory such as `/home/ubuntu/persistent` or `/mnt/persistent`. Refer to the [Storage](/documentation/userdocs/storage/intro/) section for more information.
 
 To run on a specific type of GPU, add the node affinity described in [GPU pods](/documentation/userdocs/running/gpu-pods/) to the reference configuration.
+
+`DISPLAY_SIZEW` and `DISPLAY_SIZEH` set the size the desktop has until your browser connects, and dynamic resizing then gives it the size of your browser window; `DISPLAY_REFRESH` sets the refresh rate the X server of [docker-selkies-glx-desktop](https://github.com/selkies-project/docker-selkies-glx-desktop) starts at. Where a Selkies setting names the same thing, the Selkies setting takes their place, read exactly as Selkies reads it: `SELKIES_MANUAL_WIDTH` and `SELKIES_MANUAL_HEIGHT` lock the desktop to a fixed size instead of following your browser window, and `SELKIES_FRAMERATE` sets the frame rate the stream starts at, which that X server then starts at too. There is no color depth setting: the desktop is always 24-bit, the depth Selkies captures.
 
 The two settings below apply to the WebRTC transport:
 
