@@ -199,6 +199,17 @@ mkdir -p "$BACKUP_DIR"
 
 kubectl -n rook-system get deploy rook-ceph-operator -o yaml \
   > "$BACKUP_DIR/rook-ceph-operator.yaml"
+kubectl -n rook-system get configmap rook-ceph-operator-config -o yaml \
+  > "$BACKUP_DIR/rook-ceph-operator-config.yaml"
+kubectl -n rook-system get daemonset \
+  csi-rbdplugin csi-cephfsplugin -o yaml \
+  > "$BACKUP_DIR/csi-daemonsets.yaml"
+kubectl -n rook-system get deployment \
+  csi-rbdplugin-provisioner csi-cephfsplugin-provisioner -o yaml \
+  > "$BACKUP_DIR/csi-provisioners.yaml"
+kubectl get csidriver -o yaml > "$BACKUP_DIR/csidrivers.yaml"
+kubectl get storageclass -o yaml > "$BACKUP_DIR/storageclasses.yaml"
+kubectl get crd -o yaml > "$BACKUP_DIR/crds.yaml"
 kubectl -n rook-system get sa,role,rolebinding -o yaml \
   > "$BACKUP_DIR/rook-system-rbac.yaml"
 kubectl get clusterrole,clusterrolebinding -o yaml \
@@ -210,7 +221,22 @@ for NS in rook rook-central rook-east rook-haosu rook-pacific rook-south-east ro
   kubectl -n "$NS" get cephcluster -o yaml \
     > "$BACKUP_DIR/$NS-cephcluster.yaml"
 done
+
+# Save files from the exact currently installed Rook release as well as the
+# live objects. These are needed to restore RBAC and operator configuration.
+cp /path/to/current-release/deploy/examples/{crds.yaml,common.yaml,common-second-cluster.yaml} \
+  "$BACKUP_DIR/"
+
+(cd "$BACKUP_DIR" && find . -type f ! -name SHA256SUMS -print0 | \
+  sort -z | xargs -0 sha256sum > SHA256SUMS)
+(cd "$BACKUP_DIR" && sha256sum -c SHA256SUMS)
 ```
+
+Take a new snapshot before every Rook minor-version step. This is a
+control-plane configuration backup, not a Ceph data backup. Do not routinely
+downgrade CRDs during rollback; restore the previous operator image and
+compatible RBAC/configuration first, then follow the target-version rollback
+guidance.
 
 Do not include `rook-fullerton` in ordinary local-cluster RBAC generation. It is an external CephCluster and must follow the external-cluster upgrade procedure.
 
@@ -274,6 +300,21 @@ kubectl apply -f crds.yaml -f clusters/
 
 Review the diff before applying. `common-second-cluster.yaml` creates the namespace-scoped RBAC needed by the shared operator; it assumes the primary `common.yaml` resources already exist.
 
+:::danger[Do not overwrite shared multi-cluster bindings]
+`common-second-cluster.yaml` can contain fixed-name cluster-scoped bindings and
+a fixed-name RoleBinding in `rook-system`. Applying one independently rendered
+copy per namespace makes the last file overwrite subjects installed by earlier
+files.
+
+Remove duplicate shared bindings from the secondary files and keep one
+consolidated copy containing service-account subjects for all eight local
+clusters. In particular, verify the subjects in `rook-ceph-mgr-cluster`,
+`rook-ceph-osd`, and `rook-system/rook-ceph-mgr-system`. Preserve any existing
+rules that are not present in the new release, such as access to `nodes/proxy`,
+unless the release notes explicitly require their removal. Never add a
+`rook-fullerton` subject to ordinary local-cluster bindings.
+:::
+
 Do not add PodSecurityPolicy (PSP) resources; PSP is removed from modern Kubernetes. Old `*-psp` RoleBindings or ClusterRoleBindings that reference a missing `psp:rook` ClusterRole are legacy residue, not a reason to recreate that ClusterRole. Audit and remove those stale bindings separately from the upgrade after confirming they are unused.
 
 ### Update the operator without overwriting site configuration
@@ -289,6 +330,30 @@ kubectl -n rook-system get deploy rook-ceph-operator \
 ```
 
 If any CSI image is pinned to a version that is not compatible with the target Rook release, update the operator Deployment before or immediately after the operator image change.
+
+For Rook v1.18 and v1.19, decide CSI ownership before changing the image. The
+operator defaults `ROOK_USE_CSI_OPERATOR` to `true` if the setting is absent.
+If a separate Ceph CSI operator is not already installed and ready, make the
+working built-in mode explicit:
+
+```bash
+kubectl -n rook-system apply -f - <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rook-ceph-operator-config
+  namespace: rook-system
+data:
+  ROOK_USE_CSI_OPERATOR: "false"
+  ROOK_CSI_DISABLE_DRIVER: "false"
+EOF
+```
+
+`ROOK_USE_CSI_OPERATOR: "false"` does not disable CSI. It tells Rook to keep
+directly managing the RBD and CephFS DaemonSets and provisioners. Without this
+setting, Rook can remove those workloads while expecting a separately installed
+CSI operator to recreate them. New mounts then fail because the driver is not
+present in the kubelet's list of registered CSI drivers.
 
 ```bash
 kubectl -n rook-system set image deploy/rook-ceph-operator \
@@ -339,6 +404,10 @@ for NS in rook rook-central rook-east rook-haosu rook-pacific rook-south-east ro
     --as=system:serviceaccount:rook-system:rook-ceph-system \
     -n "$NS"
 done
+
+kubectl auth can-i get nodes/proxy \
+  --as=system:serviceaccount:rook-system:rook-ceph-system \
+  --all-namespaces
 ```
 
 Every result should be `yes`. If any result is `no`, regenerate and apply that namespace's target-version `common-second-cluster.yaml`. Do not give `cluster-admin` to the operator; fix the missing namespace RBAC instead.
@@ -356,9 +425,68 @@ kubectl -n rook-system logs deploy/rook-ceph-operator -f | grep -E "ERROR|WARN|r
 
 After each operator minor version, verify the operator rollout, inspect its logs, and confirm every local CephCluster is still `Ready` before proceeding to the next minor version.
 
-### Rook v1.20 CSI migration
+Also confirm CSI ownership and mounts after every step:
 
-Treat the v1.20 upgrade as a separate maintenance step. Starting with Rook v1.20, Ceph-CSI drivers are managed by `ceph-csi-operator` instead of directly by the Rook operator. Upgrade to at least Rook v1.19.5 first and follow the exact v1.20 operator upgrade guide.
+```bash
+kubectl -n rook-system get configmap rook-ceph-operator-config -o yaml
+kubectl -n rook-system get daemonset csi-rbdplugin csi-cephfsplugin
+kubectl -n rook-system get deployment \
+  csi-rbdplugin-provisioner csi-cephfsplugin-provisioner
+kubectl get csidriver
+```
+
+Record the CSI DaemonSet UIDs before the upgrade. In built-in mode they may roll
+their pods and update Ceph-CSI images, but the DaemonSet objects must not enter
+deletion. Test both an existing mounted workload and a newly provisioned PVC by
+mounting it in a pod, writing a file, reading it back, and deleting the test
+resources. A Bound PVC proves provisioning, but only a successful pod test
+proves node registration, attachment, and mounting.
+
+Before upgrading to Rook v1.19, inspect every local CephCluster's CephX policy:
+
+```bash
+kubectl get cephcluster -A \
+  -o jsonpath='{range .items[*]}{.metadata.namespace}{"\t"}{.spec.security.cephx}{"\n"}{end}'
+```
+
+Do not enable key rotation or increment `keyGeneration` during the operator
+upgrade. Leaving `spec.security.cephx.allowedCiphers` unset in Rook v1.19 allows
+both `aes` and `aes256k`, preserving existing keys. Plan cipher and key rotation
+as a separate change after all clients and peers have been checked.
+
+### Planned Ceph CSI operator migration
+
+In built-in mode, the CSI DaemonSets and provisioners are not manually managed:
+the Rook operator generates and continuously reconciles them. A migration moves
+that ownership from the Rook operator to the separate Ceph CSI operator.
+
+Do not combine a CSI ownership migration with an ordinary Rook minor-version
+upgrade. Keep built-in CSI management through a stable Rook v1.19 checkpoint,
+then schedule a separate maintenance window. Follow the exact target-release
+operator and CSI migration guides; if targeting Rook v1.20, upgrade to at least
+Rook v1.19.5 first.
+
+At a high level:
+
+1. Keep `ROOK_USE_CSI_OPERATOR: "false"` while installing the exact
+   release-matched CSI operator CRDs, RBAC, and controller.
+2. Wait for the CSI operator controller to become healthy without changing
+   ownership.
+3. Preserve the existing driver names, operator namespace, provisioner
+   affinity, tolerations, snapshot settings, host-network settings, and any
+   pinned images.
+4. Record CSI DaemonSet UIDs, ready counts, provisioner status, CSIDriver
+   objects, and working PVC mounts.
+5. Set `ROOK_USE_CSI_OPERATOR: "true"` while leaving
+   `ROOK_CSI_DISABLE_DRIVER: "false"`, then monitor the handoff continuously.
+6. Require both CSI provisioners, both node-plugin DaemonSets, existing mounts,
+   and new RBD and CephFS mount tests to pass before completing the window.
+
+The ownership handoff can temporarily interrupt new provisioning, attachment,
+or mounts even when already-mounted filesystems remain usable. Do not manually
+delete CSI DaemonSets, pods, finalizers, or VolumeAttachments merely because a
+handoff is slow. First establish which controller owns each resource and inspect
+node-plugin registration and active attachments.
 
 Before upgrading to v1.20, install or verify the target CSI CRDs and save the generated CSI resources if they exist:
 
@@ -372,3 +500,8 @@ kubectl -n rook-system get operatorconfigs.csi.ceph.io -o yaml \
 On versions before the CSI operator is installed, `kubectl` may report that these resource types do not exist. That is expected, but do not proceed to v1.20 until the target guide's CSI installation and migration steps have been prepared.
 
 Preserve the current CSI settings from the live Rook operator Deployment, including provisioner affinity and CSI tolerations. Do not fully apply a stock v1.20 `operator.yaml` later without first transferring those settings to the ceph-csi-operator configuration; stock defaults can overwrite site-specific values.
+
+If the migration fails, set `ROOK_USE_CSI_OPERATOR: "false"`, restart the Rook
+operator, and verify that it recreates and registers the built-in CSI workloads.
+Confirm the old driver names and mount tests before removing any CSI-operator
+resources.
