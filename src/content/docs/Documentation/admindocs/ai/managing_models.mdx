@@ -721,6 +721,8 @@ Kimi-K2.6 (`KimiK25ForConditionalGeneration` and `DeepseekV3ForCausalLM`) is a M
 
 To use two nodes for this model, we can use something similar to `--tensor-parallel-size 4 --decode-context-parallel-size 4 --pipeline-parallel-size 2` to make two instances (Pods) of vLLM and deploy two 4x RTX PRO 6000 Blackwell GPU Pods, while properly sharding the KV cache. This is the default configuration for an instance of the model, without duplication through data parallelism.
 
+Both StatefulSets start `vllm serve` through the multi-node supervisor described in [Keeping a multi-node pair recoverable](#keeping-a-multi-node-pair-recoverable) below, so that a restart on either side restarts the pair together; create its ConfigMap first. For more than one worker, raise the worker StatefulSet's `replicas` and `--nnodes`, and add one `--peer` per worker pod to the head's supervisor line.
+
 Example Configuration (do not use `--mm-processor-cache-type shm` in multi-node):
 
 <details>
@@ -733,7 +735,7 @@ metadata:
   name: kimi-bw-vllm-inference
   namespace: nrp-llm
   labels:
-    app: kimi-bw-vllm-head
+    component: llm
 spec:
   # Standard service to expose the API strictly pointing to the Head Node
   type: ClusterIP
@@ -754,19 +756,23 @@ metadata:
   labels:
     group: kimi-bw-vllm
 spec:
-  # Headless service for internal StatefulSet pod DNS resolution
+  # Headless service for internal StatefulSet pod DNS resolution.
+  # publishNotReadyAddresses: the pods must find each other long before either is Ready.
   clusterIP: None
   publishNotReadyAddresses: true
   selector:
     # Selects both head and worker pods for internal communication
     group: kimi-bw-vllm
   ports:
-  - name: tcp
+  - name: master
     port: 29501
     targetPort: 29501
     protocol: TCP
+  - name: supervisor
+    port: 29502
+    targetPort: 29502
+    protocol: TCP
 ---
-
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -779,15 +785,18 @@ spec:
   policyTypes:
   - Ingress
   ingress:
-  # Allow all traffic, but only if it comes from other inference pods
+  # The rendezvous store, NCCL and the ZMQ queues have no authentication:
+  # allow all traffic, but only if it comes from other pods of the group
   - from:
     - podSelector:
         matchLabels:
           group: kimi-bw-vllm
-  # Allow API access (Port 5000) from anywhere
+  # Allow API access (Port 5000) and the supervisor's read-only state (Port 29502) from anywhere
   - ports:
     - protocol: TCP
       port: 5000
+    - protocol: TCP
+      port: 29502
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -803,6 +812,7 @@ spec:
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Retain
     whenScaled: Retain
+  podManagementPolicy: Parallel
   replicas: 1
   selector:
     matchLabels:
@@ -845,10 +855,16 @@ spec:
       containers:
       - args:
         - |
-          RANK=0
-          MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
+          SVC=kimi-bw-vllm-master.nrp-llm.svc.cluster.local
+          MASTER_ADDR=kimi-bw-vllm-head-0.$SVC
 
-          vllm serve \
+          # The supervisor downloads the checkpoint first (--prepare), waits until the
+          # worker has joined this start, then runs vLLM and restarts the pair together
+          # if either side restarts; see "Keeping a multi-node pair recoverable".
+          exec python3 /opt/multinode/multinode_supervisor.py --role head \
+            --peer kimi-bw-vllm-worker-0.$SVC \
+            --prepare 'hf download moonshotai/Kimi-K2.6 --cache-dir /workspace/.cache/huggingface/hub' \
+            -- vllm serve \
             moonshotai/Kimi-K2.6 \
             --port 5000 \
             --host 0.0.0.0 \
@@ -859,7 +875,7 @@ spec:
             --decode-context-parallel-size 4 \
             --pipeline-parallel-size 2 \
             --nnodes 2 \
-            --node-rank $RANK \
+            --node-rank 0 \
             --master-addr $MASTER_ADDR \
             --master-port 29501 \
             --api-server-count 8 \
@@ -884,29 +900,47 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
+        # PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True can help with CUDA memory
+        # errors, but with a tensor-parallel group inside one node it needs
+        # --disable-custom-all-reduce too: vLLM's custom all-reduce cannot register
+        # expandable-segment memory for CUDA graphs ("invalid argument").
         #- name: PYTORCH_CUDA_ALLOC_CONF
         #  value: "expandable_segments:True"
         - name: NCCL_DEBUG
-          value: "INFO"
+          value: "WARN"
+        # Cross-node traffic is TCP over eth0 when the pod has no RDMA devices.
+        # Pods are dual-stack; pin NCCL to IPv4 so both nodes pick the same family.
+        - name: NCCL_SOCKET_IFNAME
+          value: "eth0"
+        - name: NCCL_SOCKET_FAMILY
+          value: "AF_INET"
         - name: NCCL_IB_DISABLE
+          value: "1"
+        # NCCL 2.30 binds NVLS multicast memory, which the containers cannot do
+        - name: NCCL_NVLS_ENABLE
+          value: "0"
+        - name: HF_HUB_DISABLE_PROGRESS_BARS
           value: "1"
         - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
           value: "true"
         - name: OTEL_SERVICE_NAME
-          value: kimi-bw-vllm-head
+          value: kimi-bw-vllm-inference
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
-        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-digest>
         imagePullPolicy: Always
-        name: kimi-bw-vllm-head
+        # Matches the Service name, as the status page requires
+        name: kimi-bw-vllm-inference
         ports:
         - containerPort: 5000
           name: http
           protocol: TCP
         - containerPort: 29501
-          name: tcp
+          name: master
+          protocol: TCP
+        - containerPort: 29502
+          name: supervisor
           protocol: TCP
         resources:
           limits:
@@ -923,11 +957,13 @@ spec:
             drop:
             - ALL
           runAsNonRoot: false
+        # The startup window covers the first download (--prepare), waiting for the
+        # worker, and loading: 2160 x 10 s = 6 h
         startupProbe:
           httpGet:
             path: /health
             port: 5000
-          failureThreshold: 900
+          failureThreshold: 2160
           periodSeconds: 10
           timeoutSeconds: 5
         readinessProbe:
@@ -950,6 +986,9 @@ spec:
         - mountPath: /workspace/.cache
           name: kimi-bw-inference-cache
           subPath: cache
+        - mountPath: /opt/multinode
+          name: supervisor
+          readOnly: true
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -980,6 +1019,10 @@ spec:
           medium: Memory
           sizeLimit: 10995116277760m
         name: shm
+      - configMap:
+          defaultMode: 0555
+          name: vllm-multinode-supervisor
+        name: supervisor
   updateStrategy:
     rollingUpdate:
       partition: 0
@@ -1005,7 +1048,6 @@ metadata:
   labels:
     app: kimi-bw-vllm-worker
     group: kimi-bw-vllm
-    component: llm
   name: kimi-bw-vllm-worker
   namespace: nrp-llm
 spec:
@@ -1023,7 +1065,6 @@ spec:
       labels:
         app: kimi-bw-vllm-worker
         group: kimi-bw-vllm
-        component: llm
     spec:
       affinity:
         nodeAffinity:
@@ -1056,13 +1097,15 @@ spec:
       containers:
       - args:
         - |
+          SVC=kimi-bw-vllm-master.nrp-llm.svc.cluster.local
+          MASTER_ADDR=kimi-bw-vllm-head-0.$SVC
           # Offset worker rank by 1 since Head is Rank 0
-          INDEX=${HOSTNAME##*-}
-          RANK=$((INDEX + 1))
+          RANK=$(( ${HOSTNAME##*-} + 1 ))
 
-          MASTER_ADDR="kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local"
-
-          vllm serve \
+          exec python3 /opt/multinode/multinode_supervisor.py --role worker \
+            --peer $MASTER_ADDR \
+            --prepare 'hf download moonshotai/Kimi-K2.6 --cache-dir /workspace/.cache/huggingface/hub' \
+            -- vllm serve \
             moonshotai/Kimi-K2.6 \
             --port 5000 \
             --host 0.0.0.0 \
@@ -1098,12 +1141,17 @@ spec:
         # Required to allow the engine to initialize large models
         - name: VLLM_ENGINE_READY_TIMEOUT_S
           value: "86400"
-        # Use in case CUDA memory errors occur; may solve the problem over lowering --gpu-memory-utilization
-        #- name: PYTORCH_CUDA_ALLOC_CONF
-        #  value: "expandable_segments:True"
         - name: NCCL_DEBUG
-          value: "INFO"
+          value: "WARN"
+        - name: NCCL_SOCKET_IFNAME
+          value: "eth0"
+        - name: NCCL_SOCKET_FAMILY
+          value: "AF_INET"
         - name: NCCL_IB_DISABLE
+          value: "1"
+        - name: NCCL_NVLS_ENABLE
+          value: "0"
+        - name: HF_HUB_DISABLE_PROGRESS_BARS
           value: "1"
         - name: OTEL_EXPORTER_OTLP_TRACES_INSECURE
           value: "true"
@@ -1112,9 +1160,13 @@ spec:
         envFrom:
         - configMapRef:
             name: qwen-vllm-inference-config
-        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-commit_hash>
+        image: vllm/vllm-openai:<v0.xx.xx_or_nightly-digest>
         imagePullPolicy: Always
         name: kimi-bw-vllm-worker
+        ports:
+        - containerPort: 29502
+          name: supervisor
+          protocol: TCP
         resources:
           limits:
             cpu: "28"
@@ -1130,57 +1182,38 @@ spec:
             drop:
             - ALL
           runAsNonRoot: false
-        startupProbe:
-          exec:
-            command:
-            - python3
-            - -c
-            - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
-          failureThreshold: 900
-          periodSeconds: 10
+        # Liveness is the supervisor's own endpoint, which answers from the first
+        # second: a worker waiting for its head is alive, not stuck.
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 29502
+          initialDelaySeconds: 10
+          failureThreshold: 4
+          periodSeconds: 30
           timeoutSeconds: 5
+        # Readiness mirrors the head's /health, so `kubectl get pods` shows whether
+        # the group is serving; it never restarts anything.
         readinessProbe:
           exec:
             command:
             - python3
             - -c
             - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
+              import urllib.request
+              urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
           failureThreshold: 6
           periodSeconds: 10
-          timeoutSeconds: 5
-        livenessProbe:
-          exec:
-            command:
-            - python3
-            - -c
-            - |
-              import urllib.request, sys
-              try:
-                  urllib.request.urlopen("http://kimi-bw-vllm-head-0.kimi-bw-vllm-master.nrp-llm.svc.cluster.local:5000/health", timeout=5)
-              except Exception:
-                  sys.exit(1)
-          initialDelaySeconds: 30
-          failureThreshold: 8
-          periodSeconds: 30
-          timeoutSeconds: 5
+          timeoutSeconds: 10
         volumeMounts:
         - mountPath: /dev/shm
           name: shm
         - mountPath: /workspace/.cache
           name: kimi-bw-inference-cache
           subPath: cache
+        - mountPath: /opt/multinode
+          name: supervisor
+          readOnly: true
       priorityClassName: owner
       securityContext:
         runAsGroup: 0
@@ -1211,6 +1244,10 @@ spec:
           medium: Memory
           sizeLimit: 10995116277760m
         name: shm
+      - configMap:
+          defaultMode: 0555
+          name: vllm-multinode-supervisor
+        name: supervisor
   updateStrategy:
     rollingUpdate:
       partition: 0
@@ -1234,6 +1271,377 @@ spec:
 </details>
 
 But, in case user demand increases, higher concurrency and token throughput are desired. We can add `--enable-expert-parallel --enable-ep-weight-filter` and `--data-parallel-size`, where expert layers are distributed across multiple data parallelism instances and GPUs without duplication, and tensor parallelism within GPUs of each instance shards the dense attention layers duplicated across data parallelism instances. This way, all five types of parallelism can work together and also scale up, opening up higher KV cache capacity and concurrency.
+
+##### Keeping a multi-node pair recoverable
+
+A head StatefulSet and a worker StatefulSet are two independent workloads to Kubernetes, but to vLLM they are one process group, and **vLLM cannot re-admit a node into a running group**. Without the supervisor below, any restart on one side leaves the pair stuck:
+
+- **The worker waits forever.** A headless worker (`--headless`) blocks on the head's broadcast queue and never notices that the head went away. When a new head starts, the old worker is still attached to the previous process group.
+- **The head looks healthy.** `/health` on the head only reports an engine that has already errored. An idle head whose worker died keeps answering `200` indefinitely. Only a request that reaches it fails, after `VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS` (300 s).
+- **The replacement joins a dead rendezvous.** A restarted worker dials the head's `--master-port`, finds a rendezvous that already completed, and hangs. Worker probes that only check the head's `/health` then pass, so Kubernetes has no reason to restart anything.
+
+The fix is to restart the group as a unit, which is what [LeaderWorkerSet](https://docs.vllm.ai/en/latest/deployment/frameworks/lws.html)'s `RecreateGroupOnPodRestart` provides upstream. The LeaderWorkerSet controller is not installed on Nautilus, so both StatefulSets start `vllm serve` through a small supervisor that gives them the same behaviour. It is `ConfigMap/vllm-multinode-supervisor` below, and the maintained copy is [`inference-pool/vllm-multinode-supervisor.yaml`](https://gitlab.nrp-nautilus.io/prp/llm-proxy/-/blob/main/inference-pool/vllm-multinode-supervisor.yaml) in the llm-proxy project. The supervisor works in four steps:
+
+1. Every container start draws a fresh epoch on the head, or a fresh generation on a worker, and runs `--prepare` first. `--prepare` is a weight pre-download with `hf download`, so that no node sits in a collective while another is still downloading (vLLM's own multi-node advice).
+2. A worker only adopts the epoch of a head that is still **waiting** for its workers. It never attaches to a head that is already running.
+3. The head starts vLLM once every worker has joined its epoch, and the workers then start theirs.
+4. From then on each side polls the other on port `29502`. If the peer's epoch or generation changed (it restarted), the supervisor restarts immediately. If the peer is unreachable for 60 s, it restarts then. Restarting means stopping vLLM and exiting, so the kubelet restarts the container and the group re-forms from step 1.
+
+What changes for operators:
+
+- **Roll out either StatefulSet on its own.** The other side follows by itself, in whichever order the pods come back. No manual pairing or deleting of the peer is needed.
+- **Check where a group is** with `kubectl exec <pod> -- python3 -c "import urllib.request; print(urllib.request.urlopen('http://localhost:29502/').read().decode())"`. It prints `{"role": "head", "epoch": ..., "state": "preparing|waiting|running"}`; a worker also reports its `gen` and the epoch it joined.
+- **See why a group restarted** with `kubectl logs <pod> | grep 'multinode-supervisor'`. Every restart is logged with its reason, for example `RESTART: worker ... left the group` or `RESTART: head restarted (epoch ... -> ...)`.
+- **A pod stuck `Terminating` on a lost node** blocks its StatefulSet from creating a replacement, and the surviving side waits in the `waiting` state holding its GPUs. Get the node back (or rebooted) so its kubelet finishes the deletion; do not force-delete the pod.
+- **Probes.** The head keeps the usual `/health` probes; its `startupProbe` must also cover the first download. The worker's liveness is the supervisor's own `/healthz`. Its readiness mirrors the head's `/health`, so `kubectl get pods` shows whether the group is serving, and readiness never restarts anything.
+- **Storage.** A recreated pair can come back with head and worker swapped between nodes, because other pods take the freed GPUs in the gap, and then both ReadWriteOnce cache volumes have to move. `rook-ceph-block` moved them in seconds. On 2026-09-30 `linstor-igrok` volumes could not attach anywhere while the LINSTOR controller was crash-looping, so a pair on `linstor-igrok` stayed down for the whole outage.
+- **Networking.** Cross-node traffic goes over TCP on `eth0` unless the pod has RDMA devices. Set `NCCL_SOCKET_IFNAME=eth0` and, because pods are dual-stack, `NCCL_SOCKET_FAMILY=AF_INET`, so that every node picks the same interface and address family. Leave gloo on its default: `GLOO_SOCKET_IFNAME=eth0` made every cross-node gloo rendezvous take about 6 s instead of 0.5 s.
+- **Settings required on NCCL 2.30 / vLLM 0.30.** Each of these hung the communicator setup silently (0% CPU and GPU, no error) until it was set:
+  - `NCCL_NVLS_ENABLE=0`: NCCL 2.30.7 binds NVLS multicast memory, which NRP containers cannot do (there is no fabric capability, and `/dev/nvidia-caps` is empty). Single-node pods crash on this; across nodes, communicator init hangs.
+  - `VLLM_ALLREDUCE_USE_SYMM_MEM=0` and `VLLM_ALLREDUCE_USE_FLASHINFER=0`, whenever the tensor-parallel group spans nodes: both default on and assume the whole TP group sits on one node (CUDA IPC, or multi-node NVLink), so the TP group's setup stalls. NCCL then does the all-reduce. Pipeline parallelism across nodes, as in the Kimi-K2.6 layout, keeps each TP group on one node and does not need them.
+
+Supervisor (create it once per namespace; every multi-node pair mounts the same ConfigMap):
+
+<details>
+<summary>Open</summary>
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vllm-multinode-supervisor
+  namespace: nrp-llm
+data:
+  multinode_supervisor.py: |
+    #!/usr/bin/env python3
+    """Gang-restart supervisor for multi-node vLLM (one head, N headless workers).
+
+    vLLM's multi-node multiprocessing runtime cannot re-admit a node. When the
+    vLLM process on any node is replaced, the survivors stay bound to the old
+    process group: a headless worker blocks forever waiting for the old head, and
+    an idle head keeps answering /health with 200 because /health only reports an
+    engine that has already errored. A replacement node that dials in then joins a
+    dead rendezvous, so the pair never recovers on its own.
+
+    This wrapper gives a head StatefulSet plus worker StatefulSets the
+    RecreateGroupOnPodRestart behaviour of a LeaderWorkerSet: a restart on any
+    node restarts every node, and a node only starts vLLM against a head that is
+    still waiting for its workers.
+
+    Each side serves its state as JSON on --port (GET /, and /healthz for probes):
+      head:   {"role": "head",   "epoch": E, "state": "preparing|waiting|running"}
+      worker: {"role": "worker", "gen": G, "epoch": E or null,
+               "state": "preparing|waiting|joined|running"}
+
+      1. Every container start draws a fresh epoch (head) or gen (worker), then
+         runs --prepare, e.g. a weight pre-download, so that no node sits in a
+         collective while another is still downloading.
+      2. A worker adopts the epoch of a head that is "waiting" and reports
+         "joined". It never adopts the epoch of a head that is already "running".
+      3. Once every worker has joined its epoch, the head records their gens and
+         starts vLLM; the workers see "running" and start theirs.
+      4. From then on each side polls the other every --interval seconds. A
+         changed epoch or gen restarts immediately. An unreachable peer restarts
+         after --grace seconds.
+
+    Restarting means stopping vLLM and exiting non-zero, so the kubelet restarts
+    the container, which draws a new epoch or gen. The peers see the change and
+    follow, and the group re-forms from step 1.
+
+    Usage:
+      multinode_supervisor.py --role head   --peer <worker-0 host> ... -- vllm serve ...
+      multinode_supervisor.py --role worker --peer <head host>         -- vllm serve ... --headless
+    """
+
+    import argparse
+    import json
+    import os
+    import signal
+    import socket
+    import subprocess
+    import sys
+    import threading
+    import time
+    import urllib.request
+    import uuid
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    _status = {}
+    _status_lock = threading.Lock()
+    _stopping = threading.Event()
+
+
+    def log(msg):
+        print(f"[multinode-supervisor] {time.strftime('%Y-%m-%dT%H:%M:%S')} {msg}", flush=True)
+
+
+    def set_status(**kw):
+        with _status_lock:
+            _status.update(kw)
+
+
+    class _Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == "/healthz":
+                body = b"ok\n"
+            else:
+                with _status_lock:
+                    body = json.dumps(_status).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, *args):
+            pass
+
+
+    class _DualStackServer(ThreadingHTTPServer):
+        address_family = socket.AF_INET6
+
+        def server_bind(self):
+            self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+            super().server_bind()
+
+
+    def fetch(peer, default_port, timeout):
+        """Return the peer's status dict, or None when it cannot be reached."""
+        host, sep, port = peer.rpartition(":")
+        if not (sep and port.isdigit()):
+            host, port = peer, str(default_port)
+        try:
+            with urllib.request.urlopen(f"http://{host}:{port}/", timeout=timeout) as r:
+                return json.loads(r.read())
+        except Exception:
+            return None
+
+
+    def start(argv):
+        # A session of its own, so stop() reaches the API servers, the engine core
+        # and every worker process vLLM spawns.
+        return subprocess.Popen(argv, start_new_session=True)
+
+
+    def stop(proc, timeout):
+        if proc is None or proc.poll() is not None:
+            return
+        try:
+            os.killpg(proc.pid, signal.SIGTERM)
+            proc.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            log(f"still running {timeout:.0f}s after SIGTERM, sending SIGKILL")
+        except ProcessLookupError:
+            return
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        proc.wait()
+
+
+    def reap_orphans(tracked):
+        """As PID 1, reap zombies reparented to us, leaving our own child alone.
+
+        Helpers that outlive their parent (for example the downloader's children)
+        are reparented to PID 1 and would otherwise stay zombies for the pod's life.
+        Only exact PIDs are waited on, never -1, so vLLM's exit status is untouched.
+        """
+        if os.getpid() != 1:
+            return
+        for name in os.listdir("/proc"):
+            if not name.isdigit() or int(name) in tracked:
+                continue
+            try:
+                with open(f"/proc/{name}/stat") as f:
+                    stat = f.read()
+            except OSError:
+                continue
+            fields = stat[stat.rfind(")") + 2:].split()
+            if fields[0] == "Z" and fields[1] == "1":
+                try:
+                    os.waitpid(int(name), os.WNOHANG)
+                except ChildProcessError:
+                    pass
+
+
+    def wait_or_exit(proc, seconds, stop_timeout):
+        """Sleep, but hand a SIGTERM/SIGINT from the kubelet on to vLLM and exit."""
+        reap_orphans({proc.pid} if proc is not None else set())
+        if _stopping.wait(seconds):
+            log("termination requested, stopping vLLM")
+            stop(proc, stop_timeout)
+            sys.exit(0)
+
+
+    def restart(proc, reason, stop_timeout):
+        log(f"RESTART: {reason}")
+        stop(proc, stop_timeout)
+        sys.exit(1)
+
+
+    def main():
+        ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+        ap.add_argument("--role", choices=["head", "worker"], required=True)
+        ap.add_argument("--peer", action="append", default=[], required=True,
+                        help="head: every worker's address; worker: the head's address "
+                             "(host, or host:port)")
+        ap.add_argument("--port", type=int, default=29502,
+                        help="port this supervisor serves its state on (default 29502)")
+        ap.add_argument("--interval", type=float, default=5,
+                        help="seconds between peer polls (default 5)")
+        ap.add_argument("--grace", type=float, default=60,
+                        help="seconds a peer may be unreachable before restarting (default 60)")
+        ap.add_argument("--prepare",
+                        help="shell command to run before the handshake, e.g. a weight "
+                             "pre-download; a failure is logged and ignored")
+        ap.add_argument("--stop-timeout", type=float, default=30,
+                        help="seconds vLLM gets to exit after SIGTERM (default 30)")
+        ap.add_argument("cmd", nargs=argparse.REMAINDER,
+                        help="-- followed by the vllm serve command")
+        args = ap.parse_args()
+        cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
+        if not cmd:
+            ap.error("missing the vllm command after --")
+        if args.role == "worker" and len(args.peer) != 1:
+            ap.error("a worker takes exactly one --peer: the head")
+
+        def on_signal(signum, frame):
+            _stopping.set()
+
+        signal.signal(signal.SIGTERM, on_signal)
+        signal.signal(signal.SIGINT, on_signal)
+
+        token = uuid.uuid4().hex[:12]
+        if args.role == "head":
+            set_status(role="head", epoch=token, state="preparing")
+        else:
+            set_status(role="worker", gen=token, epoch=None, state="preparing")
+        try:  # dual-stack where the pod has IPv6, IPv4-only otherwise
+            server = _DualStackServer(("::", args.port), _Handler)
+        except OSError:
+            server = ThreadingHTTPServer(("0.0.0.0", args.port), _Handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        log(f"{args.role} {'epoch' if args.role == 'head' else 'gen'} {token}, "
+            f"state on :{args.port}, peers {' '.join(args.peer)}")
+
+        if args.prepare:
+            log(f"prepare: {args.prepare}")
+            prep = subprocess.Popen(["bash", "-c", args.prepare], start_new_session=True)
+            while prep.poll() is None:
+                wait_or_exit(prep, 1, args.stop_timeout)
+            if prep.returncode:
+                log(f"prepare exited {prep.returncode}; continuing, vLLM will retry the download")
+
+        if args.role == "head":
+            run_head(args, cmd, token)
+        else:
+            run_worker(args, cmd, token)
+
+
+    def run_head(args, cmd, epoch):
+        set_status(state="waiting")
+        last_log = 0.0
+        while True:
+            joined = {}
+            for peer in args.peer:
+                s = fetch(peer, args.port, 3)
+                if s and s.get("epoch") == epoch and s.get("state") in ("joined", "running"):
+                    joined[peer] = s.get("gen")
+            if len(joined) == len(args.peer):
+                break
+            if time.monotonic() - last_log > 60:
+                missing = [p for p in args.peer if p not in joined]
+                log(f"waiting for {len(missing)} worker(s) to join epoch {epoch}: {' '.join(missing)}")
+                last_log = time.monotonic()
+            wait_or_exit(None, args.interval, args.stop_timeout)
+
+        gens = joined
+        log("all workers joined epoch %s (%s), starting vLLM"
+            % (epoch, ", ".join(f"{p}={g}" for p, g in gens.items())))
+        set_status(state="running")
+        proc = start(cmd)
+        last_ok = {p: time.monotonic() for p in args.peer}
+        while True:
+            wait_or_exit(proc, args.interval, args.stop_timeout)
+            rc = proc.poll()
+            if rc is not None:
+                log(f"vLLM exited with {rc}")
+                sys.exit(rc or 1)
+            now = time.monotonic()
+            for peer in args.peer:
+                s = fetch(peer, args.port, 3)
+                if s is None:
+                    if now - last_ok[peer] > args.grace:
+                        restart(proc, f"worker {peer} unreachable for {args.grace:.0f}s",
+                                args.stop_timeout)
+                elif s.get("gen") != gens[peer] or s.get("epoch") != epoch:
+                    restart(proc, f"worker {peer} left the group (gen {gens[peer]} -> "
+                                  f"{s.get('gen')}, epoch {s.get('epoch')}, state {s.get('state')})",
+                            args.stop_timeout)
+                else:
+                    last_ok[peer] = now
+
+
+    def run_worker(args, cmd, gen):
+        head = args.peer[0]
+        epoch = None
+        last_seen = time.monotonic()
+        last_log = 0.0
+        set_status(state="waiting")
+        while True:
+            s = fetch(head, args.port, 3)
+            now = time.monotonic()
+            if s is not None:
+                last_seen = now
+            if epoch is None:
+                if s and s.get("state") == "waiting" and s.get("epoch"):
+                    epoch = s["epoch"]
+                    set_status(epoch=epoch, state="joined")
+                    log(f"joined head epoch {epoch}, waiting for the head to start vLLM")
+                elif now - last_log > 60:
+                    state = "unreachable" if s is None else s.get("state")
+                    log(f"waiting for head {head} to wait for workers (head is {state})")
+                    last_log = now
+            elif s is not None and s.get("epoch") != epoch:
+                log(f"head moved to epoch {s.get('epoch')} before starting vLLM; rejoining")
+                epoch = None
+                set_status(epoch=None, state="waiting")
+                continue
+            elif s is None and now - last_seen > args.grace:
+                log(f"head {head} unreachable for {args.grace:.0f}s before starting vLLM; rejoining")
+                epoch = None
+                set_status(epoch=None, state="waiting")
+            elif s is not None and s.get("state") == "running":
+                break
+            wait_or_exit(None, args.interval, args.stop_timeout)
+
+        log(f"head started epoch {epoch}, starting vLLM")
+        set_status(state="running")
+        proc = start(cmd)
+        last_ok = time.monotonic()
+        while True:
+            wait_or_exit(proc, args.interval, args.stop_timeout)
+            rc = proc.poll()
+            if rc is not None:
+                log(f"vLLM exited with {rc}")
+                sys.exit(rc or 1)
+            now = time.monotonic()
+            s = fetch(head, args.port, 3)
+            if s is None:
+                if now - last_ok > args.grace:
+                    restart(proc, f"head {head} unreachable for {args.grace:.0f}s", args.stop_timeout)
+            elif s.get("epoch") != epoch:
+                restart(proc, f"head restarted (epoch {epoch} -> {s.get('epoch')})", args.stop_timeout)
+            else:
+                last_ok = now
+
+
+    if __name__ == "__main__":
+        main()
+```
+
+</details>
 
 #### Further Reading
 
