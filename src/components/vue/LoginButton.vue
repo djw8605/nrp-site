@@ -40,7 +40,9 @@ import Avatar from 'primevue/avatar';
 const user = useStore(userStore);
 
 const handleLogin = () => {
-  window.location.href = baseUrl + '/auth';
+  // The portal sends us back here after login. Pass the full URL explicitly:
+  // the cross-origin hop strips the path and query from Referer.
+  window.location.href = baseUrl + '/auth?next=' + encodeURIComponent(window.location.href);
 };
 const handleLogout = () => {
   window.location.href = baseUrl + '/logout';
