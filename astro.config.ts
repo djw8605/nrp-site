@@ -363,7 +363,10 @@ export default defineConfig({
             {
               label: 'AI',
               collapsed: true,
-              items: [{ label: 'Managing AI Models', link: 'documentation/admindocs/ai/managing_models' }],
+              items: [
+                { label: 'Managing AI Models', link: 'documentation/admindocs/ai/managing_models' },
+                { label: 'Training Join Links', link: 'documentation/admindocs/ai/training_join_links' },
+              ],
             },
             {
               label: 'Storage',
