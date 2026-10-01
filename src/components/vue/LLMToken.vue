@@ -1,26 +1,5 @@
 <template>
-    <Message v-if="join.code" :severity="joinSeverity" :closable="false" class="mb-6">
-        <template v-if="join.state === 'loading'">Checking your training link…</template>
-        <template v-else-if="join.state === 'login'">
-            <template v-if="join.info.Status === 'full'">
-                <b>{{ join.info.Name }}</b> is full. If you already joined, log in to get a new API key.
-            </template>
-            <template v-else>
-                You've been invited to <b>{{ join.info.Name }}</b> in the <b>{{ join.info.Namespace }}</b> namespace.
-                Log in to the NRP to get your API key. If this is your first time, logging in creates your NRP account.
-            </template>
-            <div class="mt-3"><Button label="Log in to continue" icon="pi pi-sign-in" @click="loginForJoin" /></div>
-        </template>
-        <template v-else-if="join.state === 'redeeming'">
-            Adding you to <b>{{ join.info.Namespace }}</b> and creating your API key…
-        </template>
-        <template v-else-if="join.state === 'done'">
-            You've joined <b>{{ join.info.Name }}</b>. Your access ends {{ fmtDate(join.accessUntil) }}.
-            Opening the training link again replaces your training key.
-        </template>
-        <template v-else-if="join.state === 'error'">{{ join.error }}</template>
-    </Message>
-    <div v-if="!user && !join.code" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
+    <div v-if="!user" class="mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg  dark:bg-slate-800 dark:shadow-none">Please log in to see the info.</div>
     <VueSpinnerPie v-if="isTokensLoading" size="40" style="z-index: 10; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%);" color="red" />
 
     <div v-if="user && (tokensInfo.Tokens != null && tokensInfo.Tokens.length > 0)" id="userInfo" class="flex flex-col">
@@ -115,7 +94,6 @@
     <Dialog v-model:visible="dialogVisible" modal header="Please save and secure your API key. It will not be shown again. If you lose it, you’ll need to regenerate a new one." :style="{ width: '40rem' }">
         <div class="flex flex-col gap-4">
             <Message severity="success"><span ref="tokenTextRef" class="break-all">{{ newToken }}</span></Message>
-            <p v-if="newTokenAccessUntil" class="text-sm">Access ends {{ fmtDate(newTokenAccessUntil) }}.</p>
             <Button :label="copiedToken ? 'Copied' : 'Copy API key'" :icon="copiedToken ? 'pi pi-check' : 'pi pi-copy'" severity="secondary" class="self-start" @click="copyToken"/>
         </div>
     </Dialog>
@@ -150,7 +128,7 @@ import { LLM_ENDPOINT } from '../../data/llm-endpoint.ts';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
-import {ref, reactive, computed, watch, onMounted} from 'vue';
+import {ref, onMounted} from 'vue';
 
 const user = useStore(userStore);
 
@@ -316,86 +294,7 @@ const transport = new HTTPTransport(baseUrl+"/rpc",
 );
 const client = new Client(new RequestManager([transport]));
 
-// Training join links: /llmtoken?join=<code>. See k8s_portal
-// docs/superpowers/specs/2026-10-01-llm-join-links-design.md.
-const joinCode = new URLSearchParams(window.location.search).get('join');
-const join = reactive({ code: joinCode, state: joinCode ? 'loading' : null, info: null, error: null, accessUntil: null });
-const newTokenAccessUntil = ref(null);
-const joinMessages = {
-    expired: 'This training link has expired. Ask the training organizer for a new one.',
-    invalid: 'This training link is not valid. Check that you copied the whole link, or ask the training organizer for a new one.',
-};
-const joinSeverity = computed(() => ({ error: 'error', done: 'success' })[join.state] || 'info');
-const fmtDate = (iso) => new Date(iso).toLocaleString();
-
-const loginForJoin = () => {
-    window.location.href = baseUrl + '/auth?next=' + encodeURIComponent(window.location.href);
-};
-
-const redeemJoin = () => {
-    if (join.state === 'redeeming' || join.state === 'done') {
-        return;
-    }
-    join.state = 'redeeming';
-    client.request({
-        method: 'user.RedeemLLMJoinLink',
-        params: { Code: join.code },
-    }).then((resp) => {
-        join.state = 'done';
-        join.accessUntil = resp.AccessUntil;
-        newToken.value = resp.Token;
-        newTokenAccessUntil.value = resp.AccessUntil;
-        copiedToken.value = false;
-        dialogVisible.value = true;
-        getUserLLMTokens();
-        // Drop ?join= so a refresh does not replace the key again.
-        const url = new URL(window.location.href);
-        url.searchParams.delete('join');
-        window.history.replaceState(null, '', url.toString());
-    }).catch((err) => {
-        // A stale login in localStorage outlives the portal session; send
-        // the visitor back through login instead of a dead end.
-        if (err.message === 'unauthorized') {
-            join.state = 'login';
-            return;
-        }
-        join.state = 'error';
-        join.error = err.message;
-    });
-};
-
-const startJoin = () => {
-    client.request({
-        method: 'guest.GetLLMJoinLinkInfo',
-        params: { Code: join.code },
-    }).then((info) => {
-        join.info = info;
-        if (info.Status === 'expired' || info.Status === 'invalid') {
-            join.state = 'error';
-            join.error = joinMessages[info.Status];
-        } else if (user.value) {
-            redeemJoin();
-        } else {
-            join.state = 'login';
-        }
-    }).catch((err) => {
-        join.state = 'error';
-        join.error = 'Could not check this training link: ' + err.message;
-    });
-};
-
-// The login state arrives asynchronously (LoginButton pings the portal), so
-// redeem as soon as the user appears.
-watch(user, (u) => {
-    if (u && join.state === 'login') {
-        redeemJoin();
-    }
-});
-
 onMounted(async () => {
-    if (join.code) {
-        startJoin();
-    }
     if(user.value == null) {
         return;
     }
@@ -497,7 +396,6 @@ const createToken = () => {
             return;
         }
         newToken.value = response.Token;
-        newTokenAccessUntil.value = null;
         copiedToken.value = false;
         dialogVisible.value = true;
         getUserLLMTokens();

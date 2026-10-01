@@ -211,10 +211,10 @@
         </template>
     </Card>
 
-    <LLMJoinLinks
-        v-if="selectedNamespace.IsLiteLLMOrg"
+    <JoinLinks
         :namespace="nsShortName"
         :isK8sNamespace="!!selectedNamespace.IsK8sNamespace"
+        :isLLMNamespace="!!selectedNamespace.IsLiteLLMOrg"
     />
 
     <Card class="my-8">
@@ -424,7 +424,7 @@ import Select from "primevue/select";
 import Textarea from "primevue/textarea";
 import {VueSpinnerPie} from 'vue3-spinners';
 
-import LLMJoinLinks from './LLMJoinLinks.vue';
+import JoinLinks from './JoinLinks.vue';
 
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 

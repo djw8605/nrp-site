@@ -1,0 +1,53 @@
+---
+title: Training Join Links
+description: Give workshop attendees time-limited access to your namespace, and optionally an LLM API key, with a single link
+---
+
+A training join link lets attendees into your namespace without waiting for you to add them one by one.
+Anyone who opens the link and logs in to the NRP is added to the namespace. You can also have the link
+give each attendee an LLM API key. When the training ends, people the link added are removed again.
+
+## What attendees get
+
+- **Membership of the namespace**, until access ends.
+- **Kubernetes `edit` access**, if the namespace has Kubernetes enabled. This is the same access any
+  member of the namespace has.
+- **An LLM API key**, if you turned on **Also give each attendee an LLM API key**. This option is only
+  offered on namespaces with LLM access.
+
+Use a namespace set up for the training if attendees should not see your other work.
+
+## Before you start
+
+- You must be an admin of the namespace.
+- Decide how long access should last. It can last at most 90 days.
+
+## Create a link
+
+1. Open [Namespaces](/namespaces) and select the namespace.
+2. In **Training join links**, enter a training name, the maximum number of attendees, when joins stop
+   being accepted, and when access ends. On namespaces with LLM access, choose whether attendees also
+   get an LLM API key.
+3. Select **Create join link**, then copy the link from the table and share it with attendees.
+
+## What attendees see
+
+The link opens the [Join a Training](/join) page. Attendees log in to the NRP with their institution, or
+another provider offered on the login page. Their first login creates their NRP account. They are then
+added to the namespace and told when their access ends.
+
+- If the link gives LLM keys, the page shows the attendee's key and the base URL to use. If they lose
+  the key, they can open the link again. That replaces their training key and doesn't use up another
+  seat.
+- If the namespace has Kubernetes enabled, the page points them to the `kubectl` setup instructions.
+
+## When the training ends
+
+- **Revoke** stops new joins. People who already joined keep access until it ends.
+- **End now** stops new joins and removes attendees within 15 minutes.
+- At the access end date, everyone the link added is removed from the namespace within 15 minutes, and
+  you get an email summary. Their LLM keys in the namespace are revoked a few minutes later. A
+  `kubectl` login they already had can keep working for up to 30 more minutes, until its token expires.
+
+People who were already members of the namespace, people you added yourself, and namespace admins are
+never removed. Attendees keep their NRP accounts, so their usage stays in NRP reports.

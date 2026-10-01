@@ -4,13 +4,13 @@
     <template #content>
       <div class="flex flex-col gap-4 p-6">
         <p class="text-sm text-muted">
-          Anyone who opens a join link and logs in to the NRP is added to this namespace and gets an LLM API key. When
-          access ends, people the link added are removed from the namespace, which revokes their keys. People who were
-          already members are never removed.
+          Anyone who opens a join link and logs in to the NRP is added to this namespace until access ends. Then the
+          people the link added are removed again, which ends their access, including any LLM API keys. People who were
+          already members are never removed, and attendees keep their NRP accounts.
         </p>
-        <Message v-if="isK8sNamespace" severity="warn" :closable="false">
-          This namespace has Kubernetes enabled. Attendees will also get Kubernetes <code>edit</code> access to it until
-          access ends.
+        <Message v-if="isK8sNamespace" severity="info" :closable="false">
+          This namespace has Kubernetes enabled, so attendees get Kubernetes <code>edit</code> access to it until access
+          ends.
         </Message>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FloatLabel variant="on">
@@ -30,6 +30,10 @@
             <label for="accessUntil">Access ends</label>
           </FloatLabel>
         </div>
+        <div v-if="isLLMNamespace" class="flex items-center gap-2">
+          <Checkbox v-model="form.issueLLMKey" inputId="joinIssueLLMKey" :binary="true" />
+          <label for="joinIssueLLMKey">Also give each attendee an LLM API key</label>
+        </div>
         <Message v-if="createError" severity="error" :closable="false">{{ createError }}</Message>
         <Button
           icon="pi pi-link"
@@ -42,6 +46,9 @@
       </div>
       <DataTable :value="links" :loading="loading" dataKey="ID" class="px-6">
         <Column field="Name" header="Training" />
+        <Column header="Access">
+          <template #body="{ data }">{{ data.IssueLLMKey ? 'Membership + LLM key' : 'Membership' }}</template>
+        </Column>
         <Column header="Link">
           <template #body="{ data }">
             <div class="flex items-center gap-2">
@@ -84,7 +91,7 @@
   <Dialog v-model:visible="endDialogVisible" modal header="End this training now?" :style="{ width: '30rem' }">
     <p>
       Everyone who joined through <b>{{ endTarget?.Name }}</b> and wasn't already a member will be removed from the
-      namespace within 15 minutes, and their API keys revoked. The link stops working immediately.
+      namespace within 15 minutes, which ends their access to it. The link stops working immediately.
     </p>
     <div class="flex justify-end gap-2 mt-4">
       <Button label="Cancel" severity="secondary" @click="endDialogVisible = false" />
@@ -103,6 +110,7 @@ import InputNumber from 'primevue/inputnumber';
 import DatePicker from 'primevue/datepicker';
 import FloatLabel from 'primevue/floatlabel';
 import Message from 'primevue/message';
+import Checkbox from 'primevue/checkbox';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
@@ -112,13 +120,14 @@ import { useToast } from 'primevue/usetoast';
 const props = defineProps({
   namespace: { type: String, required: true }, // short name, as the RPCs expect
   isK8sNamespace: { type: Boolean, default: false },
+  isLLMNamespace: { type: Boolean, default: false },
 });
 
 const baseUrl = import.meta.env.PUBLIC_SVC_URL;
 const client = new Client(new RequestManager([new HTTPTransport(baseUrl + '/rpc', { credentials: 'include' })]));
 const toast = useToast();
 
-// Shown only once ListLLMJoinLinks succeeds: the server allows it only for
+// Shown only once ListJoinLinks succeeds: the server allows it only for
 // admins of this namespace, and only when the feature is enabled.
 const visible = ref(false);
 const links = ref([]);
@@ -139,9 +148,15 @@ const daysFromNow = (n) => {
   d.setDate(d.getDate() + n);
   return d;
 };
-const form = reactive({ name: '', maxUses: 50, joinUntil: endOfToday(), accessUntil: daysFromNow(7) });
+const form = reactive({
+  name: '',
+  maxUses: 50,
+  joinUntil: endOfToday(),
+  accessUntil: daysFromNow(7),
+  issueLLMKey: props.isLLMNamespace,
+});
 
-const linkUrl = (link) => `${window.location.origin}/llmtoken?join=${link.Code}`;
+const linkUrl = (link) => `${window.location.origin}/join?code=${link.Code}`;
 const fmt = (iso) => new Date(iso).toLocaleString();
 const statusSeverity = (s) =>
   ({ active: 'success', full: 'warn', expired: 'secondary', revoked: 'secondary', ended: 'contrast' })[s] || 'info';
@@ -149,7 +164,7 @@ const statusSeverity = (s) =>
 const loadLinks = () => {
   loading.value = true;
   return client
-    .request({ method: 'admin.ListLLMJoinLinks', params: { Namespace: props.namespace } })
+    .request({ method: 'admin.ListJoinLinks', params: { Namespace: props.namespace } })
     .then((resp) => {
       links.value = resp.Links || [];
       visible.value = true;
@@ -167,13 +182,14 @@ const createLink = () => {
   creating.value = true;
   client
     .request({
-      method: 'admin.CreateLLMJoinLink',
+      method: 'admin.CreateJoinLink',
       params: {
         Namespace: props.namespace,
         Name: form.name.trim(),
         JoinUntil: form.joinUntil.toISOString(),
         AccessUntil: form.accessUntil.toISOString(),
         MaxUses: form.maxUses,
+        IssueLLMKey: props.isLLMNamespace && form.issueLLMKey,
       },
     })
     .then(() => {
@@ -212,13 +228,13 @@ const runAction = (method, link) => {
     });
 };
 
-const revoke = (link) => runAction('admin.RevokeLLMJoinLink', link);
+const revoke = (link) => runAction('admin.RevokeJoinLink', link);
 const askEnd = (link) => {
   endTarget.value = link;
   endDialogVisible.value = true;
 };
 const endNow = () =>
-  runAction('admin.EndLLMJoinLink', endTarget.value).then(() => {
+  runAction('admin.EndJoinLink', endTarget.value).then(() => {
     endDialogVisible.value = false;
   });
 
