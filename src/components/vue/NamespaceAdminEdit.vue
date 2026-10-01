@@ -211,6 +211,12 @@
         </template>
     </Card>
 
+    <LLMJoinLinks
+        v-if="selectedNamespace.IsLiteLLMOrg"
+        :namespace="nsShortName"
+        :isK8sNamespace="!!selectedNamespace.IsK8sNamespace"
+    />
+
     <Card class="my-8">
     <template #title>Create subgroup</template>
 
@@ -418,6 +424,8 @@ import Select from "primevue/select";
 import Textarea from "primevue/textarea";
 import {VueSpinnerPie} from 'vue3-spinners';
 
+import LLMJoinLinks from './LLMJoinLinks.vue';
+
 import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
 import CryptoJS from 'crypto-js';
@@ -430,6 +438,11 @@ import '@gravatar-com/hovercards/dist/style.css';
 const hovercards = new Hovercards( { /* Options */ } );
 
 const props = defineProps(['selectedNamespace']);
+
+const nsShortName = computed(() => {
+    const parts = props.selectedNamespace.Name.split('/');
+    return parts[parts.length - 1];
+});
 
 const form = ref();
 
