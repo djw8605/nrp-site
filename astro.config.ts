@@ -102,6 +102,7 @@ export default defineConfig({
                 { label: 'Getting access', link: 'documentation/userdocs/start/getting-started' },
                 { label: 'Using Nautilus', link: 'documentation/userdocs/start/using-nautilus' },
                 { label: 'Hierarchical resources', link: 'documentation/userdocs/start/hierarchy' },
+                { label: 'Training join links', link: 'documentation/userdocs/start/training-join-links' },
                 { label: 'Cluster Policies', link: 'documentation/userdocs/start/policies' },
                 { label: 'Deployed Services', link: 'documentation/userdocs/start/resources' },
                 { label: 'Glossary', link: 'documentation/userdocs/start/glossary' },

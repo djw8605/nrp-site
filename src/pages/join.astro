@@ -1,0 +1,21 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import JoinLink from '~/components/vue/JoinLink.vue';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Join a Training',
+  robots: { index: false, follow: false },
+};
+---
+
+<Layout metadata={metadata}>
+  <WidgetWrapper
+    titleAs="h1"
+    containerClass="py-2 md:py-4 lg:py-6"
+    title="Join a Training"
+    description="Your training organizer sent you this link. Log in to the NRP and you'll be added to the training's namespace until the training ends."
+  >
+    <JoinLink client:only="vue" />
+  </WidgetWrapper>
+</Layout>
