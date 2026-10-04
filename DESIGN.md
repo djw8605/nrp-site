@@ -109,11 +109,18 @@ Tailwind exposes these as `text-heading`, `text-body`, `text-muted`.
 | `--nrp-link`            | `#136a85` | `#6fd3e5` | use the `.link` class, never a raw `text-blue-*` |
 | `--nrp-ring`            | `#1785a4` | `#56bfd9` | focus ring; ≥3:1 on every surface                |
 | `--nrp-border-hairline` | `#d7dfe7` | `#1e2c39` | **decorative only** — see below                  |
+| `--nrp-danger`          | `#b42318` | `#ff9b8f` | destructive actions and failures only            |
 
 `--nrp-border-hairline` is ~1.35:1 and deliberately whisper-quiet. It is legal for dividers and card
 edges, which WCAG does not require to meet contrast. It is **not** legal as the sole means of
 identifying a control boundary (e.g. an input's outline) — those need ≥3:1, so use `--nrp-ring` or
 `teal-600`.
+
+`--nrp-danger` (Tailwind `text-danger`) is for destructive controls and failure messages, nothing
+else. Measured: 6.57:1 on white and 4.92:1 on `surface-4` in light; 9.34:1 on the page and 5.77:1 on
+`surface-4` in dark. A filled danger button takes white text in light mode (6.57:1) and
+`--nrp-surface-page` text in dark mode (9.34:1). The PrimeVue preset routes every `severity="danger"`
+button through it, because Aura's own red-500 with white text measures about 3.8:1.
 
 ### Opacity modifiers do not work on these tokens
 
@@ -334,6 +341,32 @@ and anything a user might copy use `--nrp-font-mono`. That includes the model na
 not prose. The `/llms` model grid renders `src/content/models/*.yaml` — the same collection as the
 docs feature matrix and the live `/v1/models` listing — so the marketing page cannot drift from what
 the platform serves; `status: evaluating` renders as a neutral chip, never a hidden model.
+
+### The namespaces page
+
+`/namespaces` is a list-and-detail tool:
+[`vue/namespaces/NamespacesApp.vue`](src/components/vue/namespaces/NamespacesApp.vue) holds the
+shell, `NamespaceList.vue` the list, and one component per detail tab. Decisions that should survive
+edits:
+
+- **The namespace list is HTML, never a chart.** It replaced an Observable Plot tree drawn at a fixed
+  1600px and scaled down, which put labels at about 10.5px on desktop and 4px on a phone, with no
+  keyboard access. _Mine_ lists the groups you belong to directly; _Tree_ is a `role="tree"` with arrow
+  keys and roving focus, and is the default for NRP staff (`IsNrpAdmin`).
+- **Features are words** (`K8s`, `LLM`, `Milvus`, and "off"), never hue alone. The old tree encoded
+  them in five CSS named colours that failed contrast in one theme or the other.
+- **Admin is one NRP-wide role.** In the portal backend, admin is a single Authentik group, and you
+  can manage a namespace when you are an admin and a member of it or of any namespace above it. So
+  the page never shows a per-namespace admin role: members carry an "NRP admin" badge, the header
+  says "You can manage this" or "…through unl-hcc", and granting or removing admin lives on
+  `/userinfo`, where its platform-wide scope is stated in the confirmation.
+- **Destructive actions are guarded in proportion.** Removing one member is immediate with a
+  persistent Undo (no timeout). Bulk removal, leaving, and deleting a namespace confirm first.
+  Delete is blocked, with links, while subgroups exist (the backend refuses it), and the confirm
+  lists what the backend actually removes and requires the name typed.
+- **The namespace name is the page's `<h1>`**, in mono, with a copy control. The list and detail sit
+  side by side from `lg`; below it they are separate screens and the "Namespaces" breadcrumb is the
+  way back.
 
 ### The endpoint readout
 
@@ -595,7 +628,7 @@ The `--aw-*` aliases exist so this can proceed incrementally. Update this table 
 `widgets/BlogLatestPosts.astro` · `widgets/Header.astro` · `widgets/Footer.astro` ·
 `widgets/Brands.astro` · `widgets/Steps.astro` · `widgets/Content.astro` · `ui/Timeline.astro` ·
 `common/AnnouncementBar.astro` · `widgets/People.astro` · `blog/GridItem.astro` ·
-`ai/EndpointPanel.astro` · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
+`ai/EndpointPanel.astro` · `vue/namespaces/*` · `pages/_app.ts` (PrimeVue preset) · `pages/index.astro` · `pages/llmtoken.astro` · `pages/education.astro` · `pages/llms.astro` ·
 `pages/distributed-infrastructure.astro` · `pages/about.astro` · `pages/contact.astro`
 
 **Deleted** — ten widgets reachable only from the five removed AstroWind demo pages:
@@ -610,7 +643,7 @@ by `common/AnnouncementBar.astro`.)
 | `widgets/MatrixFeed.astro`, `MatrixList.astro`   | live chat feed                                                                        |
 | `widgets/BlogHighlightedPosts.astro`             | unused by any page; delete or migrate                                                 |
 | `blog/*` (except `GridItem`)                     | list, pagination, single-post, tags                                                   |
-| `vue/*` (12 PrimeVue islands)                    | themed by PrimeVue; needs a matching PrimeVue preset                                  |
+| `vue/*` (PrimeVue islands)                       | PrimeVue now maps onto the tokens (`pages/_app.ts`); islands still use raw classes    |
 | `ai/ModelCard.astro`, `ModelFeatureMatrix.astro` | the docs model catalogue, not `/llms`' grid; `--sl-*` styled for the Starlight island |
 | `plots/*` (D3 / Observable Plot)                 | chart palette should derive from the teal ramp                                        |
 | `layouts/MarkdownLayout.astro`                   | see below — two pages left                                                            |

@@ -56,6 +56,7 @@ export default {
         link: 'var(--nrp-link)',
         ring: 'var(--nrp-ring)',
         hairline: 'var(--nrp-border-hairline)',
+        danger: 'var(--nrp-danger)',
 
         // Legacy AstroWind names, still consumed by unmigrated widgets.
         primary: 'var(--aw-color-primary)',

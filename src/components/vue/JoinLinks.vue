@@ -1,8 +1,8 @@
 <template>
-  <Card v-if="visible" class="my-8" id="join-links">
-    <template #title>Training join links</template>
-    <template #content>
-      <div class="flex flex-col gap-4 p-6">
+  <section v-if="visible" id="join-links" aria-labelledby="join-links-h">
+    <h2 id="join-links-h" class="font-display text-h4 font-semibold text-heading">Training join links</h2>
+    <div>
+      <div class="mt-3 flex flex-col gap-4">
         <p class="text-sm text-muted">
           Anyone who opens a join link and logs in to the NRP is added to this namespace until access ends. Then the
           people the link added are removed again, which ends their access, including any LLM API keys. People who were
@@ -44,7 +44,7 @@
           @click="createLink"
         />
       </div>
-      <DataTable :value="links" :loading="loading" dataKey="ID" class="px-6">
+      <DataTable :value="links" :loading="loading" dataKey="ID" class="mt-4">
         <Column field="Name" header="Training" />
         <Column header="Access">
           <template #body="{ data }">{{ data.IssueLLMKey ? 'Membership + LLM key' : 'Membership' }}</template>
@@ -52,8 +52,14 @@
         <Column header="Link">
           <template #body="{ data }">
             <div class="flex items-center gap-2">
-              <span class="break-all font-mono text-sm">{{ linkUrl(data) }}</span>
-              <Button icon="pi pi-copy" text size="small" aria-label="Copy join link" @click="copyLink(data)" />
+              <span class="whitespace-nowrap font-mono text-sm" :title="linkUrl(data)">{{ data.Code }}</span>
+              <Button
+                icon="pi pi-copy"
+                text
+                size="small"
+                :aria-label="`Copy the join link for ${data.Name}`"
+                @click="copyLink(data)"
+              />
             </div>
           </template>
         </Column>
@@ -80,14 +86,24 @@
                 :loading="!!busy[data.ID]"
                 @click="revoke(data)"
               />
-              <Button label="End now" severity="warn" size="small" :loading="!!busy[data.ID]" @click="askEnd(data)" />
+              <Button
+                label="End now…"
+                severity="secondary"
+                outlined
+                size="small"
+                :loading="!!busy[data.ID]"
+                @click="askEnd(data)"
+              />
             </div>
           </template>
         </Column>
         <template #empty>No join links yet.</template>
       </DataTable>
-    </template>
-  </Card>
+    </div>
+  </section>
+  <p v-else-if="!loading" class="text-sm text-muted">
+    Join links are not available for this namespace. Ask in the support chat if you need them for a training.
+  </p>
   <Dialog v-model:visible="endDialogVisible" modal header="End this training now?" :style="{ width: '30rem' }">
     <p>
       Everyone who joined through <b>{{ endTarget?.Name }}</b> and wasn't already a member will be removed from the
@@ -103,7 +119,6 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import { RequestManager, HTTPTransport, Client } from '@open-rpc/client-js';
-import Card from 'primevue/card';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
@@ -157,7 +172,8 @@ const form = reactive({
 });
 
 const linkUrl = (link) => `${window.location.origin}/join?code=${link.Code}`;
-const fmt = (iso) => new Date(iso).toLocaleString();
+const fmt = (iso) =>
+  new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 const statusSeverity = (s) =>
   ({ active: 'success', full: 'warn', expired: 'secondary', revoked: 'secondary', ended: 'contrast' })[s] || 'info';
 
