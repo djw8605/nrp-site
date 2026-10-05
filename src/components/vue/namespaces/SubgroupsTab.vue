@@ -90,7 +90,6 @@ const children = computed(() => props.index.children.get(props.path) ?? []);
 const FEATURE_CHOICES = [
   { key: 'is_k8s_namespace', title: 'Kubernetes namespace', help: 'Members can run workloads with kubectl.' },
   { key: 'is_litellm_org', title: 'LLM access', help: 'Members can create API keys for the hosted LLMs.' },
-  { key: 'is_milvus_db', title: 'Milvus database', help: 'A vector database for the group.' },
 ];
 
 const newName = ref('');

@@ -21,10 +21,11 @@ export interface Feature {
   label: string;
 }
 
+// Features a namespace can be given from this page. Milvus is no longer offered;
+// namespaces that already have it still show it, and deleting one still removes it.
 export const FEATURES: Feature[] = [
   { key: 'is_k8s_namespace', label: 'K8s' },
   { key: 'is_litellm_org', label: 'LLM' },
-  { key: 'is_milvus_db', label: 'Milvus' },
 ];
 
 export const leaf = (path: string) => path.slice(path.lastIndexOf('/') + 1);

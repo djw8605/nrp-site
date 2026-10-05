@@ -27,6 +27,7 @@
           <span v-for="f in FEATURES" :key="f.key" class="ns-chip" :class="{ 'is-off': !featureOn(f.key) }">
             {{ f.label }}<template v-if="!featureOn(f.key)">&nbsp;off</template>
           </span>
+          <span v-if="featureOn('is_milvus_db')" class="ns-chip">Milvus</span>
           <button
             v-if="canManage && offFeatures.length"
             type="button"

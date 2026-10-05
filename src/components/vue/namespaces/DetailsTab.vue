@@ -23,6 +23,16 @@
             Enable…
           </button>
         </li>
+        <li
+          v-if="features.includes('is_milvus_db')"
+          class="flex flex-wrap items-center justify-between gap-3 rounded-md bg-surface-1 px-3 py-2.5"
+        >
+          <span class="grid">
+            <span class="text-sm font-medium text-heading">Milvus database</span>
+            <span class="text-xs text-muted">No longer offered for new namespaces.</span>
+          </span>
+          <span class="ns-chip">On</span>
+        </li>
       </ul>
     </section>
 
@@ -148,7 +158,6 @@ const toast = useToast();
 const FEATURE_CHOICES = [
   { key: 'is_k8s_namespace', title: 'Kubernetes namespace', help: 'Members can run workloads with kubectl.' },
   { key: 'is_litellm_org', title: 'LLM access', help: 'Members can create API keys for the hosted LLMs.' },
-  { key: 'is_milvus_db', title: 'Milvus database', help: 'A vector database for the group.' },
 ];
 
 const form = reactive({ pi: '', grant: '', description: '', institution: '', software: '', publications: '' });

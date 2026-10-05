@@ -206,6 +206,7 @@
                 <span class="text-xs text-muted [overflow-wrap:break-word]"
                   >{{ emailHead(u.Email) }}<wbr />{{ emailTail(u.Email) }}</span
                 >
+                <span class="font-mono text-xs text-muted [overflow-wrap:anywhere]">ID {{ u.ID }}</span>
               </span>
             </div>
             <p v-if="rowError?.id === u.ID" class="mt-1.5 flex items-start gap-1.5 text-sm text-danger" role="alert">

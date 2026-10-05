@@ -353,7 +353,8 @@ edits:
   1600px and scaled down, which put labels at about 10.5px on desktop and 4px on a phone, with no
   keyboard access. _Mine_ lists the groups you belong to directly; _Tree_ is a `role="tree"` with arrow
   keys and roving focus, and is the default for NRP staff (`IsNrpAdmin`).
-- **Features are words** (`K8s`, `LLM`, `Milvus`, and "off"), never hue alone. The old tree encoded
+- **Features are words** (`K8s`, `LLM`, and "off"), never hue alone. Milvus is no longer offered; namespaces that
+  already have it show a `Milvus` label. The old tree encoded
   them in five CSS named colours that failed contrast in one theme or the other.
 - **Admin is one NRP-wide role.** In the portal backend, admin is a single Authentik group, and you
   can manage a namespace when you are an admin and a member of it or of any namespace above it. So
