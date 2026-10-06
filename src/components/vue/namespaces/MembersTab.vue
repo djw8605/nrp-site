@@ -206,7 +206,7 @@
                 <span class="text-xs text-muted [overflow-wrap:break-word]"
                   >{{ emailHead(u.Email) }}<wbr />{{ emailTail(u.Email) }}</span
                 >
-                <span class="font-mono text-xs text-muted [overflow-wrap:anywhere]">ID {{ u.ID }}</span>
+                <span class="font-mono text-xs text-muted [overflow-wrap:anywhere]">{{ u.ID }}</span>
               </span>
             </div>
             <p v-if="rowError?.id === u.ID" class="mt-1.5 flex items-start gap-1.5 text-sm text-danger" role="alert">
@@ -666,7 +666,7 @@ const openMenu = (e: Event, u: Member) => {
   const first = (u.Name || u.Email || '').split(' ')[0];
   menuItems.value = [
     ...(u.Email ? [{ label: isMe(u) ? 'Email yourself' : `Email ${first}`, url: `mailto:${u.Email}` }] : []),
-    { label: 'Copy portal user ID', command: () => copy(u.ID, 'the portal user ID') },
+    { label: 'Copy CILogon ID', command: () => copy(u.ID, 'the CILogon ID') },
     { separator: true },
     isMe(u)
       ? { label: `Leave ${props.name}…`, class: 'ns-menu-danger', command: () => (confirmLeave.value = true) }
