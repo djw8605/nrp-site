@@ -81,6 +81,7 @@
           v-model="form.institution"
           input-id="ns-inst"
           :suggestions="orgs"
+          force-selection
           fluid
           aria-required="true"
           :invalid="tried && !!errors.institution"
@@ -91,7 +92,7 @@
           {{
             tried && errors.institution
               ? errors.institution
-              : 'Start typing to search the Research Organization Registry.'
+              : 'Start typing, then pick your institution from the Research Organization Registry list.'
           }}
         </p>
       </div>
@@ -181,7 +182,8 @@ const errors = computed(() => ({
     : form.description.trim().length < 50
       ? `Add a little more: at least 50 characters, ${form.description.trim().length} so far.`
       : '',
-  institution: typeof form.institution === 'string' && form.institution.trim() ? '' : 'Choose an institution.',
+  institution:
+    typeof form.institution === 'string' && form.institution.trim() ? '' : 'Choose an institution from the list.',
   publications: form.publications.trim() ? '' : 'List publications, or write "None".',
 }));
 

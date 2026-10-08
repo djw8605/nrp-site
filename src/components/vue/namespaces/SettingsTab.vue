@@ -28,7 +28,8 @@
       <h2 id="ns-delete-h" class="font-display text-h4 font-semibold text-heading">Delete {{ name }}</h2>
       <template v-if="children.length">
         <p class="text-sm text-body">
-          {{ name }} cannot be deleted while it has subgroups. Delete these {{ children.length }} first:
+          {{ name }} cannot be deleted while it has subgroups.
+          {{ children.length === 1 ? 'Delete this one first:' : `Delete these ${children.length} first:` }}
         </p>
         <ul class="grid gap-1 text-sm">
           <li v-for="c in children" :key="c">

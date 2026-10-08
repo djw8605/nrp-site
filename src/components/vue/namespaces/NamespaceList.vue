@@ -58,7 +58,7 @@
             @click.prevent="$emit('select', row.path)"
           >
             <span class="flex items-baseline justify-between gap-2">
-              <span class="font-mono text-sm text-heading">
+              <span class="ns-name min-w-0 font-mono text-sm text-heading">
                 <template v-for="(part, i) in highlightParts(leaf(row.path), filter.q)" :key="i"
                   ><mark v-if="part.hit" class="ns-hit">{{ part.text }}</mark
                   ><template v-else>{{ part.text }}</template></template
@@ -119,7 +119,7 @@
           </svg>
         </button>
         <span v-else class="h-6 w-6 shrink-0" aria-hidden="true"></span>
-        <span class="ns-tree-name min-w-0 truncate font-mono text-sm text-heading">
+        <span class="ns-tree-name min-w-0 font-mono text-sm text-heading">
           <template v-for="(part, i) in highlightParts(leaf(row.path), filter.q)" :key="i"
             ><mark v-if="part.hit" class="ns-hit">{{ part.text }}</mark
             ><template v-else>{{ part.text }}</template></template

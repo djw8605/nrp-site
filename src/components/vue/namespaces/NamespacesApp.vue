@@ -41,7 +41,10 @@
     </div>
   </section>
 
-  <div v-else class="grid rounded-lg border border-hairline lg:grid-cols-[19rem_minmax(0,1fr)]">
+  <div
+    v-else
+    class="grid grid-cols-[minmax(0,1fr)] rounded-lg border border-hairline lg:grid-cols-[19rem_minmax(0,1fr)]"
+  >
     <aside
       class="rounded-lg border-hairline bg-surface-1 lg:block lg:rounded-r-none lg:border-r"
       :class="selected ? 'hidden' : 'block'"
@@ -214,11 +217,15 @@ html.dark .ns-segment button[aria-checked='true'] {
   font-weight: 700;
 }
 /* The name keeps its full width and never shares a line it would have to be
-   cut to fit; only a name wider than the row itself is truncated. 1.75rem is
-   the expand button plus its gap. */
+   cut to fit. A name wider than the row wraps, at its dashes first, and is never
+   truncated. 1.75rem is the expand button plus its gap. */
 .ns-tree-name {
   flex: 1 0 auto;
   max-width: calc(100% - 1.75rem);
+}
+.ns-tree-name,
+.ns-name {
+  overflow-wrap: anywhere;
 }
 .ns-row.is-context {
   opacity: 0.72;
