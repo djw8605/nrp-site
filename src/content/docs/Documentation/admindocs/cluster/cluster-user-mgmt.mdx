@@ -8,12 +8,16 @@ This document outlines the steps to manage user roles and permissions within the
 
 ## Add a User to a Namespace
 
-Now implemented directly in website. Namespace membership corresponds to an Authentik group for the namespace.
+On the [Namespaces](/namespaces) page, select the namespace and use its **Members** tab. Namespace membership
+corresponds to an Authentik group for the namespace.
 
 ## Promote a User to Admin
 
-Now implemented directly in website. Adminship corresponds to an Authentik group "namespace admins".
+On the [User info](/userinfo) page, look the user up and select **Make NRP admin…**. Adminship is one
+platform-wide role: it corresponds to the Authentik group "namespace admins", and lets the user manage every
+namespace they belong to, and the namespaces under those.
 
 ## Demote an Admin to User
 
-Now implemented directly in website. Adminship corresponds to an Authentik group "namespace admins".
+On the [User info](/userinfo) page, look the user up and select **Remove NRP admin…**. This removes them from
+the Authentik group "namespace admins".
