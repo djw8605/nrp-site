@@ -210,11 +210,19 @@ watch(
   },
   { immediate: true }
 );
+// A filter opens every branch that leads to a match. Branches collapsed while
+// filtering are kept apart from `expanded`, and reopen when the filter changes.
+const collapsedInFilter = ref(new Set<string>());
+watch(
+  () => filter.value.q,
+  () => (collapsedInFilter.value = new Set())
+);
 const toggle = (path: string) => {
-  const next = new Set(expanded.value);
+  const target = filter.value.q ? collapsedInFilter : expanded;
+  const next = new Set(target.value);
   if (next.has(path)) next.delete(path);
   else next.add(path);
-  expanded.value = next;
+  target.value = next;
 };
 
 interface TreeRow {
@@ -230,7 +238,7 @@ const treeRows = computed<TreeRow[]>(() => {
   const walk = (path: string, depth: number) => {
     if (f.q && !f.visible.has(path)) return;
     const kids = (props.index.children.get(path) ?? []).filter((k) => !f.q || f.visible.has(k));
-    const open = f.q ? true : expanded.value.has(path);
+    const open = f.q ? !collapsedInFilter.value.has(path) : expanded.value.has(path);
     rows.push({ path, depth, hasKids: kids.length > 0, open, count: descendantCount(path, props.index) });
     if (open) kids.forEach((k) => walk(k, depth + 1));
   };
@@ -282,7 +290,7 @@ const onTreeKey = (e: KeyboardEvent) => {
       else if (row.hasKids) go(i + 1);
       break;
     case 'ArrowLeft':
-      if (row.hasKids && row.open && !filter.value.q) toggle(row.path);
+      if (row.hasKids && row.open) toggle(row.path);
       else if (parentPath(row.path)) focusRow(parentPath(row.path));
       break;
     case 'Enter':
