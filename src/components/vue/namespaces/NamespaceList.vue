@@ -88,7 +88,7 @@
         :aria-selected="row.path === selected"
         :tabindex="row.path === focusPath ? 0 : -1"
         :data-path="row.path"
-        class="ns-row flex cursor-pointer items-center gap-1 py-1.5 pr-3"
+        class="ns-row flex cursor-pointer flex-wrap items-center gap-x-1 gap-y-0.5 py-1.5 pr-3"
         :class="[
           row.path === selected ? 'is-selected' : '',
           filter.q && !filter.matched.has(row.path) ? 'is-context' : '',
@@ -118,8 +118,8 @@
             <path d="m9 6 6 6-6 6"></path>
           </svg>
         </button>
-        <span v-else class="w-6 shrink-0" aria-hidden="true"></span>
-        <span class="min-w-0 flex-1 truncate font-mono text-sm text-heading">
+        <span v-else class="h-6 w-6 shrink-0" aria-hidden="true"></span>
+        <span class="ns-tree-name min-w-0 truncate font-mono text-sm text-heading">
           <template v-for="(part, i) in highlightParts(leaf(row.path), filter.q)" :key="i"
             ><mark v-if="part.hit" class="ns-hit">{{ part.text }}</mark
             ><template v-else>{{ part.text }}</template></template
@@ -128,9 +128,12 @@
             >{{ row.count }}<span class="sr-only"> subgroups</span></span
           >
         </span>
-        <span v-if="index.memberPaths.has(row.path)" class="text-xs font-semibold text-link">member</span>
-        <span class="flex shrink-0 gap-1">
-          <span v-for="f in nodeFeatures(index.byPath.get(row.path))" :key="f" class="ns-chip">{{ f }}</span>
+        <!-- Labels sit right of the name, and drop to a line of their own when the name needs the room. -->
+        <span class="ml-auto flex shrink-0 items-center gap-1">
+          <span v-if="index.memberPaths.has(row.path)" class="text-xs font-semibold text-link">member</span>
+          <span v-for="f in nodeFeatures(index.byPath.get(row.path))" :key="f" class="ns-chip ns-chip-tight">{{
+            f
+          }}</span>
         </span>
       </li>
     </ul>

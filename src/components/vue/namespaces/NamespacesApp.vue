@@ -210,8 +210,15 @@ html.dark .ns-segment button[aria-checked='true'] {
   background: var(--nrp-surface-3);
 }
 .ns-row.is-selected .font-mono:first-child,
-.ns-row.is-selected > .flex-1 {
+.ns-row.is-selected > .ns-tree-name {
   font-weight: 700;
+}
+/* The name keeps its full width and never shares a line it would have to be
+   cut to fit; only a name wider than the row itself is truncated. 1.75rem is
+   the expand button plus its gap. */
+.ns-tree-name {
+  flex: 1 0 auto;
+  max-width: calc(100% - 1.75rem);
 }
 .ns-row.is-context {
   opacity: 0.72;
@@ -237,6 +244,11 @@ html.dark .ns-segment button[aria-checked='true'] {
 }
 html.dark .ns-chip {
   color: var(--nrp-teal-300);
+}
+/* Tighter chips for the tree, where rows are narrow and indented. */
+.ns-chip-tight {
+  padding: 0 0.3rem;
+  line-height: 1.125rem;
 }
 .ns-chip.is-off {
   color: var(--nrp-text-muted);
