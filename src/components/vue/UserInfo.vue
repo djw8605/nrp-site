@@ -28,55 +28,6 @@
             </div>
         </div>
     </div>
-    <Card v-if="user && currentUserIsAdmin && viewedUserId" class="my-8">
-        <template #title>NRP admin</template>
-        <template #content>
-            <div class="flex flex-col gap-3 max-w-2xl">
-                <p class="text-body">
-                    <template v-if="userInfo.IsAdmin">{{ viewedName }} is an NRP admin<template v-if="userInfo.PromotedBy">, promoted by {{ userInfo.PromotedBy }}</template>.</template>
-                    <template v-else>{{ viewedName }} is not an NRP admin.</template>
-                </p>
-                <p class="text-sm text-muted">
-                    NRP admin is one role across the whole platform. An NRP admin can manage every namespace they belong to and all
-                    subgroups beneath them: add and remove people, create join links and subgroups, and delete namespaces.
-                </p>
-                <div>
-                    <Button
-                        :label="userInfo.IsAdmin ? 'Remove NRP admin…' : 'Make NRP admin…'"
-                        :severity="userInfo.IsAdmin ? 'secondary' : undefined"
-                        size="small"
-                        @click="promoteDialogVisible = true"
-                    />
-                </div>
-            </div>
-        </template>
-    </Card>
-    <Dialog
-        v-model:visible="promoteDialogVisible"
-        modal
-        :header="userInfo.IsAdmin ? `Remove NRP admin from ${viewedName}?` : `Make ${viewedName} an NRP admin?`"
-        :style="{ width: '32rem' }"
-    >
-        <div class="flex flex-col gap-3 text-sm">
-            <p class="text-muted"><span class="font-mono text-heading">{{ userInfo.Email }}</span><template v-if="userInfo.IDP">, signs in with {{ userInfo.IDP }}</template></p>
-            <template v-if="userInfo.IsAdmin">
-                <p>They stop managing every namespace, not only one. They stay a member of the namespaces they belong to.</p>
-            </template>
-            <template v-else>
-                <p>They will be able to manage every namespace they belong to and all subgroups beneath them.</p>
-                <p>The NRP holds namespace admins responsible for all activity in the namespaces they manage. Only do this if you are vouching for them.</p>
-            </template>
-        </div>
-        <template #footer>
-            <Button label="Cancel" severity="secondary" outlined size="small" @click="promoteDialogVisible = false" />
-            <Button
-                :label="userInfo.IsAdmin ? 'Remove NRP admin' : 'Make NRP admin'"
-                size="small"
-                :loading="promoteLoading"
-                @click="togglePromote"
-            />
-        </template>
-    </Dialog>
     <Card v-if="user" class="my-8">
         <template #title>Namespaces & Groups</template>
         <template #content>
@@ -197,7 +148,6 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import FloatLabel from "primevue/floatlabel";
 import Card from 'primevue/card';
-import Dialog from 'primevue/dialog';
 import InputGroup from 'primevue/inputgroup';
 import Badge from 'primevue/badge';
 import {VueSpinnerPie} from 'vue3-spinners';
@@ -209,7 +159,7 @@ import { RequestManager, HTTPTransport, Client } from "@open-rpc/client-js";
 
 import CryptoJS from 'crypto-js';
 
-import {ref, onMounted, computed} from 'vue';
+import {ref, onMounted} from 'vue';
 
 import {Hovercards} from '@gravatar-com/hovercards';
 import '@gravatar-com/hovercards/dist/style.css';
@@ -222,42 +172,6 @@ const chooseUser = ref(null);
 const filteredUsers = ref([]);
 
 const currentUserIsAdmin = ref(false);
-
-// The user being looked at, when an admin searched for someone else. Granting
-// NRP admin lives here, not on a namespace page, because the role is NRP-wide.
-const viewedUserId = ref("");
-const viewedName = computed(() => userInfo.value.Name || userInfo.value.Email || viewedUserId.value);
-const promoteDialogVisible = ref(false);
-const promoteLoading = ref(false);
-
-const togglePromote = () => {
-    const promoting = !userInfo.value.IsAdmin;
-    promoteLoading.value = true;
-    client.request({
-        method: "admin.PromoteUser",
-        params: {
-            UserID: viewedUserId.value,
-            IsPromoting: promoting,
-        }
-    }).then(() => {
-        toast.add({
-            severity: 'success',
-            summary: promoting ? `${viewedName.value} is now an NRP admin` : `${viewedName.value} is no longer an NRP admin`,
-            life: 4000
-        });
-        promoteDialogVisible.value = false;
-        getUserInfo(viewedUserId.value);
-    }).catch((err) => {
-        toast.add({
-            severity: 'error',
-            summary: promoting ? 'Could not make them an NRP admin' : 'Could not remove NRP admin',
-            detail: `${err.message} Nothing changed.`,
-            life: 8000
-        });
-    }).finally(() => {
-        promoteLoading.value = false;
-    });
-};
 
 const toast = useToast();
 
@@ -333,7 +247,6 @@ const searchUser = () => {
     if(chooseUser.value == null || chooseUser.value == "" || chooseUser.value.ID == "") {
         return;
     }
-    viewedUserId.value = chooseUser.value.ID;
     getUserInfo(chooseUser.value.ID);
 };
 

@@ -3,7 +3,6 @@ title: Cluster User Management
 description: Managing users in the cluster.
 ---
 
-
 This document outlines the steps to manage user roles and permissions within the platform.
 
 ## Add a User to a Namespace
@@ -13,11 +12,13 @@ corresponds to an Authentik group for the namespace.
 
 ## Promote a User to Admin
 
-On the [User info](/userinfo) page, look the user up and select **Make NRP admin…**. Adminship is one
-platform-wide role: it corresponds to the Authentik group "namespace admins", and lets the user manage every
-namespace they belong to, and the namespaces under those.
+On the [Namespaces](/namespaces) page, select a namespace the user belongs to, open its **Members** tab, and choose
+**Make NRP admin…** from the **⋯** menu on their row. Adminship is one platform-wide role, not a per-namespace one: it
+corresponds to the Authentik group "namespace admins", and lets the user manage every namespace they belong to, and
+the namespaces under those.
 
 ## Demote an Admin to User
 
-On the [User info](/userinfo) page, look the user up and select **Remove NRP admin…**. This removes them from
-the Authentik group "namespace admins".
+On the namespace's **Members** tab, choose **Remove NRP admin…** from the **⋯** menu on their row. This removes them
+from the Authentik group "namespace admins", so they stop managing every namespace, not only that one. You can only
+remove adminship from people you promoted.

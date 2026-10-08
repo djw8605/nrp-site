@@ -298,7 +298,8 @@
         }}<template v-if="invites.length"
           >, {{ invites.length }} pending invite{{ invites.length === 1 ? '' : 's' }}</template
         >. NRP admin is one role across the whole platform: NRP admins who belong to {{ name
-        }}<template v-if="parent"> or to a namespace above it</template> can manage it.
+        }}<template v-if="parent"> or to a namespace above it</template> can manage it. Grant or remove it from a
+        member's actions menu.
       </p>
       <div class="flex flex-wrap gap-2">
         <a v-if="users.length" class="btn-secondary !px-4 !py-2 text-sm" :href="mailto(users)">Email all members</a>
@@ -328,6 +329,47 @@
         </button>
         <button type="button" class="ns-danger-btn" :disabled="removing" @click="removeUsers(selectedUsers)">
           {{ removing ? 'Removing…' : 'Remove' }}
+        </button>
+      </template>
+    </Dialog>
+
+    <Dialog
+      :visible="!!adminTarget"
+      modal
+      :header="
+        adminTarget?.IsAdmin
+          ? `Remove NRP admin from ${who(adminTarget)}?`
+          : `Make ${adminTarget ? who(adminTarget) : ''} an NRP admin?`
+      "
+      :style="{ width: '32rem' }"
+      @update:visible="(v: boolean) => !v && (adminTarget = null)"
+    >
+      <div v-if="adminTarget" class="grid gap-3 text-sm text-body">
+        <p class="text-muted">
+          <span class="font-mono text-heading">{{ adminTarget.Email }}</span
+          ><template v-if="adminTarget.IDP">, signs in with {{ adminTarget.IDP }}</template>
+        </p>
+        <template v-if="adminTarget.IsAdmin">
+          <p>
+            They stop managing every namespace, not only {{ name }}. They stay a member of the namespaces they belong
+            to.
+          </p>
+        </template>
+        <template v-else>
+          <p>
+            NRP admin is one role across the whole platform, not only {{ name }}. They will be able to manage every
+            namespace they belong to and all subgroups beneath them.
+          </p>
+          <p>
+            The NRP holds namespace admins responsible for all activity in the namespaces they manage. Only do this if
+            you are vouching for them.
+          </p>
+        </template>
+      </div>
+      <template #footer>
+        <button type="button" class="btn-secondary !px-4 !py-2 text-sm" @click="adminTarget = null">Cancel</button>
+        <button type="button" class="btn-primary !px-4 !py-2 text-sm" :disabled="promoting" @click="toggleAdmin">
+          {{ promoting ? 'Saving…' : adminTarget?.IsAdmin ? 'Remove NRP admin' : 'Make NRP admin' }}
         </button>
       </template>
     </Dialog>
@@ -362,6 +404,7 @@ interface Member {
   Email?: string;
   IDP?: string;
   IsAdmin?: boolean;
+  CanDemote?: boolean;
 }
 interface Invite {
   Email: string;
@@ -636,6 +679,36 @@ const runUndo = async () => {
   }
 };
 
+// NRP admin is platform-wide, so the confirm says so. The backend reports
+// CanDemote on admins whose adminship this caller is allowed to remove.
+const adminTarget = ref<Member | null>(null);
+const promoting = ref(false);
+const who = (u: Member) => u.Name || u.Email || u.ID;
+const toggleAdmin = async () => {
+  const u = adminTarget.value;
+  if (!u) return;
+  const promote = !u.IsAdmin;
+  promoting.value = true;
+  try {
+    await rpc.request({ method: 'admin.PromoteUser', params: { UserID: u.ID, IsPromoting: promote } });
+    toast.add({
+      severity: 'success',
+      summary: promote ? `${who(u)} is now an NRP admin` : `${who(u)} is no longer an NRP admin`,
+      life: 4000,
+    });
+    adminTarget.value = null;
+    await loadMembers();
+  } catch (err: unknown) {
+    adminTarget.value = null;
+    rowError.value = {
+      id: u.ID,
+      message: `Could not ${promote ? 'make' : 'remove'} ${who(u)} ${promote ? 'an' : 'as'} NRP admin. ${err instanceof Error ? err.message : ''} Nothing changed for them.`,
+    };
+  } finally {
+    promoting.value = false;
+  }
+};
+
 const cancelInvite = async (inv: Invite) => {
   try {
     await rpc.request({ method: 'admin.DeletePendingNSInvite', params: { Namespace: props.name, Email: inv.Email } });
@@ -667,6 +740,11 @@ const openMenu = (e: Event, u: Member) => {
   menuItems.value = [
     ...(u.Email ? [{ label: isMe(u) ? 'Email yourself' : `Email ${first}`, url: `mailto:${u.Email}` }] : []),
     { label: 'Copy CILogon ID', command: () => copy(u.ID, 'the CILogon ID') },
+    ...(!u.IsAdmin
+      ? [{ label: 'Make NRP admin…', command: () => (adminTarget.value = u) }]
+      : u.CanDemote
+        ? [{ label: 'Remove NRP admin…', command: () => (adminTarget.value = u) }]
+        : [{ label: `Only whoever made ${isMe(u) ? 'you' : 'them'} an admin can remove it`, disabled: true }]),
     { separator: true },
     isMe(u)
       ? { label: `Leave ${props.name}…`, class: 'ns-menu-danger', command: () => (confirmLeave.value = true) }
