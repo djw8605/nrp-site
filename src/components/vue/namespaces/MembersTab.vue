@@ -302,6 +302,9 @@
         member's actions menu.
       </p>
       <div class="flex flex-wrap gap-2">
+        <a v-if="adminUsers.length" class="btn-secondary !px-4 !py-2 text-sm" :href="mailto(adminUsers)"
+          >Email admins</a
+        >
         <a v-if="users.length" class="btn-secondary !px-4 !py-2 text-sm" :href="mailto(users)">Email all members</a>
       </div>
     </div>
@@ -483,6 +486,7 @@ const shownInvites = computed(() =>
   memberQuery.value.trim() ? invites.value.filter((i) => matches(i.Email)) : invites.value
 );
 const selectedIds = ref(new Set<string>());
+const adminUsers = computed(() => users.value.filter((u) => u.IsAdmin));
 const selectedUsers = computed(() => users.value.filter((u) => selectedIds.value.has(u.ID)));
 const allShownSelected = computed(
   () => shownUsers.value.length > 0 && shownUsers.value.every((u) => selectedIds.value.has(u.ID))
